@@ -26,8 +26,8 @@ library(labelled)
 ######### Data management #########
 
 # Loading data
-df <- read.csv("/Users/edoardovitella/Documents/Paper_PTA_DTA/TREND Dataset/trend2022.csv", sep = ";") # Dataset
-codes <- read.csv("/Users/edoardovitella/Documents/Paper_PTA_DTA/TREND Dataset/TREND_2022_SCHEMA_COMPLETO.csv", sep = ",") # Variables description
+df <- read.csv("Data/TREND/trend2022.csv", sep = ";") # Dataset
+codes <- read.csv("Data/TREND/TREND_2022_SCHEMA_COMPLETO.csv", sep = ",") # Variables description
 
 # Attaching variable labels
 variable_labels <- setNames(codes$Descrizione, codes$Nome.Variabile)
