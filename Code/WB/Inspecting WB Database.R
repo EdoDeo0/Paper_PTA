@@ -115,6 +115,115 @@ for (i in seq_len(nrow(agreements_info))) {
 }
 WB_DTA_ENV_China_2000_2015 <- WB_DTA_ENV_2000_2015 %>% select(all_of(selected_vars))
 
+# Removing incorrectly selected agreements
+incorrect_agreements <- c("agree_220", "agree_190", "agree_253")
+WB_DTA_ENV_China_2000_2015 <- WB_DTA_ENV_China_2000_2015 %>%
+  select(-all_of(incorrect_agreements))
+
+# Save the final dataset
+write.csv(WB_DTA_ENV_China_2000_2015, "Data/WB/WB_China_2000_2015.csv", row.names = FALSE)
+
+
+
+
+
+## Checking inconsistencies and adding summary rows ##
+
+# Add a final raw that is a sum of the provisions (sum of the columns)
+WB_DTA_ENV_China_2000_2015 <- WB_DTA_ENV_China_2000_2015 %>%
+  bind_rows(
+    data.frame(
+      Area = "Total Provisions",
+      Coding = NA,
+      Provision = NA,
+      t(colSums(WB_DTA_ENV_China_2000_2015[, -c(1:3)], na.rm = TRUE))
+    )
+  )
+
+
+# Add a final row that is a sum of the environmental provisions (sum of the columns)
+WB_DTA_ENV <- WB_DTA_ENV %>%
+  bind_rows(
+    data.frame(
+      Area = "Total Environmental Provisions",
+      Coding = NA,
+      Provision = NA,
+      t(colSums(WB_DTA_ENV[, -c(1:3)], na.rm = TRUE))
+    )
+  )
+
+
+# Add a final row that takes value 1 if the Total Environmental Provisions row is higher than 5 in WB_DTA_ENV
+
+
+
+WB_DTA_ENV <- WB_DTA_ENV %>%
+  bind_rows(
+    data.frame(
+      Area = "Agreements with more than 5 Environmental Provisions",
+      Coding = NA,
+      Provision = NA,
+      # Usiamo [-nrow(WB_DTA_ENV)] per escludere l'ultima riga dal calcolo
+      t(ifelse(colSums(WB_DTA_ENV[-nrow(WB_DTA_ENV), -c(1:3)], na.rm = TRUE) > 5, 1, 0))
+    )
+  )
+
+
+
+
+# Read horizontal content data
+horizontal_data <- read_excel("Data/WB/DTA 1.0 - Horizontal Content (v2).xlsx", 
+           sheet = "WTO-X AC")
+
+
+# Fai un nuovo data frame in cui tieni solo le colonne WBID, Agreement e Environmetnal Laws da horizontal data
+horizontal_env <- horizontal_data %>%
+  select(`WBID`, Agreement, `EnvironmentalLaws`)
+
+
+
+# Aggiungi una seconda colonna con le informazioni della colonna Agreements with more than 5 Environmental Provisions di WB_DTA_ENV
+# usa WBID per fare il join
+
+horizontal_env <- horizontal_env %>%
+  left_join(
+    data.frame(
+      # Convertiamo qui il risultato di sub() in numero
+      WBID = as.numeric(sub("agree_", "", colnames(WB_DTA_ENV)[-c(1:3)])),
+      More_Than_5_EP = as.numeric(WB_DTA_ENV[nrow(WB_DTA_ENV), -c(1:3)]),
+      Number_EP = as.numeric(WB_DTA_ENV[nrow(WB_DTA_ENV) - 1, -c(1:3)])
+    ),
+    by = "WBID"
+  )
+
+# Isola le righe in horizontal_env per cui le ultime 2 colonne hanno valori diversi
+horizontal_env_discrepancies <- horizontal_env %>%
+  filter(`EnvironmentalLaws` != More_Than_5_EP)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

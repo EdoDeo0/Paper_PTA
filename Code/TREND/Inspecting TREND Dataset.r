@@ -8,7 +8,6 @@
 ## Dataset available at: https://www.chaire-epi.ulaval.ca/en/trend
 
 
-
 #########  Setup #########
 
 # Clean workspace
@@ -33,6 +32,28 @@ codes <- read.csv("Data/TREND/TREND_2022_SCHEMA_COMPLETO.csv", sep = ",") # Vari
 variable_labels <- setNames(codes$Descrizione, codes$Nome.Variabile)
 df <- set_variable_labels(df, .labels = variable_labels)
 
+# Select only agreements that include China between 2000 and 2015
+df_china_2000_2015 <- df %>%
+  filter(str_detect(Trade.Agreement, "China"), Year >= 2000, Year <= 2015)
+
+# Include missing agreements from original dataset
+missing_agreements <- df %>%
+  filter(Trade.Agreement %in% c("100_Bangkok Agreement_1975", "62_Asia Pacific Trade Agreement (Bangkok Agreement amended)_2005"))
+df_china_2000_2015 <- bind_rows(df_china_2000_2015, missing_agreements)
+
+
+# Delete incorrect agreements (225_China Pakistan Services_2009 and 68_Association of Southeast Asian Nations China Services_2007)
+df_china_2000_2015 <- df_china_2000_2015 %>%
+  filter(!(Trade.Agreement %in% c("225_China Pakistan Services_2009", "68_Association of Southeast Asian Nations China Services_2007")))
+
+# Create merge identifier
+df_china_2000_2015 <- df_china_2000_2015 %>%
+  bind_cols(tibble(Merge_ID = 1:nrow(df_china_2000_2015))) %>%
+  relocate(Merge_ID, .after = Trade.Agreement)
+
+# Save China 2000-2015 dataset for future merge
+write.csv(df_china_2000_2015, "Data/TREND/TREND_China_2000_2015.csv", row.names = FALSE)
+
 
 ######### Graphs on the whole sample #########
 
@@ -44,9 +65,11 @@ df %>%
   geom_line(size = 1) +
   geom_point() +
   theme_minimal() +
-  labs(title = "Number of agreements",
-       x = "Year",
-       y = "Number of agreements")
+  labs(
+    title = "Number of agreements",
+    x = "Year",
+    y = "Number of agreements"
+  )
 
 # Number of agreements per year from 2000 to 2015
 df %>%
@@ -57,9 +80,11 @@ df %>%
   geom_line(size = 1) +
   geom_point() +
   theme_minimal() +
-  labs(title = "Number of agreements",
-       x = "Year",
-       y = "Number of agreements")
+  labs(
+    title = "Number of agreements",
+    x = "Year",
+    y = "Number of agreements"
+  )
 
 # Time trend of environmental provisions
 df %>%
@@ -107,9 +132,11 @@ df_china %>%
   geom_line(size = 1) +
   geom_point() +
   theme_minimal() +
-  labs(title = "Number of agreements with China",
-       x = "Year",
-       y = "Number of agreements")
+  labs(
+    title = "Number of agreements with China",
+    x = "Year",
+    y = "Number of agreements"
+  )
 
 # Time trend of environmental provisions for China
 df_china %>%
@@ -133,6 +160,9 @@ df_china %>%
 df_china_2000_2015 <- df %>%
   filter(str_detect(Trade.Agreement, "China"), Year >= 2000, Year <= 2015)
 
+# Save dataset
+write.csv(df_china_2000_2015, "Data/TREND/TREND_China_2000_2015.csv", row.names = FALSE)
+
 # Number of agreements per year for China (2000-2015)
 df_china_2000_2015 %>%
   group_by(Year) %>%
@@ -141,9 +171,11 @@ df_china_2000_2015 %>%
   geom_line(size = 1) +
   geom_point() +
   theme_minimal() +
-  labs(title = "Number of agreements with China (2000-2015)",
-       x = "Year",
-       y = "Number of agreements")
+  labs(
+    title = "Number of agreements with China (2000-2015)",
+    x = "Year",
+    y = "Number of agreements"
+  )
 
 # Time trend of envirnonmental provisions for China (2000-2015)
 df_china_2000_2015 %>%
@@ -174,10 +206,11 @@ df %>%
   adorn_totals("row")
 
 hist(df$Environmental_Breadth_Index,
-     main = "Distribuzione di Environmental_Breadth_Index",
-     xlab = "Environmental_Breadth_Index",
-     col = "lightblue",
-     border = "black")
+  main = "Distribuzione di Environmental_Breadth_Index",
+  xlab = "Environmental_Breadth_Index",
+  col = "lightblue",
+  border = "black"
+)
 
 
 # Thematic indeces
@@ -190,17 +223,16 @@ df <- df %>%
 
 # Tabulating and plotting Climate_Norms
 df %>%
-  tabyl(Climate_Norms, show_na = TRUE) %>%  adorn_pct_formatting(digits = 2) %>%
+  tabyl(Climate_Norms, show_na = TRUE) %>%
+  adorn_pct_formatting(digits = 2) %>%
   adorn_totals("row")
 
 hist(df$Climate_Norms,
-     main = "Distribuzione di Climate_Norms",
-     xlab = "Climate_Norms",
-     col = "lightgreen",
-     border = "black")
-
-
-
+  main = "Distribuzione di Climate_Norms",
+  xlab = "Climate_Norms",
+  col = "lightgreen",
+  border = "black"
+)
 
 
 # Binding index
@@ -237,29 +269,30 @@ df <- df %>%
 
 # Tabulazione della colonna Environmental_Breadth_Index
 df %>%
-  tabyl(Environmental_Breadth_Index, show_na = TRUE) %>%  # conteggi e % automatici
-  adorn_pct_formatting(digits = 2) %>%                   # formatta percentuali
-  adorn_totals("row")                                    # aggiunge totalone
+  tabyl(Environmental_Breadth_Index, show_na = TRUE) %>% # conteggi e % automatici
+  adorn_pct_formatting(digits = 2) %>% # formatta percentuali
+  adorn_totals("row") # aggiunge totalone
 
-hist(df$Environmental_Breadth_Index, 
-     main = "Distribuzione di Environmental_Breadth_Index", 
-     xlab = "Environmental_Breadth_Index", 
-     col = "lightblue", 
-     border = "black")
+hist(df$Environmental_Breadth_Index,
+  main = "Distribuzione di Environmental_Breadth_Index",
+  xlab = "Environmental_Breadth_Index",
+  col = "lightblue",
+  border = "black"
+)
 
 
 # Tabulazzione di Climate_Norms
 df %>%
-  tabyl(Climate_Norms, show_na = TRUE) %>%  adorn_pct_formatting(digits = 2) %>%
+  tabyl(Climate_Norms, show_na = TRUE) %>%
+  adorn_pct_formatting(digits = 2) %>%
   adorn_totals("row")
 
-hist(df$Climate_Norms, 
-     main = "Distribuzione di Climate_Norms", 
-     xlab = "Climate_Norms", 
-     col = "lightgreen", 
-     border = "black")
-
-
+hist(df$Climate_Norms,
+  main = "Distribuzione di Climate_Norms",
+  xlab = "Climate_Norms",
+  col = "lightgreen",
+  border = "black"
+)
 
 
 # Accordi Cina Deep
