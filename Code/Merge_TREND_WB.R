@@ -303,6 +303,7 @@ write_dta(df_merged, "Data/Merged_TREND_WB.dta")
 
 
 
+
 ### ENVIRONMENTAL PROVISIONS INDICES ###
 
 # 1. EP_Count (Breadth/Ampiezza)
@@ -323,10 +324,10 @@ df_merged <- df_merged %>%
 df_merged <- df_merged %>%
   mutate(
     Market_Access_Green = rowSums(select(
-      ., 
-      WB_10,  # Liberalization of environmental goods
-      X7_01_01, X7_01_02_01, X7_01_02_02,  # Production/trade encouragement
-      X8_09_04  # Environmental services
+      .,
+      WB_10, # Liberalization of environmental goods
+      X7_01_01, X7_01_02_01, X7_01_02_02, # Production/trade encouragement
+      X8_09_04 # Environmental services
     ), na.rm = TRUE)
   )
 
@@ -342,9 +343,9 @@ df_merged <- df_merged %>%
   mutate(
     Standards_NonRegression = rowSums(select(
       .,
-      WB_2, WB_8, WB_9,  # High levels & no dilution
-      X2_01_01, X2_01_02, X2_01_03,  # No relaxation
-      X2_02_01, X2_02_02  # High standards & enhancement
+      WB_2, WB_8, WB_9, # High levels & no dilution
+      X2_01_01, X2_01_02, X2_01_03, # No relaxation
+      X2_02_01, X2_02_02 # High standards & enhancement
     ), na.rm = TRUE)
   )
 
@@ -364,8 +365,8 @@ df_merged <- df_merged %>%
   mutate(
     Enforcement_DSM = rowSums(select(
       .,
-      WB_13, WB_14, WB_15, WB_16,  # WB enforcement & DSM
-      X5_01_01, X5_02, X5_03, X5_04_01, X5_04_02, X5_05  # TREND enforcement
+      WB_13, WB_14, WB_15, WB_16, # WB enforcement & DSM
+      X5_01_01, X5_02, X5_03, X5_04_01, X5_04_02, X5_05 # TREND enforcement
     ), na.rm = TRUE)
   )
 
@@ -384,9 +385,9 @@ df_merged <- df_merged %>%
   mutate(
     Regulatory_Space = rowSums(select(
       .,
-      WB_5, WB_6, WB_7,  # Right to regulate & exceptions
-      X1_08_01, X1_08_02, X1_08_03, X1_08_04,  # Sovereignty
-      X8_01_01_01, X8_03_07, X8_05_01, X8_07  # Exceptions & ISDS exclusion
+      WB_5, WB_6, WB_7, # Right to regulate & exceptions
+      X1_08_01, X1_08_02, X1_08_03, X1_08_04, # Sovereignty
+      X8_01_01_01, X8_03_07, X8_05_01, X8_07 # Exceptions & ISDS exclusion
     ), na.rm = TRUE)
   )
 
@@ -408,12 +409,12 @@ df_merged <- df_merged %>%
   mutate(
     Cooperation_Assistance = rowSums(select(
       .,
-      WB_3, WB_4, WB_17,  # WB cooperation
-      X6_01,  # Education
-      X7_02_01, X7_02_02, X7_02_03, X7_02_04,  # Scientific cooperation
-      X7_03_01, X7_03_02, X7_03_03, X7_03_04, X7_03_05,  # Information exchange
-      X7_04_01, X7_09,  # Harmonization & cooperation
-      X9_01_01, X9_01_02, X9_02, X9_03_01, X9_03_02  # Capacity building & funding
+      WB_3, WB_4, WB_17, # WB cooperation
+      X6_01, # Education
+      X7_02_01, X7_02_02, X7_02_03, X7_02_04, # Scientific cooperation
+      X7_03_01, X7_03_02, X7_03_03, X7_03_04, X7_03_05, # Information exchange
+      X7_04_01, X7_09, # Harmonization & cooperation
+      X9_01_01, X9_01_02, X9_02, X9_03_01, X9_03_02 # Capacity building & funding
     ), na.rm = TRUE)
   )
 
@@ -428,10 +429,10 @@ df_merged <- df_merged %>%
   mutate(
     TBT_SPS_Environment = rowSums(select(
       .,
-      WB_11,  # Science-based regulation
-      X3_01_01, X3_01_02,  # Scientific knowledge
-      X8_02_01, X8_02_02, X8_02_03,  # TBT measures
-      X8_10  # SPS measures
+      WB_11, # Science-based regulation
+      X3_01_01, X3_01_02, # Scientific knowledge
+      X8_02_01, X8_02_02, X8_02_03, # TBT measures
+      X8_10 # SPS measures
     ), na.rm = TRUE)
   )
 
@@ -444,9 +445,9 @@ df_merged <- df_merged %>%
   mutate(
     MEA_Compliance = rowSums(select(
       .,
-      WB_29, WB_30,  # General MEA compliance
-      WB_31, WB_32, WB_33, WB_34, WB_35, WB_36, WB_37, WB_38,  # Specific MEAs
-      WB_39, WB_40, WB_41, WB_42, WB_43, WB_44  # More specific MEAs
+      WB_29, WB_30, # General MEA compliance
+      WB_31, WB_32, WB_33, WB_34, WB_35, WB_36, WB_37, WB_38, # Specific MEAs
+      WB_39, WB_40, WB_41, WB_42, WB_43, WB_44 # More specific MEAs
     ), na.rm = TRUE)
   )
 
@@ -460,9 +461,9 @@ df_merged <- df_merged %>%
   mutate(
     Climate_Energy = rowSums(select(
       .,
-      WB_27,  # Renewable energy
-      X4_03,  # Energy-environment interaction
-      matches("^X10_")  # Climate provisions
+      WB_27, # Renewable energy
+      X4_03, # Energy-environment interaction
+      matches("^X10_") # Climate provisions
     ), na.rm = TRUE)
   )
 
@@ -477,9 +478,9 @@ df_merged <- df_merged %>%
   mutate(
     Biodiversity_Resources = rowSums(select(
       .,
-      WB_18, WB_19, WB_20, WB_21, WB_22, WB_23, WB_24, WB_25, WB_26, WB_28,  # Specific environmental issues
-      X1_07_01, X1_07_02, X1_07_03, X1_07_04,  # Sovereignty over resources
-      X8_01_02  # Conservation
+      WB_18, WB_19, WB_20, WB_21, WB_22, WB_23, WB_24, WB_25, WB_26, WB_28, # Specific environmental issues
+      X1_07_01, X1_07_02, X1_07_03, X1_07_04, # Sovereignty over resources
+      X8_01_02 # Conservation
     ), na.rm = TRUE)
   )
 
@@ -498,14 +499,13 @@ df_merged <- df_merged %>%
   mutate(
     Transparency_Participation = rowSums(select(
       .,
-      WB_45, WB_46, WB_47, WB_48,  # WB transparency
-      X3_02_01, X3_02_02, X3_03_01, X3_03_02, X3_04, X3_05  # TREND transparency
+      WB_45, WB_46, WB_47, WB_48, # WB transparency
+      X3_02_01, X3_02_02, X3_03_01, X3_03_02, X3_04, X3_05 # TREND transparency
     ), na.rm = TRUE)
   )
 
 
-# 12. Summary statistics by index
-# Create a summary showing the distribution of each index
+# Summary statistics by index
 print("Summary of Environmental Provisions Indices:")
 summary(df_merged %>% select(
   EP_Count, Market_Access_Green, Standards_NonRegression,
@@ -514,9 +514,18 @@ summary(df_merged %>% select(
   Biodiversity_Resources, Transparency_Participation
 ))
 
+indices <- c(
+  "EP_Count", "Market_Access_Green", "Standards_NonRegression",
+  "Enforcement_DSM", "Regulatory_Space", "Cooperation_Assistance",
+  "TBT_SPS_Environment", "MEA_Compliance", "Climate_Energy",
+  "Biodiversity_Resources", "Transparency_Participation"
+)
 
-
-
+# Table for each index
+for (index in indices) {
+  cat(paste0("\nDistribution of ", index, ":\n"))
+  print(table(df_merged[[index]], useNA = "ifany"))
+}
 
 
 ### INDICI SOLO-TREND (Sensitivity Test) ###
@@ -536,9 +545,9 @@ df_merged <- df_merged %>%
   mutate(
     TREND_Soft = rowSums(select(
       .,
-      matches("^X1_"),  # General principles and objectives
-      X7_09,  # Vague commitments to cooperate
-      X5_01_02  # Non-binding obligations
+      matches("^X1_"), # General principles and objectives
+      X7_09, # Vague commitments to cooperate
+      X5_01_02 # Non-binding obligations
     ), na.rm = TRUE)
   )
 
@@ -547,11 +556,11 @@ df_merged <- df_merged %>%
   mutate(
     TREND_Hard = rowSums(select(
       .,
-      matches("^X2_"),  # Standards and non-regression
-      matches("^X5_"),  # Enforcement (excluding non-binding)
-      matches("^X10_"),  # Climate change specific obligations
-      matches("^X14_")  # Implementation (if present)
-    ), na.rm = TRUE) - TREND_Soft  # Subtract soft items already counted
+      matches("^X2_"), # Standards and non-regression
+      matches("^X5_"), # Enforcement (excluding non-binding)
+      matches("^X10_"), # Climate change specific obligations
+      matches("^X14_") # Implementation (if present)
+    ), na.rm = TRUE) - TREND_Soft # Subtract soft items already counted
   )
 
 # Hardness share
@@ -571,10 +580,10 @@ df_merged <- df_merged %>%
   mutate(
     TREND_EnforcementDSM = rowSums(select(
       .,
-      matches("^X5_"),  # Enforcement provisions (section 5)
-      matches("^X13_"),  # Dispute settlement (section 13, if present)
-      matches("^X11_"),  # Institutions (section 11, if present)
-      matches("^X12_")  # Monitoring (section 12, if present)
+      matches("^X5_"), # Enforcement provisions (section 5)
+      matches("^X13_"), # Dispute settlement (section 13, if present)
+      matches("^X11_"), # Institutions (section 11, if present)
+      matches("^X12_") # Monitoring (section 12, if present)
     ), na.rm = TRUE)
   )
 
@@ -585,10 +594,10 @@ df_merged <- df_merged %>%
   mutate(
     TREND_RegulatorySpace = rowSums(select(
       .,
-      X1_07_01, X1_07_02, X1_07_03, X1_07_04,  # Sovereignty over resources
-      X1_08_01, X1_08_02, X1_08_03, X1_08_04,  # Sovereignty in policies/enforcement
-      X1_09_01, X1_09_02,  # No extraterritorial enforcement
-      matches("^X8_")  # Exceptions and carve-outs
+      X1_07_01, X1_07_02, X1_07_03, X1_07_04, # Sovereignty over resources
+      X1_08_01, X1_08_02, X1_08_03, X1_08_04, # Sovereignty in policies/enforcement
+      X1_09_01, X1_09_02, # No extraterritorial enforcement
+      matches("^X8_") # Exceptions and carve-outs
     ), na.rm = TRUE)
   )
 
@@ -599,8 +608,8 @@ df_merged <- df_merged %>%
   mutate(
     TREND_GreenMarketAccess = rowSums(select(
       .,
-      X7_01_01, X7_01_02_01, X7_01_02_02,  # Environmental goods/services
-      X8_09_04  # Norms on environmental services
+      X7_01_01, X7_01_02_01, X7_01_02_02, # Environmental goods/services
+      X8_09_04 # Norms on environmental services
     ), na.rm = TRUE)
   )
 
@@ -611,8 +620,8 @@ df_merged <- df_merged %>%
   mutate(
     TREND_ClimateEnergy = rowSums(select(
       .,
-      X4_03,  # Energy-environment interaction
-      matches("^X10_")  # Climate change provisions (if present)
+      X4_03, # Energy-environment interaction
+      matches("^X10_") # Climate change provisions (if present)
     ), na.rm = TRUE)
   )
 
@@ -621,13 +630,10 @@ df_merged <- df_merged %>%
   mutate(
     TREND_BiodivForestsFisheries = rowSums(select(
       .,
-      X1_07_02, X1_07_03,  # Sovereignty over genetic/fishery resources
-      matches("^X11_")  # Biodiversity/species provisions (if in section 11)
+      X1_07_02, X1_07_03, # Sovereignty over genetic/fishery resources
+      matches("^X11_") # Biodiversity/species provisions (if in section 11)
     ), na.rm = TRUE)
   )
-
-
-
 
 
 ### INDICI SOLO-WB (Sensitivity Test) ###
@@ -647,9 +653,9 @@ df_merged <- df_merged %>%
   mutate(
     WB_StandardsNonRegression = rowSums(select(
       .,
-      WB_2,   # High levels of environmental protection
-      WB_8,   # Prohibit dilution to promote trade
-      WB_9    # Prohibit dilution to promote investment
+      WB_2, # High levels of environmental protection
+      WB_8, # Prohibit dilution to promote trade
+      WB_9 # Prohibit dilution to promote investment
     ), na.rm = TRUE)
   )
 
@@ -660,10 +666,10 @@ df_merged <- df_merged %>%
   mutate(
     WB_EnforcementDSM = rowSums(select(
       .,
-      WB_13,  # Judicial/administrative proceedings
-      WB_14,  # General state-to-state dispute settlement
-      WB_15,  # Special environmental dispute settlement
-      WB_16   # Compensation/retaliation remedies
+      WB_13, # Judicial/administrative proceedings
+      WB_14, # General state-to-state dispute settlement
+      WB_15, # Special environmental dispute settlement
+      WB_16 # Compensation/retaliation remedies
     ), na.rm = TRUE)
   )
 
@@ -674,9 +680,9 @@ df_merged <- df_merged %>%
   mutate(
     WB_RegulatorySpaceExceptions = rowSums(select(
       .,
-      WB_5,   # Preserve right to regulate
-      WB_6,   # General exception for environmental reasons
-      WB_7    # Investment chapter environmental exception
+      WB_5, # Preserve right to regulate
+      WB_6, # General exception for environmental reasons
+      WB_7 # Investment chapter environmental exception
     ), na.rm = TRUE)
   )
 
@@ -685,7 +691,7 @@ df_merged <- df_merged %>%
 # Differential liberalization of environmental goods
 df_merged <- df_merged %>%
   mutate(
-    WB_GreenLiberalization = WB_10  # Only one variable for this
+    WB_GreenLiberalization = WB_10 # Only one variable for this
   )
 
 
@@ -693,12 +699,8 @@ df_merged <- df_merged %>%
 # Technical/financial assistance and capacity building
 df_merged <- df_merged %>%
   mutate(
-    WB_Assistance = WB_17  # Technical/financial assistance/capacity building
+    WB_Assistance = WB_17 # Technical/financial assistance/capacity building
   )
-
-
-
-
 
 
 ### INDICI NORMALIZZATI (WB vs TREND Comparison) ###
@@ -709,7 +711,6 @@ df_merged <- df_merged %>%
   mutate(
     N_TREND_available = rowSums(!is.na(select(., starts_with("X")))),
     N_WB_available = rowSums(!is.na(select(., starts_with("WB_")))),
-    
     TREND_Depth_Norm = ifelse(N_TREND_available > 0, TREND_EP_Count / N_TREND_available, NA),
     WB_Depth_Norm = ifelse(N_WB_available > 0, WB_EP_Depth / N_WB_available, NA)
   )
@@ -797,4 +798,46 @@ summary(df_merged %>% select(
   TREND_RegSpace_Share, WB_RegSpace_Share,
   TREND_GreenLib_Share, WB_GreenLib_Share
 ))
-  
+
+
+
+
+
+
+#########  Create Indices-Only Dataset for Chinese Custom Data Merge #########
+
+# Select only country_code, year and all indices
+df_indices <- df_merged %>%
+  select(
+    country_code, year,
+    # Main indices (Combined TREND + WB)
+    EP_Count, EP_Count_Binary, Market_Access_Green, Standards_NonRegression,
+    Enforcement_DSM, Regulatory_Space, Cooperation_Assistance,
+    TBT_SPS_Environment, MEA_Compliance, Climate_Energy,
+    Biodiversity_Resources, Transparency_Participation
+  )
+#   # TREND-only indices
+#   TREND_EP_Count, TREND_EP_Count_Binary, TREND_Soft, TREND_Hard,
+#   TREND_Hardness_Share, TREND_EnforcementDSM, TREND_RegulatorySpace,
+#   TREND_GreenMarketAccess, TREND_ClimateEnergy, TREND_BiodivForestsFisheries,
+#   # WB-only indices
+#   WB_EP_Depth, WB_EP_Depth_Binary, WB_StandardsNonRegression,
+#   WB_EnforcementDSM, WB_RegulatorySpaceExceptions,
+#   WB_GreenLiberalization, WB_Assistance,
+#   # Normalized comparison indices
+#   N_TREND_available, N_WB_available, TREND_Depth_Norm, WB_Depth_Norm,
+#   WB_Hardness_Share, TREND_Enforcement_Share, WB_Enforcement_Share,
+#   TREND_RegSpace_Share, WB_RegSpace_Share,
+#   TREND_GreenLib_Share, WB_GreenLib_Share
+# )
+
+# Save indices-only dataset
+write.csv(df_indices, "Data/Merged_TREND_WB_Indices_Only.csv", row.names = FALSE)
+
+# Save in .dta format for Stata
+write_dta(df_indices, "Data/Merged_TREND_WB_Indices_Only.dta")
+
+print("\n=== Indices-Only Dataset Created ===")
+print(paste0("Dimensions: ", nrow(df_indices), " rows × ", ncol(df_indices), " columns"))
+print("Variables included:")
+print(names(df_indices))
