@@ -159,7 +159,7 @@ Country_TREND <- list(
   c("Pakistan"),
   c("Peru"),
   c("Singapore"),
-  c("Brunei", "Cambodia", "Indonesia", "Laos, PDR", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "East Timor", "Vietnam"), # ASEAN Members
+  c("Brunei", "Cambodia", "Indonesia", "Laos,PDR", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "East Timor", "Vietnam"), # ASEAN Members
   c("Costa Rica"),
   c("Australia"),
   c("Switzerland"),
@@ -572,7 +572,7 @@ df_merged <- df_merged |>
     TREND_Hardness_Share = round(ifelse(
       (TREND_Hard + TREND_Soft) > 0,
       TREND_Hard / (TREND_Hard + TREND_Soft),
-      NA
+      0
     ), 3)
   )
 
@@ -641,7 +641,7 @@ df_merged <- df_merged %>%
 
 
 
-### INDICI SOLO-WB (Sensitivity Test) ###
+### INDICI SOLO-WB ###
 
 # W1) WB_EP_Depth (Overall)
 # Sum of all WB variables (0/1) - parsimonious equivalent of EP_Count
@@ -692,7 +692,7 @@ df_merged <- df_merged %>%
   )
 
 
-# W5) WB_GreenLiberalization
+# W5) WB_GreenLiberalization - Questa fa oggettivamente ridere però cosa devo farci
 # Differential liberalization of environmental goods
 df_merged <- df_merged %>%
   mutate(
@@ -701,7 +701,7 @@ df_merged <- df_merged %>%
 
 
 # W6) WB_Assistance
-# Technical/financial assistance and capacity building
+# Technical/financial assistance and capacity building - Pure questa non scherza a comicità
 df_merged <- df_merged %>%
   mutate(
     WB_Assistance = WB_17 # Technical/financial assistance/capacity building
@@ -727,11 +727,11 @@ df_merged <- df_merged %>%
 # For WB, use standards/non-regression as proxy for "hard"
 df_merged <- df_merged %>%
   mutate(
-    WB_Hardness_Share = ifelse(
+    WB_Hardness_Share = round(ifelse(
       WB_EP_Depth > 0,
       WB_StandardsNonRegression / WB_EP_Depth,
       NA
-    )
+    ), 3)
   )
 
 
@@ -739,46 +739,46 @@ df_merged <- df_merged %>%
 # Enforcement share
 df_merged <- df_merged %>%
   mutate(
-    TREND_Enforcement_Share = ifelse(
+    TREND_Enforcement_Share = round(ifelse(
       TREND_EP_Count > 0,
       TREND_EnforcementDSM / TREND_EP_Count,
       NA
-    ),
-    WB_Enforcement_Share = ifelse(
+    ), 3),
+    WB_Enforcement_Share = round(ifelse(
       WB_EP_Depth > 0,
       WB_EnforcementDSM / WB_EP_Depth,
       NA
-    )
+    ),3)
   )
 
 # Regulatory space share
 df_merged <- df_merged %>%
   mutate(
-    TREND_RegSpace_Share = ifelse(
+    TREND_RegSpace_Share = round(ifelse(
       TREND_EP_Count > 0,
       TREND_RegulatorySpace / TREND_EP_Count,
       NA
-    ),
-    WB_RegSpace_Share = ifelse(
+    ), 3),
+    WB_RegSpace_Share = round(ifelse(
       WB_EP_Depth > 0,
       WB_RegulatorySpaceExceptions / WB_EP_Depth,
       NA
-    )
+    ), 3)
   )
 
 # Green liberalization share
 df_merged <- df_merged %>%
   mutate(
-    TREND_GreenLib_Share = ifelse(
+    TREND_GreenLib_Share = round(ifelse(
       TREND_EP_Count > 0,
       TREND_GreenMarketAccess / TREND_EP_Count,
       NA
-    ),
-    WB_GreenLib_Share = ifelse(
+    ), 3),
+    WB_GreenLib_Share = round(ifelse(
       WB_EP_Depth > 0,
       WB_GreenLiberalization / WB_EP_Depth,
       NA
-    )
+    ), 3)
   )
 
 
