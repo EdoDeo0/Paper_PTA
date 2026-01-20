@@ -143,27 +143,23 @@ ggplot() +
 
 #########  China-specific Analysis #########
 
-# List of WBID for China's agreements (from the analysis in Merge_TREND_WB.R)
-# These correspond to the 14 PTAs that China has signed
-china_wbid <- c(8, 15, 10, 1, 9, 2, 12, 3, 4, 7, 13, 5, 6, 11)
-
-# Filter wb_horizontal and wb_merged for China
+# Filter wb_horizontal for China's agreements using the Agreement column
 wb_horizontal_china <- wb_horizontal %>%
-    filter(WBID %in% china_wbid)
+    filter(grepl("China", Agreement, ignore.case = TRUE))
 
 wb_merged_china <- wb_merged %>%
-    filter(WBID %in% china_wbid)
+    filter(grepl("China", Agreement, ignore.case = TRUE))
 
 # Prepare data: count PTAs by year and environmental laws status for China
-wb_summary_china <- wb_merged_china %>%
+wb_summary_china <- wb_horizontal_china %>%
     filter(!is.na(Year)) %>%
     mutate(EnvironmentalLaws = factor(EnvironmentalLaws, levels = c(0, 1))) %>%
     group_by(Year, EnvironmentalLaws) %>%
     summarise(Count = n(), .groups = "drop") %>%
     arrange(Year)
 
-# Calculate cumulative count for China
-wb_cumulative_china <- wb_merged_china %>%
+# Calculate cumulative count for China (using all China's agreements from wb_horizontal_china)
+wb_cumulative_china <- wb_horizontal_china %>%
     filter(!is.na(Year)) %>%
     arrange(Year) %>%
     group_by(Year) %>%
@@ -195,6 +191,9 @@ ggplot() +
         values = c("Cumulative PTAs" = "#E57373"),
         labels = c("Cumulative PTAs" = "Cumulative number of PTAs")
     ) +
+    scale_x_continuous(
+        breaks = seq(min(wb_summary_china$Year, na.rm = TRUE), max(wb_summary_china$Year, na.rm = TRUE), by = 1)
+    ) +
     scale_y_continuous(
         name = "Number of PTAs",
         sec.axis = sec_axis(
@@ -212,5 +211,78 @@ ggplot() +
     theme(
         legend.position = "bottom",
         plot.title = element_text(face = "bold", color = "#00ACC1"),
-        panel.grid.minor = element_blank()
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    )
+
+
+#########  China-specific Analysis (2000-2015) #########
+
+# Filter for years 2000-2015
+wb_horizontal_china_2000_2015 <- wb_horizontal_china %>%
+    filter(Year >= 2000 & Year <= 2015)
+
+# Prepare data: count PTAs by year and environmental laws status for China (2000-2015)
+wb_summary_china_2000_2015 <- wb_horizontal_china_2000_2015 %>%
+    filter(!is.na(Year)) %>%
+    mutate(EnvironmentalLaws = factor(EnvironmentalLaws, levels = c(0, 1))) %>%
+    group_by(Year, EnvironmentalLaws) %>%
+    summarise(Count = n(), .groups = "drop") %>%
+    arrange(Year)
+
+# Calculate cumulative count for China (2000-2015)
+wb_cumulative_china_2000_2015 <- wb_horizontal_china_2000_2015 %>%
+    filter(!is.na(Year)) %>%
+    arrange(Year) %>%
+    group_by(Year) %>%
+    summarise(Total = n(), .groups = "drop") %>%
+    mutate(Cumulative = cumsum(Total))
+
+# Get max values for scaling
+max_count_china_2000_2015 <- max(wb_summary_china_2000_2015$Count)
+max_cumul_china_2000_2015 <- max(wb_cumulative_china_2000_2015$Cumulative)
+
+# Create the plot for China (2000-2015)
+ggplot() +
+    geom_col(
+        data = wb_summary_china_2000_2015,
+        aes(x = Year, y = Count, fill = EnvironmentalLaws),
+        width = 0.8,
+        color = "white"
+    ) +
+    geom_line(
+        data = wb_cumulative_china_2000_2015,
+        aes(x = Year, y = Cumulative * max_count_china_2000_2015 / max_cumul_china_2000_2015, color = "Cumulative PTAs"),
+        linewidth = 1.2
+    ) +
+    scale_fill_manual(
+        values = c("0" = "#BDBDBD", "1" = "#00ACC1"),
+        labels = c("0" = "Without environmental provisions", "1" = "With environmental provisions")
+    ) +
+    scale_color_manual(
+        values = c("Cumulative PTAs" = "#E57373"),
+        labels = c("Cumulative PTAs" = "Cumulative number of PTAs")
+    ) +
+    scale_x_continuous(
+        breaks = seq(2000, 2015, by = 1)
+    ) +
+    scale_y_continuous(
+        name = "Number of PTAs",
+        sec.axis = sec_axis(
+            ~ . * max_cumul_china_2000_2015 / max_count_china_2000_2015,
+            name = "Cumulative number of PTAs"
+        )
+    ) +
+    labs(
+        title = "Evolution of China's PTAs with environment-related provisions (2000-2015)",
+        x = "Year of signature",
+        fill = "",
+        color = ""
+    ) +
+    theme_minimal() +
+    theme(
+        legend.position = "bottom",
+        plot.title = element_text(face = "bold", color = "#00ACC1"),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
     )
