@@ -299,11 +299,6 @@ write.csv(df_merged, "Data/Merged_TREND_WB.csv")
 write_dta(df_merged, "Data/Merged_TREND_WB.dta")
 
 
-
-
-
-
-
 ### ENVIRONMENTAL PROVISIONS INDICES ###
 
 # # 1. EP_Count (Breadth/Ampiezza)
@@ -639,8 +634,6 @@ df_merged <- df_merged %>%
   )
 
 
-
-
 ### INDICI SOLO-WB ###
 
 # W1) WB_EP_Depth (Overall)
@@ -708,7 +701,6 @@ df_merged <- df_merged %>%
   )
 
 
-
 ### INDICI NORMALIZZATI (WB vs TREND Comparison) ###
 
 # N1) Normalized Overall Depth
@@ -735,12 +727,104 @@ df_merged <- df_merged %>%
   )
 
 
+# N2_v2) ALTERNATIVE HARDNESS CLASSIFICATION - More comparable between datasets
+# This version uses a more consistent definition of "hard" vs "soft" provisions
+
+# WB Hard provisions v2: Standards + Non-regression + Enforcement + DSM
+df_merged <- df_merged %>%
+  mutate(
+    WB_Hard_v2 = rowSums(select(
+      .,
+      WB_2, WB_8, WB_9, # Standards and non-regression (original)
+      WB_13, WB_14, WB_15, WB_16 # Enforcement and DSM (added)
+    ), na.rm = TRUE)
+  )
+
+# WB Soft provisions v2: Everything else (cooperation, assistance, regulatory space, etc.)
+df_merged <- df_merged %>%
+  mutate(
+    WB_Soft_v2 = WB_EP_Depth - WB_Hard_v2
+  )
+
+# WB Hardness Share v2
+df_merged <- df_merged %>%
+  mutate(
+    WB_Hardness_Share_v2 = round(ifelse(
+      WB_EP_Depth > 0,
+      WB_Hard_v2 / WB_EP_Depth,
+      NA
+    ), 3)
+  )
+
+# TREND provisions reclassified for better comparability
+# Soft v2: General principles, sovereignty, vague cooperation, regulatory space exceptions
+df_merged <- df_merged %>%
+  mutate(
+    TREND_Soft_v2 = rowSums(select(
+      .,
+      matches("^X1_"), # General principles and objectives
+      matches("^X8_"), # Exceptions and regulatory space (reclassified as soft)
+      X7_09, # Vague commitments to cooperate
+      X5_01_02 # Non-binding obligations
+    ), na.rm = TRUE)
+  )
+
+# Hard v2: Standards, non-regression, enforcement (excluding regulatory space)
+df_merged <- df_merged %>%
+  mutate(
+    TREND_Hard_v2 = pmax(
+      rowSums(select(
+        .,
+        matches("^X2_"), # Standards and non-regression
+        X5_01_01, X5_02, X5_03, X5_04_01, X5_04_02, X5_05, # Enforcement (specific items, not all X5)
+        matches("^X10_"), # Climate change specific obligations
+        matches("^X13_"), # Dispute settlement
+        matches("^X14_") # Implementation
+      ), na.rm = TRUE),
+      0
+    )
+  )
+
+# TREND Hardness Share v2
+df_merged <- df_merged %>%
+  mutate(
+    TREND_Hardness_Share_v2 = round(ifelse(
+      (TREND_Hard_v2 + TREND_Soft_v2) > 0,
+      TREND_Hard_v2 / (TREND_Hard_v2 + TREND_Soft_v2),
+      0
+    ), 3)
+  )
+
+# Print comparison of original vs v2
+print("\n=== HARDNESS CLASSIFICATION COMPARISON ===")
+print("\nOriginal vs Alternative (v2) Hardness Indices:")
+print(paste0("TREND Hardness (original) - Mean: ", 
+             round(mean(df_merged$TREND_Hardness_Share, na.rm = TRUE), 3),
+             " | SD: ", round(sd(df_merged$TREND_Hardness_Share, na.rm = TRUE), 3)))
+print(paste0("TREND Hardness (v2) - Mean: ", 
+             round(mean(df_merged$TREND_Hardness_Share_v2, na.rm = TRUE), 3),
+             " | SD: ", round(sd(df_merged$TREND_Hardness_Share_v2, na.rm = TRUE), 3)))
+print(paste0("WB Hardness (original) - Mean: ", 
+             round(mean(df_merged$WB_Hardness_Share, na.rm = TRUE), 3),
+             " | SD: ", round(sd(df_merged$WB_Hardness_Share, na.rm = TRUE), 3)))
+print(paste0("WB Hardness (v2) - Mean: ", 
+             round(mean(df_merged$WB_Hardness_Share_v2, na.rm = TRUE), 3),
+             " | SD: ", round(sd(df_merged$WB_Hardness_Share_v2, na.rm = TRUE), 3)))
+print(paste0("\nCorrelation (original): ", 
+             round(cor(df_merged$TREND_Hardness_Share, df_merged$WB_Hardness_Share, use = "complete.obs"), 3)))
+print(paste0("Correlation (v2): ", 
+             round(cor(df_merged$TREND_Hardness_Share_v2, df_merged$WB_Hardness_Share_v2, use = "complete.obs"), 3)))
+
+
 # N3) Thematic Shares (as percentage of total provisions in each dataset)
 # Enforcement share
 df_merged <- df_merged %>%
   mutate(
     TREND_Enforcement_Share = round(ifelse(
-      TREND_EP_Count > 0,
+      TREND_EP_Count > 0,,
+    # Alternative hardness indices (v2)
+    TREND_Hard_v2, TREND_Soft_v2, TREND_Hardness_Share_v2,
+    WB_Hard_v2, WB_Soft_v2, WB_Hardness_Share_v2
       TREND_EnforcementDSM / TREND_EP_Count,
       NA
     ), 3),
@@ -748,7 +832,7 @@ df_merged <- df_merged %>%
       WB_EP_Depth > 0,
       WB_EnforcementDSM / WB_EP_Depth,
       NA
-    ),3)
+    ), 3)
   )
 
 # Regulatory space share
@@ -806,10 +890,6 @@ summary(df_merged %>% select(
 ))
 
 
-
-
-
-
 #########  Create Indices-Only Dataset for Chinese Custom Data Merge #########
 
 # Select only country_code, year and all indices
@@ -846,3 +926,621 @@ print("\n=== Indices-Only Dataset Created ===")
 print(paste0("Dimensions: ", nrow(df_indices), " rows × ", ncol(df_indices), " columns"))
 print("Variables included:")
 print(names(df_indices))
+
+
+
+
+
+
+
+#########  DESCRIPTIVE STATISTICS AND DATASET COMPARISON #########
+
+
+### 1. DEPTH INDICES - Descriptive Statistics ###
+
+print("\n========================================")
+print("=== DEPTH INDICES - DESCRIPTIVE STATISTICS ===")
+print("========================================\n")
+
+# Raw counts
+print("--- Raw Depth Counts ---")
+depth_raw <- df_merged %>%
+  select(TREND_EP_Count, WB_EP_Depth) %>%
+  summary()
+print(depth_raw)
+
+# Export as data frame
+depth_raw_df <- data.frame(
+  Statistic = c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max"),
+  TREND_EP_Count = as.numeric(depth_raw[, "TREND_EP_Count"]),
+  WB_EP_Depth = as.numeric(depth_raw[, "WB_EP_Depth"])
+)
+write.csv(depth_raw_df, "Output/Table_Depth_Raw_Statistics.csv", row.names = FALSE)
+print("✓ Saved: Table_Depth_Raw_Statistics.csv")
+
+# Normalized depth
+print("\n--- Normalized Depth (0-1 scale) ---")
+depth_norm <- df_merged %>%
+  select(TREND_Depth_Norm, WB_Depth_Norm) %>%
+  summary()
+print(depth_norm)
+
+# Export as data frame
+depth_norm_df <- data.frame(
+  Statistic = c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max", "NA's"),
+  TREND_Depth_Norm = c(as.numeric(depth_norm[1:6, "TREND_Depth_Norm"]), sum(is.na(df_merged$TREND_Depth_Norm))),
+  WB_Depth_Norm = c(as.numeric(depth_norm[1:6, "WB_Depth_Norm"]), sum(is.na(df_merged$WB_Depth_Norm)))
+)
+write.csv(depth_norm_df, "Output/Table_Depth_Normalized_Statistics.csv", row.names = FALSE)
+print("✓ Saved: Table_Depth_Normalized_Statistics.csv")
+
+# Cross-tabulation: depth categories
+df_merged <- df_merged %>%
+  mutate(
+    TREND_Depth_Category = cut(
+      TREND_EP_Count,
+      breaks = c(-Inf, 10, 20, 30, Inf),
+      labels = c("Low (0-10)", "Medium (11-20)", "High (21-30)", "Very High (>30)")
+    ),
+    WB_Depth_Category = cut(
+      WB_EP_Depth,
+      breaks = c(-Inf, 5, 10, 15, Inf),
+      labels = c("Low (0-5)", "Medium (6-10)", "High (11-15)", "Very High (>15)")
+    )
+  )
+
+print("\n--- Depth Categories Cross-Tabulation ---")
+depth_crosstab <- table(df_merged$TREND_Depth_Category, df_merged$WB_Depth_Category)
+print(depth_crosstab)
+
+# Export cross-tabulation
+depth_crosstab_df <- as.data.frame.matrix(depth_crosstab)
+depth_crosstab_df <- cbind(TREND_Category = rownames(depth_crosstab_df), depth_crosstab_df)
+write.csv(depth_crosstab_df, "Output/Table_Depth_Categories_CrossTab.csv", row.names = FALSE)
+print("✓ Saved: Table_Depth_Categories_CrossTab.csv")
+
+
+### 2. NORMALIZED COMPARABLE INDICES - Descriptive Statistics ###
+
+print("\n========================================")
+print("=== NORMALIZED INDICES - DESCRIPTIVE STATISTICS ===")
+print("========================================\n")
+
+# Hardness Share
+print("--- Hardness Share (Hard provisions / Total provisions) ---")
+hardness_stats <- df_merged %>%
+  select(TREND_Hardness_Share, WB_Hardness_Share) %>%
+  summary()
+print(hardness_stats)
+
+# Export hardness statistics
+hardness_stats_df <- data.frame(
+  Statistic = c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max", "NA's"),
+  TREND_Hardness_Share = c(as.numeric(hardness_stats[1:6, "TREND_Hardness_Share"]), sum(is.na(df_merged$TREND_Hardness_Share))),
+  WB_Hardness_Share = c(as.numeric(hardness_stats[1:6, "WB_Hardness_Share"]), sum(is.na(df_merged$WB_Hardness_Share)))
+)
+write.csv(hardness_stats_df, "Output/Table_Hardness_Share_Statistics.csv", row.names = FALSE)
+print("✓ Saved: Table_Hardness_Share_Statistics.csv")
+
+# Enforcement Share
+print("\n--- Enforcement Share ---")
+enforcement_stats <- df_merged %>%
+  select(TREND_Enforcement_Share, WB_Enforcement_Share) %>%
+  summary()
+print(enforcement_stats)
+
+# Export enforcement statistics
+enforcement_stats_df <- data.frame(
+  Statistic = c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max", "NA's"),
+  TREND_Enforcement_Share = c(as.numeric(enforcement_stats[1:6, "TREND_Enforcement_Share"]), sum(is.na(df_merged$TREND_Enforcement_Share))),
+  WB_Enforcement_Share = c(as.numeric(enforcement_stats[1:6, "WB_Enforcement_Share"]), sum(is.na(df_merged$WB_Enforcement_Share)))
+)
+write.csv(enforcement_stats_df, "Output/Table_Enforcement_Share_Statistics.csv", row.names = FALSE)
+print("✓ Saved: Table_Enforcement_Share_Statistics.csv")
+
+# Regulatory Space Share
+print("\n--- Regulatory Space Share ---")
+regspace_stats <- df_merged %>%
+  select(TREND_RegSpace_Share, WB_RegSpace_Share) %>%
+  summary()
+print(regspace_stats)
+
+# Export regulatory space statistics
+regspace_stats_df <- data.frame(
+  Statistic = c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max", "NA's"),
+  TREND_RegSpace_Share = c(as.numeric(regspace_stats[1:6, "TREND_RegSpace_Share"]), sum(is.na(df_merged$TREND_RegSpace_Share))),
+  WB_RegSpace_Share = c(as.numeric(regspace_stats[1:6, "WB_RegSpace_Share"]), sum(is.na(df_merged$WB_RegSpace_Share)))
+)
+write.csv(regspace_stats_df, "Output/Table_RegSpace_Share_Statistics.csv", row.names = FALSE)
+print("✓ Saved: Table_RegSpace_Share_Statistics.csv")
+
+# Green Liberalization Share
+print("\n--- Green Liberalization Share ---")
+greenlib_stats <- df_merged %>%
+  select(TREND_GreenLib_Share, WB_GreenLib_Share) %>%
+  summary()
+print(greenlib_stats)
+
+# Export green liberalization statistics
+greenlib_stats_df <- data.frame(
+  Statistic = c("Min", "1st Qu.", "Median", "Mean", "3rd Qu.", "Max", "NA's"),
+  TREND_GreenLib_Share = c(as.numeric(greenlib_stats[1:6, "TREND_GreenLib_Share"]), sum(is.na(df_merged$TREND_GreenLib_Share))),
+  WB_GreenLib_Share = c(as.numeric(greenlib_stats[1:6, "WB_GreenLib_Share"]), sum(is.na(df_merged$WB_GreenLib_Share)))
+)
+write.csv(greenlib_stats_df, "Output/Table_GreenLib_Share_Statistics.csv", row.names = FALSE)
+print("✓ Saved: Table_GreenLib_Share_Statistics.csv")
+
+
+### 3. CORRELATION ANALYSIS ###
+
+print("\n========================================")
+print("=== CORRELATION BETWEEN TREND AND WB INDICES ===")
+print("========================================\n")
+
+# Create correlation dataset (remove NAs)
+corr_data <- df_merged %>%
+  select(
+    TREND_Depth_Norm, WB_Depth_Norm,
+    TREND_Hardness_Share, WB_Hardness_Share,
+    # v2 indices
+    TREND_Hardness_Share_v2, WB_Hardness_Share_v2,
+    TREND_Enforcement_Share, WB_Enforcement_Share,
+    TREND_RegSpace_Share, WB_RegSpace_Share,
+    TREND_GreenLib_Share, WB_GreenLib_Share
+  ) %>%
+  na.omit()
+
+# Calculate correlations for each comparable pair
+print("--- Correlation Coefficients (Pearson) ---")
+cor_depth <- cor(corr_data$TREND_Depth_Norm, corr_data$WB_Depth_Norm)
+cor_hardness <- cor(corr_data$TREND_Hardness_Share, corr_data$WB_Hardness_Share)
+cor_enforcement <- cor(corr_data$TREND_Enforcement_Share, corr_data$WB_Enforcement_Share)
+cor_regspace <- cor(corr_data$TREND_RegSpace_Share, corr_data$WB_RegSpace_Share)
+cor_greenlib <- cor(corr_data$TREND_GreenLib_Share, corr_data$WB_GreenLib_Share)
+
+correlations <- data.frame(
+  Index = c("Depth (Normalized)", "Hardness Share", "Enforcement Share", "Regulatory Space Share", "Green Liberalization Share"),
+  Correlation = round(c(cor_depth, cor_hardness, cor_enforcement, cor_regspace, cor_greenlib), 3)
+)
+print(correlations)
+
+# Export correlations table
+
+# Calculate correlation for v2 hardness
+cor_hardness_v2 <- cor(corr_data$TREND_Hardness_Share_v2, corr_data$WB_Hardness_Share_v2)
+print(paste0("\nAlternative Hardness Correlation (v2): ", round(cor_hardness_v2, 3)))
+write.csv(correlations, "Output/Table_Correlations_TREND_WB.csv", row.names = FALSE)
+print("✓ Saved: Table_Correlations_TREND_WB.csv")
+
+
+### 4. OVERLAPPING MEASURES ###
+
+print("\n========================================")
+print("=== DATASET OVERLAPPING ANALYSIS ===")
+print("========================================\n")
+
+# Agreement-level overlap: how many agreements are covered by both datasets?
+print("--- Agreement Coverage ---")
+agreement_coverage <- df_merged %>%
+  group_by(country_code, year) %>%
+  summarise(
+    Has_TREND = sum(TREND_EP_Count > 0, na.rm = TRUE) > 0,
+    Has_WB = sum(WB_EP_Depth > 0, na.rm = TRUE) > 0,
+    .groups = "drop"
+  ) %>%
+  summarise(
+    Only_TREND = sum(Has_TREND & !Has_WB),
+    Only_WB = sum(!Has_TREND & Has_WB),
+    Both = sum(Has_TREND & Has_WB),
+    Neither = sum(!Has_TREND & !Has_WB)
+  )
+print(agreement_coverage)
+
+# Export agreement coverage
+write.csv(agreement_coverage, "Output/Table_Agreement_Coverage.csv", row.names = FALSE)
+print("✓ Saved: Table_Agreement_Coverage.csv")
+
+# Provision-level conceptual overlap
+# Calculate how many observations have provisions in both datasets
+print("\n--- Provision-Level Overlap (observations with provisions) ---")
+provision_overlap <- df_merged %>%
+  summarise(
+    Total_Obs = n(),
+    Both_NonZero = sum(TREND_EP_Count > 0 & WB_EP_Depth > 0, na.rm = TRUE),
+    Only_TREND_NonZero = sum(TREND_EP_Count > 0 & WB_EP_Depth == 0, na.rm = TRUE),
+    Only_WB_NonZero = sum(TREND_EP_Count == 0 & WB_EP_Depth > 0, na.rm = TRUE),
+    Both_Zero = sum(TREND_EP_Count == 0 & WB_EP_Depth == 0, na.rm = TRUE)
+  )
+print(provision_overlap)
+
+# Export provision overlap
+write.csv(provision_overlap, "Output/Table_Provision_Overlap.csv", row.names = FALSE)
+print("✓ Saved: Table_Provision_Overlap.csv")
+
+# Overlap percentage
+overlap_pct <- round(provision_overlap$Both_NonZero / provision_overlap$Total_Obs * 100, 2)
+print(paste0("\nPercentage of observations with provisions in BOTH datasets: ", overlap_pct, "%"))
+
+
+### 5. VISUALIZATION ###
+
+print("\n========================================")
+print("=== CREATING VISUALIZATIONS ===")
+print("========================================\n")
+
+# 5.1 Box plot: Side-by-side comparison of normalized depth
+df_depth_box <- corr_data %>%
+  select(TREND_Depth_Norm, WB_Depth_Norm) %>%
+  pivot_longer(cols = everything(), names_to = "Dataset", values_to = "Depth") %>%
+  mutate(Dataset = ifelse(Dataset == "TREND_Depth_Norm", "TREND", "WB"))
+
+p1 <- ggplot(df_depth_box, aes(x = Dataset, y = Depth, fill = Dataset)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = 21, outlier.size = 2) +
+  geom_jitter(width = 0.2, alpha = 0.3, size = 1) +
+  scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  labs(
+    title = "Normalized Depth Distribution: TREND vs WB",
+    subtitle = paste0("Correlation: ", round(cor_depth, 3)),
+    y = "Normalized Depth (0-1 scale)",
+    x = ""
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+
+ggsave("Output/Depth_BoxPlot_TREND_WB.png", plot = p1, width = 8, height = 6, dpi = 300)
+print("✓ Saved: Depth_BoxPlot_TREND_WB.png")
+
+# 5.2 Grouped bar chart: Mean comparison for all indices
+means_comparison <- data.frame(
+  Index = rep(c("Depth", "Hardness", "Enforcement", "Reg. Space", "Green Lib."), each = 2),
+  Dataset = rep(c("TREND", "WB"), 5),
+  Mean = c(
+    mean(corr_data$TREND_Depth_Norm, na.rm = TRUE), mean(corr_data$WB_Depth_Norm, na.rm = TRUE),
+    mean(corr_data$TREND_Hardness_Share, na.rm = TRUE), mean(corr_data$WB_Hardness_Share, na.rm = TRUE),
+    mean(corr_data$TREND_Enforcement_Share, na.rm = TRUE), mean(corr_data$WB_Enforcement_Share, na.rm = TRUE),
+    mean(corr_data$TREND_RegSpace_Share, na.rm = TRUE), mean(corr_data$WB_RegSpace_Share, na.rm = TRUE),
+    mean(corr_data$TREND_GreenLib_Share, na.rm = TRUE), mean(corr_data$WB_GreenLib_Share, na.rm = TRUE)
+  ),
+  SE = c(
+    sd(corr_data$TREND_Depth_Norm, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$TREND_Depth_Norm))),
+    sd(corr_data$WB_Depth_Norm, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$WB_Depth_Norm))),
+    sd(corr_data$TREND_Hardness_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$TREND_Hardness_Share))),
+    sd(corr_data$WB_Hardness_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$WB_Hardness_Share))),
+    sd(corr_data$TREND_Enforcement_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$TREND_Enforcement_Share))),
+    sd(corr_data$WB_Enforcement_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$WB_Enforcement_Share))),
+    sd(corr_data$TREND_RegSpace_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$TREND_RegSpace_Share))),
+    sd(corr_data$WB_RegSpace_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$WB_RegSpace_Share))),
+    sd(corr_data$TREND_GreenLib_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$TREND_GreenLib_Share))),
+    sd(corr_data$WB_GreenLib_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$WB_GreenLib_Share)))
+  )
+)
+
+p2 <- ggplot(means_comparison, aes(x = Index, y = Mean, fill = Dataset)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), alpha = 0.8) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE),
+    position = position_dodge(width = 0.8), width = 0.25
+  ) +
+  scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  labs(
+    title = "Mean Comparison: TREND vs WB Indices",
+    subtitle = "Error bars represent standard error",
+    y = "Mean Value",
+    x = ""
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top",
+    axis.text.x = element_text(angle = 0)
+
+# 5.2b Grouped bar chart: Hardness comparison (Original vs v2)
+hardness_comparison <- data.frame(
+  Version = rep(c("Original", "Alternative (v2)"), each = 2),
+  Dataset = rep(c("TREND", "WB"), 2),
+  Mean = c(
+    mean(corr_data$TREND_Hardness_Share, na.rm = TRUE), 
+    mean(corr_data$WB_Hardness_Share, na.rm = TRUE),
+    mean(corr_data$TREND_Hardness_Share_v2, na.rm = TRUE), 
+    mean(corr_data$WB_Hardness_Share_v2, na.rm = TRUE)
+  ),
+  SE = c(
+    sd(corr_data$TREND_Hardness_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$TREND_Hardness_Share))),
+    sd(corr_data$WB_Hardness_Share, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$WB_Hardness_Share))),
+    sd(corr_data$TREND_Hardness_Share_v2, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$TREND_Hardness_Share_v2))),
+    sd(corr_data$WB_Hardness_Share_v2, na.rm = TRUE) / sqrt(sum(!is.na(corr_data$WB_Hardness_Share_v2)))
+  ),
+  Correlation = c(
+    rep(round(cor_hardness, 3), 2),
+    rep(round(cor_hardness_v2, 3), 2)
+  )
+)
+
+p2b <- ggplot(hardness_comparison, aes(x = Version, y = Mean, fill = Dataset)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), alpha = 0.8) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE),
+                position = position_dodge(width = 0.8), width = 0.25) +
+  geom_text(aes(label = paste0("r=", Correlation), y = 0.05), 
+            position = position_dodge(width = 0.8), size = 3.5, fontface = "bold") +
+  scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  labs(
+    title = "Hardness Share Comparison: Original vs Alternative Classification",
+    subtitle = "Alternative (v2) includes enforcement provisions in 'hard' category for both datasets",
+    y = "Mean Hardness Share",
+    x = ""
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 9),
+    legend.position = "top"
+  )
+
+ggsave("Output/Hardness_Comparison_Original_vs_v2.png", plot = p2b, width = 10, height = 6, dpi = 300)
+print("✓ Saved: Hardness_Comparison_Original_vs_v2.png")
+  )
+
+ggsave("Output/Means_Comparison_TREND_WB.png", plot = p2, width = 10, height = 6, dpi = 300)
+print("✓ Saved: Means_Comparison_TREND_WB.png")
+
+# 5.3 Violin plot: Distribution comparison for all normalized indices
+df_all_indices <- corr_data %>%
+  select(
+    TREND_Depth_Norm, WB_Depth_Norm,
+    TREND_Hardness_Share, WB_Hardness_Share,
+    TREND_Enforcement_Share, WB_Enforcement_Share,
+    TREND_RegSpace_Share, WB_RegSpace_Share
+  ) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value") %>%
+  mutate(
+    Dataset = ifelse(grepl("^TREND", Variable), "TREND", "WB"),
+    Index = case_when(
+      grepl("Depth", Variable) ~ "Depth",
+      grepl("Hardness", Variable) ~ "Hardness",
+      grepl("Enforcement", Variable) ~ "Enforcement",
+      grepl("RegSpace", Variable) ~ "Reg. Space",
+      TRUE ~ "Other"
+    )
+  )
+
+p3 <- ggplot(df_all_indices, aes(x = Index, y = Value, fill = Dataset)) +
+  geom_violin(alpha = 0.6, position = position_dodge(width = 0.9)) +
+  geom_boxplot(
+    width = 0.15, position = position_dodge(width = 0.9),
+    alpha = 0.8, outlier.size = 0.5
+  ) +
+  scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  labs(
+    title = "Distribution Comparison: TREND vs WB Indices",
+    subtitle = "Violin plots show full distribution, box plots show quartiles",
+    y = "Value (0-1 scale)",
+    x = ""
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 9),
+    legend.position = "top"
+  )
+
+ggsave("Output/Violin_Comparison_TREND_WB.png", plot = p3, width = 10, height = 6, dpi = 300)
+print("✓ Saved: Violin_Comparison_TREND_WB.png")
+
+# 5.4 Faceted histograms for each index
+p4 <- ggplot(df_all_indices, aes(x = Value, fill = Dataset)) +
+  geom_histogram(alpha = 0.6, position = "identity", bins = 20) +
+  facet_wrap(~Index, scales = "free", ncol = 2) +
+  scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  labs(
+    title = "Histograms: TREND vs WB Indices",
+    x = "Value",
+    y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "top",
+    strip.text = element_text(face = "bold")
+  )
+
+ggsave("Output/Histograms_TREND_WB.png", plot = p4, width = 10, height = 8, dpi = 300)
+print("✓ Saved: Histograms_TREND_WB.png")
+
+# 5.5 Combined density plots for depth
+df_depth_long <- df_merged %>%
+  select(TREND_Depth_Norm, WB_Depth_Norm) %>%
+  pivot_longer(cols = everything(), names_to = "Dataset", values_to = "Depth") %>%
+  mutate(Dataset = ifelse(Dataset == "TREND_Depth_Norm", "TREND", "WB"))
+
+p5 <- ggplot(df_depth_long, aes(x = Depth, fill = Dataset)) +
+  geom_density(alpha = 0.6) +
+  scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  labs(
+    title = "Distribution of Normalized Depth: TREND vs WB",
+    x = "Normalized Depth (0-1 scale)",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "top"
+  )
+
+ggsave("Output/Depth_Distribution_TREND_WB.png", plot = p5, width = 10, height = 6, dpi = 300)
+print("✓ Saved: Depth_Distribution_TREND_WB.png")
+
+# 5.6 Overlapping Venn diagram representation (as bar chart)
+overlap_data <- data.frame(
+  Category = c("Only TREND", "Only WB", "Both Datasets", "Neither"),
+  Count = c(
+    provision_overlap$Only_TREND_NonZero,
+    provision_overlap$Only_WB_NonZero,
+    provision_overlap$Both_NonZero,
+    provision_overlap$Both_Zero
+  )
+)
+
+p6 <- ggplot(overlap_data, aes(x = reorder(Category, -Count), y = Count, fill = Category)) +
+  geom_bar(stat = "identity", alpha = 0.8) +
+  geom_text(aes(label = Count), vjust = -0.5, size = 5) +
+  scale_fill_manual(values = c(
+    "Only TREND" = "steelblue",
+    "Only WB" = "coral",
+    "Both Datasets" = "forestgreen",
+    "Neither" = "gray70"
+  )) +
+  labs(
+    title = "Provision Overlap: TREND vs WB Datasets",
+    subtitle = paste0("Overlap: ", overlap_pct, "% of observations have provisions in both datasets"),
+    x = "",
+    y = "Number of Observations"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.text.x = element_text(size = 11)
+  )
+
+ggsave("Output/Provision_Overlap_TREND_WB.png", plot = p6, width = 10, height = 6, dpi = 300)
+print("✓ Saved: Provision_Overlap_TREND_WB.png")
+
+# 5.7 Correlation heatmap for all comparable indices
+library(reshape2)
+
+# Create correlation matrix for TREND and WB indices side by side
+indices_for_corr <- corr_data %>%
+  select(
+    TREND_Depth = TREND_Depth_Norm,
+    WB_Depth = WB_Depth_Norm,
+    TREND_Hardness = TREND_Hardness_Share,
+    WB_Hardness = WB_Hardness_Share,
+    TREND_Enforcement = TREND_Enforcement_Share,
+    WB_Enforcement = WB_Enforcement_Share,
+    TREND_RegSpace = TREND_RegSpace_Share,
+    WB_RegSpace = WB_RegSpace_Share
+  )
+
+corr_matrix <- cor(indices_for_corr)
+corr_melted <- melt(corr_matrix)
+
+p7 <- ggplot(corr_melted, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(value, 2)), size = 3) +
+  scale_fill_gradient2(
+    low = "blue", mid = "white", high = "red",
+    midpoint = 0, limits = c(-1, 1)
+  ) +
+  labs(
+    title = "Correlation Matrix: TREND vs WB Indices",
+    x = "",
+    y = "",
+    fill = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "right"
+  )
+
+# Alternative (v2) summary table
+summary_table_v2 <- data.frame(
+  Index = c("Depth (Normalized)", "Hardness Share (v2)", "Enforcement Share", "Regulatory Space Share", "Green Liberalization Share"),
+  TREND_Mean = round(c(
+    mean(corr_data$TREND_Depth_Norm, na.rm = TRUE),
+    mean(corr_data$TREND_Hardness_Share_v2, na.rm = TRUE),
+    mean(corr_data$TREND_Enforcement_Share, na.rm = TRUE),
+    mean(corr_data$TREND_RegSpace_Share, na.rm = TRUE),
+    mean(corr_data$TREND_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  TREND_SD = round(c(
+    sd(corr_data$TREND_Depth_Norm, na.rm = TRUE),
+    sd(corr_data$TREND_Hardness_Share_v2, na.rm = TRUE),
+    sd(corr_data$TREND_Enforcement_Share, na.rm = TRUE),
+    sd(corr_data$TREND_RegSpace_Share, na.rm = TRUE),
+    sd(corr_data$TREND_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  WB_Mean = round(c(
+    mean(corr_data$WB_Depth_Norm, na.rm = TRUE),
+    mean(corr_data$WB_Hardness_Share_v2, na.rm = TRUE),
+    mean(corr_data$WB_Enforcement_Share, na.rm = TRUE),
+    mean(corr_data$WB_RegSpace_Share, na.rm = TRUE),
+    mean(corr_data$WB_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  WB_SD = round(c(
+    sd(corr_data$WB_Depth_Norm, na.rm = TRUE),
+    sd(corr_data$WB_Hardness_Share_v2, na.rm = TRUE),
+    sd(corr_data$WB_Enforcement_Share, na.rm = TRUE),
+    sd(corr_data$WB_RegSpace_Share, na.rm = TRUE),
+    sd(corr_data$WB_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  Correlation = round(c(cor_depth, cor_hardness_v2, cor_enforcement, cor_regspace, cor_greenlib), 3)
+)
+
+print("\n=== ALTERNATIVE CLASSIFICATION (v2) SUMMARY ===")
+print(summary_table_v2)
+
+# Save alternative summary table
+write.csv(summary_table_v2, "Output/Summary_Comparison_TREND_WB_v2.csv", row.names = FALSE)
+print("\n✓ Saved: Summary_Comparison_TREND_WB_v2.csv")
+
+ggsave("Output/Correlation_Matrix_TREND_WB.png", plot = p7, width = 10, height = 8, dpi = 300)
+print("✓ Saved: Correlation_Matrix_TREND_WB.png")
+
+
+### 6. SUMMARY TABLE ###
+
+print("\n========================================")
+print("=== SUMMARY TABLE FOR COMPARABLE INDICES ===")
+print("========================================\n")
+
+summary_table <- data.frame(
+  Index = c("Depth (Normalized)", "Hardness Share", "Enforcement Share", "Regulatory Space Share", "Green Liberalization Share"),
+  TREND_Mean = round(c(
+    mean(corr_data$TREND_Depth_Norm, na.rm = TRUE),
+    mean(corr_data$TREND_Hardness_Share, na.rm = TRUE),
+    mean(corr_data$TREND_Enforcement_Share, na.rm = TRUE),
+    mean(corr_data$TREND_RegSpace_Share, na.rm = TRUE),
+    mean(corr_data$TREND_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  TREND_SD = round(c(
+    sd(corr_data$TREND_Depth_Norm, na.rm = TRUE),
+    sd(corr_data$TREND_Hardness_Share, na.rm = TRUE),
+    sd(corr_data$TREND_Enforcement_Share, na.rm = TRUE),
+    sd(corr_data$TREND_RegSpace_Share, na.rm = TRUE),
+    sd(corr_data$TREND_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  WB_Mean = round(c(
+    mean(corr_data$WB_Depth_Norm, na.rm = TRUE),
+    mean(corr_data$WB_Hardness_Share, na.rm = TRUE),
+    mean(corr_data$WB_Enforcement_Share, na.rm = TRUE),
+    mean(corr_data$WB_RegSpace_Share, na.rm = TRUE),
+    mean(corr_data$WB_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  WB_SD = round(c(
+    sd(corr_data$WB_Depth_Norm, na.rm = TRUE),
+    sd(corr_data$WB_Hardness_Share, na.rm = TRUE),
+    sd(corr_data$WB_Enforcement_Share, na.rm = TRUE),
+    sd(corr_data$WB_RegSpace_Share, na.rm = TRUE),
+    sd(corr_data$WB_GreenLib_Share, na.rm = TRUE)
+  ), 3),
+  Correlation = round(c(cor_depth, cor_hardness, cor_enforcement, cor_regspace, cor_greenlib), 3)
+)
+
+print(summary_table)
+
+# Save summary table
+write.csv(summary_table, "Output/Summary_Comparison_TREND_WB.csv", row.names = FALSE)
+print("\n✓ Saved: Summary_Comparison_TREND_WB.csv")
+
+print("\n========================================")
+print("=== ANALYSIS COMPLETE ===")
+print("========================================")
+print("\nAll descriptive statistics and visualizations have been generated.")
+print("Check the 'Output/' folder for saved plots and tables.")
