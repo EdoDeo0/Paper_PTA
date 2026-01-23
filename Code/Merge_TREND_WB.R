@@ -250,7 +250,7 @@ wb_var_names <- names(df_merged)[wb_vars_start:wb_vars_end]
 # Create WB mapping dataset
 wb_variable_mapping <- data.frame(
   original_name = wb_var_names,
-  short_code = paste0("WB_", 1:length(wb_var_names)),
+  short_code = paste0("WB_", seq_along(wb_var_names)),
   stringsAsFactors = FALSE
 )
 
@@ -267,7 +267,7 @@ trend_variable_mapping <- data.frame(
   short_code = ifelse(
     grepl("^X[0-9]", trend_var_names),
     sub("\\.$", "", sub("^(X[0-9.]+).*", "\\1", trend_var_names)), # Extract X code and remove trailing dot
-    paste0("TREND_", 1:length(trend_var_names)) # Create new codes for control variables
+    paste0("TREND_", seq_along(trend_var_names)) # Create new codes for control variables
   ),
   stringsAsFactors = FALSE
 )
@@ -279,7 +279,7 @@ trend_variable_mapping <- data.frame(
   short_code = ifelse(
     grepl("^X[0-9]", trend_var_names),
     gsub("\\.", "_", sub("\\.$", "", sub("^(X[0-9.]+).*", "\\1", trend_var_names))), # Extract X code, remove trailing dot, replace dots with underscores
-    paste0("TREND_", 1:length(trend_var_names)) # Create new codes for control variables
+    paste0("TREND_", seq_along(trend_var_names)) # Create new codes for control variables
   ),
   stringsAsFactors = FALSE
 )
@@ -821,10 +821,7 @@ print(paste0("Correlation (v2): ",
 df_merged <- df_merged %>%
   mutate(
     TREND_Enforcement_Share = round(ifelse(
-      TREND_EP_Count > 0,,
-    # Alternative hardness indices (v2)
-    TREND_Hard_v2, TREND_Soft_v2, TREND_Hardness_Share_v2,
-    WB_Hard_v2, WB_Soft_v2, WB_Hardness_Share_v2
+      TREND_EP_Count > 0,
       TREND_EnforcementDSM / TREND_EP_Count,
       NA
     ), 3),
@@ -1237,6 +1234,7 @@ p2 <- ggplot(means_comparison, aes(x = Index, y = Mean, fill = Dataset)) +
     plot.subtitle = element_text(hjust = 0.5),
     legend.position = "top",
     axis.text.x = element_text(angle = 0)
+  )
 
 # 5.2b Grouped bar chart: Hardness comparison (Original vs v2)
 hardness_comparison <- data.frame(
@@ -1282,7 +1280,6 @@ p2b <- ggplot(hardness_comparison, aes(x = Version, y = Mean, fill = Dataset)) +
 
 ggsave("Output/Hardness_Comparison_Original_vs_v2.png", plot = p2b, width = 10, height = 6, dpi = 300)
 print("✓ Saved: Hardness_Comparison_Original_vs_v2.png")
-  )
 
 ggsave("Output/Means_Comparison_TREND_WB.png", plot = p2, width = 10, height = 6, dpi = 300)
 print("✓ Saved: Means_Comparison_TREND_WB.png")
@@ -1544,3 +1541,167 @@ print("=== ANALYSIS COMPLETE ===")
 print("========================================")
 print("\nAll descriptive statistics and visualizations have been generated.")
 print("Check the 'Output/' folder for saved plots and tables.")
+
+
+### 7. TIME SERIES: Environmental Provisions Depth Over Time ###
+
+print("\n========================================")
+print("=== TIME SERIES ANALYSIS ===")
+print("========================================\n")
+
+# Aggregate environmental provisions depth by year
+depth_over_time <- df_merged %>%
+  group_by(year) %>%
+  summarise(
+    TREND_Mean_EP_Count = mean(TREND_EP_Count, na.rm = TRUE),
+    TREND_Max_EP_Count = max(TREND_EP_Count, na.rm = TRUE),
+    WB_Mean_EP_Depth = mean(WB_EP_Depth, na.rm = TRUE),
+    WB_Max_EP_Depth = max(WB_EP_Depth, na.rm = TRUE),
+    TREND_Mean_Norm = mean(TREND_Depth_Norm, na.rm = TRUE),
+    WB_Mean_Norm = mean(WB_Depth_Norm, na.rm = TRUE),
+    N_Agreements = n(),
+    .groups = "drop"
+  )
+
+print("--- Environmental Provisions Depth Over Time ---")
+print(depth_over_time)
+
+# Prepare data for plotting (normalized depth - comparable scale)
+depth_time_long <- depth_over_time %>%
+  select(year, TREND_Mean_Norm, WB_Mean_Norm) %>%
+  pivot_longer(
+    cols = c(TREND_Mean_Norm, WB_Mean_Norm),
+    names_to = "Dataset",
+    values_to = "Depth_Norm"
+  ) %>%
+  mutate(Dataset = ifelse(Dataset == "TREND_Mean_Norm", "TREND", "WB"))
+
+# Plot 8a: Normalized EP Depth over time (line plot)
+p8a <- ggplot(depth_time_long, aes(x = year, y = Depth_Norm, color = Dataset)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  scale_x_continuous(breaks = seq(min(depth_over_time$year), max(depth_over_time$year), by = 1)) +
+  labs(
+    title = "Environmental Provisions Depth in China's PTAs Over Time",
+    subtitle = "Normalized depth (0-1 scale) - Mean across agreements by year",
+    x = "Year",
+    y = "Normalized EP Depth",
+    color = "Dataset"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+ggsave("Output/EP_Depth_TimeSeries_Normalized.png", plot = p8a, width = 12, height = 6, dpi = 300)
+print("✓ Saved: EP_Depth_TimeSeries_Normalized.png")
+
+# Prepare data for raw counts plotting
+depth_time_raw <- depth_over_time %>%
+  select(year, TREND_Mean_EP_Count, WB_Mean_EP_Depth) %>%
+  pivot_longer(
+    cols = c(TREND_Mean_EP_Count, WB_Mean_EP_Depth),
+    names_to = "Dataset",
+    values_to = "EP_Count"
+  ) %>%
+  mutate(Dataset = ifelse(Dataset == "TREND_Mean_EP_Count", "TREND", "WB"))
+
+# Plot 8b: Raw EP Count over time (line plot)
+p8b <- ggplot(depth_time_raw, aes(x = year, y = EP_Count, color = Dataset)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  scale_x_continuous(breaks = seq(min(depth_over_time$year), max(depth_over_time$year), by = 1)) +
+  labs(
+    title = "Environmental Provisions Count in China's PTAs Over Time",
+    subtitle = "Raw provision count - Mean across agreements by year",
+    x = "Year",
+    y = "Mean EP Count",
+    color = "Dataset"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+ggsave("Output/EP_Depth_TimeSeries_Raw.png", plot = p8b, width = 12, height = 6, dpi = 300)
+print("✓ Saved: EP_Depth_TimeSeries_Raw.png")
+
+# Plot 8c: Combined plot with dual y-axis (using facets instead for clarity)
+# Faceted view showing both normalized and raw counts
+depth_time_combined <- df_merged %>%
+  select(year, TREND_EP_Count, WB_EP_Depth, TREND_Depth_Norm, WB_Depth_Norm) %>%
+  pivot_longer(
+    cols = -year,
+    names_to = "Variable",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Dataset = ifelse(grepl("^TREND", Variable), "TREND", "WB"),
+    Measure = ifelse(grepl("Norm", Variable), "Normalized (0-1)", "Raw Count")
+  )
+
+p8c <- ggplot(depth_time_combined, aes(x = year, y = Value, color = Dataset)) +
+  geom_point(alpha = 0.4, size = 1.5) +
+  geom_smooth(method = "loess", se = TRUE, alpha = 0.2, linewidth = 1.2) +
+  facet_wrap(~Measure, scales = "free_y", ncol = 1) +
+  scale_color_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  scale_x_continuous(breaks = seq(min(df_merged$year), max(df_merged$year), by = 1)) +
+  labs(
+    title = "Environmental Provisions Depth in China's PTAs: Trend Over Time",
+    subtitle = "Each point represents a country-year observation; smoothed trend line with confidence interval",
+    x = "Year",
+    y = "EP Depth",
+    color = "Dataset"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 9),
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    strip.text = element_text(face = "bold", size = 11)
+  )
+
+ggsave("Output/EP_Depth_TimeSeries_Combined.png", plot = p8c, width = 12, height = 10, dpi = 300)
+print("✓ Saved: EP_Depth_TimeSeries_Combined.png")
+
+# Plot 8d: Area plot showing cumulative depth
+p8d <- ggplot(depth_time_long, aes(x = year, y = Depth_Norm, fill = Dataset)) +
+  geom_area(alpha = 0.6, position = "identity") +
+  geom_line(aes(color = Dataset), linewidth = 1) +
+  scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
+  scale_color_manual(values = c("TREND" = "darkblue", "WB" = "darkred")) +
+  scale_x_continuous(breaks = seq(min(depth_over_time$year), max(depth_over_time$year), by = 1)) +
+  labs(
+    title = "Environmental Provisions Depth Trend in China's PTAs",
+    subtitle = "Normalized depth (0-1 scale) - Mean by year",
+    x = "Year",
+    y = "Normalized EP Depth",
+    fill = "Dataset",
+    color = "Dataset"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+ggsave("Output/EP_Depth_TimeSeries_Area.png", plot = p8d, width = 12, height = 6, dpi = 300)
+print("✓ Saved: EP_Depth_TimeSeries_Area.png")
+
+# Save time series data
+write.csv(depth_over_time, "Output/Table_EP_Depth_Over_Time.csv", row.names = FALSE)
+print("✓ Saved: Table_EP_Depth_Over_Time.csv")
+
+print("\n=== TIME SERIES ANALYSIS COMPLETE ===")
+
