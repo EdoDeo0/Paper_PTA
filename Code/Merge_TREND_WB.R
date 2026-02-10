@@ -35,7 +35,7 @@ wto_x_le <- read_excel("Data/WB/DTA 1.0 - Horizontal Content (v2).xlsx", sheet =
 ######### Process WB dataset #########
 
 # Remove unnecessary rows from df_wb
-df_wb <- df_wb[-c(1, 7, 15, 20, 22, 34, 51), ]
+df_wb <- df_wb[-c(1, 7, 15, 20, 22, 34, 51), ] # Removes rows relative to the chapters
 
 # Reshape df_wb: agreements as rows, provisions as columns
 df_wb <- df_wb %>%
@@ -798,22 +798,34 @@ df_merged <- df_merged %>%
 # Print comparison of original vs v2
 print("\n=== HARDNESS CLASSIFICATION COMPARISON ===")
 print("\nOriginal vs Alternative (v2) Hardness Indices:")
-print(paste0("TREND Hardness (original) - Mean: ", 
-             round(mean(df_merged$TREND_Hardness_Share, na.rm = TRUE), 3),
-             " | SD: ", round(sd(df_merged$TREND_Hardness_Share, na.rm = TRUE), 3)))
-print(paste0("TREND Hardness (v2) - Mean: ", 
-             round(mean(df_merged$TREND_Hardness_Share_v2, na.rm = TRUE), 3),
-             " | SD: ", round(sd(df_merged$TREND_Hardness_Share_v2, na.rm = TRUE), 3)))
-print(paste0("WB Hardness (original) - Mean: ", 
-             round(mean(df_merged$WB_Hardness_Share, na.rm = TRUE), 3),
-             " | SD: ", round(sd(df_merged$WB_Hardness_Share, na.rm = TRUE), 3)))
-print(paste0("WB Hardness (v2) - Mean: ", 
-             round(mean(df_merged$WB_Hardness_Share_v2, na.rm = TRUE), 3),
-             " | SD: ", round(sd(df_merged$WB_Hardness_Share_v2, na.rm = TRUE), 3)))
-print(paste0("\nCorrelation (original): ", 
-             round(cor(df_merged$TREND_Hardness_Share, df_merged$WB_Hardness_Share, use = "complete.obs"), 3)))
-print(paste0("Correlation (v2): ", 
-             round(cor(df_merged$TREND_Hardness_Share_v2, df_merged$WB_Hardness_Share_v2, use = "complete.obs"), 3)))
+print(paste0(
+  "TREND Hardness (original) - Mean: ",
+  round(mean(df_merged$TREND_Hardness_Share, na.rm = TRUE), 3),
+  " | SD: ", round(sd(df_merged$TREND_Hardness_Share, na.rm = TRUE), 3)
+))
+print(paste0(
+  "TREND Hardness (v2) - Mean: ",
+  round(mean(df_merged$TREND_Hardness_Share_v2, na.rm = TRUE), 3),
+  " | SD: ", round(sd(df_merged$TREND_Hardness_Share_v2, na.rm = TRUE), 3)
+))
+print(paste0(
+  "WB Hardness (original) - Mean: ",
+  round(mean(df_merged$WB_Hardness_Share, na.rm = TRUE), 3),
+  " | SD: ", round(sd(df_merged$WB_Hardness_Share, na.rm = TRUE), 3)
+))
+print(paste0(
+  "WB Hardness (v2) - Mean: ",
+  round(mean(df_merged$WB_Hardness_Share_v2, na.rm = TRUE), 3),
+  " | SD: ", round(sd(df_merged$WB_Hardness_Share_v2, na.rm = TRUE), 3)
+))
+print(paste0(
+  "\nCorrelation (original): ",
+  round(cor(df_merged$TREND_Hardness_Share, df_merged$WB_Hardness_Share, use = "complete.obs"), 3)
+))
+print(paste0(
+  "Correlation (v2): ",
+  round(cor(df_merged$TREND_Hardness_Share_v2, df_merged$WB_Hardness_Share_v2, use = "complete.obs"), 3)
+))
 
 
 # N3) Thematic Shares (as percentage of total provisions in each dataset)
@@ -1241,9 +1253,9 @@ hardness_comparison <- data.frame(
   Version = rep(c("Original", "Alternative (v2)"), each = 2),
   Dataset = rep(c("TREND", "WB"), 2),
   Mean = c(
-    mean(corr_data$TREND_Hardness_Share, na.rm = TRUE), 
+    mean(corr_data$TREND_Hardness_Share, na.rm = TRUE),
     mean(corr_data$WB_Hardness_Share, na.rm = TRUE),
-    mean(corr_data$TREND_Hardness_Share_v2, na.rm = TRUE), 
+    mean(corr_data$TREND_Hardness_Share_v2, na.rm = TRUE),
     mean(corr_data$WB_Hardness_Share_v2, na.rm = TRUE)
   ),
   SE = c(
@@ -1261,9 +1273,11 @@ hardness_comparison <- data.frame(
 p2b <- ggplot(hardness_comparison, aes(x = Version, y = Mean, fill = Dataset)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.8), alpha = 0.8) +
   geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE),
-                position = position_dodge(width = 0.8), width = 0.25) +
-  geom_text(aes(label = paste0("r=", Correlation), y = 0.05), 
-            position = position_dodge(width = 0.8), size = 3.5, fontface = "bold") +
+    position = position_dodge(width = 0.8), width = 0.25
+  ) +
+  geom_text(aes(label = paste0("r=", Correlation), y = 0.05),
+    position = position_dodge(width = 0.8), size = 3.5, fontface = "bold"
+  ) +
   scale_fill_manual(values = c("TREND" = "steelblue", "WB" = "coral")) +
   labs(
     title = "Hardness Share Comparison: Original vs Alternative Classification",
@@ -1704,4 +1718,3 @@ write.csv(depth_over_time, "Output/Table_EP_Depth_Over_Time.csv", row.names = FA
 print("✓ Saved: Table_EP_Depth_Over_Time.csv")
 
 print("\n=== TIME SERIES ANALYSIS COMPLETE ===")
-
