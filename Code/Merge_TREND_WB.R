@@ -98,23 +98,20 @@ Country_WB <- list(
   c("Switzerland")
 )
 
-# Trattati solo diadi: 9291520 (18.87% del totale)
-# Trattati persi con solo diadi:
-
-# Espandi il dataset: crea una riga per ogni paese
+# Expand dataset: create a row for each country
 df_wb_expanded <- df_wb %>%
   mutate(Country_WB = Country_WB) %>%
   unnest(Country_WB)
 
-# Espandi per tutti gli anni dal Year_WB fino al 2015
+# Expand for all years from Year_WB to 2015
 df_wb_country_year <- df_wb_expanded %>%
   rowwise() %>%
   mutate(Year = list(Year_WB:2015)) %>%
   unnest(Year) %>%
   ungroup()
 
-# Per ogni coppia Country_WB-Year, prendi il valore massimo di ogni provision
-# Identifica le colonne delle provisions (escludendo le colonne identificative)
+# For each Country_WB-Year pair, take the maximum value of each provision
+# Identify the columns of the provisions (excluding the identifying columns)
 provision_cols <- setdiff(
   names(df_wb_country_year),
   c(
@@ -123,24 +120,24 @@ provision_cols <- setdiff(
   )
 )
 
-# Aggrega prendendo il massimo per ogni provision
+# Aggregate by taking the maximum for each provision
 df_wb_final <- df_wb_country_year %>%
   group_by(Country_WB, Year) %>%
   summarise(
     across(all_of(provision_cols), ~ max(.x, na.rm = TRUE)),
     Env_Laws_AC = max(Env_Laws_AC, na.rm = TRUE),
     Env_Laws_LE = max(Env_Laws_LE, na.rm = TRUE),
-    # Mantieni Merge_ID e Year_WB del primo accordo (o quello più recente)
+    # Keep Merge_ID and Year_WB of the first agreement (or the most recent one)
     Merge_ID = first(Merge_ID),
     Year_WB = min(Year_WB),
     .groups = "drop"
   )
 
-# Sostituisci -Inf con NA (nel caso non ci siano valori validi)
+# Replace -Inf with NA (in case there are no valid values)
 df_wb_final <- df_wb_final %>%
   mutate(across(where(is.numeric), ~ ifelse(is.infinite(.x), NA, .x)))
 
-# Usa df_wb_final per il merge
+# Use df_wb_final for the merge
 df_wb <- df_wb_final
 
 
@@ -150,7 +147,7 @@ df_wb <- df_wb_final
 Year_trend <- c(2006, 2003, 2003, 2008, 2007, 2010, 2009, 2005, 2011, 2015, 2014, 2015, 2014, 2002, 2005)
 df_trend$Year_trend <- Year_trend
 
-# Add Country (lista con paesi singoli o multipli)
+# Add Country
 Country_TREND <- list(
   c("Chile"),
   c("HongKong"),
@@ -169,22 +166,22 @@ Country_TREND <- list(
   c("Bangladesh", "India", "Korea Rep.", "Laos,PDR", "Sri Lanka") # Asia Pacific Trade Agreement (APTA) - Bangkok Agreement Amended
 )
 
-# Aggiungi la colonna Country_TREND a df_trend
+# Add column Country_TREND to df_trend
 df_trend <- df_trend %>%
   mutate(Country_TREND = Country_TREND)
 
-# Espandi il dataset: crea una riga per ogni paese
+# Expand dataset: create a row for each country
 df_trend_expanded <- df_trend %>%
   unnest(Country_TREND)
 
-# Espandi per tutti gli anni dal Year fino al 2015
+# Expand for all years from Year_trend to 2015
 df_trend_country_year <- df_trend_expanded %>%
   rowwise() %>%
   mutate(Year_Expanded = list(Year_trend:2015)) %>%
   unnest(Year_Expanded) %>%
   ungroup()
 
-# Identifica le colonne delle provisions/variabili (escludendo le colonne identificative)
+# Identify the columns of the provisions/variables (excluding the identifying columns)
 trend_provision_cols <- setdiff(
   names(df_trend_country_year),
   c(
@@ -193,7 +190,7 @@ trend_provision_cols <- setdiff(
   )
 )
 
-# Aggrega prendendo il massimo per ogni provision/variabile
+# Aggregate by taking the maximum for each provision/variable
 df_trend_final <- df_trend_country_year %>%
   group_by(Country_TREND, Year_Expanded) %>%
   summarise(
@@ -204,11 +201,11 @@ df_trend_final <- df_trend_country_year %>%
   ) %>%
   rename(Year = Year_Expanded)
 
-# Sostituisci -Inf con NA
+# Replace -Inf with NA
 df_trend_final <- df_trend_final %>%
   mutate(across(where(is.numeric), ~ ifelse(is.infinite(.x), NA, .x)))
 
-# Usa df_trend_final per il merge
+# Use df_trend_final for the merge
 df_trend <- df_trend_final
 
 
