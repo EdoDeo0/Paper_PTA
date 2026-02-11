@@ -127,18 +127,14 @@ provision_cols <- setdiff(
 df_wb_final <- df_wb_country_year %>%
   group_by(Country_WB, Year) %>%
   summarise(
-    across(all_of(provision_cols), ~ max(.x, na.rm = TRUE)),
-    Env_Laws_AC = max(Env_Laws_AC, na.rm = TRUE),
-    Env_Laws_LE = max(Env_Laws_LE, na.rm = TRUE),
+    across(all_of(provision_cols), ~ if(all(is.na(.x))) NA_real_ else max(.x, na.rm = TRUE)),
+    Env_Laws_AC = if(all(is.na(Env_Laws_AC))) NA_real_ else max(Env_Laws_AC, na.rm = TRUE),
+    Env_Laws_LE = if(all(is.na(Env_Laws_LE))) NA_real_ else max(Env_Laws_LE, na.rm = TRUE),
     # Mantieni Merge_ID e Year_WB del primo accordo (o quello più recente)
     Merge_ID = first(Merge_ID),
     Year_WB = min(Year_WB),
     .groups = "drop"
   )
-
-# Sostituisci -Inf con NA (nel caso non ci siano valori validi)
-df_wb_final <- df_wb_final %>%
-  mutate(across(where(is.numeric), ~ ifelse(is.infinite(.x), NA, .x)))
 
 # Usa df_wb_final per il merge
 df_wb <- df_wb_final
@@ -197,16 +193,12 @@ trend_provision_cols <- setdiff(
 df_trend_final <- df_trend_country_year %>%
   group_by(Country_TREND, Year_Expanded) %>%
   summarise(
-    across(all_of(trend_provision_cols), ~ max(.x, na.rm = TRUE)),
+    across(all_of(trend_provision_cols), ~ if(all(is.na(.x))) NA_real_ else max(.x, na.rm = TRUE)),
     Merge_ID = first(Merge_ID),
     Year_trend_min = min(Year_trend),
     .groups = "drop"
   ) %>%
   rename(Year = Year_Expanded)
-
-# Sostituisci -Inf con NA
-df_trend_final <- df_trend_final %>%
-  mutate(across(where(is.numeric), ~ ifelse(is.infinite(.x), NA, .x)))
 
 # Usa df_trend_final per il merge
 df_trend <- df_trend_final
