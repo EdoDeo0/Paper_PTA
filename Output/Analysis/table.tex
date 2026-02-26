@@ -1,0 +1,25 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\toprule
+                              &\multicolumn{3}{c}{Baseline}                            &\multicolumn{3}{c}{With controls}                       \\\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+                              &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+                              &\multicolumn{1}{c}{$\textit{Exports}\\\_{fpdt}$}&\multicolumn{1}{c}{$\textit{Quantity}\\\_{fpdt}$}&\multicolumn{1}{c}{$\textit{UnitValue}\\\_{fpdt}$}&\multicolumn{1}{c}{$\textit{Exports}\\\_{fpdt}$}&\multicolumn{1}{c}{$\textit{Quantity}\\\_{fpdt}$}&\multicolumn{1}{c}{$\textit{UnitValue}\\\_{fpdt}$}\\
+\midrule
+$\textit{EPDepth}\\\_{dt}$     &  0.00098\sym{***}&  0.00198\sym{***}& -0.00093\sym{***}&  0.00127\sym{***}&  0.00255\sym{***}& -0.00126\sym{***}\\
+                              &(0.00035)         &(0.00037)         &(0.00015)         &(0.00037)         &(0.00039)         &(0.00016)         \\
+$\ln \textit{MFNTariffs}\\\_{pdt}$&                  &                  &                  & -0.05923\sym{***}& -0.06873\sym{***}&  0.00976\sym{***}\\
+                              &                  &                  &                  &(0.00226)         &(0.00239)         &(0.00094)         \\
+$\ln \textit{HHI}\\\_{pdt}$    &                  &                  &                  & -0.02344\sym{***}& -0.02525\sym{***}&  0.00188\sym{***}\\
+                              &                  &                  &                  &(0.00184)         &(0.00193)         &(0.00073)         \\
+\midrule
+\(N\)                         & 31817355         & 31579783         & 31579775         & 28798035         & 28580079         & 28580071         \\
+Clusters (pdt)                &2,993,119         &2,985,681         &2,985,681         &2,478,463         &2,472,529         &2,472,529         \\
+$\theta\\\_{fpd}$              &      Yes         &      Yes         &      Yes         &      Yes         &      Yes         &      Yes         \\
+$\theta\\\_{t}$                &      Yes         &      Yes         &      Yes         &      Yes         &      Yes         &      Yes         \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\footnotesize
+\textit{Notes}: Standard errors clustered at the product (pdt) level are reported in parentheses. 
+*** <0.01$, ** <0.05$, * <0.10$.
+\end{flushleft}

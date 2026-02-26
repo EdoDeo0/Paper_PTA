@@ -1,0 +1,21 @@
+With Controls	
+	(1)
+VARIABLES	$\text{Exports}_{fpd}$
+	
+WB_EP_Depth	0.00127***
+	(0.00037)
+tariffs	-0.05923***
+	(0.00226)
+ln_hhi_baci	-0.02344***
+	(0.00184)
+Constant	9.85472***
+	(0.00448)
+	
+Observations	28,798,035
+R-squared	0.79290
+$\theta_{fpd}$	YES
+$\theta_t$	YES
+Adj R-squared	0.713
+Clusters(pdt)	2.478e+06
+Robust standard errors in parentheses	
+*** p<0.01, ** p<0.05, * p<0.1	
