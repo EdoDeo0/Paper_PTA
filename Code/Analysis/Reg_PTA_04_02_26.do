@@ -20,9 +20,6 @@ set showbaselevels on
 // cd "Set path"
 // use final_dataset_pta_env_indices.dta, clear
 use "C:\Users\edodr\Desktop\final_dataset_pta_env_indices.dta", clear
-compress // Reducing disk space
-// save "C:\Users\edodr\Desktop\final_dataset_pta_env_indices_compressed.dta", replace
-
 
 ** Generating some variables for the analysis
 gen ln_export = ln(export)
@@ -32,8 +29,12 @@ gen ln_export_qua = ln(exp_qua)
 replace WB_EP_Depth = 0 if WB_EP_Depth == .
 replace TREND_EP_Count = 0 if TREND_EP_Count == .
 gen ln_export_value = ln(uv_exp)
-egen pdt = group(hs6 country_code year)
+egen long pdt = group(hs6 country_code year) // Forcing long format
+format pdt %12.0g // Forcing %12.0g display type according to long format
 
+// Saving final (compressed) version of the dataset
+compress // Reducing disk space
+save "C:\Users\edodr\Desktop\final_dataset_pta_env_indices_compressed.dta", replace
 
 
 *****************************************
