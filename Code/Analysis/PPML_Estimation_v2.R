@@ -17,7 +17,9 @@ library(data.table)
 library(kableExtra)
 
 # Caricamento selettivo per risparmiare RAM (solo variabili usate)
-setwd("C:\\Users\\edodr\\Desktop\\PPML Estimation")
+setwd("C:\\Users\\edodr\\Desktop\\PPML Estimation")  # On Windows
+setwd("/Users/edoardovitella/Desktop/PPML Estimation")  # On Mac
+
 vars_needed <- c(
     "export", "exp_qua", "uv_exp", "WB_EP_Depth", "TREND_EP_Count",
     "env_good", "tariffs", "ln_hhi_baci", "fpd", "year", "pdt"
