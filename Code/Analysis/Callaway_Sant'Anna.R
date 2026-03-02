@@ -13,6 +13,7 @@
 
 rm(list = ls())
 
+library(fst)
 library(did)
 library(data.table)
 
@@ -22,7 +23,7 @@ setwd("/Users/edoardovitella/Desktop/PPML Estimation")  # On Mac
 
 vars_needed <- c(
     "export", "exp_qua", "uv_exp", "WB_EP_Depth", "TREND_EP_Count",
-    "env_good", "tariffs", "ln_hhi_baci", "fpd", "year", "pdt"
+    "env_good", "tariffs", "ln_hhi_baci", "fpd", "year", "pdt", "country_code"
 )
 # Caricamento dataset // NOT in this folder, file too big !!
 data <- read_fst("final_dataset_pta_env_indices_compressed.fst", columns = vars_needed)
@@ -31,12 +32,12 @@ data <- read_fst("final_dataset_pta_env_indices_compressed.fst", columns = vars_
 data <- as.data.table(data)
 
 
-# Costruisci variabile di coorte: anno primo trattamento per destinazione d
+# Costruisci variabile di coorte: anno primo trattamento per destinazione (country_code)
 # Se mai trattato, G = 0 (never-treated)
 data <- data %>%
-  group_by(dest) %>%
-  mutate(G = ifelse(any(EPDepth > 0), 
-                    min(year[EPDepth > 0]), 0)) %>%
+  group_by(country_code) %>%
+  mutate(G = ifelse(any(WB_EP_Depth > 0), 
+                    min(year[WB_EP_Depth > 0]), 0)) %>%
   ungroup()
 
 # CS richiede un panel bilanciato a livello di unità
