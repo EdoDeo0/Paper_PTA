@@ -3,7 +3,8 @@
 ####################################################
 
 ## Author: Edoardo Vitella
-## PhD stutent ad University of Trento and Free University of Bozen
+## PhD student at University of Trento and Free University of Bozen
+## Merges WB and TREND datasets, creates indices of EPs, and prepares final dataset
 
 
 #########  Setup #########
@@ -22,8 +23,8 @@ library(tidyr)
 #########  Load Data #########
 
 # Datasets
-df_wb <- read.csv("Data/WB/WB_China_2000_2015.csv")
-df_trend <- read.csv("Data/TREND/TREND_China_2000_2015.csv")
+df_wb <- read.csv("Data/WB/WB_China_2000_2015.csv") # Generated in Inspecting WB Database.R
+df_trend <- read.csv("Data/TREND/TREND_China_2000_2015.csv") # Generated in Inspecting TREND Dataset.R
 
 # WTO-X datasets
 wto_x_ac <- read_excel("Data/WB/DTA 1.0 - Horizontal Content (v2).xlsx", sheet = "WTO-X AC")

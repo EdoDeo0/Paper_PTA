@@ -3,7 +3,7 @@
 ######################################
 
 ## Author: Edoardo Vitella
-## PhD stutent ad University of Trento and Free University of Bozen
+## PhD student at University of Trento and Free University of Bozen
 ## Date: November 2025
 ## Dataset available at: https://www.chaire-epi.ulaval.ca/en/trend
 
@@ -26,7 +26,7 @@ library(labelled)
 
 # Loading data
 df <- read.csv("Data/TREND/trend2022.csv", sep = ";") # Dataset
-codes <- read.csv("Data/TREND/TREND_2022_SCHEMA_COMPLETO.csv", sep = ",") # Variables description
+codes <- read.csv("Data/TREND/TREND_2022_Description.csv", sep = ",") # Variables description
 
 # Attaching variable labels
 variable_labels <- setNames(codes$Descrizione, codes$Nome.Variabile)
@@ -53,6 +53,8 @@ df_china_2000_2015 <- df_china_2000_2015 %>%
 
 # Save China 2000-2015 dataset for future merge
 write.csv(df_china_2000_2015, "Data/TREND/TREND_China_2000_2015.csv", row.names = FALSE)
+
+
 
 
 ######### Graphs on the whole sample #########

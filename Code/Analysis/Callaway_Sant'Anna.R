@@ -3,7 +3,7 @@
 ########################################################
 
 ## Author: Edoardo Vitella
-## PhD stutent ad University of Trento and Free University of Bozen
+## PhD stutent at University of Trento and Free University of Bozen
 ## Implementation of Callaway and Sant'Anna (2021) DiD esimator
 
 

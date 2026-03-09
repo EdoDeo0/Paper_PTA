@@ -3,8 +3,8 @@
 #############################
 
 ## Author: Edoardo Vitella
-## PhD stutent ad University of Trento and Free University of Bozen
-## PPML Estimation without zeros fill-in (onunly positive export flows) using fepois from fixest package
+## PhD student at University of Trento and Free University of Bozen
+## PPML Estimation without zeros fill-in (only positive export flows) using fepois from fixest package
 
 
 # ─────────────────────────────────────────────────────────────────────

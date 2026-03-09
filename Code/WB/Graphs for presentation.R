@@ -3,7 +3,7 @@
 ####################################################
 
 ## Author: Edoardo Vitella
-## PhD stutent ad University of Trento and Free University of Bozen
+## PhD student at University of Trento and Free University of Bozen
 ## Date: November 2025
 ## Dataset available at: https://datatopics.worldbank.org/dta/table.html
 

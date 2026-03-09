@@ -1,0 +1,320 @@
+Categoria,Nome Variabile,Descrizione,Tipo di Dato,Valori Unici,Non-Null,Totale Righe,sort_key
+METADATI,Trade.Agreement,Unique identifier for each trade agreement in the database,object,775,775,775,1
+METADATI,Dyads,Number of country dyads (bilateral pairs) comprising the agreement,float64,58,721,775,1
+METADATI,EC_Partners,Indicator whether European Union is a partner to the agreement,object,4,775,775,1
+METADATI,HBTypeCode,Agreement type classification according to Hofmann-Bates taxonomy,float64,5,467,775,1
+METADATI,Language,Official language or languages of the agreement,float64,6,724,775,1
+METADATI,NorthSouth,"Geo-economic classification (0=North-North, 1=North-South, 2=South-South)",int64,3,775,775,1
+METADATI,Number,Sequential identification number,object,771,775,775,1
+METADATI,NumberMS,Number of Member States in the agreement,float64,43,722,775,1
+METADATI,Sectoral,Indicator of sectoral (0) vs. general (1) agreement,float64,2,712,775,1
+METADATI,TypeDepth,Agreement depth scale from shallow (1) to deep (6) trade agreements,float64,6,680,775,1
+METADATI,TypeMemb,Type of membership structure,float64,7,724,775,1
+METADATI,US_Partners,Indicator whether United States is a partner,object,4,775,775,1
+METADATI,WTOListed,"Indicator of WTO notification (0=no, 1=yes)",float64,2,708,775,1
+METADATI,WTOTypeCode,WTO agreement classification,object,4,399,775,1
+METADATI,Year,Year of agreement signature or entry into force,int64,71,775,775,1
+REGIONALI,reg_africa,Binary indicator: agreement involves African countries,float64,2,722,775,2
+REGIONALI,reg_americas,Binary indicator: agreement involves American countries,float64,2,722,775,2
+REGIONALI,reg_asia,Binary indicator: agreement involves Asian countries,float64,2,722,775,2
+REGIONALI,reg_europe,Binary indicator: agreement involves European countries,float64,2,722,775,2
+REGIONALI,reg_intercontinental,Binary indicator: agreement is intercontinental,float64,2,722,775,2
+REGIONALI,reg_oceania,Binary indicator: agreement involves Oceania countries,float64,2,722,775,2
+NORME AMBIENTALI,X14.04.15.Other.ref.Stockholm.Declaration,Environmental norm: 14 04 15 Other ref Stockholm Declaration,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.17.Other.ref.Rio.Declaration.of.1992,Environmental norm: 14 04 17 Other ref Rio Declaration of 1992,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.18.Other.ref.Agenda.21.of.1992,Environmental norm: 14 04 18 Other ref Agenda 21 of 1992,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.19.Other.ref.Johannesburg.Declaration.2002,Environmental norm: 14 04 19 Other ref Johannesburg Declaration 2002,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.20.Other.ref.Johannesburg.Plan.of.Implementation.2002,Environmental norm: 14 04 20 Other ref Johannesburg Plan of Implementation 2002,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.21.Other.ref.Rio.20.outcome.document,Environmental norm: 14 04 21 Other ref Rio 20 outcome document,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.22.Other.ref.UNEP,Environmental norm: 14 04 22 Other ref UNEP,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.24.Other.ref.REDD,Environmental norm: 14 04 24 Other ref REDD,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.06.Other.ref.Stockholm.Convention,Environmental norm: 14 04 06 Other ref Stockholm Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.07.Other.ref.RAMSAR.Convention,Environmental norm: 14 04 07 Other ref RAMSAR Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.08.Other.ref.CCAMLR,Environmental norm: 14 04 08 Other ref CCAMLR,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.09.Other.ref.Whaling.Convention,Environmental norm: 14 04 09 Other ref Whaling Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.10.Other.ref.UNFCCC,Environmental norm: 14 04 10 Other ref UNFCCC,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.11.Other.ref.Kyoto.Protocol,Environmental norm: 14 04 11 Other ref Kyoto Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.12.Other.ref.CBD,Environmental norm: 14 04 12 Other ref CBD,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.14.Other.ref.Nagoya.Protocol,Environmental norm: 14 04 14 Other ref Nagoya Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.11.Prevalence.Kyoto.Protocol,Environmental norm: 14 03 11 Prevalence Kyoto Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.12.Prevalence.CBD,Environmental norm: 14 03 12 Prevalence CBD,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.13.Prevalence.Cartagena.Protocol,Environmental norm: 14 03 13 Prevalence Cartagena Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.16.Prevalence.other.agreements.related.to.the.environment,Environmental norm: 14 03 16 Prevalence other agreements related to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.01.Other.ref.CITES,Environmental norm: 14 04 01 Other ref CITES,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.02.Other.ref.Montreal.Protocol,Environmental norm: 14 04 02 Other ref Montreal Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.03.Other.ref.Basel.Convention,Environmental norm: 14 04 03 Other ref Basel Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.04.Other.ref.MARPOL,Environmental norm: 14 04 04 Other ref MARPOL,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.02.Prevalence.Montreal.Protocol,Environmental norm: 14 03 02 Prevalence Montreal Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.03.Prevalence.Basel.Convention,Environmental norm: 14 03 03 Prevalence Basel Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.04.Prevalence.MARPOL,Environmental norm: 14 03 04 Prevalence MARPOL,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.05.Prevalence.Rotterdam.Convention,Environmental norm: 14 03 05 Prevalence Rotterdam Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.06.Prevalence.Stockholm.Convention,Environmental norm: 14 03 06 Prevalence Stockholm Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.07.Prevalence.Ramsar.Convention,Environmental norm: 14 03 07 Prevalence Ramsar Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.08.Prevalence.CCAMLR,Environmental norm: 14 03 08 Prevalence CCAMLR,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.09.Prevalence.International.Convention.for.the.Regulation.of.Whaling,Environmental norm: 14 03 09 Prevalence International Convention for the Regulation of Whaling,int64,2,775,775,3
+NORME AMBIENTALI,X2.02.01.Laws.and.regulations.should.provide.for.high.levels.of.environmental.protection,High levels of environmental protection - Passive observation that national measures should provide for high levels of environmental protection.,int64,2,775,775,3
+NORME AMBIENTALI,X2.02.02.Commitment.to.enhance..strengthen..improve.levels.of.environmental.protection,Commitment to enhance environmental protection - Active commitment to change national measures to provide better/higher levels of environmental protection over time.,int64,2,775,775,3
+NORME AMBIENTALI,X2.03.Definition.of.environmental.law..environmental.governance..etc.,"Definition of environmental law - Formal definition of what constitutes environmental law, environmental measures, and related governance terms.",int64,2,775,775,3
+NORME AMBIENTALI,X2.04.Not.for.protectionist.purposes,"Not for protectionist purposes - Environmental measures should not be adopted for trade protectionist, discriminatory or unnecessary purposes.",int64,2,775,775,3
+NORME AMBIENTALI,X3.01.01.Scientific.knowledge.when.designing.environmental.measures,"Scientific knowledge when designing measures - Obligation to use scientific knowledge and technical data when designing, preparing, adopting or implementing environmental measures.",int64,2,775,775,3
+NORME AMBIENTALI,X3.01.02.Scientific.knowledge.when.making.environmental.assessment,Scientific knowledge in environmental assessment - Obligation to consider scientific evidence in conducting environmental risk assessment.,int64,2,775,775,3
+NORME AMBIENTALI,X3.02.01.Public.participation.in.the.adoption.of.environmental.measures,"Public participation in adoption of measures - Right of citizens, NGOs and stakeholders to participate in adoption of environmental measures through consultations, comments and participation.",int64,2,775,775,3
+NORME AMBIENTALI,X3.02.02.Public.participation.in.environmental.impact.assessment,Public participation in EIA - Right of public participation in environmental impact assessment for projects with significant environmental effects.,int64,2,775,775,3
+NORME AMBIENTALI,X1.10.01.Environmental.protection.as.a.precondition.for.trade.or.development,"Environmental protection as precondition for trade or development - Environmental protection recognized as essential for growth, trade, liberalization or economic development.",int64,2,775,775,3
+NORME AMBIENTALI,X1.10.02.Reference.to.mutual.supportiveness.between.enviro..trade.and.dev,"Mutual supportiveness between environment and trade/development - Statement that protection of environment and trade/development ARE mutually supportive. Causal claims (is/are), not normative claims (should/could).",int64,2,775,775,3
+NORME AMBIENTALI,X1.11.Recognition.of.a.development.gap.or.of.different.capabilities,Recognition of development gap or different capabilities - Recognition of development gap between countries or of developing countries special needs and respective circumstances on environmental matters.,int64,2,775,775,3
+NORME AMBIENTALI,X1.12.Cost.benefit.analysis,Cost-benefit analysis - Taking into account costs and benefits when designing environmental measures. Includes cost-effective environmental measures.,int64,2,775,775,3
+NORME AMBIENTALI,X1.13.Business.actors.contribute.to.environmental.protection,Business actors contribute to environmental protection - Recognition of role or contribution of private sector in environmental protection. Excludes NGO and civil society.,int64,2,775,775,3
+NORME AMBIENTALI,X2.01.01.Inappropriate.to.encourage.trade.by.relaxing.environmental.measures,Inappropriate to encourage trade by relaxing environmental measures - Obligation not to encourage trade by weakening or reducing levels of protection in environmental laws.,int64,2,775,775,3
+NORME AMBIENTALI,X2.01.02.Inappropriate.to.encourage.investment.by.relaxing.environmental.measures,Inappropriate to encourage investment by relaxing environmental measures - Obligation not to encourage investment by lowering domestic environmental standards.,int64,2,775,775,3
+NORME AMBIENTALI,X2.01.03.Maintain.existing.level.of.environmental.protection,Maintain existing level of environmental protection - Formal commitment to maintain at least the level of protection that exists.,int64,2,775,775,3
+NORME AMBIENTALI,X1.07.03.Sovereignty.over.hydrobiological.and.fishery.resources,Sovereignty over hydrobiological and fishery resources - Sovereign rights over fishery resources in territorial waters. Distinguished from protection of fishery resources (see 10.04.01).,int64,2,775,775,3
+NORME AMBIENTALI,X1.07.04.Sovereignty.over.other.specific.resources,"Sovereignty over other specific resources - Includes sovereignty over minerals, water, forests, and other specific natural resources not otherwise classified.",int64,2,775,775,3
+NORME AMBIENTALI,X1.08.01.Sovereignty.in.determining.its.own.environmental.policies.according.to.State.priorities,"Sovereignty in determining own environmental policies - Recognition of countries prerogative to establish their own levels of environmental protection, modify environmental laws and policies, and set priorities. Includes right to set protection level higher than minimum.",int64,2,775,775,3
+NORME AMBIENTALI,X1.08.02.Sovereignty.in.the.enforcement.of.environmental.measures,Sovereignty in the enforcement of environmental measures - Recognition of States discretion with respect to compliance matters and allocation of resources to enforcement. Includes Party ability to interpret its own measures.,int64,2,775,775,3
+NORME AMBIENTALI,X1.08.03.Sovereignty.or.independence.of.national.tribunals.in.the.application.of.environmental.measures,Sovereignty or independence of national tribunals - Recognition of independence and sovereignty of national tribunals in applying environmental measures.,int64,2,775,775,3
+NORME AMBIENTALI,X1.08.04.Other.norms.on.regulatory.sovereignty,Other norms on regulatory sovereignty - Other norms on sovereignty over environmental regulation not elsewhere classified.,int64,2,775,775,3
+NORME AMBIENTALI,X1.09.01.No.extraterritorial.enforcement.activities,No extraterritorial enforcement activities - Explicit prohibition of enforcement activities in the territory of another Party.,int64,2,775,775,3
+NORME AMBIENTALI,X1.09.02.No.right.of.action.under.a.Party.s.domestic.law,No right of action under domestic law - No right of action under a Party domestic law against another Party on grounds of inconsistency with the agreement.,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.25.Other.ref.Agenda.2030.or.Sustainable.Development.Goals,Environmental norm: 14 04 25 Other ref Agenda 2030 or Sustainable Development Goals,int64,2,775,775,3
+NORME AMBIENTALI,X1.02.Common.but.differentiated.responsibilities.principle,"Common but differentiated responsibilities principle - Includes two necessary and joint elements: common responsibility of States to protect the environment, and the need to take into account different circumstances of a situation. Could be limited to a specific environmental issue such as climate change.",int64,2,775,775,3
+NORME AMBIENTALI,X1.03.Prevention.principle,Prevention principle - Responsibility of States to ensure that activities within their jurisdiction do not cause damage to the environment. Refers to known risks rather than uncertainty (see 1.04 for precautionary principle).,int64,2,775,775,3
+NORME AMBIENTALI,X1.04.Precautionary.principle,Precautionary principle - Refers to preventing harm by taking action when there is lack of scientific certainty. Insufficient scientific evidence shall not be used as a reason to postpone or reject environmental measures.,int64,2,775,775,3
+NORME AMBIENTALI,X1.05.Polluter.pays.principle,Polluter pays principle - The polluter should bear the cost of pollution. Environmental externalities should be internalized. Includes mentions of extended producer responsibility.,int64,2,775,775,3
+NORME AMBIENTALI,X1.06.Damage.rectified.at.source,Damage rectified at source - Aims to correct whatever damage is caused before it spreads to other areas. As opposed to prevention principle which aims to avoid causing damage at all.,int64,2,775,775,3
+NORME AMBIENTALI,X1.07.01.Sovereignty.over.natural.resources.in.general,"Sovereignty over natural resources in general - Includes reference to sovereign right to exploit, conserve, administer and manage natural resources. Directly or indirectly expressed.",int64,2,775,775,3
+NORME AMBIENTALI,X1.07.02.Sovereignty.over.genetic.resources,Sovereignty over genetic resources - Recognition of sovereign rights and authority over genetic resources as established by the Convention on Biological Diversity (CBD).,int64,2,775,775,3
+NORME AMBIENTALI,X7.06.Prohibit.the.export.to.the.other.Party.of.environmental.good.whose.use.or.imports.is.prohibited.within.that.Party.s.territory,Environmental norm: 7 06 Prohibit the export to the other Party of environmental good whose use or imports is prohibited within that Party s territory,int64,2,775,775,3
+NORME AMBIENTALI,X7.07.Prohibit.the.import.of.environmental.good.from.a.Party.where.its.use.or.export.is.prohibited.by.that.Party,Environmental norm: 7 07 Prohibit the import of environmental good from a Party where its use or export is prohibited by that Party,int64,2,775,775,3
+NORME AMBIENTALI,X7.08.Cooperate.in.the.prevention.of.deceptive.practices,Environmental norm: 7 08 Cooperate in the prevention of deceptive practices,int64,2,775,775,3
+NORME AMBIENTALI,X7.09.Vague.commitments.to.cooperate,Environmental norm: 7 09 Vague commitments to cooperate,int64,2,775,775,3
+NORME AMBIENTALI,X8.01.01.01.Necessary,Environmental norm: 8 01 01 01 Necessary,int64,2,775,775,3
+NORME AMBIENTALI,X8.01.01.02.Not.necessary,Environmental norm: 8 01 01 02 Not necessary,int64,2,775,775,3
+NORME AMBIENTALI,X8.01.02.Conservation.of.natural.resources,Environmental norm: 8 01 02 Conservation of natural resources,int64,2,775,775,3
+NORME AMBIENTALI,X8.01.03.Protection.of.the.environment,Environmental norm: 8 01 03 Protection of the environment,int64,2,775,775,3
+NORME AMBIENTALI,X7.04.01.Harmonization.of.environmental.measures,Environmental norm: 7 04 01 Harmonization of environmental measures,int64,2,775,775,3
+NORME AMBIENTALI,X7.04.02.Alignment.of.a.Party.s.legislation.to.the.other.Party.s,Environmental norm: 7 04 02 Alignment of a Party s legislation to the other Party s,int64,2,775,775,3
+NORME AMBIENTALI,X7.04.03.Avoid.exceptional.national.environmental.standards,Environmental norm: 7 04 03 Avoid exceptional national environmental standards,int64,2,775,775,3
+NORME AMBIENTALI,X7.04.04.Mutual.recognition,Environmental norm: 7 04 04 Mutual recognition,int64,2,775,775,3
+NORME AMBIENTALI,X7.04.05.Harmonization.not.to.be.used.as.a.false.pretense.to.lower.environmental.protection,Environmental norm: 7 04 05 Harmonization not to be used as a false pretense to lower environmental protection,int64,2,775,775,3
+NORME AMBIENTALI,X7.04.06.Possibility.to.opt.out.of.harmonized.environmental.norms,Environmental norm: 7 04 06 Possibility to opt out of harmonized environmental norms,int64,2,775,775,3
+NORME AMBIENTALI,X7.04.07.Not.the.Party.s.intentions.to.harmonize.their.environmental.standards,Environmental norm: 7 04 07 Not the Party s intentions to harmonize their environmental standards,int64,2,775,775,3
+NORME AMBIENTALI,X7.05.Negotiations.of.environmental.agreements,Environmental norm: 7 05 Negotiations of environmental agreements,int64,2,775,775,3
+NORME AMBIENTALI,X7.02.02.Specific.means.to.conduct.scientific.cooperation,Environmental norm: 7 02 02 Specific means to conduct scientific cooperation,int64,2,775,775,3
+NORME AMBIENTALI,X7.02.03.Creation.of.joint.research.institutions,Environmental norm: 7 02 03 Creation of joint research institutions,int64,2,775,775,3
+NORME AMBIENTALI,X7.02.04.Joint.environmental.assessment.and.study.or.monitoring.of.environmental.concerns,Environmental norm: 7 02 04 Joint environmental assessment and study or monitoring of environmental concerns,int64,2,775,775,3
+NORME AMBIENTALI,X7.03.01.General.obligation.to.exchange.information.related.to.the.environment,Environmental norm: 7 03 01 General obligation to exchange information related to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X7.03.02.Specific.means.to.exchange.information,Environmental norm: 7 03 02 Specific means to exchange information,int64,2,775,775,3
+NORME AMBIENTALI,X7.03.03.Early.notification.or.exchange.of.information.in.case.of.natural.disasters..environmental.catastrophes.or.accidents,Environmental norm: 7 03 03 Early notification or exchange of information in case of natural disasters  environmental catastrophes or accidents,int64,2,775,775,3
+NORME AMBIENTALI,X7.03.04.Provision.of.information.when.taking.measures.to.protect.the.environment,Environmental norm: 7 03 04 Provision of information when taking measures to protect the environment,int64,2,775,775,3
+NORME AMBIENTALI,X7.03.05.Communication.between.customs.authorities.on.offenses.related.to.environmental.protection,Environmental norm: 7 03 05 Communication between customs authorities on offenses related to environmental protection,int64,2,775,775,3
+NORME AMBIENTALI,X6.02.01.Promotion.of.unspecified.voluntary.measures,Environmental norm: 6 02 01 Promotion of unspecified voluntary measures,int64,2,775,775,3
+NORME AMBIENTALI,X6.02.02.Promotion.of.specific.voluntary.measures,Environmental norm: 6 02 02 Promotion of specific voluntary measures,int64,2,775,775,3
+NORME AMBIENTALI,X6.03.01.Unspecified.economic.or.market.instruments,Environmental norm: 6 03 01 Unspecified economic or market instruments,int64,2,775,775,3
+NORME AMBIENTALI,X6.03.02.Specific.economic.or.market.instruments,Environmental norm: 6 03 02 Specific economic or market instruments,int64,2,775,775,3
+NORME AMBIENTALI,X7.01.01.Encourage.production.of.environmental.goods.and.services,Environmental norm: 7 01 01 Encourage production of environmental goods and services,int64,2,775,775,3
+NORME AMBIENTALI,X7.01.02.01.General.encouragement,Environmental norm: 7 01 02 01 General encouragement,int64,2,775,775,3
+NORME AMBIENTALI,X7.01.02.02.Encouragement.for.specific.goods.and.services,Environmental norm: 7 01 02 02 Encouragement for specific goods and services,int64,2,775,775,3
+NORME AMBIENTALI,X7.02.01.Conduct.joint.scientific.research,Environmental norm: 7 02 01 Conduct joint scientific research,int64,2,775,775,3
+NORME AMBIENTALI,X8.09.03.Services.on.protection.of.the.environment,Environmental norm: 8 09 03 Services on protection of the environment,int64,2,775,775,3
+NORME AMBIENTALI,X8.09.04.Norms.on.environmental.services,Environmental norm: 8 09 04 Norms on environmental services,int64,2,775,775,3
+NORME AMBIENTALI,X8.09.05.Exclusion.of.environmental.sectors.from.the.liberalization.of.services,Environmental norm: 8 09 05 Exclusion of environmental sectors from the liberalization of services,int64,2,775,775,3
+NORME AMBIENTALI,X8.09.06.Right.to.maintain.or.adopt.any.measures.in.regards.of.a.specific.sector.of.services,Environmental norm: 8 09 06 Right to maintain or adopt any measures in regards of a specific sector of services,int64,2,775,775,3
+NORME AMBIENTALI,X8.10.SPS.measures.and.the.environment,Environmental norm: 8 10 SPS measures and the environment,int64,2,775,775,3
+NORME AMBIENTALI,X8.11.Exception.to.the.free.movement.of.persons,Environmental norm: 8 11 Exception to the free movement of persons,int64,2,775,775,3
+NORME AMBIENTALI,X9.01.01.Technical.assistance..training.or.capacity.building.provided.to.another.Party,Environmental norm: 9 01 01 Technical assistance  training or capacity building provided to another Party,int64,2,775,775,3
+NORME AMBIENTALI,X9.01.02.Technical.assistance..training.or.capacity.building.provided.to.non.state.actors,Environmental norm: 9 01 02 Technical assistance  training or capacity building provided to non state actors,int64,2,775,775,3
+NORME AMBIENTALI,X8.05.04.Cooperation.on.green.public.procurement,Environmental norm: 8 05 04 Cooperation on green public procurement,int64,2,775,775,3
+NORME AMBIENTALI,X8.06.01.01.Exceptions.allowing.agricultural.subsidies,Environmental norm: 8 06 01 01 Exceptions allowing agricultural subsidies,int64,2,775,775,3
+NORME AMBIENTALI,X8.06.01.02.Other.norms.allowing.subsidies,Environmental norm: 8 06 01 02 Other norms allowing subsidies,int64,2,775,775,3
+NORME AMBIENTALI,X8.06.02.Prevention.of.subsidies.harmful.to.the.environment,Environmental norm: 8 06 02 Prevention of subsidies harmful to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X8.07.Safeguard.measures.on.environmental.grounds,Environmental norm: 8 07 Safeguard measures on environmental grounds,int64,2,775,775,3
+NORME AMBIENTALI,X8.08.Obligation.to.respect.the.environment.in.outward.processing.zones,Environmental norm: 8 08 Obligation to respect the environment in outward processing zones,int64,2,775,775,3
+NORME AMBIENTALI,X8.09.01.Services.on.Life.or.health.of.animal.or.plant,Environmental norm: 8 09 01 Services on Life or health of animal or plant,int64,2,775,775,3
+NORME AMBIENTALI,X8.09.02.Services.on.conservation.of.natural.resources,Environmental norm: 8 09 02 Services on conservation of natural resources,int64,2,775,775,3
+NORME AMBIENTALI,X8.03.06.Right.to.maintain.or.adopt.any.measures.in.regards.of.investment.in.a.specific.sector,Environmental norm: 8 03 06 Right to maintain or adopt any measures in regards of investment in a specific sector,int64,2,775,775,3
+NORME AMBIENTALI,X8.03.07.Exclusion.of.ISDS,Environmental norm: 8 03 07 Exclusion of ISDS,int64,2,775,775,3
+NORME AMBIENTALI,X8.04.01.Exclusion.of.environmentally.harmful.inventions.from.patentability,Environmental norm: 8 04 01 Exclusion of environmentally harmful inventions from patentability,int64,2,775,775,3
+NORME AMBIENTALI,X8.04.02.Use.of.geographical.indications.to.protect.the.environment,Environmental norm: 8 04 02 Use of geographical indications to protect the environment,int64,2,775,775,3
+NORME AMBIENTALI,X8.04.03.Other.norms.on.intellectual.property.and.the.environment,Environmental norm: 8 04 03 Other norms on intellectual property and the environment,int64,2,775,775,3
+NORME AMBIENTALI,X8.05.01.General.exceptions,Environmental norm: 8 05 01 General exceptions,int64,2,775,775,3
+NORME AMBIENTALI,X8.05.02.Technical.specification.or.restriction.in.tender.procedure,Environmental norm: 8 05 02 Technical specification or restriction in tender procedure,int64,2,775,775,3
+NORME AMBIENTALI,X8.05.03.Exclusion.of.specific.sectors.from.procurement.liberalization,Environmental norm: 8 05 03 Exclusion of specific sectors from procurement liberalization,int64,2,775,775,3
+NORME AMBIENTALI,X8.02.01.Right.to.conduct.a.risk.assessment,Environmental norm: 8 02 01 Right to conduct a risk assessment,int64,2,775,775,3
+NORME AMBIENTALI,X8.02.02.Right.to.prepare..elaborate..adopt.or.apply.TBT.measures.related.to.the.environment,Environmental norm: 8 02 02 Right to prepare  elaborate  adopt or apply TBT measures related to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X8.02.03.Right.to.derogate.from.the.regular.adoption.procedure.of.a.TBT.measure.in.case.of.emergency,Environmental norm: 8 02 03 Right to derogate from the regular adoption procedure of a TBT measure in case of emergency,int64,2,775,775,3
+NORME AMBIENTALI,X8.03.01.General.on.investment,Environmental norm: 8 03 01 General on investment,int64,2,775,775,3
+NORME AMBIENTALI,X8.03.02.Specific.on.establishment,Environmental norm: 8 03 02 Specific on establishment,int64,2,775,775,3
+NORME AMBIENTALI,X8.03.03.Specific.on.performance.requirements,Environmental norm: 8 03 03 Specific on performance requirements,int64,2,775,775,3
+NORME AMBIENTALI,X8.03.04.Specific.on.expropriation,Environmental norm: 8 03 04 Specific on expropriation,int64,2,775,775,3
+NORME AMBIENTALI,X8.03.05.Foreign.investment.ban.from.specific.sectors.related.to.the.environment,Environmental norm: 8 03 05 Foreign investment ban from specific sectors related to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X10.04.06.Prevent.harmful.subsidies,Environmental norm: 10 04 06 Prevent harmful subsidies,int64,2,775,775,3
+NORME AMBIENTALI,X10.05.01.Conservation.of.forests,Environmental norm: 10 05 01 Conservation of forests,int64,2,775,775,3
+NORME AMBIENTALI,X10.05.02.Sustainable.trade.in.forestry.products,Environmental norm: 10 05 02 Sustainable trade in forestry products,int64,2,775,775,3
+NORME AMBIENTALI,X10.05.03.Combat.illegal.exploitation.of.forests,Environmental norm: 10 05 03 Combat illegal exploitation of forests,int64,2,775,775,3
+NORME AMBIENTALI,X10.06.Endangered.species.and.their.illegal.trade,Environmental norm: 10 06 Endangered species and their illegal trade,int64,2,775,775,3
+NORME AMBIENTALI,X10.07.Wildlife.trafficking.as.a.serious.crime,Environmental norm: 10 07 Wildlife trafficking as a serious crime,int64,2,775,775,3
+NORME AMBIENTALI,X10.08.Whale.and.seals,Environmental norm: 10 08 Whale and seals,int64,2,775,775,3
+NORME AMBIENTALI,X10.09.Migratory.species,Environmental norm: 10 09 Migratory species,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.10.Other.norms.on.water,Environmental norm: 10 01 10 Other norms on water,int64,2,775,775,3
+NORME AMBIENTALI,X10.02.Wetlands,Environmental norm: 10 02 Wetlands,int64,2,775,775,3
+NORME AMBIENTALI,X10.03.Contaminated.land,Environmental norm: 10 03 Contaminated land,int64,2,775,775,3
+NORME AMBIENTALI,X10.04.01.Conservation.of.fishery.resources,Environmental norm: 10 04 01 Conservation of fishery resources,int64,2,775,775,3
+NORME AMBIENTALI,X10.04.02.Sustainable.trade.in.fishery.products,Environmental norm: 10 04 02 Sustainable trade in fishery products,int64,2,775,775,3
+NORME AMBIENTALI,X10.04.03.Combat.illegal.fishing,Environmental norm: 10 04 03 Combat illegal fishing,int64,2,775,775,3
+NORME AMBIENTALI,X10.04.04.Prevent.pollution.arising.from.fishing.activities,Environmental norm: 10 04 04 Prevent pollution arising from fishing activities,int64,2,775,775,3
+NORME AMBIENTALI,X10.04.05.Bycatch.prevention,Environmental norm: 10 04 05 Bycatch prevention,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.02.Coral.reefs,Environmental norm: 10 01 02 Coral reefs,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.03.Seas.and.oceans,Environmental norm: 10 01 03 Seas and oceans,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.04.Management.of.transboundary.waterways,Environmental norm: 10 01 04 Management of transboundary waterways,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.05.Management.of.rivers..basins.and.lakes,Environmental norm: 10 01 05 Management of rivers  basins and lakes,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.06.Protection.of.coastal.areas,Environmental norm: 10 01 06 Protection of coastal areas,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.07.Aquifers..ground.water..water.table,Environmental norm: 10 01 07 Aquifers  ground water  water table,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.08.Water.efficiency,Environmental norm: 10 01 08 Water efficiency,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.09.Marine.plastic.pollution,Environmental norm: 10 01 09 Marine plastic pollution,int64,2,775,775,3
+NORME AMBIENTALI,X9.02.Technology.transfer.in.the.field.of.environment,Environmental norm: 9 02 Technology transfer in the field of environment,int64,2,775,775,3
+NORME AMBIENTALI,X9.03.01.Funding.of.capacity.building..training..technical.assistance.and.technological.transfer,Environmental norm: 9 03 01 Funding of capacity building  training  technical assistance and technological transfer,int64,2,775,775,3
+NORME AMBIENTALI,X9.03.02.Funding.of.cooperation.activities,Environmental norm: 9 03 02 Funding of cooperation activities,int64,2,775,775,3
+NORME AMBIENTALI,X9.03.03.Each.Party.must.fund.its.implementation.of.the.agreement,Environmental norm: 9 03 03 Each Party must fund its implementation of the agreement,int64,2,775,775,3
+NORME AMBIENTALI,X9.03.04.Funding.provided.to.non.state.actors,Environmental norm: 9 03 04 Funding provided to non state actors,int64,2,775,775,3
+NORME AMBIENTALI,X9.04.Emergency.assistance.in.case.of.natural.disaster,Environmental norm: 9 04 Emergency assistance in case of natural disaster,int64,2,775,775,3
+NORME AMBIENTALI,X9.05.Capacity.building..training..technology.transfer..technical..financial.and.emergency.assistance.to.third.countries,Environmental norm: 9 05 Capacity building  training  technology transfer  technical  financial and emergency assistance to third countries,int64,2,775,775,3
+NORME AMBIENTALI,X10.01.01.Exclusion.of.water.from.the.agreement,Environmental norm: 10 01 01 Exclusion of water from the agreement,int64,2,775,775,3
+NORME AMBIENTALI,X10.22.03.Other.norms.on.disasters,Environmental norm: 10 22 03 Other norms on disasters,int64,2,775,775,3
+NORME AMBIENTALI,X10.23.Domestic.waste,Environmental norm: 10 23 Domestic waste,int64,2,775,775,3
+NORME AMBIENTALI,X10.24.01.Restrictions.on.export..import.or.transportation.of.hazardous.waste,Environmental norm: 10 24 01 Restrictions on export  import or transportation of hazardous waste,int64,2,775,775,3
+NORME AMBIENTALI,X10.24.02.Other.norms.on.hazardous.waste,Environmental norm: 10 24 02 Other norms on hazardous waste,int64,2,775,775,3
+NORME AMBIENTALI,X10.25.Pesticides..fertilizers..toxic.products..chemicals,Environmental norm: 10 25 Pesticides  fertilizers  toxic products  chemicals,int64,2,775,775,3
+NORME AMBIENTALI,X10.26.Organic.foods,Environmental norm: 10 26 Organic foods,int64,2,775,775,3
+NORME AMBIENTALI,X10.27.Food.waste,Environmental norm: 10 27 Food waste,int64,2,775,775,3
+NORME AMBIENTALI,X10.29.Noise.pollution,Environmental norm: 10 29 Noise pollution,int64,2,775,775,3
+NORME AMBIENTALI,X10.17.Air.pollution,Environmental norm: 10 17 Air pollution,int64,2,775,775,3
+NORME AMBIENTALI,X10.18.Environmental.standards.on.vehicle.emissions,Environmental norm: 10 18 Environmental standards on vehicle emissions,int64,2,775,775,3
+NORME AMBIENTALI,X10.19.Soil.erosion,Environmental norm: 10 19 Soil erosion,int64,2,775,775,3
+NORME AMBIENTALI,X10.20.Desertification..degradation..salinisation.and.acidification,Environmental norm: 10 20 Desertification  degradation  salinisation and acidification,int64,2,775,775,3
+NORME AMBIENTALI,X10.21.01.Biosafety..excluding.GMOs,Environmental norm: 10 21 01 Biosafety  excluding GMOs,int64,2,775,775,3
+NORME AMBIENTALI,X10.21.02.Genetically.modified.organisms,Environmental norm: 10 21 02 Genetically modified organisms,int64,2,775,775,3
+NORME AMBIENTALI,X10.22.01.Oil.spill,Environmental norm: 10 22 01 Oil spill,int64,2,775,775,3
+NORME AMBIENTALI,X10.22.02.Nuclear.safety.and.radiation,Environmental norm: 10 22 02 Nuclear safety and radiation,int64,2,775,775,3
+NORME AMBIENTALI,X10.15.01.01.Promote.renewable.production.of.energy,Environmental norm: 10 15 01 01 Promote renewable production of energy,int64,2,775,775,3
+NORME AMBIENTALI,X10.15.01.02.Promote.energy.efficiency,Environmental norm: 10 15 01 02 Promote energy efficiency,int64,2,775,775,3
+NORME AMBIENTALI,X10.15.02.01.Reduction.of.GHG.emissions,Environmental norm: 10 15 02 01 Reduction of GHG emissions,int64,2,775,775,3
+NORME AMBIENTALI,X10.15.02.02.Climate.change.adaptation,Environmental norm: 10 15 02 02 Climate change adaptation,int64,2,775,775,3
+NORME AMBIENTALI,X10.15.02.03.Cooperation.on.climate.change,Environmental norm: 10 15 02 03 Cooperation on climate change,int64,2,775,775,3
+NORME AMBIENTALI,X10.15.02.04.Harmonization.of.legislations.related.to.climate.change,Environmental norm: 10 15 02 04 Harmonization of legislations related to climate change,int64,2,775,775,3
+NORME AMBIENTALI,X10.15.02.05.Other.norms.on.climate.change,Environmental norm: 10 15 02 05 Other norms on climate change,int64,2,775,775,3
+NORME AMBIENTALI,X10.16.Ozone.layer.and.CFC,Environmental norm: 10 16 Ozone layer and CFC,int64,2,775,775,3
+NORME AMBIENTALI,X10.10.Invasive..alien.or.exotic.species,Environmental norm: 10 10 Invasive  alien or exotic species,int64,2,775,775,3
+NORME AMBIENTALI,X10.11.Shared.species,Environmental norm: 10 11 Shared species,int64,2,775,775,3
+NORME AMBIENTALI,X10.12.01.Disclosure.of.the.source.of.genetic.material,Environmental norm: 10 12 01 Disclosure of the source of genetic material,int64,2,775,775,3
+NORME AMBIENTALI,X10.12.02.Prior.informed.consent.from.the.appropriate.authority.when.accessing.genetic.resources,Environmental norm: 10 12 02 Prior informed consent from the appropriate authority when accessing genetic resources,int64,2,775,775,3
+NORME AMBIENTALI,X10.12.03.Equitable.sharing.of.benefits.arising.from.use.of.genetic.resources,Environmental norm: 10 12 03 Equitable sharing of benefits arising from use of genetic resources,int64,2,775,775,3
+NORME AMBIENTALI,X10.12.04.Other.norms.on.genetic.resources,Environmental norm: 10 12 04 Other norms on genetic resources,int64,2,775,775,3
+NORME AMBIENTALI,X10.13.Protected.areas..parks.and.natural.reserves,Environmental norm: 10 13 Protected areas  parks and natural reserves,int64,2,775,775,3
+NORME AMBIENTALI,X10.14.Biodiversity...others,Environmental norm: 10 14 Biodiversity   others,int64,2,775,775,3
+NORME AMBIENTALI,X13.04.01.03.State.State.arbitrage,Environmental norm: 13 04 01 03 State State arbitrage,int64,2,775,775,3
+NORME AMBIENTALI,X13.04.02.01.General.DSM.procedures,Environmental norm: 13 04 02 01 General DSM procedures,int64,2,775,775,3
+NORME AMBIENTALI,X13.04.02.02.Suspension.of.benefits,Environmental norm: 13 04 02 02 Suspension of benefits,int64,2,775,775,3
+NORME AMBIENTALI,X13.05.01.Exclusion.of.multilateral.environmental.agreements..DSM,Environmental norm: 13 05 01 Exclusion of multilateral environmental agreements  DSM,int64,2,775,775,3
+NORME AMBIENTALI,X13.05.02.Consent.to.use.the.DSM.of.a.multilateral.environmental.agreements,Environmental norm: 13 05 02 Consent to use the DSM of a multilateral environmental agreements,int64,2,775,775,3
+NORME AMBIENTALI,X13.05.03.Panel.shall.consult.or.defer.to.any.relevant.entity.the.interpretation.of.a.Party.s.obligation.under.a.multilateral.environmental.agreement,Environmental norm: 13 05 03 Panel shall consult or defer to any relevant entity the interpretation of a Party s obligation under a multilateral environmental agreement,int64,2,775,775,3
+NORME AMBIENTALI,X14.01.02.Ratification.Montreal.Protocol,Environmental norm: 14 01 02 Ratification Montreal Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.01.03.Ratification.Basel.Convention,Environmental norm: 14 01 03 Ratification Basel Convention,int64,2,775,775,3
+NORME AMBIENTALI,X13.02.01.Environmental.report.in.state.state.dispute.over.failure.to.enforce.environmental.measures.or.other.environmental.provisions.of.the.trade.agreement,Environmental norm: 13 02 01 Environmental report in state state dispute over failure to enforce environmental measures or other environmental provisions of the trade agreement,int64,2,775,775,3
+NORME AMBIENTALI,X13.02.02.Environmental.report.in.state.state.dispute.over.trade.provisions.of.the.trade.agreement,Environmental norm: 13 02 02 Environmental report in state state dispute over trade provisions of the trade agreement,int64,2,775,775,3
+NORME AMBIENTALI,X13.02.03.Environmental.report.in.investor.state.dispute,Environmental norm: 13 02 03 Environmental report in investor state dispute,int64,2,775,775,3
+NORME AMBIENTALI,X13.03.01.Non.jurisdictional.mechanism.for.failure.to.enforce,Environmental norm: 13 03 01 Non jurisdictional mechanism for failure to enforce,int64,2,775,775,3
+NORME AMBIENTALI,X13.03.02.Monetary.enforcement.assessments.for.failure.to.enforce,Environmental norm: 13 03 02 Monetary enforcement assessments for failure to enforce,int64,2,775,775,3
+NORME AMBIENTALI,X13.03.03.Suspension.of.benefits.in.case.of.failure.to.enforce.or.to.pay,Environmental norm: 13 03 03 Suspension of benefits in case of failure to enforce or to pay,int64,2,775,775,3
+NORME AMBIENTALI,X13.04.01.01.Preliminary.steps.before.resorting.to.specific.DSM,Environmental norm: 13 04 01 01 Preliminary steps before resorting to specific DSM,int64,2,775,775,3
+NORME AMBIENTALI,X13.04.01.02.Non.jurisdictional.DSM,Environmental norm: 13 04 01 02 Non jurisdictional DSM,int64,2,775,775,3
+NORME AMBIENTALI,X11.03.02.Direct.contact.between.non.state.actors.of.both.Parties,Environmental norm: 11 03 02 Direct contact between non state actors of both Parties,int64,2,775,775,3
+NORME AMBIENTALI,X11.04.Environmental.impact.assessment.of.the.agreement,Environmental norm: 11 04 Environmental impact assessment of the agreement,int64,2,775,775,3
+NORME AMBIENTALI,X12.01.Intergovernmental.committee,Environmental norm: 12 01 Intergovernmental committee,int64,2,775,775,3
+NORME AMBIENTALI,X12.02.01.Establishment.of.an.international.secretariat.to.administer.environmental.norms.of.the.treaty,Environmental norm: 12 02 01 Establishment of an international secretariat to administer environmental norms of the treaty,int64,2,775,775,3
+NORME AMBIENTALI,X12.02.02.Establishment.of.specialized.organization.on.specific.environmental.issue,Environmental norm: 12 02 02 Establishment of specialized organization on specific environmental issue,int64,2,775,775,3
+NORME AMBIENTALI,X12.03.Stakeholders.international.committee,Environmental norm: 12 03 Stakeholders international committee,int64,2,775,775,3
+NORME AMBIENTALI,X13.01.01.Environmental.experts.for.state.state.dispute.over.failure.to.enforce.environmental.measures.or.other.environmental.provisions.of.the.trade.agreement,Environmental norm: 13 01 01 Environmental experts for state state dispute over failure to enforce environmental measures or other environmental provisions of the trade agreement,int64,2,775,775,3
+NORME AMBIENTALI,X13.01.02.Environmental.experts.in.state.state.dispute.over.trade.provisions.of.the.trade.agreement,Environmental norm: 13 01 02 Environmental experts in state state dispute over trade provisions of the trade agreement,int64,2,775,775,3
+NORME AMBIENTALI,X10.30.Scenery.preservation,Environmental norm: 10 30 Scenery preservation,int64,2,775,775,3
+NORME AMBIENTALI,X10.31.Other.specific.environmental.issues,Environmental norm: 10 31 Other specific environmental issues,int64,2,775,775,3
+NORME AMBIENTALI,X11.01.Contact.point.on.environmental.matters,Environmental norm: 11 01 Contact point on environmental matters,int64,2,775,775,3
+NORME AMBIENTALI,X11.02.01.Communication.on.actions.undertaken.pursuant.to.this.agreement,Environmental norm: 11 02 01 Communication on actions undertaken pursuant to this agreement,int64,2,775,775,3
+NORME AMBIENTALI,X11.02.02.Commitment.to.communicate.the.decisions.or.recommendations.of.joint.institutions,Environmental norm: 11 02 02 Commitment to communicate the decisions or recommendations of joint institutions,int64,2,775,775,3
+NORME AMBIENTALI,X11.02.03.Commitment.to.make.available.communications.received.from.the.public,Environmental norm: 11 02 03 Commitment to make available communications received from the public,int64,2,775,775,3
+NORME AMBIENTALI,X11.02.04.Public.sessions.of.joint.institutions,Environmental norm: 11 02 04 Public sessions of joint institutions,int64,2,775,775,3
+NORME AMBIENTALI,X11.03.01.Public.participation.in.the.implementation.of.the.agreement,Environmental norm: 11 03 01 Public participation in the implementation of the agreement,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.15.Implementation.Stockholm.declaration,Environmental norm: 14 02 15 Implementation Stockholm declaration,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.16.Implementation.Rio.declaration.of.1992,Environmental norm: 14 02 16 Implementation Rio declaration of 1992,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.17.Implementation.Agenda.21.of.1992,Environmental norm: 14 02 17 Implementation Agenda 21 of 1992,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.18.Implementation.Johannesburg.declaration.of.2002,Environmental norm: 14 02 18 Implementation Johannesburg declaration of 2002,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.19.Implementation.2030.Agenda.or.Sustainable.Development.Goals,Environmental norm: 14 02 19 Implementation 2030 Agenda or Sustainable Development Goals,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.20.Implementation.Paris.Climate.Agreement,Environmental norm: 14 02 20 Implementation Paris Climate Agreement,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.21.Implementation.other.agreements.related.to.the.environment,Environmental norm: 14 02 21 Implementation other agreements related to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X14.03.01.Prevalence.CITES,Environmental norm: 14 03 01 Prevalence CITES,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.09.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 09 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.10.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 10 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.11.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 11 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.11.02.Implementation.of.a.specific.part,Environmental norm: 14 02 11 02 Implementation of a specific part,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.12.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 12 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.12.02.Implementation.of.a.specific.part,Environmental norm: 14 02 12 02 Implementation of a specific part,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.13.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 13 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.14.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 14 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.02.02.Implementation.of.a.specific.part,Environmental norm: 14 02 02 02 Implementation of a specific part,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.03.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 03 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.04.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 04 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.05.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 05 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.05.02.Implementation.of.a.specific.part,Environmental norm: 14 02 05 02 Implementation of a specific part,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.06.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 06 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.07.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 07 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.08.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 08 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.01.05.Ratification.Rotterdam.Convention,Environmental norm: 14 01 05 Ratification Rotterdam Convention,int64,2,775,775,3
+NORME AMBIENTALI,X14.01.10.Ratification.UNFCCC,Environmental norm: 14 01 10 Ratification UNFCCC,int64,2,775,775,3
+NORME AMBIENTALI,X14.01.11.Ratification.Kyoto.Protocol,Environmental norm: 14 01 11 Ratification Kyoto Protocol,int64,2,775,775,3
+NORME AMBIENTALI,X14.01.12.Ratification.CBD,Environmental norm: 14 01 12 Ratification CBD,int64,2,775,775,3
+NORME AMBIENTALI,X14.01.16.Ratification.other.agreements.related.to.the.environment,Environmental norm: 14 01 16 Ratification other agreements related to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.01.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 01 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.01.02.Implementation.of.a.specific.part,Environmental norm: 14 02 01 02 Implementation of a specific part,int64,2,775,775,3
+NORME AMBIENTALI,X14.02.02.01.Implementation.of.the.whole.treaty,Environmental norm: 14 02 02 01 Implementation of the whole treaty,int64,2,775,775,3
+NORME AMBIENTALI,X5.01.02.Non.binding.obligations,Environmental norm: 5 01 02 Non binding obligations,int64,2,775,775,3
+NORME AMBIENTALI,X5.02.Specific.governmental.action.for.enforcement,Environmental norm: 5 02 Specific governmental action for enforcement,int64,2,775,775,3
+NORME AMBIENTALI,X5.03.Private.access.to.remedies..procedural.guarantees.and.appropriate.sanctions,Environmental norm: 5 03 Private access to remedies  procedural guarantees and appropriate sanctions,int64,2,775,775,3
+NORME AMBIENTALI,X5.04.01.Commitment.to.consider.alleged.violation.brought.by.a.citizen.of.any.Party,Environmental norm: 5 04 01 Commitment to consider alleged violation brought by a citizen of any Party,int64,2,775,775,3
+NORME AMBIENTALI,X5.04.02.Commitment.to.consider.alleged.violation.brought.by.foreigners,Environmental norm: 5 04 02 Commitment to consider alleged violation brought by foreigners,int64,2,775,775,3
+NORME AMBIENTALI,X5.05.Cooperation.on.enforcement,Environmental norm: 5 05 Cooperation on enforcement,int64,2,775,775,3
+NORME AMBIENTALI,X5.06.Factual.report.on.enforcement,Environmental norm: 5 06 Factual report on enforcement,int64,2,775,775,3
+NORME AMBIENTALI,X6.01.Education.or.public.awareness,Environmental norm: 6 01 Education or public awareness,int64,2,775,775,3
+NORME AMBIENTALI,X4.11.Interaction.between.construction.activities.and.the.environment,Construction and environment - Environmental protection in construction activities including building energy performance.,int64,2,775,775,3
+NORME AMBIENTALI,X4.12.Interaction.between.agriculture.and.the.environment,Agriculture and environment - Environmental aspects in agricultural sector. Excludes specific issues like pesticides and GMOs.,int64,2,775,775,3
+NORME AMBIENTALI,X4.13.Interaction.between.indigenous.communities.or.traditional.knowledge.and.the.environment,Indigenous communities and environment - Role of indigenous communities and traditional knowledge in biodiversity conservation and sustainable use.,int64,2,775,775,3
+NORME AMBIENTALI,X4.14.Interaction.between.human.health.and.the.environment,Human health and environment - Connection between environmental protection and human health.,int64,2,775,775,3
+NORME AMBIENTALI,X4.15.Interaction.between.industrial.activities.and.the.environment,"Industrial activities and environment - Environmental protection in industrial activities, pollution and plant safety.",int64,2,775,775,3
+NORME AMBIENTALI,X4.16.Interaction.between.transport.and.the.environment,"Transport and environment - Environmental aspects in all types of transportation (air, maritime, road, public).",int64,2,775,775,3
+NORME AMBIENTALI,X4.17.Interaction.between.other.non.environmental.issues.and.the.environment,"Other non-environmental issues - Other interactions such as market economy transition, food security, regional development, culture.",int64,2,775,775,3
+NORME AMBIENTALI,X5.01.01.Binding.obligations,Environmental norm: 5 01 01 Binding obligations,int64,2,775,775,3
+NORME AMBIENTALI,X4.03.Interaction.between.energy.policies.and.the.environment,Energy and environment - Taking environmental concerns into account when designing energy policies. Distinguished from renewable energy promotion (see 10.15.01).,int64,2,775,775,3
+NORME AMBIENTALI,X4.04.Interaction.between.mining.and.the.environment,Mining and environment - Inclusion of environmental management and conservation measures in mining activities.,int64,2,775,775,3
+NORME AMBIENTALI,X4.05.Interaction.between.tourism.and.the.environment,Tourism and environment - Environmental protection in tourism sector. Includes sustainable and ecotourism.,int64,2,775,775,3
+NORME AMBIENTALI,X4.06.Interaction.between.gender.policies.and.the.environment,Gender and environment - Statement linking gender or womens issues to environmental protection as interacting issues.,int64,2,775,775,3
+NORME AMBIENTALI,X4.07.Interaction.between.social.issues.and.the.environment,"Social issues and environment - Consideration of poverty, employment, labour, standard of living in relation to environmental protection.",int64,2,775,775,3
+NORME AMBIENTALI,X4.08.Interaction.between.rural.development.and.the.environment,Rural development and environment - Environmental aspects in sustainable rural development.,int64,2,775,775,3
+NORME AMBIENTALI,X4.09.Interaction.between.urban.development.and.the.environment,Urban development and environment - Environmental protection in urban development and urban pollution control.,int64,2,775,775,3
+NORME AMBIENTALI,X4.10.Interaction.between.land.use.planning.and.the.environment,Land use planning and environment - Linking land use planning to environmental concerns.,int64,2,775,775,3
+NORME AMBIENTALI,X3.03.01.Publication.of.environmental.laws..regulations.and.administrative.rulings,"Publication of environmental laws - Obligation to publish and make available environmental laws, regulations and administrative decisions. Includes advance publication of proposed measures.",int64,2,775,775,3
+NORME AMBIENTALI,X3.03.02.Identification.of.measures..restrictions.or.prohibitions.in.terms.of.tariff,"Identification in tariff terms - Obligation to identify environmental measures, restrictions or prohibitions according to tariff classification.",int64,2,775,775,3
+NORME AMBIENTALI,X3.04.Commitment.to.monitor.the.state.of.the.environment,Monitor state of environment - Obligation to periodically prepare and publish reports on the state of the environment.,int64,2,775,775,3
+NORME AMBIENTALI,X3.05.Requirement.to.conduct.environmental.assessment,Environmental assessment requirement - Obligation to maintain appropriate procedures for assessing environmental impact of proposed projects with significant adverse effects.,int64,2,775,775,3
+NORME AMBIENTALI,X3.06.Commitment.to.invest.in.environmental.research.and.science,Investment in environmental research - Commitment to invest in environmental research and science to improve State own environmental capacity.,int64,2,775,775,3
+NORME AMBIENTALI,X3.07.Establish.or.support.national.standard.bodies,National standards bodies - Obligation to establish or support national organisms for environmental standardization.,int64,2,775,775,3
+NORME AMBIENTALI,X4.01.Coherence.in.general,Coherence in general - General commitment to coherence between environmental policies and other economic/sectoral policies.,int64,2,775,775,3
+NORME AMBIENTALI,X4.02.Coherence.with.domestic.trade.or.investment.policies,Coherence with trade/investment - Normative commitment to design trade and investment policies that are supportive with environmental protection.,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.26.Other.ref.Paris.Climate.Agreement,Environmental norm: 14 04 26 Other ref Paris Climate Agreement,int64,2,775,775,3
+NORME AMBIENTALI,X14.04.27.Other.ref.to.other.institutions.related.to.the.environment,Environmental norm: 14 04 27 Other ref to other institutions related to the environment,int64,2,775,775,3
+NORME AMBIENTALI,X14.05.Any.inconsistency.between.a.trade.agreement.and.any.other.agreement.shall.be.resolved.by.consultation,Environmental norm: 14 05 Any inconsistency between a trade agreement and any other agreement shall be resolved by consultation,int64,2,775,775,3
+NORME AMBIENTALI,X14.06.Prevalence.of.the.trade.agreement.in.case.of.inconsistency.with.any.other.agreement,Environmental norm: 14 06 Prevalence of the trade agreement in case of inconsistency with any other agreement,int64,2,775,775,3
+NORME AMBIENTALI,X14.07.01.International.standards.are.presumed.to.be.in.conformity.with.the.trade.agreement.s.obligations,Environmental norm: 14 07 01 International standards are presumed to be in conformity with the trade agreement s obligations,int64,2,775,775,3
+NORME AMBIENTALI,X14.07.02.International.standards.or.risk.assessments.carried.out.by.international.organizations.should.be.used.or.taken.into.account.when.designing.environmental.measures,Environmental norm: 14 07 02 International standards or risk assessments carried out by international organizations should be used or taken into account when designing environmental measures,int64,2,775,775,3
+NORME AMBIENTALI,X14.07.03.Right.to.adopt.stringer.standards.than.international.ones,Environmental norm: 14 07 03 Right to adopt stringer standards than international ones,int64,2,775,775,3
+NORME AMBIENTALI,X14.07.04.Party.should.use.methods.of.risk.assessment.developed.by.international.organizations,Environmental norm: 14 07 04 Party should use methods of risk assessment developed by international organizations,int64,2,775,775,3
+NORME AMBIENTALI,X15.OTHER.ENVIRONMENTAL.NORMS,Environmental norm: 15 OTHER ENVIRONMENTAL NORMS,int64,2,775,775,3
+NORME AMBIENTALI,X1.01.Preamble.refers.to.the.environment,"Preamble refers to the environment - Limited to the preamble of the main trade agreement. Excludes more specific preambles to chapters or side agreements. Includes references to environmental agreements, summits or declarations.",int64,2,775,775,3

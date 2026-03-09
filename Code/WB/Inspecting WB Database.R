@@ -3,7 +3,7 @@
 ####################################################
 
 ## Author: Edoardo Vitella
-## PhD stutent ad University of Trento and Free University of Bozen
+## PhD student at University of Trento and Free University of Bozen
 ## Date: November 2025
 ## Dataset available at: https://datatopics.worldbank.org/dta/table.html
 
@@ -24,7 +24,7 @@ library(ggplot2)
 #########  Data Management #########
 
 # Loading data
-WB_DTA <- read_dta("Data/WB/WB_DTA.dta") # Previously converted from .xlsx to .dta
+WB_DTA <- read_dta("Data/WB/WB_DTA.dta") # Previously converted from .xlsx to .dta in WB_Dataset_Conversion.do
 WB_DTA <- as.data.frame(WB_DTA)
 agreements_info <- read_excel("Data/WB/DTA 2.0 - Vertical Content (v2).xlsx", 
                    sheet = "Agreements")
