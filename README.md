@@ -67,12 +67,12 @@ The key treatment variables are indices of EP breadth/depth constructed from two
 ```
 Paper_PTA/
 ├── Code/
-│   ├── Merge/                          # Dataset construction pipeline
+│   ├── Merge/                                  # Dataset construction pipeline
 │   │   ├── 1_Build_Final_PTA_EP_Dataset.R      # Main pipeline (Steps 1–3 of dataset build)
 │   │   ├── 2_Build_Final_PTA_EP_Dataset.do     # Merge with Chinese customs data (Stata)
 │   │   ├── 3_FST_Conversion_Final_PTA_EP_Dataset.R  # Convert to .fst format
 │   │   └── Merge_TREND_WB.R                    # Standalone merge script (legacy)
-│   ├── Analysis/                       # Regression scripts
+│   ├── Analysis/                               # Regression scripts
 │   │   ├── Reg_PTA_04_02_26.do                 # OLS regressions (Stata)
 │   │   ├── PPML_Estimation.R                   # PPML regressions (R)
 │   │   └── Callaway_Sant'Anna.R                # Staggered DiD (R)
