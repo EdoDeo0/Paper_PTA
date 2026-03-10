@@ -207,7 +207,8 @@ cm_trend_int <- c(
 # ─────────────────────────────────────────────────────────────────────
 # RUNNING MODELS AND GENERATING TABLES
 # ─────────────────────────────────────────────────────────────────────
-
+library(lubridate)
+start = now()
 # Check if data file exists before running models
 stopifnot("File dati non trovato!" = file.exists(data_file))
 
@@ -256,3 +257,5 @@ cat("Tabelle in:", tables_output_dir, "\n")
 cat("Modelli in:", models_output_dir, "\n")
 cat("- 4 tabelle .tex\n")
 cat("- 24 model_*.rds (modelli singoli per summary())\n")
+
+cat("Tempo totale di esecuzione: ", now() - start, " secondi\n")
