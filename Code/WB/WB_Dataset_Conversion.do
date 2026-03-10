@@ -7,5 +7,7 @@
 // Phd at University of Trento and Free University of Bozen
 // Dataset available at: https://datatopics.worldbank.org/dta/table.html
 
+// This script converts the WB Dataset for PTAs into .dta format
+
 import excel "/Users/edoardovitella/Documents/Paper_PTA_DTA/WB Dataset/DTA 2.0 - Vertical Content (v2).xlsx", sheet("STATA") firstrow
 save "/Users/edoardovitella/Documents/Paper_PTA_DTA/WB Dataset/WB_DTA.dta"

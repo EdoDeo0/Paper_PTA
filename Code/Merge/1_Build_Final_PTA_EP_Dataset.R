@@ -1,6 +1,6 @@
-####################################################
-###### Build Final Dataset - Unified Pipeline ######
-####################################################
+#################################################################################
+###### Build Final PTA Environmental Provisions Dataset - Unified Pipeline ######
+#################################################################################
 
 ## Author: Edoardo Vitella
 ## PhD student at University of Trento and Free University of Bozen
@@ -817,4 +817,3 @@ print(names(df_indices))
 print("\n========================================")
 print("=== BUILD FINAL DATASET - PIPELINE COMPLETE ===")
 print("========================================")
-

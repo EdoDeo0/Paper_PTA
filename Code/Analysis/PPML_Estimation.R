@@ -25,7 +25,7 @@ threads_fst(8)
 
 # Set your own data file (not in the repo, file too big)
 data_file <- "/Users/edoardovitella/Desktop/PPML Estimation/final_dataset_pta_env_indices_compressed.fst" ## On Mac
-data_file <- "C:\\Users\\edodr\\Desktop\\PPML Estimation\\final_dataset_pta_env_indices_compressed.fst" ## On Windows
+data_file <- "Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst" ## On Windows
 out_dir <- here("Output/Analysis/PPML")
 tables_output_dir <- file.path(out_dir, "Tables")
 models_output_dir <- file.path(out_dir, "Models_Output")
