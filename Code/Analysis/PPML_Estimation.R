@@ -21,7 +21,7 @@ library(data.table)
 library(here)
 
 # Set the number of threads for fst (adjust based on your CPU)
-threads_fst(8)
+# threads_fst(8) # 8 threads is a good default for modern CPUs (especially for laptops), but adjust as needed
 
 # Set your own data file (not in the repo, file too big)
 data_file <- "/Users/edoardovitella/Desktop/PPML Estimation/final_dataset_pta_env_indices_compressed.fst" ## On Mac
