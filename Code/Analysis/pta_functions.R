@@ -92,6 +92,12 @@ load_formula_data <- function(data_file, formula_str, vcov = "HC1") {
 #' @param save_mode    What to save in the .rds: "stats" (smallest), "bundle"
 #'                     (list(model=..., stats=...)), or "model". Default: "stats".
 #'                     Use "bundle" only when you need summary() from saved files.
+#' @param requested_stats Character vector of stats to compute. Available keys:
+#'                     "nobs", "n_clust", "r2", "ar2", "wr2", "f_stat".
+#'                     Default: c("nobs", "n_clust", "r2").
+#' @param extra_fitstats If TRUE, also attempts to compute additional fit statistics
+#'                     (ar2, wr2, f_stat). Kept for backward compatibility.
+#'                     Default: FALSE.
 #' @return Named list: coefs, se, pval, nobs, n_clust, r2, ar2, wr2, f_stat,
 #'         fe_vars, vcov_label
 estimate_model <- function(formula_str,
@@ -100,7 +106,9 @@ estimate_model <- function(formula_str,
                            vcov = "HC1",
                            lean = TRUE,
                            save_path = NULL,
-                           save_mode = c("stats", "bundle", "model")) {
+                           save_mode = c("stats", "bundle", "model"),
+                           requested_stats = c("nobs", "n_clust", "r2"),
+                           extra_fitstats = FALSE) {
     estimator <- match.arg(estimator)
     save_mode <- match.arg(save_mode)
 
@@ -130,18 +138,42 @@ estimate_model <- function(formula_str,
         vcov_label = vcov_label
     )
 
-    # Safe statistics extraction:
-    # - n_clust via fitstat("g") was stable in your original scripts
-    # - r2 from sq.cor avoids an extra fitstat call in OLS
-    # - other stats are attempted but can be NA if unsupported with lean models
-    stats$n_clust <- tryCatch(fitstat(model, "g")[[1]], error = function(e) NA)
-    stats$r2 <- tryCatch(
-        if (!is.null(model$sq.cor)) unname(model$sq.cor) else fitstat(model, "r2")[[1]],
-        error = function(e) NA
-    )
-    stats$ar2 <- tryCatch(fitstat(model, "ar2")[[1]], error = function(e) NA)
-    stats$wr2 <- tryCatch(fitstat(model, "wr2")[[1]], error = function(e) NA)
-    stats$f_stat <- tryCatch(fitstat(model, "f.stat")[[1]], error = function(e) NA)
+    valid_stats <- c("nobs", "n_clust", "r2", "ar2", "wr2", "f_stat")
+    requested_stats <- unique(requested_stats)
+    if (isTRUE(extra_fitstats)) {
+        requested_stats <- unique(c(requested_stats, "ar2", "wr2", "f_stat"))
+    }
+    unknown_stats <- setdiff(requested_stats, valid_stats)
+    if (length(unknown_stats) > 0) {
+        warning("Unknown requested_stats key(s): ", paste(unknown_stats, collapse = ", "), " - ignored.")
+    }
+    requested_stats <- intersect(requested_stats, valid_stats)
+
+    # Initialize optional stats as NA; compute only those explicitly requested.
+    stats$n_clust <- NA_real_
+    stats$r2 <- NA_real_
+    stats$ar2 <- NA_real_
+    stats$wr2 <- NA_real_
+    stats$f_stat <- NA_real_
+
+    if ("n_clust" %in% requested_stats) {
+        stats$n_clust <- tryCatch(fitstat(model, "g")[[1]], error = function(e) NA_real_)
+    }
+    if ("r2" %in% requested_stats) {
+        stats$r2 <- tryCatch(
+            if (!is.null(model$sq.cor)) unname(model$sq.cor) else fitstat(model, "r2")[[1]],
+            error = function(e) NA_real_
+        )
+    }
+    if ("ar2" %in% requested_stats) {
+        stats$ar2 <- tryCatch(fitstat(model, "ar2")[[1]], error = function(e) NA_real_)
+    }
+    if ("wr2" %in% requested_stats) {
+        stats$wr2 <- tryCatch(fitstat(model, "wr2")[[1]], error = function(e) NA_real_)
+    }
+    if ("f_stat" %in% requested_stats) {
+        stats$f_stat <- tryCatch(fitstat(model, "f.stat")[[1]], error = function(e) NA_real_)
+    }
 
     if (!is.null(save_path)) {
         obj_to_save <- switch(save_mode,
@@ -168,6 +200,9 @@ estimate_model <- function(formula_str,
 #' @param vcov        Variance-covariance specification (see estimate_model). Default: "HC1".
 #' @param lean        Passed through to estimate_model(). Default: TRUE.
 #' @param save_mode   Passed through to estimate_model(). Default: "stats".
+#' @param requested_stats Passed through to estimate_model().
+#'                      Default: c("nobs", "n_clust", "r2").
+#' @param extra_fitstats Passed through to estimate_model(). Default: FALSE.
 #' @param prefix      Filename prefix for .rds files (default: "OLS" or "PPML")
 #' @return List of stats objects, one per formula
 run_block <- function(formulas,
@@ -178,6 +213,8 @@ run_block <- function(formulas,
                       vcov = "HC1",
                       lean = TRUE,
                       save_mode = "stats",
+                      requested_stats = c("nobs", "n_clust", "r2"),
+                      extra_fitstats = FALSE,
                       prefix = NULL) {
     estimator <- match.arg(estimator)
     if (is.null(prefix)) prefix <- toupper(estimator)
@@ -189,7 +226,10 @@ run_block <- function(formulas,
             models_dir,
             sprintf("%s_%s_%d.rds", prefix, gsub(" ", "_", block_name), i)
         )
-        estimate_model(formulas[[i]], estimator, data_file, vcov, lean, save_path, save_mode)
+        estimate_model(
+            formulas[[i]], estimator, data_file, vcov, lean,
+            save_path, save_mode, requested_stats, extra_fitstats
+        )
     })
 }
 
@@ -334,6 +374,16 @@ make_table <- function(stats_list,
         if (is.null(label)) {
             warning("Unknown stat key '", stat_key, "' - skipped.")
             next
+        }
+        if (all(sapply(stats_list, function(s) {
+            val <- s[[stat_key]]
+            is.null(val) || all(is.na(val))
+        }))) {
+            warning(
+                "Stat '", stat_key,
+                "' is not available in stats_list. ",
+                "Pass it in run_block(..., requested_stats = ...) to compute it."
+            )
         }
         vals <- sapply(stats_list, function(s) {
             val <- s[[stat_key]]

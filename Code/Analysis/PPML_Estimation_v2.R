@@ -67,6 +67,7 @@ cm_trend_int <- c(
 # RUNNING MODELS AND GENERATING TABLES
 # ─────────────────────────────────────────────────────────────────────
 start <- now()
+show_stats_ppml <- c("nobs", "n_clust")
 
 # BLOCK 1: WB No Interaction
 f1 <- c(
@@ -77,8 +78,8 @@ f1 <- c(
     "exp_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year"
 )
-stats1 <- run_block(f1, "WB No Interaction", "ppml", data_file, dirs$models, vcov = ~pdt)
-make_table(stats1, cm_wb, "PPML_WB_No_Interaction.tex", dirs$tables, digits = 5)
+stats1 <- run_block(f1, "WB No Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats1, cm_wb, "PPML_WB_No_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 # BLOCK 2: WB Interaction
 f2 <- c(
@@ -89,8 +90,8 @@ f2 <- c(
     "exp_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + year"
 )
-stats2 <- run_block(f2, "WB Interaction", "ppml", data_file, dirs$models, vcov = ~pdt)
-make_table(stats2, cm_wb_int, "PPML_WB_Interaction.tex", dirs$tables, digits = 5)
+stats2 <- run_block(f2, "WB Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats2, cm_wb_int, "PPML_WB_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 # BLOCK 3: TREND No Interaction
 f3 <- c(
@@ -101,8 +102,8 @@ f3 <- c(
     "exp_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + year"
 )
-stats3 <- run_block(f3, "TREND No Interaction", "ppml", data_file, dirs$models, vcov = ~pdt)
-make_table(stats3, cm_trend, "PPML_TREND_No_Interaction.tex", dirs$tables, digits = 5)
+stats3 <- run_block(f3, "TREND No Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats3, cm_trend, "PPML_TREND_No_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 # BLOCK 4: TREND Interaction
 f4 <- c(
@@ -113,8 +114,8 @@ f4 <- c(
     "exp_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year"
 )
-stats4 <- run_block(f4, "TREND Interaction", "ppml", data_file, dirs$models, vcov = ~pdt)
-make_table(stats4, cm_trend_int, "PPML_TREND_Interaction.tex", dirs$tables, digits = 5)
+stats4 <- run_block(f4, "TREND Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats4, cm_trend_int, "PPML_TREND_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 cat("\n=== COMPLETATO! ===\n")
 cat("Tabelle in:", dirs$tables, "\n")
