@@ -95,12 +95,11 @@ load_formula_data <- function(data_file, formula_str, vcov = "HC1") {
 #' @param requested_stats Character vector of stats to compute. Available keys:
 #'                     "nobs", "n_clust", "r2", "ar2", "wr2", "f_stat".
 #'                     Default: c("nobs", "n_clust", "r2").
-#' @param n_clust_method How to compute cluster counts when requested:
-#'                     "global-data" (default, counts unique cluster IDs once
-#'                     from the source data), "data" (counts unique cluster IDs
-#'                     in the loaded model data), or "fitstat"
-#'                     (uses fixest::fitstat(model, "g"), potentially less stable
-#'                     on very large lean models).
+#' @param n_clust_method Kept for backward compatibility; not used in the current
+#'                     implementation. n_clust is computed via
+#'                     fixest::fitstat(model, "g"), which returns the exact count
+#'                     of clusters used by feols/fepois (equivalent to Stata's
+#'                     e(N_clust1)).
 #' @param extra_fitstats If TRUE, also attempts to compute additional fit statistics
 #'                     (ar2, wr2, f_stat). Kept for backward compatibility.
 #'                     Default: FALSE.
@@ -114,13 +113,12 @@ estimate_model <- function(formula_str,
                            save_path = NULL,
                            save_mode = c("stats", "bundle", "model"),
                            requested_stats = c("nobs", "n_clust", "r2"),
-                           n_clust_method = c("global-data", "data", "fitstat"),
+                           n_clust_method = "data",
                            n_clust_override = NULL,
                            preloaded_data = NULL,
                            extra_fitstats = FALSE) {
     estimator <- match.arg(estimator)
     save_mode <- match.arg(save_mode)
-    n_clust_method <- match.arg(n_clust_method)
 
     model_vars <- parse_formula_vars(formula_str, vcov)
     if (is.null(preloaded_data)) {
@@ -188,17 +186,7 @@ estimate_model <- function(formula_str,
     stats$f_stat <- NA_real_
 
     if ("n_clust" %in% requested_stats) {
-        if (!is.null(n_clust_override)) {
-            stats$n_clust <- as.numeric(n_clust_override)
-        } else if (n_clust_method == "data" && inherits(vcov, "formula")) {
-            cluster_name <- all.vars(vcov)[1]
-            stats$n_clust <- tryCatch(
-                as.numeric(uniqueN(data[[cluster_name]][!is.na(data[[cluster_name]])])),
-                error = function(e) NA_real_
-            )
-        } else {
-            stats$n_clust <- tryCatch(fitstat(model, "g")[[1]], error = function(e) NA_real_)
-        }
+        stats$n_clust <- tryCatch(fitstat(model, "g")[[1]], error = function(e) NA_real_)
     }
     if ("r2" %in% requested_stats) {
         stats$r2 <- tryCatch(
@@ -243,8 +231,8 @@ estimate_model <- function(formula_str,
 #' @param save_mode   Passed through to estimate_model(). Default: "stats".
 #' @param requested_stats Passed through to estimate_model().
 #'                      Default: c("nobs", "n_clust", "r2").
-#' @param n_clust_method Passed through to estimate_model().
-#'                      Default: "global-data".
+#' @param n_clust_method Passed through to estimate_model() (kept for
+#'                      backward compatibility; currently unused).
 #' @param preload_block_data If TRUE, load once all columns needed by formulas
 #'                      in the block and reuse in-memory data for each model.
 #'                      This reduces repeated allocations and can improve
@@ -261,7 +249,7 @@ run_block <- function(formulas,
                       lean = TRUE,
                       save_mode = "stats",
                       requested_stats = c("nobs", "n_clust", "r2"),
-                      n_clust_method = "global-data",
+                      n_clust_method = "data",
                       preload_block_data = FALSE,
                       extra_fitstats = FALSE,
                       prefix = NULL) {
@@ -274,14 +262,6 @@ run_block <- function(formulas,
         block_data <- as.data.table(read_fst(data_file, columns = block_vars))
     }
 
-    n_clust_override <- NULL
-    if ("n_clust" %in% requested_stats && n_clust_method == "global-data" && inherits(vcov, "formula")) {
-        cluster_name <- all.vars(vcov)[1]
-        cluster_data <- as.data.table(read_fst(data_file, columns = cluster_name))
-        n_clust_override <- as.numeric(uniqueN(cluster_data[[cluster_name]][!is.na(cluster_data[[cluster_name]])]))
-        rm(cluster_data)
-    }
-
     cat("\n===", block_name, "===\n")
     out <- lapply(seq_along(formulas), function(i) {
         cat(sprintf("  [%d/%d] %s\n", i, length(formulas), formulas[[i]]))
@@ -292,7 +272,7 @@ run_block <- function(formulas,
         estimate_model(
             formulas[[i]], estimator, data_file, vcov, lean,
             save_path, save_mode, requested_stats, n_clust_method,
-            n_clust_override = n_clust_override,
+            n_clust_override = NULL,
             preloaded_data = block_data,
             extra_fitstats = extra_fitstats
         )

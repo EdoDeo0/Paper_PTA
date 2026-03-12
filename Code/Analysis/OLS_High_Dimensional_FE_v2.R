@@ -21,6 +21,9 @@ library(here)
 library(lubridate)
 
 # Stability mode for large Windows runs: avoid multi-thread race issues
+# Comment these two lines if you use a Unix-based system or if you want to leverage multi-threading (adjust threads_fst() as needed)
+# Unfortunenately, multi-threading with fst cause R terminal to crash on Windows when running the full set of models, likely due to race conditions.
+# Alternatively, comment these two lines and run one block at a time (instead of all 4 blocks in sequence) to mitigate the issue while still benefiting from multi-threading.
 threads_fst(1)
 setFixest_nthreads(1)
 
