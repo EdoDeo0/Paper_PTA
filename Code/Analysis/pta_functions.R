@@ -95,6 +95,12 @@ load_formula_data <- function(data_file, formula_str, vcov = "HC1") {
 #' @param requested_stats Character vector of stats to compute. Available keys:
 #'                     "nobs", "n_clust", "r2", "ar2", "wr2", "f_stat".
 #'                     Default: c("nobs", "n_clust", "r2").
+#' @param n_clust_method How to compute cluster counts when requested:
+#'                     "global-data" (default, counts unique cluster IDs once
+#'                     from the source data), "data" (counts unique cluster IDs
+#'                     in the loaded model data), or "fitstat"
+#'                     (uses fixest::fitstat(model, "g"), potentially less stable
+#'                     on very large lean models).
 #' @param extra_fitstats If TRUE, also attempts to compute additional fit statistics
 #'                     (ar2, wr2, f_stat). Kept for backward compatibility.
 #'                     Default: FALSE.
@@ -108,15 +114,40 @@ estimate_model <- function(formula_str,
                            save_path = NULL,
                            save_mode = c("stats", "bundle", "model"),
                            requested_stats = c("nobs", "n_clust", "r2"),
+                           n_clust_method = c("global-data", "data", "fitstat"),
+                           n_clust_override = NULL,
+                           preloaded_data = NULL,
                            extra_fitstats = FALSE) {
     estimator <- match.arg(estimator)
     save_mode <- match.arg(save_mode)
+    n_clust_method <- match.arg(n_clust_method)
 
-    data <- load_formula_data(data_file, formula_str, vcov)
+    model_vars <- parse_formula_vars(formula_str, vcov)
+    if (is.null(preloaded_data)) {
+        data <- load_formula_data(data_file, formula_str, vcov)
+    } else {
+        missing_vars <- setdiff(model_vars, names(preloaded_data))
+        if (length(missing_vars) > 0) {
+            stop("preloaded_data is missing variable(s): ", paste(missing_vars, collapse = ", "))
+        }
+        data <- preloaded_data[, ..model_vars]
+    }
 
     model <- switch(estimator,
-        ols  = feols(as.formula(formula_str), data = data, vcov = vcov, lean = lean),
-        ppml = fepois(as.formula(formula_str), data = data, vcov = vcov, lean = lean)
+        ols = {
+            if (inherits(vcov, "formula")) {
+                feols(as.formula(formula_str), data = data, cluster = vcov, lean = lean)
+            } else {
+                feols(as.formula(formula_str), data = data, vcov = vcov, lean = lean)
+            }
+        },
+        ppml = {
+            if (inherits(vcov, "formula")) {
+                fepois(as.formula(formula_str), data = data, cluster = vcov, lean = lean)
+            } else {
+                fepois(as.formula(formula_str), data = data, vcov = vcov, lean = lean)
+            }
+        }
     )
 
     parts <- strsplit(formula_str, "\\|")[[1]]
@@ -157,7 +188,17 @@ estimate_model <- function(formula_str,
     stats$f_stat <- NA_real_
 
     if ("n_clust" %in% requested_stats) {
-        stats$n_clust <- tryCatch(fitstat(model, "g")[[1]], error = function(e) NA_real_)
+        if (!is.null(n_clust_override)) {
+            stats$n_clust <- as.numeric(n_clust_override)
+        } else if (n_clust_method == "data" && inherits(vcov, "formula")) {
+            cluster_name <- all.vars(vcov)[1]
+            stats$n_clust <- tryCatch(
+                as.numeric(uniqueN(data[[cluster_name]][!is.na(data[[cluster_name]])])),
+                error = function(e) NA_real_
+            )
+        } else {
+            stats$n_clust <- tryCatch(fitstat(model, "g")[[1]], error = function(e) NA_real_)
+        }
     }
     if ("r2" %in% requested_stats) {
         stats$r2 <- tryCatch(
@@ -185,7 +226,7 @@ estimate_model <- function(formula_str,
     }
 
     rm(data, model)
-    gc()
+    # gc()
     return(stats)
 }
 
@@ -202,6 +243,12 @@ estimate_model <- function(formula_str,
 #' @param save_mode   Passed through to estimate_model(). Default: "stats".
 #' @param requested_stats Passed through to estimate_model().
 #'                      Default: c("nobs", "n_clust", "r2").
+#' @param n_clust_method Passed through to estimate_model().
+#'                      Default: "global-data".
+#' @param preload_block_data If TRUE, load once all columns needed by formulas
+#'                      in the block and reuse in-memory data for each model.
+#'                      This reduces repeated allocations and can improve
+#'                      stability on very large runs. Default: FALSE.
 #' @param extra_fitstats Passed through to estimate_model(). Default: FALSE.
 #' @param prefix      Filename prefix for .rds files (default: "OLS" or "PPML")
 #' @return List of stats objects, one per formula
@@ -214,13 +261,29 @@ run_block <- function(formulas,
                       lean = TRUE,
                       save_mode = "stats",
                       requested_stats = c("nobs", "n_clust", "r2"),
+                      n_clust_method = "global-data",
+                      preload_block_data = FALSE,
                       extra_fitstats = FALSE,
                       prefix = NULL) {
     estimator <- match.arg(estimator)
     if (is.null(prefix)) prefix <- toupper(estimator)
 
+    block_data <- NULL
+    if (isTRUE(preload_block_data)) {
+        block_vars <- unique(unlist(lapply(formulas, parse_formula_vars, vcov = vcov), use.names = FALSE))
+        block_data <- as.data.table(read_fst(data_file, columns = block_vars))
+    }
+
+    n_clust_override <- NULL
+    if ("n_clust" %in% requested_stats && n_clust_method == "global-data" && inherits(vcov, "formula")) {
+        cluster_name <- all.vars(vcov)[1]
+        cluster_data <- as.data.table(read_fst(data_file, columns = cluster_name))
+        n_clust_override <- as.numeric(uniqueN(cluster_data[[cluster_name]][!is.na(cluster_data[[cluster_name]])]))
+        rm(cluster_data)
+    }
+
     cat("\n===", block_name, "===\n")
-    lapply(seq_along(formulas), function(i) {
+    out <- lapply(seq_along(formulas), function(i) {
         cat(sprintf("  [%d/%d] %s\n", i, length(formulas), formulas[[i]]))
         save_path <- file.path(
             models_dir,
@@ -228,9 +291,17 @@ run_block <- function(formulas,
         )
         estimate_model(
             formulas[[i]], estimator, data_file, vcov, lean,
-            save_path, save_mode, requested_stats, extra_fitstats
+            save_path, save_mode, requested_stats, n_clust_method,
+            n_clust_override = n_clust_override,
+            preloaded_data = block_data,
+            extra_fitstats = extra_fitstats
         )
     })
+
+    if (!is.null(block_data)) {
+        rm(block_data)
+    }
+    out
 }
 
 

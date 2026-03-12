@@ -20,6 +20,10 @@ library(data.table)
 library(here)
 library(lubridate)
 
+# Stability mode for large Windows runs: avoid multi-thread race issues
+threads_fst(1)
+setFixest_nthreads(1)
+
 # Set the number of threads for fst (adjust based on your CPU)
 # threads_fst(8) # 8 threads is a good default for modern CPUs (especially for laptops), but adjust as needed
 
@@ -76,7 +80,7 @@ f1 <- c(
     "ln_export_qua   ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year",
     "ln_export_value ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year"
 )
-stats1 <- run_block(f1, "WB No Interaction", "ols", data_file, dirs$models, vcov = ~pdt, save_mode = "bundle", requested_stats = show_stats_ols)
+stats1 <- run_block(f1, "WB No Interaction", "ols", data_file, dirs$models, vcov = ~pdt, save_mode = "stats", requested_stats = show_stats_ols)
 make_table(stats1, cm_wb, "OLS_WB_No_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
 
 # BLOCK 2: WB Interaction
