@@ -24,12 +24,13 @@ library(lubridate)
 # Comment these two lines if you use a Unix-based system or if you want to leverage multi-threading (adjust threads_fst() as needed)
 # Unfortunenately, multi-threading with fst cause R terminal to crash on Windows when running the full set of models, likely due to race conditions.
 # Alternatively, comment these two lines and run one block at a time (instead of all 4 blocks in sequence) to mitigate the issue while still benefiting from multi-threading.
-threads_fst(1)
-setFixest_nthreads(1)
+#threads_fst(1)
+#setFixest_nthreads(1)
 
 # Set the number of threads for fst (adjust based on your CPU)
 # threads_fst(8) # 8 threads is a good default for modern CPUs (especially for laptops), but adjust as needed
 
+# Load shared functions for estimation and table building
 source(here("Code/Analysis/pta_functions.R"))
 
 # Set your own data file path (dataset not tracked in the repo – file too large)
