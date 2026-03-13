@@ -1,9 +1,9 @@
-###########################################################################
+#########################################################################
 ###### Replication: Baccini, Pinto & Ortiz-Mena (2017)             ######
 ###### "The Distributional Consequences of Preferential Trade      ######
-######  Liberalization: Firm-Level Evidence"                        ######
+###### Liberalization: Firm-Level Evidence"                        ######
 ###### World Politics 69(2): 373-395                               ######
-###########################################################################
+#########################################################################
 
 ## Author: Edoardo Vitella
 ## PhD student at University of Trento and Free University of Bozen
