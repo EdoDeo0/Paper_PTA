@@ -64,7 +64,7 @@ cm_trend_int <- c(
 
 
 # ─────────────────────────────────────────────────────────────────────
-# RUNNING MODELS AND GENERATING TABLES
+# FIRM-PRODUCT-DESTINATION (fdp) + TIME (year) FIXED EFFECTS
 # ─────────────────────────────────────────────────────────────────────
 start <- now()
 show_stats_ppml <- c("nobs", "n_clust")
@@ -79,8 +79,8 @@ f1 <- c(
     "exp_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year"
 )
-stats1 <- run_block(f1, "WB No Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats1, cm_wb, "PPML_WB_No_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats1 <- run_block(f1, "WB No Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats1, cm_wb, "PPML_WB_No_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 # BLOCK 2: WB Interaction
 cat("\n=== WB Interaction (fpd + year FE) ===\n")
@@ -92,8 +92,8 @@ f2 <- c(
     "exp_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + year"
 )
-stats2 <- run_block(f2, "WB Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats2, cm_wb_int, "PPML_WB_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats2 <- run_block(f2, "WB Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats2, cm_wb_int, "PPML_WB_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 # BLOCK 3: TREND No Interaction
 cat("\n=== TREND No Interaction (fpd + year FE) ===\n")
@@ -105,8 +105,8 @@ f3 <- c(
     "exp_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + year"
 )
-stats3 <- run_block(f3, "TREND No Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats3, cm_trend, "PPML_TREND_No_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats3 <- run_block(f3, "TREND No Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats3, cm_trend, "PPML_TREND_No_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 # BLOCK 4: TREND Interaction
 cat("\n=== TREND Interaction (fpd + year FE) ===\n")
@@ -118,8 +118,8 @@ f4 <- c(
     "exp_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year"
 )
-stats4 <- run_block(f4, "TREND Interaction", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats4, cm_trend_int, "PPML_TREND_Interaction.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats4 <- run_block(f4, "TREND Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats4, cm_trend_int, "PPML_TREND_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 
 cat("\n=== COMPLETATO! ===\n")
 cat("Tabelle in:", dirs$tables, "\n")
@@ -130,7 +130,7 @@ cat("Tempo totale:", now() - start, "secondi\n")
 
 
 # ─────────────────────────────────────────────────────────────────────
-# RUN ALL BLOCKS WITH FIRM-PRODUCT-TIME FIXED EFFECTS (fpt)
+# FIRM-PRODUCT-TIME FIXED EFFECTS (fpt)
 # ─────────────────────────────────────────────────────────────────────
 start_fpt <- now()
 show_stats_ppml <- c("nobs", "r2", "n_clust")
