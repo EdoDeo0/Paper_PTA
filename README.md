@@ -3,7 +3,7 @@
 **Author:** Edoardo Vitella  
 **Affiliation:** PhD Student, University of Trento & Free University of Bozen
 
-[![](https://img.shields.io/badge/status-ongoing-yellow)]
+![](https://img.shields.io/badge/status-ongoing-yellow)
 
 > **Disclaimer:** This project is ongoing. The README is updated frequently, but may not always fully reflect the current state of all analyses, data, and scripts. If you have any questions or need clarifications, feel free to contact me directly.
 
