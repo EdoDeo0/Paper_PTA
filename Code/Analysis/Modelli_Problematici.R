@@ -76,7 +76,7 @@ cm_trend_int <- c(
 start_fpd_fpt <- now()
 show_stats_ols <- c("nobs", "r2", "n_clust")
 
-# BLOCK 1: WB No Interaction - fpd & fpt FE
+# BLOCK 1: WB No Interaction (fpd & fpt FE)
 cat("\n=== WB No Interaction (fpd & fpt FE) ===\n")
 f1_fpd_fpt <- c(
     "ln_export       ~ WB_EP_Depth | fpd + fpt",
@@ -88,9 +88,10 @@ f1_fpd_fpt <- c(
 )
 stats1_fpd_fpt <- run_block(f1_fpd_fpt, "WB No Interaction (fpd & fpt FE)", "ols", data_file, dirs$models, vcov = ~pdt, save_mode = "stats", requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats1_fpd_fpt, cm_wb, "OLS_WB_No_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats1_fpd_fpt)
 gc()
 
-# BLOCK 2: WB Interaction - fpd & fpt FE
+# BLOCK 2: WB Interaction (fpd & fpt FE)
 cat("\n=== WB Interaction (fpd & fpt FE) ===\n")
 f2_fpd_fpt <- c(
     "ln_export       ~ WB_EP_Depth * env_good | fpd + fpt",
@@ -102,9 +103,10 @@ f2_fpd_fpt <- c(
 )
 stats2_fpd_fpt <- run_block(f2_fpd_fpt, "WB Interaction (fpd & fpt FE)", "ols", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats2_fpd_fpt, cm_wb_int, "OLS_WB_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats2_fpd_fpt)
 gc()
 
-# BLOCK 3: TREND No Interaction - fpd & fpt FE
+# BLOCK 3: TREND No Interaction (fpd & fpt FE)
 cat("\n=== TREND No Interaction (fpd & fpt FE) ===\n")
 f3_fpd_fpt <- c(
     "ln_export       ~ TREND_EP_Count | fpd + fpt",
@@ -116,9 +118,10 @@ f3_fpd_fpt <- c(
 )
 stats3_fpd_fpt <- run_block(f3_fpd_fpt, "TREND No Interaction (fpd & fpt FE)", "ols", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats3_fpd_fpt, cm_trend, "OLS_TREND_No_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats3_fpd_fpt)
 gc()
 
-# BLOCK 4: TREND Interaction - fpd & fpt FE
+# BLOCK 4: TREND Interaction (fpd & fpt FE)
 cat("\n=== TREND Interaction (fpd & fpt FE) ===\n")
 f4_fpd_fpt <- c(
     "ln_export       ~ TREND_EP_Count * env_good | fpd + fpt",
@@ -130,6 +133,7 @@ f4_fpd_fpt <- c(
 )
 stats4_fpd_fpt <- run_block(f4_fpd_fpt, "TREND Interaction (fpd & fpt FE)", "ols", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats4_fpd_fpt, cm_trend_int, "OLS_TREND_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats4_fpd_fpt)
 gc()
 
 cat("\n=== COMPLETATO fpd & fpt! ===\n")
@@ -146,6 +150,7 @@ cat("Tempo totale fpd & fpt:", now() - start_fpd_fpt, "secondi\n")
 start_fpt_pt_pd <- now()
 show_stats_ols <- c("nobs", "r2", "n_clust")
 
+# BLOCK 1: WB No Interaction (fpt + pt + pd FE)
 cat("\n=== Crowley et al 2021: fpt + pt + pd FE ===\n")
 f1_fpt_pt_pd <- c(
     "ln_export       ~ WB_EP_Depth | fpt + pt + pd",
@@ -157,8 +162,11 @@ f1_fpt_pt_pd <- c(
 )
 stats1_fpt_pt_pd <- run_block(f1_fpt_pt_pd, "Crowley et al 2021 (fpt + pt + pd FE)", "ols", data_file, dirs$models, vcov = ~pdt, save_mode = "stats", requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats1_fpt_pt_pd, cm_wb, "OLS_WB_No_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats1_fpt_pt_pd)
 gc()
 
+# BLOCK 2: WB Interaction (fpt + pt + pd FE)
+cat("\n=== WB Interaction (fpt + pt + pd FE) ===\n")
 f2_fpt_pt_pd <- c(
     "ln_export       ~ WB_EP_Depth * env_good | fpt + pt + pd",
     "ln_export_qua   ~ WB_EP_Depth * env_good | fpt + pt + pd",
@@ -169,8 +177,11 @@ f2_fpt_pt_pd <- c(
 )
 stats2_fpt_pt_pd <- run_block(f2_fpt_pt_pd, "Crowley et al 2021 (fpt + pt + pd FE)", "ols", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats2_fpt_pt_pd, cm_wb_int, "OLS_WB_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats2_fpt_pt_pd)
 gc()
 
+# BLOCK 3: TREND No Interaction (fpt + pt + pd FE)
+cat("\n=== TREND No Interaction (fpt + pt + pd FE) ===\n")
 f3_fpt_pt_pd <- c(
     "ln_export       ~ TREND_EP_Count | fpt + pt + pd",
     "ln_export_qua   ~ TREND_EP_Count | fpt + pt + pd",
@@ -181,8 +192,11 @@ f3_fpt_pt_pd <- c(
 )
 stats3_fpt_pt_pd <- run_block(f3_fpt_pt_pd, "Crowley et al 2021 (fpt + pt + pd FE)", "ols", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats3_fpt_pt_pd, cm_trend, "OLS_TREND_No_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats3_fpt_pt_pd)
 gc()
 
+# BLOCK 4: TREND Interaction (fpt + pt + pd FE)
+cat("\n=== TREND Interaction (fpt + pt + pd FE) ===\n")
 f4_fpt_pt_pd <- c(
     "ln_export       ~ TREND_EP_Count * env_good | fpt + pt + pd",
     "ln_export_qua   ~ TREND_EP_Count * env_good | fpt + pt + pd",
@@ -193,6 +207,7 @@ f4_fpt_pt_pd <- c(
 )
 stats4_fpt_pt_pd <- run_block(f4_fpt_pt_pd, "Crowley et al 2021 (fpt + pt + pd FE)", "ols", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ols, preload_block_data = TRUE)
 make_table(stats4_fpt_pt_pd, cm_trend_int, "OLS_TREND_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats4_fpt_pt_pd)
 gc()
 
 cat("\n=== COMPLETATO fpt + pt + pd! ===\n")
@@ -200,6 +215,20 @@ cat("Tabelle in:", dirs$tables, "\n")
 cat("Modelli in:", dirs$models, "\n")
 cat("- 4 tabelle .tex\n- 24 OLS_*_fpt_pt_pd.rds\n")
 cat("Tempo totale fpt + pt + pd:", now() - start_fpt_pt_pd, "secondi\n")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -303,6 +332,8 @@ f1_fpd_fpt <- c(
 )
 stats1_fpd_fpt <- run_block(f1_fpd_fpt, "WB No Interaction (fpd + fpt FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats1_fpd_fpt, cm_wb, "PPML_WB_No_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats1_fpd_fpt)
+gc()
 
 # BLOCK 2: WB Interaction - fpd + fpt FE
 cat("\n=== WB Interaction (fpd + fpt FE) ===\n")
@@ -316,6 +347,8 @@ f2_fpd_fpt <- c(
 )
 stats2_fpd_fpt <- run_block(f2_fpd_fpt, "WB Interaction (fpd + fpt FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats2_fpd_fpt, cm_wb_int, "PPML_WB_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats2_fpd_fpt)
+gc()
 
 # BLOCK 3: TREND No Interaction - fpd + fpt FE
 cat("\n=== TREND No Interaction (fpd + fpt FE) ===\n")
@@ -329,6 +362,8 @@ f3_fpd_fpt <- c(
 )
 stats3_fpd_fpt <- run_block(f3_fpd_fpt, "TREND No Interaction (fpd + fpt FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats3_fpd_fpt, cm_trend, "PPML_TREND_No_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats3_fpd_fpt)
+gc()
 
 # BLOCK 4: TREND Interaction - fpd + fpt FE
 cat("\n=== TREND Interaction (fpd + fpt FE) ===\n")
@@ -342,6 +377,9 @@ f4_fpd_fpt <- c(
 )
 stats4_fpd_fpt <- run_block(f4_fpd_fpt, "TREND Interaction (fpd + fpt FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats4_fpd_fpt, cm_trend_int, "PPML_TREND_Interaction_fpd_fpt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats4_fpd_fpt)
+gc()
+
 
 cat("\n=== COMPLETATO fpd + fpt! ===\n")
 cat("Tabelle in:", dirs$tables, "\n")
@@ -367,6 +405,9 @@ f1_fpt_pt_pd <- c(
 )
 stats1_fpt_pt_pd <- run_block(f1_fpt_pt_pd, "Crowley et al 2021: WB No Interaction (fpt + pt + pd FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats1_fpt_pt_pd, cm_wb, "PPML_WB_No_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats1_fpt_pt_pd)
+gc()
+
 
 f2_fpt_pt_pd <- c(
     "export  ~ WB_EP_Depth * env_good | fpt + pt + pd",
@@ -378,6 +419,9 @@ f2_fpt_pt_pd <- c(
 )
 stats2_fpt_pt_pd <- run_block(f2_fpt_pt_pd, "Crowley et al 2021: WB Interaction (fpt + pt + pd FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats2_fpt_pt_pd, cm_wb_int, "PPML_WB_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats2_fpt_pt_pd)
+gc()
+
 
 f3_fpt_pt_pd <- c(
     "export  ~ TREND_EP_Count | fpt + pt + pd",
@@ -389,6 +433,9 @@ f3_fpt_pt_pd <- c(
 )
 stats3_fpt_pt_pd <- run_block(f3_fpt_pt_pd, "Crowley et al 2021: TREND No Interaction (fpt + pt + pd FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats3_fpt_pt_pd, cm_trend, "PPML_TREND_No_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats3_fpt_pt_pd)
+gc()
+
 
 f4_fpt_pt_pd <- c(
     "export  ~ TREND_EP_Count * env_good | fpt + pt + pd",
@@ -400,6 +447,8 @@ f4_fpt_pt_pd <- c(
 )
 stats4_fpt_pt_pd <- run_block(f4_fpt_pt_pd, "Crowley et al 2021: TREND Interaction (fpt + pt + pd FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
 make_table(stats4_fpt_pt_pd, cm_trend_int, "PPML_TREND_Interaction_fpt_pt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+rm(stats4_fpt_pt_pd)
+gc()
 
 cat("\n=== COMPLETATO fpt + pt + pd! ===\n")
 cat("Tabelle in:", dirs$tables, "\n")
