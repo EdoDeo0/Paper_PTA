@@ -136,6 +136,46 @@ make_table(stats4_fpd_fpt, cm_trend_int, "OLS_TREND_Interaction_fpd_fpt.tex", di
 rm(stats4_fpd_fpt)
 gc()
 
+models_dir <- here("Output/Analysis/OLS/Models_Output")
+
+# Verifica i nomi esatti
+list.files(models_dir, pattern = "TREND_Interaction")
+
+# Ricostruisci stats4_fpd_fpt
+stats4_fpd_fpt <- lapply(1:6, function(i) {
+    readRDS(file.path(models_dir, sprintf("OLS_TREND_Interaction_(fpd_&_fpt_FE)_%d.rds", i)))
+})
+
+make_table(stats4_fpd_fpt, cm_trend_int, "OLS_TREND_Interaction_fpd_fpt.tex",
+    dirs$tables,
+    digits = 5, show_stats = show_stats_ols
+)
+
+
+stats4_fpd_fpt <- lapply(seq_along(f4_fpd_fpt), function(i) {
+    save_path <- file.path(models_dir, sprintf("OLS_TREND_Interaction_(fpd_&_fpt_FE)_%d.rds", i))
+
+    if (file.exists(save_path)) {
+        cat(sprintf("  [%d/%d] Caricato da cache: %s\n", i, length(f4_fpd_fpt), save_path))
+        readRDS(save_path)
+    } else {
+        cat(sprintf("  [%d/%d] Stimando: %s\n", i, length(f4_fpd_fpt), f4_fpd_fpt[[i]]))
+        estimate_model(
+            f4_fpd_fpt[[i]], "ols", data_file,
+            vcov = ~pdt,
+            save_path = save_path,
+            save_mode = "stats", requested_stats = show_stats_ols
+        )
+    }
+})
+
+make_table(stats4_fpd_fpt, cm_trend_int, "OLS_TREND_Interaction_fpd_fpt.tex",
+    dirs$tables,
+    digits = 5, show_stats = show_stats_ols
+)
+
+
+
 cat("\n=== COMPLETATO fpd & fpt! ===\n")
 cat("Tabelle in:", dirs$tables, "\n")
 cat("Modelli in:", dirs$models, "\n")
