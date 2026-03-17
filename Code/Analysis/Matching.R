@@ -567,9 +567,9 @@ covariates_full <- c(
     "log_imports_2000", "mfn_tariff_2000", "asia_dummy"
 )
 
-#covariates_used <- if (use_full_covariates) covariates_full else covariates_base
-covariates_used <- c("log_gdp_2000", "log_gdppc_2000", "log_dist",
-                     "log_imports_2000", "mfn_tariff_2000")
+covariates_used <- if (use_full_covariates) covariates_full else covariates_base
+#covariates_used <- c("log_gdp_2000", "log_gdppc_2000", "log_dist",
+#                     "log_imports_2000", "mfn_tariff_2000")
 
 ## Rimuovi osservazioni con NA nelle covariate di matching
 dt_match <- dt_country[complete.cases(dt_country[, ..covariates_used]) &
