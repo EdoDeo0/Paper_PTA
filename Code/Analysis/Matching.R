@@ -61,6 +61,7 @@ library(lubridate)
 library(dplyr)
 library(ggplot2)
 library(MatchIt) # CEM
+
 library(cobalt) # Balance diagnostics
 
 source(here("Code/Analysis/pta_functions.R"))
@@ -181,7 +182,7 @@ if (!file.exists(wdi_cache_file)) {
 ## Se non hai questi dati, puoi procedere con SOLO PIL e PIL pro capite + asia_dummy,
 ## impostando use_full_covariates = FALSE nella sezione matching sotto.
 
-use_full_covariates <- FALSE # Imposta TRUE se hai distanza, import e tariffe
+use_full_covariates <- TRUE # Imposta TRUE se hai distanza, import e tariffe
 
 dir.create(here("Data/Matching"), showWarnings = FALSE, recursive = TRUE)
 
@@ -204,8 +205,8 @@ cat("Distanza CEPII: OK —", nrow(dt_dist_china), "paesi\n")
 #   - BACI_HS92_Y2000_V202401.csv
 #   - country_codes_V202401.csv
 
-baci_file   <- here("Data/Matching/BACI_HS92_Y2000_V202401.csv")
-baci_codes  <- here("Data/Matching/country_codes_V202401.csv")
+baci_file  <- here("Data/Matching/BACI_HS92_Y2000_V202601.csv")
+baci_codes <- here("Data/Matching/country_codes_V202601.csv")
 
 if (file.exists(baci_file) && file.exists(baci_codes)) {
   baci_2000 <- fread(baci_file)
@@ -216,7 +217,7 @@ if (file.exists(baci_file) && file.exists(baci_codes)) {
                           by = j]
   baci_china <- merge(
     baci_china,
-    cc_baci[, .(j = country_code, iso3c = iso_3digit_alpha)],
+    cc_baci[, .(j = country_code, iso3c = country_iso3)],
     by = "j"
   )
   baci_china[, log_imports_2000 := log(imports_from_china_2000 + 1)]
@@ -290,8 +291,8 @@ if (use_full_covariates) {
             by = "iso3c", all.x = TRUE
         )
     }
-    if (!is.null(dt_tariff)) {
-        dt_country <- merge(dt_country, dt_tariff[, .(iso3c, mfn_tariff_2000)],
+    if (!is.null(dt_mfn)) {
+        dt_country <- merge(dt_country, dt_mfn[, .(iso3c, mfn_tariff_2000)],
             by = "iso3c", all.x = TRUE
         )
     }
@@ -566,7 +567,9 @@ covariates_full <- c(
     "log_imports_2000", "mfn_tariff_2000", "asia_dummy"
 )
 
-covariates_used <- if (use_full_covariates) covariates_full else covariates_base
+#covariates_used <- if (use_full_covariates) covariates_full else covariates_base
+covariates_used <- c("log_gdp_2000", "log_gdppc_2000", "log_dist",
+                     "log_imports_2000", "mfn_tariff_2000")
 
 ## Rimuovi osservazioni con NA nelle covariate di matching
 dt_match <- dt_country[complete.cases(dt_country[, ..covariates_used]) &
@@ -590,7 +593,15 @@ cem_out <- matchit(
     formula    = match_formula,
     data       = as.data.frame(dt_match),
     method     = "cem",
-    estimand   = "ATT" # Average Treatment effect on the Treated
+    estimand   = "ATT", # Average Treatment effect on the Treated
+    cutpoints  = list(
+      log_gdp_2000 = 3,
+      log_gdppc_2000 = 3,
+      log_dist = 3,
+      log_imports_2000 = 3,
+      mfn_tariff_2000 = 3
+      #asia_dummy = c(0, 1) # dummy binaria
+    ),
 )
 
 cat("\n=== SOMMARIO CEM ===\n")
@@ -642,7 +653,9 @@ p_love <- love.plot(
     var.order = "unadjusted",
     abs = TRUE,
     title = "Covariate Balance: Pre vs Post CEM Matching",
-    sample.names = c("Unmatched", "Matched (CEM)")
+    sample.names = c("Unmatched", "Matched (CEM)"),
+    stars = "raw",
+    line = TRUE
 )
 
 ggsave(file.path(out_dir, "CEM_LovePlot.pdf"), plot = p_love, width = 7, height = 5)
