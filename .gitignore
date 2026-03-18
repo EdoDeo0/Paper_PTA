@@ -13,3 +13,5 @@ Data/.DS_Store
 Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst
 Data/Final Dataset/final_dataset_pta_env_indices_compressed.dta
 Data/TREND/TREND_Guide_EN.pdf
+Output/Analysis/CEM_Robustness/CEM_full/data_cem_matched_full.fst
+Output/Analysis/CEM_Robustness/CEM_no_asia/data_cem_matched_no_asia.fst

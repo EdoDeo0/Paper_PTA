@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{Covariate Balance: Pre- and Post-CEM Matching}
+\label{tab:cem_balance}
+\small
+\begin{tabular}{lcccc}
+\hline\hline
+& \multicolumn{2}{c}{Unmatched} & \multicolumn{2}{c}{Matched (CEM)} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Variable & SMD & Var. Ratio & SMD & Var. Ratio \\
+\hline
+log\_gdp\_2000 & 0.553 & 0.421 & -0.124 & 0.511 \\
+log\_gdppc\_2000 & 0.021 & 1.329 & -0.022 & 1.229 \\
+log\_dist & -0.883 & 2.611 & -0.110 & 2.651 \\
+log\_imports\_2000 & 0.773 & 0.680 & 0.025 & 0.707 \\
+mfn\_tariff\_2000 & -0.276 & 1.140 & 0.117 & 0.645 \\
+\hline\hline
+\multicolumn{5}{l}{\footnotesize \textit{Note:} SMD = Standardised Mean Difference. Threshold: SMD $<$ 0.10.} \\
+\end{tabular}
+\end{table}

@@ -1,9 +1,7 @@
 
 Call:
 matchit(formula = match_formula, data = as.data.frame(dt_match), 
-    method = "cem", estimand = "ATT", cutpoints = list(log_gdp_2000 = 3, 
-        log_gdppc_2000 = 3, log_dist = 3, log_imports_2000 = 3, 
-        mfn_tariff_2000 = 3))
+    method = "cem", estimand = "ATT", cutpoints = cp_active)
 
 Summary of Balance for All Data:
                  Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
