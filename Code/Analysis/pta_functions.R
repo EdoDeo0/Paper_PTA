@@ -128,7 +128,8 @@ estimate_model <- function(formula_str,
         if (length(missing_vars) > 0) {
             stop("preloaded_data is missing variable(s): ", paste(missing_vars, collapse = ", "))
         }
-        data <- preloaded_data[, ..model_vars]
+        # data <- preloaded_data[, ..model_vars]
+        data <- preloaded_data # This way it does not create a copy for each model
     }
 
     model <- switch(estimator,
