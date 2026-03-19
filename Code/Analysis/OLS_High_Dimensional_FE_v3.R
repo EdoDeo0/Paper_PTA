@@ -218,7 +218,7 @@ make_table(stats4_fpt, cm_trend_int, "OLS_TREND_Interaction_fpt_pd.tex", dirs$ta
 rm(stats4_fpt)
 gc()
 
-cat("\n=== DONE fpt + pd! ===\n")
+cat("\n=== DONE fpt + pd FE! ===\n")
 cat("Tables in:", dirs$tables, "\n")
 cat("Models in:", dirs$models, "\n")
 cat("- 4 tables .tex\n- 24 OLS_*_fpt.rds\n")
@@ -234,6 +234,8 @@ cat("Time for fpt + pd:", now() - start_fpt, "seconds\n")
 # ────────────────────────────────────────────────────────────────────────────────────
 start_fpt <- now()
 show_stats_ols <- c("nobs", "r2", "n_clust") # Put here the statistics you want in the tables (must be in the list of available stats in make_table())
+# threads_fst(1)
+setFixest_nthreads(1) # To avoid windows crash
 
 
 ## BLOCK 1: WB No Interaction (firm-product-time + firm-product-destination FE)
@@ -299,7 +301,7 @@ make_table(stats4_fpt, cm_trend_int, "OLS_TREND_Interaction_fpt_fpd.tex", dirs$t
 rm(stats4_fpt)
 gc()
 
-cat("\n=== DONE fpt + fpd! ===\n")
+cat("\n=== DONE fpt + fpd FE! ===\n")
 cat("Tables in:", dirs$tables, "\n")
 cat("Models in:", dirs$models, "\n")
 cat("- 4 tables .tex\n- 24 OLS_*_fpt.rds\n")
