@@ -270,13 +270,18 @@ run_block <- function(formulas,
             models_dir,
             sprintf("%s_%s_%d.rds", prefix, gsub(" ", "_", block_name), i)
         )
-        estimate_model(
-            formulas[[i]], estimator, data_file, vcov, lean,
-            save_path, save_mode, requested_stats, n_clust_method,
-            n_clust_override = NULL,
-            preloaded_data = block_data,
-            extra_fitstats = extra_fitstats
-        )
+            if (file.exists(save_path)) {
+                cat(sprintf("    [SKIP] File already exists: %s\n", save_path))
+                return(readRDS(save_path))
+            } else {
+            estimate_model(
+                formulas[[i]], estimator, data_file, vcov, lean,
+                save_path, save_mode, requested_stats, n_clust_method,
+                n_clust_override = NULL,
+                preloaded_data = block_data,
+                extra_fitstats = extra_fitstats
+            )
+        }
     })
 
     if (!is.null(block_data)) {
