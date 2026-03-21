@@ -13,14 +13,14 @@
 ##   - Love plot (.pdf / .png)
 ##   - Balance table (.tex)
 ##   - matched_countries_<label>.csv
-##   - data_cem_matched_<label>.fst  ← dataset filtrato pronto per le stime
+##   - data_cem_matched_<label>.fst  ← filtered dataset to further be used for estimation
 ##
 ## Two variants of the CEM subsample are defined:
 ##    full      → log_gdp_2000, log_gdppc_2000, log_dist,
 ##                log_imports_2000, mfn_tariff_2000, asia_dummy
 ##    no_asia   → as the full version but asia_dummy
 ##
-##  Necessary Packages:
+## Necessary Packages:
 ## install.packages(c("MatchIt", "cobalt", "WDI", "cepiigeodist", "wbstats"))
 
 
@@ -46,7 +46,7 @@ stopifnot("File dati non trovato!" = file.exists(data_file))
 # ─────────────────────────────────────────────────────────────────────
 # DEFINING VARIANTS
 # ─────────────────────────────────────────────────────────────────────
-## Add or remove elements to get more variants
+## Add or remove elements to cem_variants to get more variants
 ## The script will loop over all defined variants and produce outputs in separate subfolders
 ##
 ## `label`      -> subfolder name for outputs (no spaces, use underscores)
@@ -89,23 +89,23 @@ cem_cutpoints <- list(
 # PART 1 — DATASET COUNTRY-LEVEL (pre-treatment covariates)
 # ─────────────────────────────────────────────────────────────────────
 
-## 1A. GPD and Per-Capita GDP (WDI) ───────────────────────────────────────
+## 1A. GPD and Per-Capita GDP (from WDI) ───────────────────────────────────────
 ## Current US Dollars
 wdi_cache_file <- here("Data/Matching/wdi_data.csv")
 
 if (!file.exists(wdi_cache_file)) {
-  if (!requireNamespace("WDI", quietly = TRUE))
+  if (!requireNamespace("WDI", quietly = TRUE)) # Check if the library is installed
     stop("Install WDI Package: install.packages('WDI')")
-  library(WDI)
+  library(WDI) 
   
-  cat("Downloading WDI Data...\n")
+  cat("Downloading WDI Data...\n") # Downloading GDP and per capita GDP 
   wdi_raw <- WDI(
-    country   = "all",
-    indicator = c("NY.GDP.MKTP.CD", "NY.GDP.PCAP.CD"),
-    start = 2000, end = 2000,
+    country   = "all", # Downloading all countries, to be filtered later on
+    indicator = c("NY.GDP.MKTP.CD", "NY.GDP.PCAP.CD"), # Tickers in WDI database
+    start = 2000, end = 2000, # We match on pre-treatment covariates, so we take the year 2000 (before any PTA)
     extra = TRUE
   )
-  wdi_dt <- as.data.table(wdi_raw)
+  wdi_dt <- as.data.table(wdi_raw) # Create the data set and log the values
   wdi_dt <- wdi_dt[!is.na(NY.GDP.MKTP.CD) & !is.na(NY.GDP.PCAP.CD)]
   wdi_dt[, log_gdp_2000   := log(NY.GDP.MKTP.CD)] # CD stands for current dollars
   wdi_dt[, log_gdppc_2000 := log(NY.GDP.PCAP.CD)] # CD stands for current dollars
@@ -118,14 +118,14 @@ if (!file.exists(wdi_cache_file)) {
   cat("WDI loaded from cache.\n")
 }
 
-## 1B. Distance CEPII ──────────────────────────────────────────────────
-if (!requireNamespace("cepiigeodist", quietly = TRUE))
+## 1B. Distance CEPII (via cepiigeodist) ─────────────────────────────
+if (!requireNamespace("cepiigeodist", quietly = TRUE)) # Check if the library is installed
   install.packages("cepiigeodist")
 library(cepiigeodist)
 
 data("dist_cepii")
-dt_dist_china <- as.data.table(dist_cepii)[
-  iso_o == "CHN",
+dt_dist_china <- as.data.table(dist_cepii)[ # Create the dataset and log the distance
+  iso_o == "CHN", # Distance from origin China to all other countries
   .(iso3c = iso_d, log_dist = log(distcap))
 ]
 fwrite(dt_dist_china, here("Data/Matching/cepii_dist.csv"))
@@ -138,11 +138,11 @@ baci_codes <- here("Data/Matching/country_codes_V202601.csv")
 if (file.exists(baci_file) && file.exists(baci_codes)) {
   baci_2000  <- fread(baci_file)
   cc_baci    <- fread(baci_codes)
-  baci_china <- baci_2000[i == 156,
+  baci_china <- baci_2000[i == 156, # Filter imports from China (i = 156 is the country code for China in BACI)
                           .(imports_from_china_2000 = sum(v, na.rm = TRUE)), by = j]
   baci_china <- merge(baci_china,
                       cc_baci[, .(j = country_code, iso3c = country_iso3)], by = "j")
-  baci_china[, log_imports_2000 := log(imports_from_china_2000 + 1)]
+  baci_china[, log_imports_2000 := log(imports_from_china_2000 + 1)] # Log of imports + 1 to avoid log(0)
   fwrite(baci_china[, .(iso3c, imports_from_china_2000, log_imports_2000)],
          here("Data/Matching/baci_imports_from_china_2000.csv"))
   cat("BACI import 2000: OK -", nrow(baci_china), "countries\n")
@@ -151,7 +151,7 @@ if (file.exists(baci_file) && file.exists(baci_codes)) {
 }
 
 ## 1D. MFN Tariffs 2000 (WITS via wbstats) ────────────────────────────
-if (!requireNamespace("wbstats", quietly = TRUE))
+if (!requireNamespace("wbstats", quietly = TRUE)) # Check if the library is installed
   install.packages("wbstats")
 library(wbstats)
 
@@ -160,7 +160,7 @@ mfn_raw <- wb_data(
   start_date  = 2000, end_date = 2000,
   return_wide = TRUE
 )
-dt_mfn <- as.data.table(mfn_raw)[
+dt_mfn <- as.data.table(mfn_raw)[ # Create data set and filter for non-missing values
   !is.na(TM.TAX.MRCH.SM.AR.ZS),
   .(iso3c, mfn_tariff_2000 = TM.TAX.MRCH.SM.AR.ZS)
 ]
@@ -173,7 +173,7 @@ dt_mfn        <- fread(here("Data/Matching/mfn_tariffs_2000.csv"))
 imp_file      <- here("Data/Matching/baci_imports_from_china_2000.csv")
 dt_imp        <- if (file.exists(imp_file)) fread(imp_file) else NULL
 
-## 1E. Asia dummy e merge covariate ────────────────────────────────────
+## 1E. Asia dummy and covariates merge ────────────────────────────────────
 asia_iso3 <- c(
   "CHN", "JPN", "KOR", "PRK", "MNG", "TWN", "HKG", "MAC",
   "BRN", "KHM", "IDN", "LAO", "MYS", "MMR", "PHL", "SGP",
@@ -255,7 +255,7 @@ dt_country[, treated := as.integer(iso3c %in% c(
   "PAK", "PHL", "PER", "SGP", "LKA", "CHE", "THA", "TLS", "VNM"
 ))]
 
-cat(sprintf("\nTreated countries (PTA): %d\n",      sum(dt_country$treated, na.rm = TRUE)))
+cat(sprintf("\nTreated countries (PTA): %d\n", sum(dt_country$treated, na.rm = TRUE)))
 cat(sprintf("Control countries (no PTA): %d\n", sum(!dt_country$treated, na.rm = TRUE)))
 
 # ─────────────────────────────────────────────────────────────────────
@@ -296,7 +296,7 @@ write_balance_latex <- function(bal_df, filepath) {
 }
 
 # ─────────────────────────────────────────────────────────────────────
-# PARTE 2 — LOOP ON ALTERNATIVE CEM VARIANTS
+# PART 2 — LOOP ON ALTERNATIVE CEM VARIANTS
 # ─────────────────────────────────────────────────────────────────────
 for (variant in cem_variants) {
   
@@ -312,7 +312,9 @@ for (variant in cem_variants) {
     "=========================================================\n\n"
   ))
   
-  out_dir <- file.path(base_out, paste0("CEM_", lbl))
+  cem_fst_dir <- here("Data/Matching", paste0("CEM_", lbl))
+  out_dir <- file.path(base_out, "../CEM", paste0("CEM_", lbl))
+  dir.create(cem_fst_dir, showWarnings = FALSE, recursive = TRUE)
   dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
   
   ## CEM ───────────────────────────────────────────────────────────────
@@ -367,10 +369,10 @@ for (variant in cem_variants) {
     stars        = "raw",
     line         = TRUE
   )
-  ggsave(file.path(out_dir, paste0("CEM_LovePlot_", lbl, ".pdf")),
-         plot = p_love, width = 7, height = 5)
-  ggsave(file.path(out_dir, paste0("CEM_LovePlot_", lbl, ".png")),
-         plot = p_love, width = 7, height = 5, dpi = 300)
+    ggsave(file.path(out_dir, paste0("CEM_LovePlot_", lbl, ".pdf")),
+      plot = p_love, width = 7, height = 5)
+    ggsave(file.path(out_dir, paste0("CEM_LovePlot_", lbl, ".png")),
+      plot = p_love, width = 7, height = 5, dpi = 300)
   
   ## Balance table LaTeX ───────────────────────────────────────────────
   bal_stats       <- bal.tab(cem_out,
@@ -400,7 +402,7 @@ for (variant in cem_variants) {
     dt_cem[,  uniqueN(country_code)]
   ))
   
-  cem_file <- file.path(out_dir, paste0("data_cem_matched_", lbl, ".fst"))
+  cem_file <- file.path(cem_fst_dir, paste0("data_cem_matched_", lbl, ".fst"))
   write_fst(dt_cem, cem_file, compress = 50)
   cat("Dataset matched salvato in:", cem_file, "\n")
   
