@@ -415,12 +415,12 @@ for (variant in cem_variants) {
 # FINAL RECAP
 # ─────────────────────────────────────────────────────────────────────
 cat("\n\n=== CEM ALTERNATIVE MATCHING - COMPLETED! ===\n")
-cat("Output directory:", base_out, "\n\n")
+cat("\nPercorsi output:\n")
 for (v in cem_variants) {
-  cat(sprintf("CEM_%s/\n", v$label))
-  cat(sprintf("  data_cem_matched_%s.fst\n",    v$label))
-  cat(sprintf("  matched_countries_%s.csv\n",   v$label))
-  cat(sprintf("  CEM_Balance_Table_%s.tex\n",   v$label))
-  cat(sprintf("  CEM_LovePlot_%s.pdf / .png\n", v$label))
-  cat(sprintf("  CEM_Summary_%s.txt\n\n",       v$label))
+  cat(sprintf("\nCEM_%s/\n", v$label))
+  cat(sprintf("  Data/Matching/CEM_%s/data_cem_matched_%s.fst\n", v$label, v$label))
+  cat(sprintf("  Output/Analysis/CEM/CEM_%s/matched_countries_%s.csv\n", v$label, v$label))
+  cat(sprintf("  Output/Analysis/CEM/CEM_%s/CEM_Balance_Table_%s.tex\n", v$label, v$label))
+  cat(sprintf("  Output/Analysis/CEM/CEM_%s/CEM_LovePlot_%s.pdf / .png\n", v$label, v$label))
+  cat(sprintf("  Output/Analysis/CEM/CEM_%s/CEM_Summary_%s.txt\n", v$label, v$label))
 }
