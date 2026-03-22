@@ -237,7 +237,6 @@ show_stats_ols <- c("nobs", "r2", "n_clust") # Put here the statistics you want 
 # threads_fst(1)
 # setFixest_nthreads(1) # To avoid windows crash
 
-
 ## BLOCK 1: WB No Interaction (firm-product-time + firm-product-destination FE)
 cat("\n=== WB No Interaction (firm-product-time + firm-product-destination FE) ===\n")
 f1_fpt <- c(
