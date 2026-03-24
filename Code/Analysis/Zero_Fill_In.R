@@ -232,7 +232,7 @@ cat("=== PARTE 4: Costruzione ID e variabili ===\n")
 # Groups for clusters and fixed effects
 dt_full[, pd := .GRP, by = .(hs6, country_code)]
 dt_full[, pt := .GRP, by = .(hs6, year)]
-dt_full[, dt := .GRP, by = -(country_code, year)]
+dt_full[, dt := .GRP, by = .(country_code, year)]
 dt_full[, pdt := .GRP, by = .(hs6, country_code, year)]
 
 # unit value aggregato: solo per celle con quantità positiva

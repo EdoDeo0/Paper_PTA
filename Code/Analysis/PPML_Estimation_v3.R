@@ -217,9 +217,7 @@ cat("\n=== DONE fpt + pd FE! ===\n")
 cat("Tables in:", dirs$tables, "\n")
 cat("Models in:", dirs$models, "\n")
 cat("- 4 tables .tex\n- 24 PPML_*_fpt.rds\n")
-cat("Time for fpt + pd:", now() - start_fpt, "seconds\n")
-
-
+cat("Time for fpt + pd:", now() - start, "seconds\n")
 
 
 # ────────────────────────────────────────────────────────────────────────────────────

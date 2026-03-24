@@ -147,6 +147,86 @@ cat("Time for [CEM Full] fpd + year FE:", now() - start, "seconds\n")
 
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# A - FIRM-PRODUCT-TIME FIXED EFFECTS (fpt) + PRODUCT-DESTINATION (pd) FIXED EFFECTS
+# Cluster standard errors at the destination-time level (dt)
+# ──────────────────────────────────────────────────────────────────────────────
+start_fpt <- now()
+show_stats_ols <- c("nobs", "r2", "n_clust") # Put here the statistics you want in the tables (must be in the list of available stats in make_table())
+
+## BLOCK 1: WB No Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM Full] WB No Interaction (firm-product-time + product-destination FE) ===\n")
+f1_fpt <- c(
+  "ln_export       ~ WB_EP_Depth | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth | fpt + pd",
+  "ln_export       ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats1_fpt <- run_block(f1_fpt, "CEM Full WB No Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats1_fpt, cm_wb, "CEM_Full_OLS_WB_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats1_fpt)
+gc()
+
+## BLOCK 2: WB Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM Full] WB Interaction (firm-product-time + product-destination FE) ===\n")
+f2_fpt <- c(
+  "ln_export       ~ WB_EP_Depth * env_good | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth * env_good | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth * env_good | fpt + pd",
+  "ln_export       ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats2_fpt <- run_block(f2_fpt, "CEM Full WB Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats2_fpt, cm_wb_int, "CEM_Full_OLS_WB_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats2_fpt)
+gc()
+
+
+## BLOCK 3: TREND No Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM Full] TREND No Interaction (firm-product-time + product-destination FE) ===\n")
+f3_fpt <- c(
+  "ln_export       ~ TREND_EP_Count | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count | fpt + pd",
+  "ln_export       ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats3_fpt <- run_block(f3_fpt, "CEM Full TREND No Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats3_fpt, cm_trend, "CEM_Full_OLS_TREND_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats3_fpt)
+gc()
+
+
+## BLOCK 4: TREND Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM Full] TREND Interaction (firm-product-time + product-destination FE) ===\n")
+f4_fpt <- c(
+  "ln_export       ~ TREND_EP_Count * env_good | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count * env_good | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count * env_good | fpt + pd",
+  "ln_export       ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats4_fpt <- run_block(f4_fpt, "CEM Full TREND Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats4_fpt, cm_trend_int, "CEM_Full_OLS_TREND_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats4_fpt)
+gc()
+
+cat("\n=== [CEM Full] DONE fpt + pd FE! ===\n")
+cat("Tables in:", dirs$tables, "\n")
+cat("Models in:", dirs$models, "\n")
+cat("- 4 tables .tex\n- 24 OLS_*_fpt.rds\n")
+cat("Time for [CEM Full] fpt + pd:", now() - start_fpt, "seconds\n")
+
+
+
+
+
+
 # ────────────────────────────────────────────────────────────────────────────────────────
 # A - FIRM-PRODUCT-TIME FIXED EFFECTS (fpt) + FIRM-PRODUCT-DESTINATION (fpd) FIXED EFFECTS
 # Cluster standard errors at the destination-time level (dt)
@@ -400,6 +480,86 @@ cat("Tables in:", dirs$tables, "\n")
 cat("Models in:", dirs$models, "\n")
 cat("- 4 tables .tex\n- 24 OLS_*_*.rds\n")
 cat("Time for [CEM No Asia] fpd + year FE:", now() - start, "seconds\n")
+
+
+
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# B - FIRM-PRODUCT-TIME FIXED EFFECTS (fpt) + PRODUCT-DESTINATION (pd) FIXED EFFECTS
+# Cluster standard errors at the destination-time level (dt)
+# ──────────────────────────────────────────────────────────────────────────────
+start_fpt <- now()
+show_stats_ols <- c("nobs", "r2", "n_clust") # Put here the statistics you want in the tables (must be in the list of available stats in make_table())
+
+## BLOCK 1: WB No Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM No Asia] WB No Interaction (firm-product-time + product-destination FE) ===\n")
+f1_fpt <- c(
+  "ln_export       ~ WB_EP_Depth | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth | fpt + pd",
+  "ln_export       ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats1_fpt <- run_block(f1_fpt, "CEM No Asia WB No Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats1_fpt, cm_wb, "CEM_No_Asia_OLS_WB_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats1_fpt)
+gc()
+
+## BLOCK 2: WB Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM No Asia] WB Interaction (firm-product-time + product-destination FE) ===\n")
+f2_fpt <- c(
+  "ln_export       ~ WB_EP_Depth * env_good | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth * env_good | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth * env_good | fpt + pd",
+  "ln_export       ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats2_fpt <- run_block(f2_fpt, "CEM No Asia WB Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats2_fpt, cm_wb_int, "CEM_No_Asia_OLS_WB_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats2_fpt)
+gc()
+
+
+## BLOCK 3: TREND No Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM No Asia] TREND No Interaction (firm-product-time + product-destination FE) ===\n")
+f3_fpt <- c(
+  "ln_export       ~ TREND_EP_Count | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count | fpt + pd",
+  "ln_export       ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats3_fpt <- run_block(f3_fpt, "CEM No Asia TREND No Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats3_fpt, cm_trend, "CEM_No_Asia_OLS_TREND_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats3_fpt)
+gc()
+
+
+## BLOCK 4: TREND Interaction (firm-product-time + product-destination FE)
+cat("\n=== [CEM No Asia] TREND Interaction (firm-product-time + product-destination FE) ===\n")
+f4_fpt <- c(
+  "ln_export       ~ TREND_EP_Count * env_good | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count * env_good | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count * env_good | fpt + pd",
+  "ln_export       ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_qua   ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd",
+  "ln_export_value ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd"
+)
+stats4_fpt <- run_block(f4_fpt, "CEM No Asia TREND Interaction (firm-product-time + product-destination FE)", "ols", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ols, preload_block_data = TRUE)
+make_table(stats4_fpt, cm_trend_int, "CEM_No_Asia_OLS_TREND_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ols)
+rm(stats4_fpt)
+gc()
+
+cat("\n=== [CEM No Asia] DONE fpt + pd FE! ===\n")
+cat("Tables in:", dirs$tables, "\n")
+cat("Models in:", dirs$models, "\n")
+cat("- 4 tables .tex\n- 24 OLS_*_fpt.rds\n")
+cat("Time for [CEM No Asia] fpt + pd:", now() - start_fpt, "seconds\n")
+
 
 
 
