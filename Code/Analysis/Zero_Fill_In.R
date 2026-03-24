@@ -51,7 +51,7 @@ data_file <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.f
 out_dir   <- here("Output/Analysis/PPML_Aggregated")
 dirs      <- setup_output_dirs(out_dir)
 
-stopifnot("File dati non trovato!" = file.exists(data_file))
+stopifnot("Data file not found!" = file.exists(data_file))
 
 agg_file  <- file.path(data_dir, "ppml_agg_pdt_zerofill.fst")
 
