@@ -73,8 +73,8 @@ dt <- as.data.table(read_fst(data_file, columns = vars_needed))
 
 cat(sprintf("Osservazioni firm-level caricate: %s\n",
             format(nrow(dt), big.mark = ",")))
-cat(sprintf("Prodotti unici (hs6): %d\n",    dt[, uniqueN(hs6)])
-cat(sprintf("Destinazioni uniche: %d\n",     dt[, uniqueN(country_code)])
+cat(sprintf("Prodotti unici (hs6): %d\n",    dt[, uniqueN(hs6)]))
+cat(sprintf("Destinazioni uniche: %d\n",     dt[, uniqueN(country_code)]))
 cat(sprintf("Anni: %d – %d\n",               dt[, min(year)], dt[, max(year)]))
 
 # ── Aggregazione: somma export e quantità per cella pdt ───────────────
@@ -229,10 +229,10 @@ gc()
 # ─────────────────────────────────────────────────────────────────────
 cat("=== PARTE 4: Costruzione ID e variabili ===\n")
 
-# pd: product-destination ID (usato come FE e per il clustering)
+# Groups for clusters and fixed effects
 dt_full[, pd := .GRP, by = .(hs6, country_code)]
-
-# pdt: product-destination-year ID (cluster alternativo se necessario)
+dt_full[, pt := .GRP, by = .(hs6, year)]
+dt_full[, dt := .GRP, by = -(country_code, year)]
 dt_full[, pdt := .GRP, by = .(hs6, country_code, year)]
 
 # unit value aggregato: solo per celle con quantità positiva
