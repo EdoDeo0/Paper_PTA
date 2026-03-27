@@ -98,6 +98,12 @@ cem_cutpoints <- list(
   mfn_tariff_2000  = 3
 )
 
+my_cutpoints <- list(
+  gdp_growth_2000 = c(-2, 0, 2, 4, 6), 
+  log_gdppc_2000 = c(7, 8.5, 10, 11.5), # Divide in poveri, medi, ricchi
+  mfn_tariff_2000 = c(0, 5, 15, 30)    # Soglie doganali classiche
+)
+
 # ─────────────────────────────────────────────────────────────────────
 # PARTE 1 — DATASET COUNTRY-LEVEL (covariate pre-trattamento, anno 2000)
 # ─────────────────────────────────────────────────────────────────────
@@ -345,14 +351,15 @@ for (variant in cem_variants) {
   ## cutpoints: numero di bin per ogni covariata continua.
   ## drop: esclude dal coarsening tutte le colonne non usate nel matching.
   ## keep.all = TRUE: mantiene tutte le righe; peso = 0 per non-matchati.
-  cp_active <- cem_cutpoints[names(cem_cutpoints) %in% covs]
+  #cp_active <- cem_cutpoints[names(cem_cutpoints) %in% covs]
+  cp_active <- my_cutpoints[names(my_cutpoints) %in% covs]
   drop_cols <- setdiff(names(dt_match), c("treated", covs))
 
   set.seed(42)
   cem_out <- cem(
     treatment = "treated",
     data      = as.data.frame(dt_match),
-    #cutpoints = cp_active,
+    cutpoints = cp_active,
     drop      = drop_cols,
     keep.all  = TRUE
   )
