@@ -1,0 +1,29 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\toprule
+&\multicolumn{3}{c}{Baseline}&\multicolumn{3}{c}{With controls}\\\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+&(1)&(2)&(3)&(4)&(5)&(6)\\
+&\textit{Exports\textsubscript{fpdt}}&\textit{Quantity\textsubscript{fpdt}}&\textit{UnitValue\textsubscript{fpdt}}&\textit{Exports\textsubscript{fpdt}}&\textit{Quantity\textsubscript{fpdt}}&\textit{UnitValue\textsubscript{fpdt}}\\
+\midrule
+\textit{EPDepth\textsubscript{dt}} & 0.00495\sym{**} & -0.01885\sym{**} & -0.01132 & 0.00539\sym{**} & -0.01843\sym{*} & -0.00722\\
+ & (0.00224) & (0.00956) & (0.00689) & (0.00235) & (0.00945) & (0.00674)\\
+\addlinespace
+\textit{EPDepth\textsubscript{dt} $\times$ EnvGood\textsubscript{p}} & 0.00401 & 0.00760 & 0.01567\sym{**} & 0.00379 & 0.00646 & 0.00900\\
+ & (0.00391) & (0.01192) & (0.00766) & (0.00395) & (0.01177) & (0.00749)\\
+\addlinespace
+\textit{ln MFN Tariffs\textsubscript{pdt}} &  &  &  & -0.08585\sym{***} & -0.11052\sym{***} & -0.03001\sym{*}\\
+ &  &  &  & (0.01936) & (0.04012) & (0.01703)\\
+\addlinespace
+\textit{ln HHI\textsubscript{pdt}} &  &  &  & -0.01930 & 0.00534 & 0.01015\\
+ &  &  &  & (0.01532) & (0.02757) & (0.01750)\\
+\midrule
+Observations & 31,813,457 & 31,756,201 & 31,575,855 & 28,793,984 & 28,741,391 & 28,575,992\\
+$R^{2}$ & 0.79496 & 0.99321 & 0.95703 & 0.79690 & 0.99335 & 0.95950\\
+Clusters (dt) & 3,528 & 3,528 & 3,528 & 2,246 & 2,246 & 2,246\\
+$\theta_{fpd}$ & Yes & Yes & Yes & Yes & Yes & Yes\\
+$\theta_{pt}$ & Yes & Yes & Yes & Yes & Yes & Yes\\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize \textit{Notes}: Standard errors clustered at the (dt) level are reported in parentheses. \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+}
