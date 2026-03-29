@@ -5,71 +5,56 @@
 ## Author: Edoardo Vitella
 ## PhD student at University of Trento and Free University of Bozen
 ##
-## Implementazione tramite il pacchetto nativo `cem` (Iacus, King & Porro, 2012),
-## in linea con Caselli et al. (2025) su Anti-dumping e Product Quality.
+## Implementation via native package `cem` (Iacus, King & Porro, 2012)
 ##
-## ── LOGICA DEL MATCHING ────────────────────────────────────────────────────
+## ── MATCHING LOGIC ─────────────────────────────────────────────────────────
 ##
-## L'obiettivo è costruire un gruppo di controllo (destinazioni senza PTA cinese)
-## bilanciato rispetto alle covariate che governano la SELEZIONE nel trattamento,
-## ossia la propensione di un paese a firmare un PTA con la Cina.
+## Objective: construct a control group (destinations without Chinese PTA)
+## balanced with respect to the covariates governing treatment SELECTION,
+## i.e., the propensity of a country to sign a PTA with China.
 ##
-## Le variabili scelte sono theory-driven:
+## Selected variables:
 ##
-##   gdp_growth_2000   → trend economico pre-trattamento (→ parallel trends)
-##                        come in Jaravel et al. (2018) e Caselli et al. (2025)
-##   log_gdppc_2000    → livello di sviluppo → propensione a firmare PTA
-##   mfn_tariff_2000   → protezione pre-PTA → guadagni attesi dall'accordo
+##   gdp_growth_2000   → pre-treatment economic trend (→ parallel trends)
+##   log_gdppc_2000    → development level → propensity to sign PTA
+##   mfn_tariff_2000   → pre-PTA protection → expected gains from agreement
 ##
-## Variabile ESCLUSA rispetto a v3:
-##   log_imports_2000  → distribuzione quasi disgiunta tra trattati e controlli
-##                        (min trattati = 9.47, P25 controlli = 9.25): overlap
-##                        insufficiente → SMD post-matching ancora 0.32–0.74,
-##                        e degrada il bilanciamento di log_gdppc_2000 come
-##                        effetto collaterale. Viene mantenuta come controllo
-##                        nella stima gravity ma esclusa dal matching.
+## EXCLUDED variable:
+##   log_imports_2000  → nearly disjoint distribution between treated and controls: 
+##                       insufficient overlap → post-matching SMD still 0.32–0.74, 
+##                       and degrades log_gdppc_2000 balance as side effect.
 ##
-## ── VARIANTI ──────────────────────────────────────────────────────────────
 ##
-##   baseline   → gdp_growth_2000, log_gdppc_2000, mfn_tariff_2000
-##   no_tariff  → gdp_growth_2000, log_gdppc_2000
-##                (robustness: mfn_tariff ha molti NA, riduce il campione)
+## ── SCRIPT STRUCTURE ───────────────────────────────────────────────────────
 ##
-## ── STRUTTURA DELLO SCRIPT ────────────────────────────────────────────────
+##   PART 1  → Building dt_country (pre-treatment covariates)
+##   PART 1H → Distribution diagnostics (quantiles + histograms)
+##   CUTPOINTS → Defined after diagnostics
+##   PART 2  → CEM Implementation
 ##
-##   PARTE 1  → Costruzione di dt_country (covariate pre-trattamento)
-##   PARTE 1H → Diagnostica distribuzioni (quantili + istogrammi)
-##   CUTPOINTS → Definiti DOPO la diagnostica, con giustificazione empirica
-##   PARTE 2  → Loop CEM su varianti
-##
-## Per ogni variante produce:
-##   - Summary CEM (.txt)
+## Produces:
+##   - CEM Summary (.txt)
 ##   - Love plot (.pdf / .png)
-##   - Balance table LaTeX con L1 statistic pre/post
-##   - matched_countries_<label>.csv
-##   - data_cem_matched_<label>.fst
+##   - Balance table LaTeX with L1 statistic pre/post
+##   - matched_countries.csv
+##   - data_cem_matched.fst
 ##
-## Struttura directory output:
+## Output directory structure:
 ##   Output/CEM/
-##     CEM_Diagnostics.pdf/.png       ← istogrammi pre-matching (Parte 1H)
-##     CEM_baseline/
-##       matched_countries_baseline.csv
-##       CEM_Summary_baseline.txt
-##       CEM_LovePlot_baseline.pdf/.png
-##       CEM_Balance_Table_baseline.tex
-##     CEM_no_tariff/
-##       ...
+##     CEM_Covariate_Diagnostics.pdf/.png   ← histograms pre-matching (Part 1H)
+##     matched_countries.csv
+##     CEM_Summary.txt
+##     CEM_LovePlot.pdf/.png
+##     CEM_Balance_Table.tex
 ##
 ##   Data/Matching/
 ##     wdi_data.csv
-##     baci_imports_from_china_2000.csv   ← scaricato ma NON usato nel matching
 ##     mfn_tariffs_2000.csv
 ##
 ##   Data/Final Dataset/
-##     data_cem_matched_baseline.fst
-##     data_cem_matched_no_tariff.fst
+##     data_cem_matched.fst
 ##
-## Pacchetti necessari:
+## Required packages:
 ## install.packages(c("cem", "cobalt", "patchwork", "WDI", "wbstats"))
 
 # ─────────────────────────────────────────────────────────────────────
@@ -112,7 +97,7 @@ if (!file.exists(wdi_cache_file)) {
     wdi_raw <- WDI(
         country = "all",
         indicator = c(
-            "NY.GDP.PCAP.CD", # GDP pro capite, USD correnti
+            "NY.GDP.PCAP.CD", # GDP per capita, current USD
             "NY.GDP.MKTP.KD.ZG" # GDP growth rate, %
         ),
         start = 2000, end = 2000,
@@ -127,10 +112,10 @@ if (!file.exists(wdi_cache_file)) {
         wdi_dt[, .(iso3c, country, log_gdppc_2000, gdp_growth_2000)],
         wdi_cache_file
     )
-    cat("WDI salvato in:", wdi_cache_file, "\n")
+    cat("WDI saved in:", wdi_cache_file, "\n")
 } else {
     wdi_dt <- fread(wdi_cache_file)
-    cat("WDI caricato dalla cache.\n")
+    cat("WDI loaded from cache.\n")
 }
 
 ## 1B. MFN Tariffs 2000 (wbstats) ─────────────────────────────────────
@@ -147,13 +132,13 @@ if (!file.exists(mfn_out_file)) {
         .(iso3c, mfn_tariff_2000 = TM.TAX.MRCH.SM.AR.ZS)
     ]
     fwrite(dt_mfn, mfn_out_file)
-    cat("MFN Tariffs 2000: OK -", nrow(dt_mfn), "paesi\n")
+    cat("MFN Tariffs 2000: OK -", nrow(dt_mfn), "countries\n")
 } else {
     dt_mfn <- fread(mfn_out_file)
-    cat("MFN Tariffs caricato dalla cache.\n")
+    cat("MFN Tariffs loaded from cache.\n")
 }
 
-## 1C. Merge covariate ────────────────────────────────────────────────
+## 1C. Merge covariates ────────────────────────────────────────────────
 dt_country <- copy(wdi_dt)
 setnames(dt_country, "country", "country_name", skip_absent = TRUE)
 
@@ -225,27 +210,27 @@ dt_country[, treated := as.integer(iso3c %in% c(
     "PAK", "PHL", "PER", "SGP", "LKA", "CHE", "THA", "TLS", "VNM"
 ))]
 
-cat(sprintf("\nPaesi trattati (PTA): %d\n", sum(dt_country$treated, na.rm = TRUE)))
-cat(sprintf("Paesi controllo (no PTA): %d\n", sum(!dt_country$treated, na.rm = TRUE)))
+cat(sprintf("\nTreated Countries (PTA): %d\n", sum(dt_country$treated, na.rm = TRUE)))
+cat(sprintf("Control Countries (no PTA): %d\n", sum(!dt_country$treated, na.rm = TRUE)))
 
-## 1F. Copertura covariate (non-NA) ────────────────────────────────────
+## 1F. Covariate coverage (non-NA) ──────────────────────────────────
 covs_list <- c("gdp_growth_2000", "log_gdppc_2000", "mfn_tariff_2000")
-cat("\nCopertura covariate (non-NA):\n")
+cat("\nCovariate coverage (non-NA):\n")
 for (v in covs_list) {
     if (v %in% names(dt_country)) {
-        cat(sprintf("  %-20s: %d paesi\n", v, sum(!is.na(dt_country[[v]]))))
+        cat(sprintf("  %-20s: %d countries\n", v, sum(!is.na(dt_country[[v]]))))
     } else {
-        cat(sprintf("  %-20s: MANCANTE nel dataset!\n", v))
+        cat(sprintf("  %-20s: MISSING in the dataset!\n", v))
     }
 }
 
-## 1G. Diagnostica distribuzioni ───────────────────────────────────────
-## Eseguita PRIMA di definire i cutpoints per giustificare empiricamente
-## la scelta dei breakpoints.
-cat("\n=== DIAGNOSTICA DISTRIBUZIONI PRE-MATCHING ===\n")
-cat("(Utilizzata per definire i cutpoints nella sezione successiva)\n")
+## 1G. Covariate distributions diagnostics ───────────────────────────────────────
+## Executed before defining cutpoints to empirically justify
+## the choice of breakpoints.
+cat("\n=== PRE-MATCHING DISTRIBUTION DIAGNOSTICS ===\n")
+cat("(Used to define cutpoints in the following section)\n")
 
-# ── gdp_growth_2000 ──────────────────────────────────────────────────
+# ── gdp_growth_2000 ────────────────────────────────────────────────
 cat("\n── gdp_growth_2000 ──\n")
 print(dt_country[, .(
     n   = sum(!is.na(gdp_growth_2000)),
@@ -255,12 +240,10 @@ print(dt_country[, .(
     p75 = round(quantile(gdp_growth_2000, .75, na.rm = TRUE), 3),
     max = round(max(gdp_growth_2000, na.rm = TRUE), 3)
 ), by = treated][order(treated)])
-## Overlap ottimo nella fascia centrale. Outlier a ~58 lato trattati
-## (verosimilmente TLS — anno di indipendenza 2000): bin estremo
-## quasi vuoto lato controlli, quel paese verrà scartato dal CEM.
-## → Cutpoints scelti: c(0, 3, 6, 10)
+## Good overlap in the central range. Outlier at ~58 in treated group.
+## → Selected cutpoints: c(0, 3, 6, 10)
 
-# ── log_gdppc_2000 ───────────────────────────────────────────────────
+# ── log_gdppc_2000 ────────────────────────────────────────────────
 cat("\n── log_gdppc_2000 ──\n")
 print(dt_country[, .(
     n   = sum(!is.na(log_gdppc_2000)),
@@ -270,11 +253,11 @@ print(dt_country[, .(
     p75 = round(quantile(log_gdppc_2000, .75, na.rm = TRUE), 3),
     max = round(max(log_gdppc_2000, na.rm = TRUE), 3)
 ), by = treated][order(treated)])
-## Distribuzione quasi identica tra gruppi (P50: 7.48 vs 7.60).
-## Soglie in log: ~$400, ~$1.800, ~$8.100, ~$36.000 di GDP pc.
-## → Cutpoints scelti: c(6.0, 7.5, 9.0, 10.5)
+## Good distribution between groups (P50: 7.48 vs 7.60).
+## → Selected cutpoints: c(6.0, 7.5, 9.0, 10.5)
+## Thresholds in log: ~$400, ~$1,800, ~$8,100, ~$36,000 GDP per capita.
 
-# ── mfn_tariff_2000 ──────────────────────────────────────────────────
+# ── mfn_tariff_2000 ────────────────────────────────────────────────
 cat("\n── mfn_tariff_2000 ──\n")
 print(dt_country[, .(
     n   = sum(!is.na(mfn_tariff_2000)),
@@ -284,12 +267,10 @@ print(dt_country[, .(
     p75 = round(quantile(mfn_tariff_2000, .75, na.rm = TRUE), 3),
     max = round(max(mfn_tariff_2000, na.rm = TRUE), 3)
 ), by = treated][order(treated)])
-## Overlap buono sui P25 (4.56 vs 4.49). Trattati concentrati nella
-## fascia bassa (P50 = 8 vs 12): coerente con teoria PTA.
-## Picco a 0 = HKG e MAC. Copertura: 22/25 trattati → variante no_tariff.
-## → Cutpoints scelti: c(0, 5, 10, 20)
+## Treated group concentrated in lower range.
+## → Selected cutpoints: c(0, 5, 10, 20)
 
-# ── Istogrammi sovrapposti con cutpoints ─────────────────────────────
+# ── Histograms with cutpoints ─────────────────────────────
 p_growth <- ggplot(
     dt_country[!is.na(gdp_growth_2000)],
     aes(x = gdp_growth_2000, fill = factor(treated))
@@ -371,7 +352,7 @@ cat("\n=== FINE DIAGNOSTICA ===\n\n")
 
 
 # ─────────────────────────────────────────────────────────────────────
-# CUTPOINTS — Definiti sulla base della diagnostica 1G
+# CUTPOINTS
 # ─────────────────────────────────────────────────────────────────────
 my_cutpoints <- list(
     gdp_growth_2000 = c(0, 3, 6, 10),
@@ -433,7 +414,7 @@ cat(sprintf(
     "\n=========================================================\n"
 ))
 cat(sprintf(" CEM MATCHING\n"))
-cat(sprintf(" Covariate: %s\n", paste(covs, collapse = ", ")))
+cat(sprintf(" Covariates: %s\n", paste(covs, collapse = ", ")))
 cat(sprintf(
     "=========================================================\n\n"
 ))
@@ -443,11 +424,11 @@ cem_fst_dir <- final_data
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 dir.create(cem_fst_dir, showWarnings = FALSE, recursive = TRUE)
 
-# ── Prepara dataset per il matching ──────────────────────────────
+# ── Preparing dataset for matching ──────────────────────────────
 dt_match <- dt_country[complete.cases(dt_country[, ..covs]) & !is.na(treated)]
 
 cat(sprintf(
-    "Dataset per matching: %d paesi (%d trattati, %d controlli)\n",
+    "Matched countries: %d (%d treated, %d controls)\n",
     nrow(dt_match), sum(dt_match$treated), sum(dt_match$treated == 0)
 ))
 
@@ -483,8 +464,8 @@ imb_after <- imbalance(
     data  = as.data.frame(dt_match_sub[, ..covs])
 )
 
-cat(sprintf("\nL1 imbalance — prima del matching: %.4f\n", imb_before$L1$L1))
-cat(sprintf("L1 imbalance — dopo il matching:   %.4f\n", imb_after$L1$L1))
+cat(sprintf("\nL1 imbalance — before matching: %.4f\n", imb_before$L1$L1))
+cat(sprintf("L1 imbalance — after matching:   %.4f\n", imb_after$L1$L1))
 
 # ── Dataset dei paesi matchati ────────────────────────────────────
 dt_matched <- copy(dt_match)
@@ -493,14 +474,14 @@ dt_matched[, subclass := cem_out$groups]
 dt_matched <- dt_matched[weights > 0]
 
 cat(sprintf(
-    "Paesi nel dataset matched: %d (%d trattati, %d controlli)\n",
+    "Matched countries: %d (%d treated, %d controls)\n",
     nrow(dt_matched), sum(dt_matched$treated), sum(dt_matched$treated == 0)
 ))
 
-fwrite(
-    dt_matched[, .(iso3c, country_name, country_code, treated, subclass, weights)],
-    file.path(out_dir, "matched_countries.csv")
-)
+# fwrite(
+#     dt_matched[, .(iso3c, country_name, country_code, treated, subclass, weights)],
+#     file.path(out_dir, "matched_countries.csv")
+# )
 
 # ── Love plot ─────────────────────────────────────────────────────
 p_love <- love.plot(
@@ -548,13 +529,13 @@ matched_codes <- dt_matched[!is.na(country_code), unique(country_code)]
 dt_cem <- dt_full[country_code %in% matched_codes]
 
 cat(sprintf(
-    "Osservazioni: %s originale → %s matched (%.1f%%)\n",
+    "Observations: %s original → %s matched (%.1f%%)\n",
     format(nrow(dt_full), big.mark = ","),
     format(nrow(dt_cem), big.mark = ","),
     100 * nrow(dt_cem) / nrow(dt_full)
 ))
 cat(sprintf(
-    "Destinazioni: %d originale → %d matched\n",
+    "Destinations: %d original → %d matched\n",
     dt_full[, uniqueN(country_code)],
     dt_cem[, uniqueN(country_code)]
 ))
@@ -567,10 +548,10 @@ rm(dt_full, dt_cem)
 gc()
 
 # ─────────────────────────────────────────────────────────────────────
-# RIEPILOGO FINALE
+# FINAL RECAP
 # ─────────────────────────────────────────────────────────────────────
-cat("\n\n=== CEM MATCHING - COMPLETATO! ===\n")
-cat("\nPercorsi output:\n")
+cat("\n\n=== CEM MATCHING - DONE! ===\n")
+cat("\nOutput paths:\n")
 cat(sprintf("\nOutput/CEM/\n"))
 cat(sprintf("  CEM_Covariate_Diagnostics.pdf/.png\n"))
 cat(sprintf("  matched_countries.csv\n"))
