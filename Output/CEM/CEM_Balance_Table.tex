@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\caption{Covariate Balance: Pre- and Post-CEM Matching}
+\label{tab:cem_balance}
+\small
+\begin{tabular}{lcccc}
+\hline\hline
+& \multicolumn{2}{c}{Unmatched} & \multicolumn{2}{c}{Matched (CEM)} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Variable & SMD & Var. Ratio & SMD & Var. Ratio \\
+\hline
+log_gdppc_2000 & 0.029 & 1.334 & -0.108 & 1.218 \\
+gdp_growth_2000 & 0.586 & 0.629 & -0.077 & 0.619 \\
+mfn_tariff_2000 & -0.282 & 1.149 & -0.047 & 1.087 \\
+\hline
+\multicolumn{5}{l}{\footnotesize \textit{L1 imbalance:} 0.7879 (pre) $\rightarrow$ 0.6516 (post)} \\
+\multicolumn{5}{l}{\footnotesize \textit{Note:} SMD = Standardised Mean Difference. Soglia: SMD $<$ 0.10.} \\
+\end{tabular}
+\end{table}

@@ -1,14 +1,15 @@
-#############################
-###### PPML Estimation ######
-#############################
+﻿#################################
+###### PPML - CEM Estimation ####
+#################################
 
 ## Author: Edoardo Vitella
 ## PhD student at University of Trento and Free University of Bozen
 ## PPML Estimation without zeros fill-in (only positive export flows)
 ## using fepois from the fixest package.
 ##
-## This script uses the shared function library in pta_functions.R.
-## All estimation and table-building logic lives there.
+## This script uses the same model specifications as
+## PPML_Estimation_v3.R, but on the CEM dataset
+## produced by Matching_v5.R.
 
 # ─────────────────────────────────────────────────────────────────────
 # SETUP
@@ -27,12 +28,12 @@ library(lubridate)
 
 source(here("Code/Analysis/pta_functions.R"))
 
-# Set your own data file path (dataset not tracked in the repo – file too large)
-data_file <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst") ## On Windows
-out_dir <- here("Output/Analysis/PPML")
+# Dataset produced by Matching_v5.R
+data_file <- here("Data/Final Dataset/data_cem_matched.fst")
+out_dir <- here("Output/Analysis/CEM/PPML")
 dirs <- setup_output_dirs(out_dir)
 
-stopifnot("File dati non trovato!" = file.exists(data_file))
+stopifnot("Dataset CEM non trovato!" = file.exists(data_file))
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -71,7 +72,7 @@ start <- now()
 show_stats_ppml <- c("nobs", "r2", "n_clust") # Put here the statistics you want in the tables (must be in the list of available stats in make_table())
 
 ## BLOCK 1: WB No Interaction
-cat("\n=== WB No Interaction (fpd + year FE) ===\n")
+cat("\n=== CEM WB No Interaction (fpd + year FE) ===\n")
 f1 <- c(
     "export  ~ WB_EP_Depth | fpd + year",
     "exp_qua ~ WB_EP_Depth | fpd + year",
@@ -80,14 +81,14 @@ f1 <- c(
     "exp_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + year"
 )
-stats1 <- run_block(f1, "WB No Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats1, cm_wb, "PPML_WB_No_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats1 <- run_block(f1, "CEM WB No Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats1, cm_wb, "CEM_PPML_WB_No_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats1)
 gc()
 
 
 ## BLOCK 2: WB Interaction
-cat("\n=== WB Interaction (fpd + year FE) ===\n")
+cat("\n=== CEM WB Interaction (fpd + year FE) ===\n")
 f2 <- c(
     "export  ~ WB_EP_Depth * env_good | fpd + year",
     "exp_qua ~ WB_EP_Depth * env_good | fpd + year",
@@ -96,14 +97,14 @@ f2 <- c(
     "exp_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + year"
 )
-stats2 <- run_block(f2, "WB Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats2, cm_wb_int, "PPML_WB_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats2 <- run_block(f2, "CEM WB Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats2, cm_wb_int, "CEM_PPML_WB_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats2)
 gc()
 
 
 ## BLOCK 3: TREND No Interaction
-cat("\n=== TREND No Interaction (fpd + year FE) ===\n")
+cat("\n=== CEM TREND No Interaction (fpd + year FE) ===\n")
 f3 <- c(
     "export  ~ TREND_EP_Count | fpd + year",
     "exp_qua ~ TREND_EP_Count | fpd + year",
@@ -112,14 +113,14 @@ f3 <- c(
     "exp_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + year"
 )
-stats3 <- run_block(f3, "TREND No Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats3, cm_trend, "PPML_TREND_No_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats3 <- run_block(f3, "CEM TREND No Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats3, cm_trend, "CEM_PPML_TREND_No_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats3)
 gc()
 
 
 ## BLOCK 4: TREND Interaction
-cat("\n=== TREND Interaction (fpd + year FE) ===\n")
+cat("\n=== CEM TREND Interaction (fpd + year FE) ===\n")
 f4 <- c(
     "export  ~ TREND_EP_Count * env_good | fpd + year",
     "exp_qua ~ TREND_EP_Count * env_good | fpd + year",
@@ -128,8 +129,8 @@ f4 <- c(
     "exp_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year",
     "uv_exp  ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year"
 )
-stats4 <- run_block(f4, "TREND Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
-make_table(stats4, cm_trend_int, "PPML_TREND_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats4 <- run_block(f4, "CEM TREND Interaction (fpd + year FE)", "ppml", data_file, dirs$models, vcov = ~pdt, requested_stats = show_stats_ppml)
+make_table(stats4, cm_trend_int, "CEM_PPML_TREND_Interaction_fpd_year.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats4)
 gc()
 
@@ -143,15 +144,14 @@ cat("Time for fpd + year FE:", now() - start, "seconds\n")
 
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# FIRM-PRODUCT-TIME FIXED EFFECTS (fpt) + PRODUCT-DESTINATION (pd) FIXED EFFECTS
+# ────────────────────────────────────────────────────────────────────
 # Cluster standard errors at the destination-time level (dt)
-# ──────────────────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────────
 start <- now()
 show_stats_ppml <- c("nobs", "r2", "n_clust") # Put here the statistics you want in the tables (must be in the list of available stats in make_table())
 
 ## BLOCK 1: WB No Interaction
-cat("\n=== WB No Interaction (fpt + pd FE) ===\n")
+cat("\n=== CEM WB No Interaction (fpt + pd FE) ===\n")
 f1 <- c(
     "export  ~ WB_EP_Depth | fpt + pd",
     "exp_qua ~ WB_EP_Depth | fpt + pd",
@@ -160,14 +160,14 @@ f1 <- c(
     "exp_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd",
     "uv_exp  ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd"
 )
-stats1 <- run_block(f1, "WB No Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats1, cm_wb, "PPML_WB_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats1 <- run_block(f1, "CEM WB No Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats1, cm_wb, "CEM_PPML_WB_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats1)
 gc()
 
 
 ## BLOCK 2: WB Interaction
-cat("\n=== WB Interaction (fpt + pd FE) ===\n")
+cat("\n=== CEM WB Interaction (fpt + pd FE) ===\n")
 f2 <- c(
     "export  ~ WB_EP_Depth * env_good | fpt + pd",
     "exp_qua ~ WB_EP_Depth * env_good | fpt + pd",
@@ -176,14 +176,14 @@ f2 <- c(
     "exp_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd",
     "uv_exp  ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd"
 )
-stats2 <- run_block(f2, "WB Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats2, cm_wb_int, "PPML_WB_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats2 <- run_block(f2, "CEM WB Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats2, cm_wb_int, "CEM_PPML_WB_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats2)
 gc()
 
 
 ## BLOCK 3: TREND No Interaction
-cat("\n=== TREND No Interaction (fpt + pd FE) ===\n")
+cat("\n=== CEM TREND No Interaction (fpt + pd FE) ===\n")
 f3 <- c(
     "export  ~ TREND_EP_Count | fpt + pd",
     "exp_qua ~ TREND_EP_Count | fpt + pd",
@@ -192,14 +192,14 @@ f3 <- c(
     "exp_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd",
     "uv_exp  ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd"
 )
-stats3 <- run_block(f3, "TREND No Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats3, cm_trend, "PPML_TREND_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats3 <- run_block(f3, "CEM TREND No Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats3, cm_trend, "CEM_PPML_TREND_No_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats3)
 gc()
 
 
 ## BLOCK 4: TREND Interaction
-cat("\n=== TREND Interaction (fpt + pd FE) ===\n")
+cat("\n=== CEM TREND Interaction (fpt + pd FE) ===\n")
 f4 <- c(
     "export  ~ TREND_EP_Count * env_good | fpt + pd",
     "exp_qua ~ TREND_EP_Count * env_good | fpt + pd",
@@ -208,8 +208,8 @@ f4 <- c(
     "exp_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd",
     "uv_exp  ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd"
 )
-stats4 <- run_block(f4, "TREND Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats4, cm_trend_int, "PPML_TREND_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats4 <- run_block(f4, "CEM TREND Interaction (fpt + pd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats4, cm_trend_int, "CEM_PPML_TREND_Interaction_fpt_pd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats4)
 gc()
 
@@ -220,15 +220,15 @@ cat("- 4 tables .tex\n- 24 PPML_*_fpt.rds\n")
 cat("Time for fpt + pd:", now() - start, "seconds\n")
 
 
-# ────────────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────
 # FIRM-PRODUCT-TIME FIXED EFFECTS (fpt) + FIRM-PRODUCT-DESTINATION (fpd) FIXED EFFECTS
 # Cluster standard errors at the destination-time level (dt)
-# ────────────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────
 start <- now()
 show_stats_ppml <- c("nobs", "r2", "n_clust") # Put here the statistics you want in the tables (must be in the list of available stats in make_table())
 
 ## BLOCK 1: WB No Interaction
-cat("\n=== WB No Interaction (fpt + fpd FE) ===\n")
+cat("\n=== CEM WB No Interaction (fpt + fpd FE) ===\n")
 f1 <- c(
     "export  ~ WB_EP_Depth | fpt + fpd",
     "exp_qua ~ WB_EP_Depth | fpt + fpd",
@@ -237,14 +237,14 @@ f1 <- c(
     "exp_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + fpd",
     "uv_exp  ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + fpd"
 )
-stats1 <- run_block(f1, "WB No Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats1, cm_wb, "PPML_WB_No_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats1 <- run_block(f1, "CEM WB No Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats1, cm_wb, "CEM_PPML_WB_No_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats1)
 gc()
 
 
 ## BLOCK 2: WB Interaction
-cat("\n=== WB Interaction (fpt + fpd FE) ===\n")
+cat("\n=== CEM WB Interaction (fpt + fpd FE) ===\n")
 f2 <- c(
     "export  ~ WB_EP_Depth * env_good | fpt + fpd",
     "exp_qua ~ WB_EP_Depth * env_good | fpt + fpd",
@@ -253,14 +253,14 @@ f2 <- c(
     "exp_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + fpd",
     "uv_exp  ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + fpd"
 )
-stats2 <- run_block(f2, "WB Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats2, cm_wb_int, "PPML_WB_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats2 <- run_block(f2, "CEM WB Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats2, cm_wb_int, "CEM_PPML_WB_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats2)
 gc()
 
 
 ## BLOCK 3: TREND No Interaction
-cat("\n=== TREND No Interaction (fpt + fpd FE) ===\n")
+cat("\n=== CEM TREND No Interaction (fpt + fpd FE) ===\n")
 f3 <- c(
     "export  ~ TREND_EP_Count | fpt + fpd",
     "exp_qua ~ TREND_EP_Count | fpt + fpd",
@@ -269,14 +269,14 @@ f3 <- c(
     "exp_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + fpd",
     "uv_exp  ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + fpd"
 )
-stats3 <- run_block(f3, "TREND No Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats3, cm_trend, "PPML_TREND_No_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats3 <- run_block(f3, "CEM TREND No Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats3, cm_trend, "CEM_PPML_TREND_No_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats3)
 gc()
 
 
 ## BLOCK 4: TREND Interaction
-cat("\n=== TREND Interaction (fpt + fpd FE) ===\n")
+cat("\n=== CEM TREND Interaction (fpt + fpd FE) ===\n")
 f4 <- c(
     "export  ~ TREND_EP_Count * env_good | fpt + fpd",
     "exp_qua ~ TREND_EP_Count * env_good | fpt + fpd",
@@ -285,8 +285,8 @@ f4 <- c(
     "exp_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + fpd",
     "uv_exp  ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + fpd"
 )
-stats4 <- run_block(f4, "TREND Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats4, cm_trend_int, "PPML_TREND_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats4 <- run_block(f4, "CEM TREND Interaction (fpt + fpd FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats4, cm_trend_int, "CEM_PPML_TREND_Interaction_fpt_fpd.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats4)
 gc()
 
@@ -306,7 +306,7 @@ show_stats_ppml <- c("nobs", "r2", "n_clust") # Put here the statistics you want
 setFixest_nthreads(1) # To avoid windows crash
 
 ## BLOCK 1: WB No Interaction
-cat("\n=== WB No Interaction (fpd + pt FE) ===\n")
+cat("\n=== CEM WB No Interaction (fpd + pt FE) ===\n")
 f1 <- c(
     "export  ~ WB_EP_Depth | fpd + pt",
     "exp_qua ~ WB_EP_Depth | fpd + pt",
@@ -315,14 +315,14 @@ f1 <- c(
     "exp_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt",
     "uv_exp  ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt"
 )
-stats1 <- run_block(f1, "WB No Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats1, cm_wb, "PPML_WB_No_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats1 <- run_block(f1, "CEM WB No Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats1, cm_wb, "CEM_PPML_WB_No_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats1)
 gc()
 
 
 ## BLOCK 2: WB Interaction
-cat("\n=== WB Interaction (fpd + pt FE) ===\n")
+cat("\n=== CEM WB Interaction (fpd + pt FE) ===\n")
 f2 <- c(
     "export  ~ WB_EP_Depth * env_good | fpd + pt",
     "exp_qua ~ WB_EP_Depth * env_good | fpd + pt",
@@ -331,14 +331,14 @@ f2 <- c(
     "exp_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt",
     "uv_exp  ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt"
 )
-stats2 <- run_block(f2, "WB Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats2, cm_wb_int, "PPML_WB_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats2 <- run_block(f2, "CEM WB Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats2, cm_wb_int, "CEM_PPML_WB_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats2)
 gc()
 
 
 ## BLOCK 3: TREND No Interaction
-cat("\n=== TREND No Interaction (fpd + pt FE) ===\n")
+cat("\n=== CEM TREND No Interaction (fpd + pt FE) ===\n")
 f3 <- c(
     "export  ~ TREND_EP_Count | fpd + pt",
     "exp_qua ~ TREND_EP_Count | fpd + pt",
@@ -347,14 +347,14 @@ f3 <- c(
     "exp_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt",
     "uv_exp  ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt"
 )
-stats3 <- run_block(f3, "TREND No Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats3, cm_trend, "PPML_TREND_No_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats3 <- run_block(f3, "CEM TREND No Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats3, cm_trend, "CEM_PPML_TREND_No_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats3)
 gc()
 
 
 ## BLOCK 4: TREND Interaction
-cat("\n=== TREND Interaction (fpd + pt FE) ===\n")
+cat("\n=== CEM TREND Interaction (fpd + pt FE) ===\n")
 f4 <- c(
     "export  ~ TREND_EP_Count * env_good | fpd + pt",
     "exp_qua ~ TREND_EP_Count * env_good | fpd + pt",
@@ -363,8 +363,8 @@ f4 <- c(
     "exp_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt",
     "uv_exp  ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt"
 )
-stats4 <- run_block(f4, "TREND Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
-make_table(stats4, cm_trend_int, "PPML_TREND_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
+stats4 <- run_block(f4, "CEM TREND Interaction (fpd + pt FE)", "ppml", data_file, dirs$models, vcov = ~dt, requested_stats = show_stats_ppml)
+make_table(stats4, cm_trend_int, "CEM_PPML_TREND_Interaction_fpd_pt.tex", dirs$tables, digits = 5, show_stats = show_stats_ppml)
 rm(stats4)
 gc()
 

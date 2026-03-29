@@ -22,11 +22,6 @@
 ##   log_imports_2000  → esposizione commerciale con Cina → selezione PTA
 ##   mfn_tariff_2000   → protezione pre-PTA → guadagni attesi dall'accordo
 ##
-## Variabili ESCLUSE rispetto alla versione precedente:
-##   log_gdp_2000   → ridondante con log_gdppc + log_imports
-##   log_dist       → time-invariant, già assorbita dal FE fpd nella stima
-##   asia_dummy     → proxy geografica rozza, non theory-driven
-##
 ## ── VARIANTI ──────────────────────────────────────────────────────────────
 ##
 ##   baseline   → gdp_growth_2000, log_gdppc_2000, log_imports_2000,
@@ -34,15 +29,43 @@
 ##   no_tariff  → come baseline ma senza mfn_tariff_2000
 ##                (robustness: mfn_tariff ha molti NA, riduce il campione)
 ##
+## ── STRUTTURA DELLO SCRIPT ────────────────────────────────────────────────
+##
+##   PARTE 1  → Costruzione di dt_country (covariate pre-trattamento)
+##   PARTE 1H → Diagnostica distribuzioni (quantili + istogrammi)
+##   CUTPOINTS → Definiti DOPO la diagnostica, con giustificazione empirica
+##   PARTE 2  → Loop CEM su varianti
+##
 ## Per ogni variante produce:
 ##   - Summary CEM (.txt)
 ##   - Love plot (.pdf / .png)
 ##   - Balance table LaTeX con L1 statistic pre/post
 ##   - matched_countries_<label>.csv
-##   - data_cem_matched_<label>.fst  ← dataset filtrato per la stima
+##   - data_cem_matched_<label>.fst
+##
+## Struttura directory output:
+##   Output/Analysis/CEM/
+##     CEM_Diagnostics.pdf/.png       ← istogrammi pre-matching (Parte 1H)
+##     CEM_baseline/
+##       matched_countries_baseline.csv
+##       CEM_Summary_baseline.txt
+##       CEM_LovePlot_baseline.pdf/.png
+##       CEM_Balance_Table_baseline.tex
+##     CEM_no_tariff/
+##       matched_countries_no_tariff.csv
+##       ...
+##
+##   Data/Matching/
+##     wdi_data.csv
+##     baci_imports_from_china_2000.csv
+##     mfn_tariffs_2000.csv
+##     CEM_baseline/
+##       data_cem_matched_baseline.fst
+##     CEM_no_tariff/
+##       data_cem_matched_no_tariff.fst
 ##
 ## Pacchetti necessari:
-## install.packages(c("cem", "cobalt", "WDI", "wbstats", "cepiigeodist"))
+## install.packages(c("cem", "cobalt", "patchwork", "WDI", "wbstats"))
 
 # ─────────────────────────────────────────────────────────────────────
 # SETUP
@@ -53,31 +76,39 @@ library(fst)
 library(data.table)
 library(here)
 library(ggplot2)
-library(cem)      # pacchetto nativo CEM (Iacus, King & Porro, 2012)
-library(cobalt)   # love.plot e bal.tab
+library(cem)
+library(cobalt)
+library(patchwork)
+library(wbstats)
 
+# Setting directories and file paths
 data_file <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
-base_out  <- here("Output/Analysis/CEM_Robustness")
+out_cem_root <- here("Output/Analysis/CEM") # CEM output (diagnostics, love plots, balance tables)
+data_match <- here("Data/Matching") # Matching covariates e matched datasets (csv + fst)
 
-stopifnot("File dati non trovato!" = file.exists(data_file))
+# Create directories if they don't exist
+dir.create(out_cem_root, showWarnings = FALSE, recursive = TRUE)
+dir.create(data_match, showWarnings = FALSE, recursive = TRUE)
+
+stopifnot("Data file not found!" = file.exists(data_file))
 
 # ─────────────────────────────────────────────────────────────────────
 # DEFINIZIONE VARIANTI
 # ─────────────────────────────────────────────────────────────────────
+## I cutpoints vengono definiti dopo la diagnostica (Parte 1H).
+## Qui definiamo solo le covariate per ogni variante.
 cem_variants <- list(
-
   list(
-    label      = "baseline",
+    label = "baseline",
     covariates = c(
-      "gdp_growth_2000",   # trend economico → parallel trends
-      "log_gdppc_2000",    # livello sviluppo → selezione PTA
-      "log_imports_2000",  # esposizione commerciale → selezione PTA
-      "mfn_tariff_2000"    # protezione iniziale → guadagni attesi
+      "gdp_growth_2000",
+      "log_gdppc_2000",
+      "log_imports_2000",
+      "mfn_tariff_2000"
     )
   ),
-
   list(
-    label      = "no_tariff",
+    label = "no_tariff",
     covariates = c(
       "gdp_growth_2000",
       "log_gdppc_2000",
@@ -87,54 +118,33 @@ cem_variants <- list(
 )
 
 # ─────────────────────────────────────────────────────────────────────
-# CUTPOINTS
-# ─────────────────────────────────────────────────────────────────────
-## Un intero k = k bin di larghezza uguale (coarsening automatico del pacchetto).
-## Le covariate non presenti in una variante vengono ignorate.
-cem_cutpoints <- list(
-  gdp_growth_2000  = 3,
-  log_gdppc_2000   = 3,
-  log_imports_2000 = 3,
-  mfn_tariff_2000  = 3
-)
-
-my_cutpoints <- list(
-  gdp_growth_2000 = c(-2, 0, 2, 4, 6), 
-  log_gdppc_2000 = c(7, 8.5, 10, 11.5), # Divide in poveri, medi, ricchi
-  mfn_tariff_2000 = c(0, 5, 15, 30)    # Soglie doganali classiche
-)
-
-# ─────────────────────────────────────────────────────────────────────
 # PARTE 1 — DATASET COUNTRY-LEVEL (covariate pre-trattamento, anno 2000)
 # ─────────────────────────────────────────────────────────────────────
 
 ## 1A. GDP per capita e GDP growth rate (WDI) ─────────────────────────
-## Scarichiamo entrambi gli indicatori in un'unica chiamata per efficienza.
-## NY.GDP.PCAP.CD = GDP pro capite (USD correnti)
-## NY.GDP.MKTP.KD.ZG = tasso di crescita del PIL reale (%)
-wdi_cache_file <- here("Data/Matching/wdi_data.csv")
+wdi_cache_file <- file.path(data_match, "wdi_data.csv")
 
 if (!file.exists(wdi_cache_file)) {
-  if (!requireNamespace("WDI", quietly = TRUE))
+  if (!requireNamespace("WDI", quietly = TRUE)) {
     stop("Installa WDI: install.packages('WDI')")
+  }
   library(WDI)
 
   cat("Downloading WDI Data...\n")
   wdi_raw <- WDI(
-    country   = "all",
+    country = "all",
     indicator = c(
-      "NY.GDP.PCAP.CD",    # GDP pro capite, USD correnti
-      "NY.GDP.MKTP.KD.ZG"  # GDP growth rate, %
+      "NY.GDP.PCAP.CD", # GDP pro capite, USD correnti
+      "NY.GDP.MKTP.KD.ZG" # GDP growth rate, %
     ),
     start = 2000, end = 2000,
     extra = TRUE
   )
   wdi_dt <- as.data.table(wdi_raw)
   wdi_dt <- wdi_dt[!is.na(NY.GDP.PCAP.CD)]
-  wdi_dt[, log_gdppc_2000  := log(NY.GDP.PCAP.CD)]
-  wdi_dt[, gdp_growth_2000 := NY.GDP.MKTP.KD.ZG]  # già in % - non si loga
+  wdi_dt[, log_gdppc_2000 := log(NY.GDP.PCAP.CD)]
+  wdi_dt[, gdp_growth_2000 := NY.GDP.MKTP.KD.ZG]
 
-  dir.create(here("Data/Matching"), showWarnings = FALSE, recursive = TRUE)
   fwrite(
     wdi_dt[, .(iso3c, country, log_gdppc_2000, gdp_growth_2000)],
     wdi_cache_file
@@ -146,58 +156,65 @@ if (!file.exists(wdi_cache_file)) {
 }
 
 ## 1B. Import da Cina nel 2000 (BACI) ────────────────────────────────
-baci_file  <- here("Data/Matching/BACI_HS92_Y2000_V202601.csv")
-baci_codes <- here("Data/Matching/country_codes_V202601.csv")
+baci_file <- file.path(data_match, "BACI_HS92_Y2000_V202601.csv")
+baci_codes <- file.path(data_match, "country_codes_V202601.csv")
+baci_out_file <- file.path(data_match, "baci_imports_from_china_2000.csv")
 
 if (file.exists(baci_file) && file.exists(baci_codes)) {
-  baci_2000  <- fread(baci_file)
-  cc_baci    <- fread(baci_codes)
+  baci_2000 <- fread(baci_file)
+  cc_baci <- fread(baci_codes)
   baci_china <- baci_2000[i == 156,
-    .(imports_from_china_2000 = sum(v, na.rm = TRUE)), by = j]
+    .(imports_from_china_2000 = sum(v, na.rm = TRUE)),
+    by = j
+  ]
   baci_china <- merge(baci_china,
-    cc_baci[, .(j = country_code, iso3c = country_iso3)], by = "j")
+    cc_baci[, .(j = country_code, iso3c = country_iso3)],
+    by = "j"
+  )
   baci_china[, log_imports_2000 := log(imports_from_china_2000 + 1)]
   fwrite(
     baci_china[, .(iso3c, imports_from_china_2000, log_imports_2000)],
-    here("Data/Matching/baci_imports_from_china_2000.csv")
+    baci_out_file
   )
   cat("BACI import 2000: OK -", nrow(baci_china), "paesi\n")
 } else {
-  cat("WARNING: BACI data non trovata in Data/Matching/.\n")
+  cat("WARNING: BACI data not found in", data_match, "\n")
 }
 
 ## 1C. MFN Tariffs 2000 (wbstats) ─────────────────────────────────────
-if (!requireNamespace("wbstats", quietly = TRUE))
-  install.packages("wbstats")
-library(wbstats)
+mfn_out_file <- file.path(data_match, "mfn_tariffs_2000.csv")
 
 mfn_raw <- wb_data(
-  indicator   = "TM.TAX.MRCH.SM.AR.ZS",
-  start_date  = 2000, end_date = 2000,
+  indicator = "TM.TAX.MRCH.SM.AR.ZS",
+  start_date = 2000, end_date = 2000,
   return_wide = TRUE
 )
 dt_mfn <- as.data.table(mfn_raw)[
   !is.na(TM.TAX.MRCH.SM.AR.ZS),
   .(iso3c, mfn_tariff_2000 = TM.TAX.MRCH.SM.AR.ZS)
 ]
-fwrite(dt_mfn, here("Data/Matching/mfn_tariffs_2000.csv"))
+fwrite(dt_mfn, mfn_out_file)
 cat("MFN Tariffs 2000: OK -", nrow(dt_mfn), "paesi\n")
 
 ## Ricarica da disco ──────────────────────────────────────────────────
-dt_mfn <- fread(here("Data/Matching/mfn_tariffs_2000.csv"))
-imp_file <- here("Data/Matching/baci_imports_from_china_2000.csv")
-dt_imp   <- if (file.exists(imp_file)) fread(imp_file) else NULL
+dt_mfn <- fread(mfn_out_file)
+dt_imp <- if (file.exists(baci_out_file)) fread(baci_out_file) else NULL
 
 ## 1D. Merge covariate ────────────────────────────────────────────────
 dt_country <- copy(wdi_dt)
 setnames(dt_country, "country", "country_name", skip_absent = TRUE)
 
-if (!is.null(dt_imp))
+if (!is.null(dt_imp)) {
   dt_country <- merge(dt_country,
-    dt_imp[, .(iso3c, log_imports_2000)], by = "iso3c", all.x = TRUE)
+    dt_imp[, .(iso3c, log_imports_2000)],
+    by = "iso3c", all.x = TRUE
+  )
+}
 
 dt_country <- merge(dt_country,
-  dt_mfn[, .(iso3c, mfn_tariff_2000)], by = "iso3c", all.x = TRUE)
+  dt_mfn[, .(iso3c, mfn_tariff_2000)],
+  by = "iso3c", all.x = TRUE
+)
 
 ## 1E. Mapping iso3c → country_code ────────────────────────────────────
 manual_iso3_to_code <- data.table(
@@ -256,27 +273,197 @@ manual_iso3_to_code <- data.table(
 dt_country <- merge(dt_country, manual_iso3_to_code, by = "iso3c", all.x = TRUE)
 
 ## 1F. Indicatore di trattamento ──────────────────────────────────────
-## Paesi trattati = destinazioni con almeno un PTA con la Cina nel campione
 dt_country[, treated := as.integer(iso3c %in% c(
   "AUS", "BGD", "BRN", "KHM", "CHL", "CRI", "HKG", "ISL",
   "IDN", "IND", "KOR", "LAO", "MYS", "MAC", "MMR", "NZL",
   "PAK", "PHL", "PER", "SGP", "LKA", "CHE", "THA", "TLS", "VNM"
 ))]
 
-cat(sprintf("\nPaesi trattati (PTA): %d\n",   sum(dt_country$treated, na.rm = TRUE)))
+cat(sprintf("\nPaesi trattati (PTA): %d\n", sum(dt_country$treated, na.rm = TRUE)))
 cat(sprintf("Paesi controllo (no PTA): %d\n", sum(!dt_country$treated, na.rm = TRUE)))
 
-## 1G. Diagnostica copertura covariate ────────────────────────────────
+## 1G. Copertura covariate (non-NA) ────────────────────────────────────
 all_covs <- unique(unlist(lapply(cem_variants, `[[`, "covariates")))
 cat("\nCopertura covariate (non-NA):\n")
 for (v in all_covs) {
   if (v %in% names(dt_country)) {
-    n_ok <- sum(!is.na(dt_country[[v]]))
-    cat(sprintf("  %-20s: %d paesi con dato valido\n", v, n_ok))
+    cat(sprintf("  %-20s: %d paesi\n", v, sum(!is.na(dt_country[[v]]))))
   } else {
     cat(sprintf("  %-20s: MANCANTE nel dataset!\n", v))
   }
 }
+
+## 1H. Diagnostica distribuzioni ───────────────────────────────────────
+## Eseguita PRIMA di definire i cutpoints per giustificare empiricamente
+## la scelta dei breakpoints. Output: quantili a schermo + figura salvata.
+cat("\n=== DIAGNOSTICA DISTRIBUZIONI PRE-MATCHING ===\n")
+cat("(Utilizzata per definire i cutpoints nella sezione successiva)\n")
+
+# ── gdp_growth_2000 ──────────────────────────────────────────────────
+cat("\n── gdp_growth_2000 ──\n")
+print(dt_country[, .(
+  n   = sum(!is.na(gdp_growth_2000)),
+  min = round(min(gdp_growth_2000, na.rm = TRUE), 3),
+  p25 = round(quantile(gdp_growth_2000, .25, na.rm = TRUE), 3),
+  p50 = round(median(gdp_growth_2000, na.rm = TRUE), 3),
+  p75 = round(quantile(gdp_growth_2000, .75, na.rm = TRUE), 3),
+  max = round(max(gdp_growth_2000, na.rm = TRUE), 3)
+), by = treated][order(treated)])
+## Overlap ottimo nella fascia centrale. Outlier a ~58 lato trattati
+## (verosimilmente TLS — anno di indipendenza 2000): bin estremo
+## quasi vuoto lato controlli, quel paese verrà scartato dal CEM.
+## → Cutpoints scelti: c(0, 3, 6, 10)
+
+# ── log_gdppc_2000 ───────────────────────────────────────────────────
+cat("\n── log_gdppc_2000 ──\n")
+print(dt_country[, .(
+  n   = sum(!is.na(log_gdppc_2000)),
+  min = round(min(log_gdppc_2000, na.rm = TRUE), 3),
+  p25 = round(quantile(log_gdppc_2000, .25, na.rm = TRUE), 3),
+  p50 = round(median(log_gdppc_2000, na.rm = TRUE), 3),
+  p75 = round(quantile(log_gdppc_2000, .75, na.rm = TRUE), 3),
+  max = round(max(log_gdppc_2000, na.rm = TRUE), 3)
+), by = treated][order(treated)])
+## Distribuzione quasi identica tra gruppi (P50: 7.48 vs 7.60).
+## Soglie in log: ~$400, ~$1.800, ~$8.100, ~$36.000 di GDP pc.
+## → Cutpoints scelti: c(6.0, 7.5, 9.0, 10.5)
+
+# ── log_imports_2000 ─────────────────────────────────────────────────
+cat("\n── log_imports_2000 ──\n")
+print(dt_country[, .(
+  n   = sum(!is.na(log_imports_2000)),
+  min = round(min(log_imports_2000, na.rm = TRUE), 3),
+  p25 = round(quantile(log_imports_2000, .25, na.rm = TRUE), 3),
+  p50 = round(median(log_imports_2000, na.rm = TRUE), 3),
+  p75 = round(quantile(log_imports_2000, .75, na.rm = TRUE), 3),
+  max = round(max(log_imports_2000, na.rm = TRUE), 3)
+), by = treated][order(treated)])
+## Distribuzione quasi disgiunta: min trattati = 9.47, P25 controlli = 9.25.
+## Controlli sotto 9.5 senza overlap → scartati dal CEM (common support).
+## Atteso: i paesi PTA erano già partner commerciali rilevanti nel 2000.
+## → Cutpoints scelti: c(9.5, 11.5, 13.5, 15.5)
+
+# ── mfn_tariff_2000 ──────────────────────────────────────────────────
+cat("\n── mfn_tariff_2000 ──\n")
+print(dt_country[, .(
+  n   = sum(!is.na(mfn_tariff_2000)),
+  min = round(min(mfn_tariff_2000, na.rm = TRUE), 3),
+  p25 = round(quantile(mfn_tariff_2000, .25, na.rm = TRUE), 3),
+  p50 = round(median(mfn_tariff_2000, na.rm = TRUE), 3),
+  p75 = round(quantile(mfn_tariff_2000, .75, na.rm = TRUE), 3),
+  max = round(max(mfn_tariff_2000, na.rm = TRUE), 3)
+), by = treated][order(treated)])
+## Overlap buono sui P25 (4.56 vs 4.49). Trattati concentrati nella
+## fascia bassa (P50 = 8 vs 12): coerente con teoria PTA.
+## Picco a 0 = HKG e MAC. Copertura: 22/25 trattati → variante no_tariff.
+## → Cutpoints scelti: c(0, 5, 10, 20)
+
+# ── Istogrammi sovrapposti con cutpoints ─────────────────────────────
+p_growth <- ggplot(
+  dt_country[!is.na(gdp_growth_2000)],
+  aes(x = gdp_growth_2000, fill = factor(treated))
+) +
+  geom_histogram(bins = 25, position = "identity", alpha = 0.6) +
+  geom_vline(
+    xintercept = c(0, 3, 6, 10),
+    linetype = "dashed", color = "black", linewidth = 0.4
+  ) +
+  scale_fill_manual(
+    values = c("grey50", "steelblue"),
+    labels = c("Controlli", "Trattati")
+  ) +
+  labs(
+    title = "gdp_growth_2000",
+    x = "GDP Growth Rate (%)", y = "Count", fill = NULL
+  ) +
+  theme_minimal(base_size = 11)
+
+p_gdppc <- ggplot(
+  dt_country[!is.na(log_gdppc_2000)],
+  aes(x = log_gdppc_2000, fill = factor(treated))
+) +
+  geom_histogram(bins = 25, position = "identity", alpha = 0.6) +
+  geom_vline(
+    xintercept = c(6.0, 7.5, 9.0, 10.5),
+    linetype = "dashed", color = "black", linewidth = 0.4
+  ) +
+  scale_fill_manual(
+    values = c("grey50", "steelblue"),
+    labels = c("Controlli", "Trattati")
+  ) +
+  labs(
+    title = "log_gdppc_2000",
+    x = "log GDP per capita (USD)", y = "Count", fill = NULL
+  ) +
+  theme_minimal(base_size = 11)
+
+p_imports <- ggplot(
+  dt_country[!is.na(log_imports_2000)],
+  aes(x = log_imports_2000, fill = factor(treated))
+) +
+  geom_histogram(bins = 25, position = "identity", alpha = 0.6) +
+  geom_vline(
+    xintercept = c(9.5, 11.5, 13.5, 15.5),
+    linetype = "dashed", color = "black", linewidth = 0.4
+  ) +
+  scale_fill_manual(
+    values = c("grey50", "steelblue"),
+    labels = c("Controlli", "Trattati")
+  ) +
+  labs(
+    title = "log_imports_2000",
+    x = "log Imports from China (USD)", y = "Count", fill = NULL
+  ) +
+  theme_minimal(base_size = 11)
+
+p_tariff <- ggplot(
+  dt_country[!is.na(mfn_tariff_2000)],
+  aes(x = mfn_tariff_2000, fill = factor(treated))
+) +
+  geom_histogram(bins = 25, position = "identity", alpha = 0.6) +
+  geom_vline(
+    xintercept = c(0, 5, 10, 20),
+    linetype = "dashed", color = "black", linewidth = 0.4
+  ) +
+  scale_fill_manual(
+    values = c("grey50", "steelblue"),
+    labels = c("Controlli", "Trattati")
+  ) +
+  labs(
+    title = "mfn_tariff_2000",
+    x = "MFN Applied Tariff (%)", y = "Count", fill = NULL
+  ) +
+  theme_minimal(base_size = 11)
+
+p_diag <- (p_growth | p_gdppc) / (p_imports | p_tariff) +
+  plot_annotation(
+    title = "Covariate Distributions: Treated vs Controls (pre-matching)",
+    subtitle = "Dashed lines = CEM cutpoints",
+    theme = theme(
+      plot.title    = element_text(size = 13, face = "bold"),
+      plot.subtitle = element_text(size = 10, color = "grey40")
+    )
+  )
+
+ggsave(file.path(out_cem_root, "CEM_Covariate_Diagnostics.pdf"),
+  plot = p_diag, width = 12, height = 8
+)
+ggsave(file.path(out_cem_root, "CEM_Covariate_Diagnostics.png"),
+  plot = p_diag, width = 12, height = 8, dpi = 300
+)
+
+cat("\nIstogrammi salvati in:", out_cem_root, "\n")
+cat("\n=== FINE DIAGNOSTICA ===\n\n")
+
+# ─────────────────────────────────────────────────────────────────────
+# CUTPOINTS — Definiti sulla base della diagnostica 1H
+# ─────────────────────────────────────────────────────────────────────
+my_cutpoints <- list(
+  gdp_growth_2000  = c(0, 3, 6, 10),
+  log_gdppc_2000   = c(6.0, 7.5, 9.0, 10.5),
+  log_imports_2000 = c(9.5, 11.5, 13.5, 15.5),
+  mfn_tariff_2000  = c(0, 5, 10, 20)
+)
 
 # ─────────────────────────────────────────────────────────────────────
 # HELPER — Balance table LaTeX con L1 statistic
@@ -298,17 +485,20 @@ write_balance_latex <- function(bal_df, l1_before, l1_after, filepath) {
   )
   for (i in seq_len(nrow(bal_df))) {
     row <- bal_df[i, ]
-    lines <- c(lines, sprintf("%s & %s & %s & %s & %s \\\\",
+    lines <- c(lines, sprintf(
+      "%s & %s & %s & %s & %s \\\\",
       gsub("_", "\\_", row$Variable),
-      fmt(row[["Diff.Un"]]),  fmt(row[["V.Ratio.Un"]]),
+      fmt(row[["Diff.Un"]]), fmt(row[["V.Ratio.Un"]]),
       fmt(row[["Diff.Adj"]]), fmt(row[["V.Ratio.Adj"]])
     ))
   }
-  lines <- c(lines,
+  lines <- c(
+    lines,
     "\\hline",
     sprintf(
       "\\multicolumn{5}{l}{\\footnotesize \\textit{L1 imbalance:} %.4f (pre) $\\rightarrow$ %.4f (post)} \\\\",
-      l1_before, l1_after),
+      l1_before, l1_after
+    ),
     "\\multicolumn{5}{l}{\\footnotesize \\textit{Note:} SMD = Standardised Mean Difference. Soglia: SMD $<$ 0.10.} \\\\",
     "\\end{tabular}",
     "\\end{table}"
@@ -321,8 +511,7 @@ write_balance_latex <- function(bal_df, l1_before, l1_after, filepath) {
 # PARTE 2 — LOOP SU VARIANTI CEM
 # ─────────────────────────────────────────────────────────────────────
 for (variant in cem_variants) {
-
-  lbl  <- variant$label
+  lbl <- variant$label
   covs <- variant$covariates
 
   cat(sprintf(
@@ -334,10 +523,11 @@ for (variant in cem_variants) {
     "=========================================================\n\n"
   ))
 
-  cem_fst_dir <- here("Data/Matching", paste0("CEM_", lbl))
-  out_dir     <- file.path(base_out, "../CEM", paste0("CEM_", lbl))
+  # Directory specifiche per questa variante
+  out_dir <- file.path(out_cem_root, paste0("CEM_", lbl))
+  cem_fst_dir <- file.path(data_match, paste0("CEM_", lbl))
+  dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
   dir.create(cem_fst_dir, showWarnings = FALSE, recursive = TRUE)
-  dir.create(out_dir,     showWarnings = FALSE, recursive = TRUE)
 
   # ── Prepara dataset per il matching ──────────────────────────────
   dt_match <- dt_country[complete.cases(dt_country[, ..covs]) & !is.na(treated)]
@@ -347,11 +537,7 @@ for (variant in cem_variants) {
     nrow(dt_match), sum(dt_match$treated), sum(!dt_match$treated)
   ))
 
-  # ── CEM (pacchetto nativo) ────────────────────────────────────────
-  ## cutpoints: numero di bin per ogni covariata continua.
-  ## drop: esclude dal coarsening tutte le colonne non usate nel matching.
-  ## keep.all = TRUE: mantiene tutte le righe; peso = 0 per non-matchati.
-  #cp_active <- cem_cutpoints[names(cem_cutpoints) %in% covs]
+  # ── CEM ──────────────────────────────────────────────────────────
   cp_active <- my_cutpoints[names(my_cutpoints) %in% covs]
   drop_cols <- setdiff(names(dt_match), c("treated", covs))
 
@@ -372,14 +558,11 @@ for (variant in cem_variants) {
   sink()
 
   # ── L1 imbalance pre/post ─────────────────────────────────────────
-  ## L1 misura la differenza complessiva nella distribuzione multivariata
-  ## delle covariate tra trattati e controlli (Iacus, King & Porro, 2011).
-  ## Valori più vicini a 0 indicano migliore bilanciamento.
   imb_before <- imbalance(
     group = dt_match$treated,
     data  = as.data.frame(dt_match[, ..covs])
   )
-  matched_idx  <- which(cem_out$w > 0)
+  matched_idx <- which(cem_out$w > 0)
   dt_match_sub <- dt_match[matched_idx]
   imb_after <- imbalance(
     group = dt_match_sub$treated,
@@ -391,7 +574,7 @@ for (variant in cem_variants) {
 
   # ── Dataset dei paesi matchati ────────────────────────────────────
   dt_matched <- copy(dt_match)
-  dt_matched[, weights  := cem_out$w]
+  dt_matched[, weights := cem_out$w]
   dt_matched[, subclass := cem_out$groups]
   dt_matched <- dt_matched[weights > 0]
 
@@ -420,9 +603,11 @@ for (variant in cem_variants) {
   )
 
   ggsave(file.path(out_dir, paste0("CEM_LovePlot_", lbl, ".pdf")),
-         plot = p_love, width = 7, height = 5)
+    plot = p_love, width = 7, height = 5
+  )
   ggsave(file.path(out_dir, paste0("CEM_LovePlot_", lbl, ".png")),
-         plot = p_love, width = 7, height = 5, dpi = 300)
+    plot = p_love, width = 7, height = 5, dpi = 300
+  )
 
   # ── Balance table LaTeX ───────────────────────────────────────────
   bal_stats <- bal.tab(
@@ -432,7 +617,7 @@ for (variant in cem_variants) {
     un         = TRUE,
     thresholds = c(m = 0.1)
   )
-  bal_df          <- as.data.frame(bal_stats$Balance)
+  bal_df <- as.data.frame(bal_stats$Balance)
   bal_df$Variable <- rownames(bal_df)
 
   write_balance_latex(
@@ -447,18 +632,18 @@ for (variant in cem_variants) {
   cat(sprintf("Country codes matched: %d\n", length(matched_codes)))
 
   dt_full <- as.data.table(read_fst(data_file))
-  dt_cem  <- dt_full[country_code %in% matched_codes]
+  dt_cem <- dt_full[country_code %in% matched_codes]
 
   cat(sprintf(
     "Osservazioni: %s originale → %s matched (%.1f%%)\n",
     format(nrow(dt_full), big.mark = ","),
-    format(nrow(dt_cem),  big.mark = ","),
+    format(nrow(dt_cem), big.mark = ","),
     100 * nrow(dt_cem) / nrow(dt_full)
   ))
   cat(sprintf(
     "Destinazioni: %d originale → %d matched\n",
     dt_full[, uniqueN(country_code)],
-    dt_cem[,  uniqueN(country_code)]
+    dt_cem[, uniqueN(country_code)]
   ))
 
   cem_file <- file.path(cem_fst_dir, paste0("data_cem_matched_", lbl, ".fst"))
@@ -467,7 +652,6 @@ for (variant in cem_variants) {
 
   rm(dt_full, dt_cem)
   gc()
-
 } # fine loop varianti
 
 # ─────────────────────────────────────────────────────────────────────
@@ -475,11 +659,14 @@ for (variant in cem_variants) {
 # ─────────────────────────────────────────────────────────────────────
 cat("\n\n=== CEM MATCHING - COMPLETATO! ===\n")
 cat("\nPercorsi output:\n")
+cat(sprintf("\nOutput/Analysis/CEM/\n"))
+cat(sprintf("  CEM_Covariate_Diagnostics.pdf/.png\n"))
 for (v in cem_variants) {
-  cat(sprintf("\nCEM_%s/\n", v$label))
-  cat(sprintf("  Data/Matching/CEM_%s/data_cem_matched_%s.fst\n",        v$label, v$label))
-  cat(sprintf("  Output/Analysis/CEM/CEM_%s/matched_countries_%s.csv\n", v$label, v$label))
-  cat(sprintf("  Output/Analysis/CEM/CEM_%s/CEM_Balance_Table_%s.tex\n", v$label, v$label))
-  cat(sprintf("  Output/Analysis/CEM/CEM_%s/CEM_LovePlot_%s.pdf/.png\n", v$label, v$label))
-  cat(sprintf("  Output/Analysis/CEM/CEM_%s/CEM_Summary_%s.txt\n",       v$label, v$label))
+  cat(sprintf("\n  CEM_%s/\n", v$label))
+  cat(sprintf("    matched_countries_%s.csv\n", v$label))
+  cat(sprintf("    CEM_Summary_%s.txt\n", v$label))
+  cat(sprintf("    CEM_LovePlot_%s.pdf/.png\n", v$label))
+  cat(sprintf("    CEM_Balance_Table_%s.tex\n", v$label))
+  cat(sprintf("\n  Data/Matching/CEM_%s/\n", v$label))
+  cat(sprintf("    data_cem_matched_%s.fst\n", v$label))
 }
