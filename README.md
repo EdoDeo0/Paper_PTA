@@ -32,24 +32,21 @@
       - [Internal Step 1.3 — Merge and Build Indices](#internal-step-13--merge-and-build-indices)
     - [Step 2 — Build the Full Analysis Dataset (Stata)](#step-2--build-the-full-analysis-dataset-stata)
     - [Step 3 — Convert to FST Format (R)](#step-3--convert-to-fst-format-r)
-  - [6. Environmental Provisions Indices](#6-environmental-provisions-indices)
-    - [TREND-based Indices](#trend-based-indices)
-    - [WB-based Indices](#wb-based-indices)
-    - [Normalized Comparison Indices](#normalized-comparison-indices)
-  - [7. Analysis Scripts](#7-analysis-scripts)
-    - [7.1 OLS with High-Dimensional Fixed Effects (Stata)](#71-ols-with-high-dimensional-fixed-effects-stata)
-    - [7.2 PPML Estimation (R)](#72-ppml-estimation-r)
-    - [7.3 Callaway \& Sant'Anna Staggered DiD (R)](#73-callaway--santanna-staggered-did-r)
-  - [8. Outputs](#8-outputs)
-    - [`Output/Analysis/`](#outputanalysis)
+  - [6. Analysis Scripts](#6-analysis-scripts)
+    - [6.1 Main OLS / HDFE Estimation (R)](#61-main-ols--hdfe-estimation-r)
+    - [6.2 Main PPML Estimation (R)](#62-main-ppml-estimation-r)
+    - [6.3 CEM-Based Estimation](#63-cem-based-estimation)
+    - [6.4 Zero Fill-In PPML Specifications](#64-zero-fill-in-ppml-specifications)
+  - [7. Outputs](#7-outputs)
+    - [`Output/Analysis/OLS/`](#outputanalysisols)
     - [`Output/Analysis/PPML/`](#outputanalysisppml)
-    - [`Output/Riordinare/`](#outputriordinare)
-  - [9. Exploratory / Supporting Scripts](#9-exploratory--supporting-scripts)
-  - [10. Important Notes](#10-important-notes)
+    - [`Output/Analysis/CEM/`](#outputanalysiscem)
+    - [`Output/CEM/`](#outputcem)
+  - [8. Exploratory / Supporting Scripts](#8-exploratory--supporting-scripts)
+  - [9. Important Notes](#9-important-notes)
     - [Data not included in the repository](#data-not-included-in-the-repository)
     - [Paths](#paths)
     - [Agreements included (China, 2000–2015)](#agreements-included-china-20002015)
-    - [Variable naming convention](#variable-naming-convention)
 
 ---
 
@@ -60,7 +57,7 @@ This project studies the effect of **Environmental Provisions (EPs) in Preferent
 The empirical strategy includes:
 - **OLS with High-Dimensional Fixed Effects** (`reghdfe` in Stata), with firm-product-destination (FPD) and year fixed effects, clustering at the PDT level.
 - **PPML estimation** (`fepois` in R via `fixest`), same specification, to account for zero trade flows.
-- **Callaway & Sant'Anna (2021) staggered DiD** (`did` in R), exploiting the staggered timing of Chinese PTA entries into force.
+<!-- - **Callaway & Sant'Anna (2021) staggered DiD** (`did` in R), exploiting the staggered timing of Chinese PTA entries into force. -->
 
 The key treatment variables are indices of EP breadth/depth constructed from two complementary databases: the **World Bank Deep Trade Agreements (DTA)** database and the **TREND** database.
 
@@ -71,25 +68,41 @@ The key treatment variables are indices of EP breadth/depth constructed from two
 ```
 Paper_PTA/
 ├── Code/
-│   ├── Merge/                                  # Dataset construction pipeline
-│   │   ├── 1_Build_Final_PTA_EP_Dataset.R      # Main pipeline (Steps 1–3 of dataset build)
+│   ├── Dataset_Creation/                       # Dataset construction pipeline
+│   │   ├── 1_Build_Final_PTA_EP_Dataset.R      # Main pipeline (indices construction)
 │   │   ├── 2_Build_Final_PTA_EP_Dataset.do     # Merge with Chinese customs data (Stata)
-│   │   ├── 3_FST_Conversion_Final_PTA_EP_Dataset.R  # Convert to .fst format
-│   │   └── Merge_TREND_WB.R                    # Standalone merge script (legacy)
+│   │   └── 3_Build_Final_PTA_EP_Dataset.R      # Convert/compress to .fst format
 │   ├── Analysis/                               # Regression scripts
-│   │   ├── Reg_PTA_04_02_26.do                 # OLS regressions (Stata)
-│   │   ├── PPML_Estimation.R                   # PPML regressions (R)
-│   │   └── Callaway_Sant'Anna.R                # Staggered DiD (R)
+│   │   ├── pta_functions.R                     # Shared functions for OLS/PPML workflows
+│   │   ├── OLS_HDFE.R                          # Main OLS/HDFE estimation (R/fixest)
+│   │   ├── PPML.R                              # Main PPML estimation (R/fixest)
+│   │   ├── CEM.R                               # CEM construction and diagnostics
+│   │   ├── OLS_CEM.R                           # OLS on CEM sample
+│   │   ├── PPML_CEM.R                          # PPML on CEM sample
+│   │   ├── Zero_Fill_In.R                      # Aggregated PPML with zero fill-in
+│   │   ├── ZFI_Green_Goods.R                   # Firm-level zero fill-in for green goods
+│   │   ├── Reg_PTA_04_02_26.do                 # Legacy OLS regressions (Stata)
+│   │   ├── Callaway_Sant'Anna.R                # Staggered DiD (exploratory)
+│   │   └── Callaway_SantAnna_v2.R              # Staggered DiD (updated version)
 │   ├── TREND/
 │   │   └── Inspecting TREND Dataset.r          # Exploratory analysis of TREND data
 │   └── WB/
 │       ├── Inspecting WB Database.R            # Exploratory analysis of WB data
-│       ├── Graphs for presentation.R           # Graphs for presentations
 │       └── WB_Dataset_Conversion.do            # Convert WB Excel → .dta (run once)
 │
 ├── Data/
 │   ├── Country_Codes_Custom_Data.csv           # Country codes for Chinese customs data
 │   ├── Env_Codes_HS.dta                        # OECD environmental goods codes (HS6)
+│   ├── Final Dataset/
+│   │   └── final_dataset_pta_env_indices_compressed.fst
+│   ├── Matching/
+│   │   ├── BACI_HS92_Y2000_V202601.csv
+│   │   ├── country_codes_V202601.csv
+│   │   ├── product_codes_HS92_V202601.csv
+│   │   ├── mfn_tariffs_2000.csv
+│   │   ├── wdi_data.csv
+│   │   ├── CEM_full/data_cem_matched_full.fst
+│   │   └── CEM_no_asia/data_cem_matched_no_asia.fst
 │   ├── Merged/                                 # Output of the R pipeline
 │   │   ├── Merged_TREND_WB_FULL_NAMES.csv      # Merged dataset (full variable names)
 │   │   ├── Merged_TREND_WB.csv / .dta          # Merged dataset (short-coded variables)
@@ -106,17 +119,26 @@ Paper_PTA/
 │       ├── DTA 1.0 - Horizontal Content (v2).xlsx  # WB horizontal content (WTO-X)
 │       ├── DTA 2.0 - 18. Environmental Laws (v2).xlsx  # WB environmental laws sheet
 │       ├── WB_China_2000_2015.csv              # WB filtered for China, 2000–2015
+│       ├── WB_DTA_ENV_CHINA_2000_2015.csv
+│       ├── WB_DTA_ENV_CHINA_2000_2015.RData
 │       └── WB_Variable_Mapping.csv             # Short-code → full name mapping
 │
 └── Output/
-    ├── Analysis/                               # Regression output tables
-    │   ├── *.ster                              # Stata stored estimates
-    │   ├── *.tex / *.txt                       # LaTeX and text regression tables
-    │   ├── *.dta                               # Regression results in Stata format
-    │   └── PPML/
-    │       ├── Models_Output/                  # Saved RDS model objects
-    │       └── Tables/                         # PPML LaTeX tables
-    ├── Riordinare/                             # Comparison plots & tables (TREND vs WB)
+    ├── Analysis/
+    │   ├── OLS/                                # Main OLS (R)
+    │   │   ├── Models_Output/
+    │   │   └── Tables/
+    │   ├── PPML/                               # Main PPML (R)
+    │   │   ├── Models_Output/
+    │   │   └── Tables/
+    │   └── CEM/                                # OLS/PPML on matched samples
+    │       ├── OLS/
+    │       │   ├── Models_Output/
+    │       │   └── Tables/
+    │       └── PPML/
+    │           ├── Models_Output/
+    │           └── Tables/
+    ├── CEM/                                    # Matching diagnostics
     └── WB/                                     # Graphs on WB data
 ```
 
@@ -231,7 +253,7 @@ This script imports the WB raw Excel file and saves it as a `.dta` file. It only
 
 ### Step 1 — Build the EP Indices Dataset (R)
 
-**Script:** `Code/Merge/1_Build_Final_PTA_EP_Dataset.R`
+**Script:** `Code/Dataset_Creation/1_Build_Final_PTA_EP_Dataset.R`
 
 This is the **main R pipeline**. It processes both databases, merges them, and constructs all Environmental Provision indices. It is structured in three internal steps:
 
@@ -286,14 +308,14 @@ This is the **main R pipeline**. It processes both databases, merges them, and c
 setwd("/path/to/Paper_PTA")
 
 # Run the script
-source("Code/Merge/1_Build_Final_PTA_EP_Dataset.R")
+source("Code/Dataset_Creation/1_Build_Final_PTA_EP_Dataset.R")
 ```
 
 ---
 
 ### Step 2 — Build the Full Analysis Dataset (Stata)
 
-**Script:** `Code/Merge/2_Build_Final_PTA_EP_Dataset.do`
+**Script:** `Code/Dataset_Creation/2_Build_Final_PTA_EP_Dataset.do`
 
 This script merges the EP indices constructed in Step 1 with the large Chinese customs dataset and with OECD environmental goods codes.
 
@@ -335,7 +357,7 @@ save "C:\path\to\output\final_dataset_pta_env_indices_compressed.dta", replace
 
 ### Step 3 — Convert to FST Format (R)
 
-**Script:** `Code/Merge/3_FST_Conversion_Final_PTA_EP_Dataset.R`
+**Script:** `Code/Dataset_Creation/3_Build_Final_PTA_EP_Dataset.R`
 
 Converts the compressed Stata dataset to the `.fst` format for fast column-selective loading in R (used by the PPML and DiD scripts).
 
@@ -352,11 +374,11 @@ Update the paths to match your local setup before running.
 **Output:** `final_dataset_pta_env_indices_compressed.fst`  
 *(not in repository — very large file)*
 
----
+<!-- --- -->
 
-## 6. Environmental Provisions Indices
+<!-- ## 6. Environmental Provisions Indices
 
-All indices are computed inside `Code/Merge/1_Build_Final_PTA_EP_Dataset.R` and are available in `Data/Merged/Merged_TREND_WB_Indices_Only.dta`.
+All indices are computed inside `Code/Dataset_Creation/1_Build_Final_PTA_EP_Dataset.R` and are available in `Data/Merged/Merged_TREND_WB_Indices_Only.dta`.
 
 ### TREND-based Indices
 
@@ -403,144 +425,133 @@ All indices are computed inside `Code/Merge/1_Build_Final_PTA_EP_Dataset.R` and 
 
 > **Variable mapping:** To recover full provision names from short codes (e.g., `WB_13`), consult `Data/WB/WB_Variable_Mapping.csv` and `Data/TREND/TREND_Variable_Mapping.csv`.
 
+--- -->
+
 ---
 
-## 7. Analysis Scripts
+## 6. Analysis Scripts
 
-### 7.1 OLS with High-Dimensional Fixed Effects (Stata)
+### 6.1 Main OLS / HDFE Estimation (R)
 
-**Script:** `Code/Analysis/Reg_PTA_04_02_26.do`
+**Script:** `Code/Analysis/OLS_HDFE.R`
 
-Uses `reghdfe` to estimate the following baseline specification:
+Main OLS workflow implemented with `fixest::feols` (high-dimensional FE), reusing common utilities from `Code/Analysis/pta_functions.R`.
+
+Baseline reference specification:
 
 $$\ln Y_{fpdt} = \beta \cdot \text{EPDepth}_{dt} + \theta_{fpd} + \theta_t + \varepsilon_{fpdt}$$
 
 where $f$ = firm, $p$ = HS6 product, $d$ = destination country, $t$ = year.
 
-**Dependent variables:**
-- `ln_export` — log export value
-- `ln_export_qua` — log export quantity
-- `ln_export_value` — log export unit value
+The script estimates WB and TREND blocks with/without `env_good` interactions and with/without controls across four FE structures:
+- `fpd + year` (cluster `pdt`)
+- `fpd + pt` (cluster `dt`)
+- `fpt + pd` (cluster `dt`)
+- `fpt + fpd` (cluster `dt`)
 
-**Key regressors:**
-- `WB_EP_Depth` — WB EP depth index (main specification)
-- `TREND_EP_Count` — TREND EP count (robustness)
-- Interaction with `env_good` (binary for OECD environmental goods)
-
-**Controls:** `tariffs` (log MFN), `ln_hhi_baci` (log HHI)
-
-**Fixed effects:** FPD (`fpd`) + Year (`year`)  
-**Clustering:** PDT level (`pdt`)
-
-The script estimates 12 models (m1–m12) with WB depth and 12 models (m1T–m12T) with TREND depth, across combinations of:
-- Baseline vs. with controls
-- No interaction vs. interaction with `env_good`
-- Three outcome variables
-
-Results are stored as `.ster` files and exported to LaTeX via `esttab`.
-
-**Update the path before running:**
-```stata
-use "C:\path\to\final_dataset_pta_env_indices.dta", clear
-cd "C:\path\to\Paper_PTA\Output\Analysis"
-```
+Outputs:
+- LaTeX tables in `Output/Analysis/OLS/Tables/`
+- `.rds` model objects in `Output/Analysis/OLS/Models_Output/`
 
 ---
 
-### 7.2 PPML Estimation (R)
+### 6.2 Main PPML Estimation (R)
 
-**Script:** `Code/Analysis/PPML_Estimation.R`
+**Script:** `Code/Analysis/PPML.R`
 
-Estimates the same specification using **Poisson Pseudo-Maximum Likelihood** via `fepois` (from `fixest`), which handles zero trade flows and is robust to heteroskedasticity. Uses the `.fst` version of the dataset for memory-efficient column-selective loading.
+Main PPML workflow with `fixest::fepois`, parallel in structure to `OLS_HDFE.R`.
 
-**Specifications estimated (4 blocks × 6 models):**
-- Block 1: WB depth, no interaction
-- Block 2: WB depth, interaction with `env_good`
-- Block 3: TREND depth, no interaction
-- Block 4: TREND depth, interaction with `env_good`
+Reference multiplicative form:
 
-Each block produces a LaTeX table saved in `Output/Analysis/PPML/Tables/`.  
-Individual model objects are saved as `.rds` files in `Output/Analysis/PPML/Models_Output/`.
+$$\mathbb{E}[Y_{fpdt} \mid X] = \exp\left(\beta \cdot \text{EPDepth}_{dt} + \theta_{FE} + X'\gamma\right)$$
 
-**Update the data path before running:**
-```r
-data_file <- "/path/to/final_dataset_pta_env_indices_compressed.fst"
-```
+Implemented blocks:
+- WB depth and TREND depth
+- with/without `env_good` interaction
+- with/without controls (`tariffs`, `ln_hhi_baci`)
+- four FE structures (`fpd+year`, `fpd+pt`, `fpt+pd`, `fpt+fpd`)
 
----
+Outputs:
+- LaTeX tables in `Output/Analysis/PPML/Tables/`
+- `.rds` models in `Output/Analysis/PPML/Models_Output/`
 
-### 7.3 Callaway & Sant'Anna Staggered DiD (R)
+### 6.3 CEM-Based Estimation
 
-**Script:** `Code/Analysis/Callaway_Sant'Anna.R`
+- `Code/Analysis/CEM.R`: builds matched samples and diagnostics (balance table, love plot, summary files).
+- `Code/Analysis/OLS_CEM.R`: applies the OLS workflow to CEM-matched data.
+- `Code/Analysis/PPML_CEM.R`: applies the PPML workflow to CEM-matched data.
 
-Implements the **Callaway & Sant'Anna (2021)** estimator for staggered adoption, using the `did` package. The treatment timing is defined as the first year a Chinese PTA entered into force with each destination country.
-
-- Treatment variable: `G` = first year of treatment (= 0 for never-treated)
-- Unit identifier: `fpd_id` (firm-product-destination)
-- Control group: never-treated units
-- Results aggregated into an event-study plot via `aggte(..., type = "dynamic")`
-
-> **Note:** The script is currently exploratory. The aggregation unit and the treatment variable definition may need to be finalized based on computational constraints (30M+ observations).
-
-**Update the data path before running:**
-```r
-setwd("/path/to/directory/with/fst/file")
-```
+Main CEM diagnostics outputs are generated under `Output/CEM/`. Estimation outputs are generated under `Output/Analysis/CEM/`.
 
 ---
 
-## 8. Outputs
+### 6.4 Zero Fill-In PPML Specifications
 
-### `Output/Analysis/`
+- `Code/Analysis/Zero_Fill_In.R`:
+  - aggregates to product-destination-year level;
+  - fills sampling zeros for active product-destination pairs;
+  - estimates PPML with FE suited to aggregated structure.
 
-| File | Description |
+- `Code/Analysis/ZFI_Green_Goods.R`:
+  - firm-level zero fill-in restricted to green goods;
+  - explicit covariate lookup by dimensionality (`d,t` or `p,d,t`);
+  - PPML estimation on the resulting panel.
+
+These scripts are robustness checks relative to the main firm-level PPML specification.
+
+---
+
+## 7. Outputs
+
+### `Output/Analysis/OLS/`
+
+| Directory | Contents |
 |---|---|
-| `m1.ster` – `m12.ster` | Stored Stata estimates, WB depth models |
-| `m1T.ster` – `m12T.ster` | Stored Stata estimates, TREND depth models |
-| `Regression_Results_No_Int_5_Feb.dta/.tex` | No-interaction results (WB depth) |
-| `Regression_Results_Int_5_Feb.dta/.tex` | Interaction results (WB depth × env_good) |
-| `Regression_Results_No_Int_5_Feb_TEND_DEPTH.dta/.tex` | No-interaction results (TREND depth) |
-| `Regression_Results_Int_5_Feb_TREND_DEPTH.dta/.tex` | Interaction results (TREND depth × env_good) |
-| `Presentation_Feb_5*.tex` | Presentation-format regression tables |
-| `Table_Final.tex`, `Table_baseline.tex` | Final publication tables |
+| `Tables/` | OLS regression tables by FE specification and index:<br/>- `OLS_WB_No_Interaction_fpd_pt.tex`, `OLS_WB_Interaction_fpd_pt.tex`<br/>- `OLS_WB_No_Interaction_fpd_year.tex`, `OLS_WB_Interaction_fpd_year.tex`<br/>- `OLS_WB_No_Interaction_fpt_fpd.tex`, `OLS_WB_Interaction_fpt_fpd.tex`<br/>- `OLS_WB_No_Interaction_fpt_pd.tex`, `OLS_WB_Interaction_fpt_pd.tex`<br/>- `OLS_TREND_No_Interaction_*.tex`, `OLS_TREND_Interaction_*.tex` (all FE combinations) |
+| `Models_Output/` | OLS model `.rds` files with full specification details:<br/>- `OLS_WB_No_Interaction_(fpd_+_year_FE)_1-6.rds` — WB depth, no interaction, 6 control variants<br/>- `OLS_WB_Interaction_*.rds` — WB depth × env_good interaction<br/>- `OLS_TREND_*.rds` — TREND depth (No_Interaction and Interaction variants)<br/>- Multiple FE combinations: `fpd_+_year`, `fpd_+_pt`, `fpt_+_pd`, `fpt_+_fpd`, etc. |
 
 ### `Output/Analysis/PPML/`
 
 | Directory | Contents |
 |---|---|
-| `Tables/` | `PPML_WB_No_Interaction.tex`, `PPML_WB_Interaction.tex`, `PPML_TREND_*.tex` |
-| `Models_Output/` | Individual `.rds` model files (one per estimated specification) |
+| `Tables/` | PPML regression tables by FE specification and index:<br/>- `PPML_WB_No_Interaction_fpd_pt.tex`, `PPML_WB_Interaction_fpd_pt.tex`<br/>- `PPML_WB_No_Interaction_fpd_year.tex`, `PPML_WB_Interaction_fpd_year.tex`<br/>- `PPML_WB_No_Interaction_fpt_fpd.tex`, `PPML_WB_Interaction_fpt_fpd.tex`<br/>- `PPML_WB_No_Interaction_fpt_pd.tex`, `PPML_WB_Interaction_fpt_pd.tex`<br/>- `PPML_TREND_No_Interaction_*.tex`, `PPML_TREND_Interaction_*.tex` (all FE combinations) |
+| `Models_Output/` | PPML model `.rds` files with full specification details:<br/>- `PPML_WB_No_Interaction_(fpd_+_year_FE)_1-6.rds` — WB depth, no interaction, 6 control variants<br/>- `PPML_WB_Interaction_*.rds` — WB depth × env_good interaction<br/>- `PPML_TREND_*.rds` — TREND depth (No_Interaction and Interaction variants)<br/>- Multiple FE combinations: `fpd_+_year`, `fpd_+_pt`, `fpt_+_pd`, `fpt_+_fpd`, `firm-product-time`, etc. |
 
-### `Output/Riordinare/`
+### `Output/Analysis/CEM/`
 
-Comparison tables and figures between TREND and WB indices, used during the index construction phase:
+| Directory | Contents |
+|---|---|
+| `OLS/Tables/` | CEM OLS LaTeX tables (`CEM_OLS_*.tex`) |
+| `OLS/Models_Output/` | CEM OLS model `.rds` files |
+| `PPML/Tables/` | CEM PPML LaTeX tables (`CEM_PPML_*.tex`) |
+| `PPML/Models_Output/` | CEM PPML model `.rds` files |
+
+### `Output/CEM/`
+
+Matching diagnostics and supporting files generated by `Code/Analysis/CEM.R`:
 
 | File | Description |
 |---|---|
-| `Summary_Comparison_TREND_WB.csv` | Summary statistics comparison |
-| `Table_Agreement_Coverage.csv` | Agreement coverage table |
-| `Table_Correlations_TREND_WB.csv` | Correlation matrix |
-| `Table_Depth_Categories_CrossTab.csv` | Cross-tabulation of depth categories |
-| `Correlation_Matrix_TREND_WB.png` | Correlation heatmap |
-| `Depth_BoxPlot_TREND_WB.png` | Box plots of depth indices |
-| `EP_Depth_TimeSeries_*.png` | Time series of EP depth |
-| `Violin_Comparison_TREND_WB.png` | Violin plots comparison |
+| `CEM_Summary.txt` | Matching summary |
+| `CEM_Balance_Table.tex` | Balance table |
+| `CEM_LovePlot.pdf/.png` | Love plot |
+| `CEM_Covariate_Diagnostics.pdf/.png` | Distribution diagnostics |
+| `matched_countries.csv` | Treated/control matched countries |
 
 ---
 
-## 9. Exploratory / Supporting Scripts
+## 8. Exploratory / Supporting Scripts
 
 | Script | Description |
 |---|---|
 | `Code/TREND/Inspecting TREND Dataset.r` | Initial exploration of the TREND database: filtering, labeling, and saving the China 2000–2015 subset |
 | `Code/WB/Inspecting WB Database.R` | Initial exploration of the WB DTA database: filtering environmental laws provisions for China 2000–2015 |
-| `Code/WB/Graphs for presentation.R` | Generates graphs on Environmental Provision depth for presentations |
 | `Code/WB/WB_Dataset_Conversion.do` | Converts WB Excel file to `.dta` format (run once before Step 1) |
-| `Code/Merge/Merge_TREND_WB.R` | Standalone (legacy) version of the merge and index construction step — now fully integrated into `1_Build_Final_PTA_EP_Dataset.R` |
+| `Code/Analysis/pta_functions.R` | Shared utility library used by OLS/PPML scripts (`run_block`, table generation, selective loading) |
 
 ---
 
-## 10. Important Notes
+## 9. Important Notes
 
 ### Data not included in the repository
 - **Chinese customs data** (`final_dataset_pta.dta` / `final_dataset_pta_env_indices_compressed.dta/.fst`): The raw and processed transaction-level datasets are not pushed to GitHub due to their large size. These must be obtained separately and stored locally.
@@ -569,7 +580,7 @@ The analysis covers the following PTAs signed by China that entered into force b
 | Singapore | 2009 |
 | Switzerland | 2014 |
 
-### Variable naming convention
+<!-- ### Variable naming convention
 - WB provision variables are renamed to `WB_1`, `WB_2`, …, `WB_N` in the merged dataset. The mapping to full provision names is in `Data/WB/WB_Variable_Mapping.csv`.
 - TREND provision variables retain their original `X` codes (e.g., `X2_01_01`) with dots replaced by underscores. The mapping is in `Data/TREND/TREND_Variable_Mapping.csv`.
-- The full-name version of the merged dataset (before renaming) is available in `Data/Merged/Merged_TREND_WB_FULL_NAMES.csv`.
+- The full-name version of the merged dataset (before renaming) is available in `Data/Merged/Merged_TREND_WB_FULL_NAMES.csv`. -->
