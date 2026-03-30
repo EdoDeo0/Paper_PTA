@@ -36,7 +36,6 @@
     - [6.1 Main OLS / HDFE Estimation (R)](#61-main-ols--hdfe-estimation-r)
     - [6.2 Main PPML Estimation (R)](#62-main-ppml-estimation-r)
     - [6.3 CEM-Based Estimation](#63-cem-based-estimation)
-    - [6.4 Zero Fill-In PPML Specifications](#64-zero-fill-in-ppml-specifications)
   - [7. Outputs](#7-outputs)
     - [`Output/Analysis/OLS/`](#outputanalysisols)
     - [`Output/Analysis/PPML/`](#outputanalysisppml)
@@ -79,11 +78,8 @@ Paper_PTA/
 │   │   ├── CEM.R                               # CEM construction and diagnostics
 │   │   ├── OLS_CEM.R                           # OLS on CEM sample
 │   │   ├── PPML_CEM.R                          # PPML on CEM sample
-│   │   ├── Zero_Fill_In.R                      # Aggregated PPML with zero fill-in
-│   │   ├── ZFI_Green_Goods.R                   # Firm-level zero fill-in for green goods
 │   │   ├── Reg_PTA_04_02_26.do                 # Legacy OLS regressions (Stata)
-│   │   ├── Callaway_Sant'Anna.R                # Staggered DiD (exploratory)
-│   │   └── Callaway_SantAnna_v2.R              # Staggered DiD (updated version)
+│   │   └── Reg_PTA_04_02_26.do                 # Legacy OLS regressions (Stata)
 │   ├── TREND/
 │   │   └── Inspecting TREND Dataset.r          # Exploratory analysis of TREND data
 │   └── WB/
@@ -191,7 +187,6 @@ The following packages are required:
 | `fst` | Fast serialization of large datasets |
 | `fixest` | PPML estimation (`fepois`) |
 | `data.table` | Fast data loading |
-| `did` | Callaway & Sant'Anna DiD estimator |
 | `lubridate` | Date utilities |
 | `ggplot2` | Graphs |
 | `janitor` | Data cleaning |
@@ -290,7 +285,7 @@ This is the **main R pipeline**. It processes both databases, merges them, and c
 - Drops administrative columns (`Trade.Agreement`, `Number`, `US_Partners`, `EC_Partners`, `HBTypeCode`, `Language`).
 - Creates variable name mapping files (`Data/WB/WB_Variable_Mapping.csv`, `Data/TREND/TREND_Variable_Mapping.csv`) and renames variables to short codes (`WB_1`…`WB_N`, `X_…`).
 
-**Index construction** (see [Section 6](#6-environmental-provisions-indices) for details):
+**Index construction:**
 - Builds all TREND-based, WB-based, and normalized indices.
 
 **Outputs:**
@@ -482,22 +477,6 @@ Outputs:
 - `Code/Analysis/PPML_CEM.R`: applies the PPML workflow to CEM-matched data.
 
 Main CEM diagnostics outputs are generated under `Output/CEM/`. Estimation outputs are generated under `Output/Analysis/CEM/`.
-
----
-
-### 6.4 Zero Fill-In PPML Specifications
-
-- `Code/Analysis/Zero_Fill_In.R`:
-  - aggregates to product-destination-year level;
-  - fills sampling zeros for active product-destination pairs;
-  - estimates PPML with FE suited to aggregated structure.
-
-- `Code/Analysis/ZFI_Green_Goods.R`:
-  - firm-level zero fill-in restricted to green goods;
-  - explicit covariate lookup by dimensionality (`d,t` or `p,d,t`);
-  - PPML estimation on the resulting panel.
-
-These scripts are robustness checks relative to the main firm-level PPML specification.
 
 ---
 
