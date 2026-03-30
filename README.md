@@ -78,7 +78,6 @@ Paper_PTA/
 │   │   ├── CEM.R                               # CEM construction and diagnostics
 │   │   ├── OLS_CEM.R                           # OLS on CEM sample
 │   │   ├── PPML_CEM.R                          # PPML on CEM sample
-│   │   ├── Reg_PTA_04_02_26.do                 # Legacy OLS regressions (Stata)
 │   │   └── Reg_PTA_04_02_26.do                 # Legacy OLS regressions (Stata)
 │   ├── TREND/
 │   │   └── Inspecting TREND Dataset.r          # Exploratory analysis of TREND data
@@ -196,7 +195,7 @@ Install all at once:
 ```r
 install.packages(c(
   "haven", "readxl", "dplyr", "tidyr", "tidyverse", "labelled",
-  "reshape2", "here", "fst", "fixest", "data.table", "did",
+  "reshape2", "here", "fst", "fixest", "data.table",
   "lubridate", "ggplot2", "janitor", "stargazer"
 ))
 ```
