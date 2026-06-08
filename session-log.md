@@ -1,5 +1,30 @@
 # Session Log — Paper_PTA
 
+## 2026-06-08 (evening) — Results audit + roadmap
+
+**Data checks (on actual `.fst`):** confirmed `duty` = MFN tariff, not bilateral preferential
+(PTA partners show *higher*/flat duty over time, not declining → it's MFN). No import records or
+processing-trade flag exist → GVC extension not feasible. `companyID` present (firm-size feasible);
+rich anti-dumping module (`AD_pdt`, leads/lags) = potential confounder; `_merge` is a spurious leftover.
+
+**Full results audit:** extracted treatment coefs from all 64 result tables (OLS+PPML × WB+TREND ×
+4–5 FE × full+CEM). Findings: EP effect is a **precisely-estimated null** — sign/significance flip
+across FE; "significant" results live only in the least-saturated `fpd+year` spec, which is also the
+*only one clustered at `pdt`* (~2.9M clusters → inflated stars). Effect vanishes monotonically as FE
+saturation rises (selection signature). PPML internally incoherent (sign flips across margins/FE);
+`fpt`-only PPML is an outlier to drop. Only stable coef = the (misspecified MFN) tariff. CEM balance weak.
+
+**Reviewed code** (`pta_functions.R`, `OLS_HDFE.R`, `CEM.R`): engineering solid; bugs noted —
+PPML R² meaningless, `library(wdi)` typo, `matched_countries.csv` never written, inconsistent clustering.
+
+**Decisions / output:**
+- All future work goes in `./New/` only; originals stay read-only (copy datasets in, never touch).
+- Created `./New/ROADMAP.md` — detailed, self-sufficient 5-phase plan (inference fix → preferential
+  tariff → identification → alt margins → robustness) executable by a smaller model.
+
+**Pending:** execute roadmap, starting Fase 1 pt.1 (cluster at `country_code` + wild bootstrap on
+`fpt+fpd`) — the decisive test for "null vs result" paper. Framing decision deferred until after that.
+
 ## 2026-06-08
 
 ### Work Completed
