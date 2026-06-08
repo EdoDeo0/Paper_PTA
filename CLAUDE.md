@@ -2,9 +2,35 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
+## Behavioral Guidelines
+
+### 1. Think Before Coding
+
+Before implementing anything: state assumptions explicitly, surface ambiguities, and ask if uncertain. If multiple interpretations exist, present them — don't pick silently. If a simpler approach exists, say so.
+
+### 2. Simplicity First
+
+Minimum code that solves the problem. No features beyond what was asked, no abstractions for single-use code, no speculative flexibility. If the result could be significantly shorter, rewrite it.
+
+### 3. Surgical Changes
+
+Modify only what directly addresses the request. Match existing code style. Don't refactor adjacent code, don't delete pre-existing dead code — mention it instead. Every changed line should trace directly to the request.
+
+### 4. Goal-Driven Execution
+
+Transform tasks into verifiable success criteria. For multi-step tasks, state a brief plan:
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+```
+
+---
+
 ## Project Overview
 
-This is an academic research project studying the effect of **Environmental Provisions (EPs) in Preferential Trade Agreements (PTAs)** signed by China on Chinese trade flows (2000–2015). The analysis examines how the depth and composition of environmental clauses in PTAs affect trade volumes and composition (environmental vs. non-environmental goods).
+Academic research project on **Environmental Provisions (EPs) in Preferential Trade Agreements (PTAs)** signed by China (2000–2015).
 
 **Author:** Edoardo Vitella (PhD Student, University of Trento & Free University of Bozen)
 
@@ -22,46 +48,51 @@ markitdown path/to/file.pdf
 - Global skills: `$RESEARCH_HOME/research-config/skills/`
 - Local project wiki: `./wiki/` (create if it doesn't exist)
 - Project-specific skills: `.claude/commands/`
-- Zotero MCP tool is available for searching and managing papers
+- Zotero MCP tool available for searching and managing papers
 
-## Running the Analysis
+## Data Pipeline
 
-All R scripts should be run with the working directory set to the **repository root** (`Paper_PTA/`). Scripts contain hardcoded absolute paths that must be updated when running on a different machine.
+Scripts must run **in order**. All R scripts require the working directory set to the repository root. Hardcoded paths must be updated when running on a different machine.
 
-### Data pipeline (must run in order)
-
-```bash
-# Step 0 — Convert WB Excel to .dta (Stata, run once)
-# Open Code/WB/WB_Dataset_Conversion.do in Stata and run it
-
-# Step 1 — Build EP indices dataset (R)
-Rscript Code/Dataset_Creation/1_Build_Final_PTA_EP_Dataset.R
-
-# Step 2 — Merge with Chinese customs data (Stata)
-# Open Code/Dataset_Creation/2_Build_Final_PTA_EP_Dataset.do in Stata and run it
-
-# Step 3 — Convert to FST format (R)
-Rscript Code/Dataset_Creation/3_Build_Final_PTA_EP_Dataset.R
 ```
+Step 0 (Stata, once)          Step 1 (R)                    Step 2 (Stata)                      Step 3 (R)
+WB_Dataset_Conversion.do  →  1_Build_Final_PTA_EP_Dataset.R  →  2_Build_Final_PTA_EP_Dataset.do  →  3_Build_Final_PTA_EP_Dataset.R
+         ↓                            ↓                                   ↓                                   ↓
+     WB_DTA.dta            Merged_TREND_WB_Indices_Only.dta    final_dataset_pta_env_indices_      ...compressed.fst
+                                                                      compressed.dta
+```
+
+- Step 0 and Step 2 are run interactively in Stata.
+- The `.fst` output of Step 3 enables fast column-selective loading in R — the full panel is too large to store in the repository.
 
 ### Analysis scripts
 
 ```bash
-# Main OLS with High-Dimensional Fixed Effects
-Rscript Code/Analysis/OLS_HDFE.R
-
-# Main PPML estimation
-Rscript Code/Analysis/PPML.R
-
-# CEM matching construction and diagnostics
-Rscript Code/Analysis/CEM.R
-
-# OLS/PPML on CEM-matched samples
-Rscript Code/Analysis/OLS_CEM.R
-Rscript Code/Analysis/PPML_CEM.R
+Rscript Code/Analysis/OLS_HDFE.R   # OLS with high-dimensional fixed effects
+Rscript Code/Analysis/PPML.R       # PPML estimation
+Rscript Code/Analysis/CEM.R        # CEM matching construction and diagnostics
+Rscript Code/Analysis/OLS_CEM.R    # OLS on CEM-matched sample
+Rscript Code/Analysis/PPML_CEM.R   # PPML on CEM-matched sample
 ```
 
-### Install R dependencies
+## Shared Utility Library
+
+**`Code/Analysis/pta_functions.R`** — source at the top of every analysis script. Provides:
+
+- `run_block()` — runs a named block of fixest formulas, caches each result as `.rds`, skips already-computed models
+- `estimate_model()` — estimates a single model from an `.fst` file, loading only the columns required by the formula
+- `load_formula_data()` — parses a fixest formula string and loads only necessary columns from `.fst`
+- `make_table()` — generates LaTeX regression tables from model stats objects
+
+## Variable Naming Conventions
+
+- WB provision variables → `WB_1`, `WB_2`, … `WB_N`; mapping in `Data/WB/WB_Variable_Mapping.csv`
+- TREND provision variables → original `X` codes with dots replaced by underscores; mapping in `Data/TREND/TREND_Variable_Mapping.csv`
+- Full-name merged dataset (before renaming): `Data/Merged/Merged_TREND_WB_FULL_NAMES.csv`
+
+## Dependencies
+
+### R
 
 ```r
 install.packages(c(
@@ -72,7 +103,7 @@ install.packages(c(
 ))
 ```
 
-### Install Stata dependencies
+### Stata
 
 ```stata
 ssc install reghdfe
@@ -80,63 +111,11 @@ ssc install estout
 ssc install regsave
 ```
 
-## Architecture
+## Zotero Collection
 
-### Data pipeline flow
+This project corresponds to Zotero collection: Paper_PTA
 
-```
-WB_Dataset_Conversion.do    →   WB_DTA.dta
-                                     ↓
-1_Build_Final_PTA_EP_Dataset.R  →  Merged_TREND_WB_Indices_Only.dta
-                                     ↓
-2_Build_Final_PTA_EP_Dataset.do →  final_dataset_pta_env_indices_compressed.dta
-                                     ↓
-3_Build_Final_PTA_EP_Dataset.R  →  final_dataset_pta_env_indices_compressed.fst
-```
+## Data Not in the Repository
 
-The `.fst` format enables fast column-selective loading from large datasets — essential because the full panel (firm × HS6 product × destination × year) is very large and not stored in the repository.
-
-### Shared utility library: `Code/Analysis/pta_functions.R`
-
-Source this file at the top of every analysis script. Key functions:
-
-- `run_block(formulas, block_name, estimator, data_file, models_dir, ...)` — runs a named block of fixest formulas, caches results as `.rds`, skips already-computed models
-- `estimate_model(formula_str, estimator, data_file, vcov, ...)` — estimates a single OLS (`feols`) or PPML (`fepois`) model from an `.fst` file, loading only the columns required by the formula
-- `load_formula_data(data_file, formula_str, vcov)` — parses a fixest formula string and loads only necessary columns
-- `make_table(stats_list, coefmap, filename, tables_dir, ...)` — generates LaTeX regression tables from model stats objects
-
-### Estimation specification
-
-Unit of observation: HS6 product × destination country × year × firm (`fpdt`).
-
-Baseline OLS:
-```
-ln_export ~ EPDepth | fpd + year
-```
-
-Baseline PPML (multiplicative, handles zero trade flows):
-```
-export ~ EPDepth | fpd + year
-```
-
-Both estimators are run across four FE structures (`fpd+year`, `fpd+pt`, `fpt+pd`, `fpt+fpd`) with and without `env_good` interactions (distinguishing environmental goods from non-environmental goods).
-
-### CEM matching (`Code/Analysis/CEM.R`)
-
-Constructs a control group (non-PTA destinations) balanced on pre-treatment covariates:
-- `gdp_growth_2000` — pre-treatment economic trend
-- `log_gdppc_2000` — development level
-- `mfn_tariff_2000` — pre-PTA protection level
-
-Two matched samples are produced: `CEM_full` (all countries) and `CEM_no_asia` (excluding Asian partners).
-
-### Variable naming conventions
-
-- WB provision variables → `WB_1`, `WB_2`, … `WB_N` (mapping: `Data/WB/WB_Variable_Mapping.csv`)
-- TREND provision variables → `X` codes with dots replaced by underscores (mapping: `Data/TREND/TREND_Variable_Mapping.csv`)
-- Full-name version of the merged dataset: `Data/Merged/Merged_TREND_WB_FULL_NAMES.csv`
-
-### Data not in the repository
-
-- Chinese customs transaction-level data (`final_dataset_pta.dta` and its processed versions) — too large for GitHub
-- `Data/WB/WB_DTA.dta` — regenerate with `WB_Dataset_Conversion.do` if absent
+- Chinese customs transaction-level data (`final_dataset_pta.dta` and processed versions) — too large for GitHub
+- `Data/WB/WB_DTA.dta` — regenerate with `Code/WB/WB_Dataset_Conversion.do` if absent
