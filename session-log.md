@@ -1,5 +1,24 @@
 # Session Log — Paper_PTA
 
+## 2026-06-09 — Fase 1: script inference_fix
+
+**Task:** Scritto `./New/Code/01_inference_fix.R` per la Fase 1 del ROADMAP.
+
+**Cosa fa lo script:**
+- Step 0: costruisce `./New/Data/common_sample.fst` (filtro `!is.na(tariffs) & !is.na(ln_hhi_baci)`) — campione comune per baseline e con-controlli
+- Sezioni 1–4: riesegue tutte e 4 le strutture FE con `vcov = ~country_code` uniformemente (corregge l'eccezione `~pdt` di `fpd+year`)
+- Sezione 5: wild cluster bootstrap su `fpt+fpd` × `ln_export` × WB e TREND (baseline + controlli), B=9999, risultati in `./New/Output/OLS/Bootstrap/bootstrap_summary.csv`
+- Sezione 6: ladder table LaTeX (`OLS_Ladder_FE.tex`) — coefficiente EP per ogni struttura FE, mostra l'azzeramento monotono
+
+**Decisioni tecniche:**
+- `threads_fst(1)` + `setFixest_nthreads(detectCores()-1)`: fst single-thread (evita conflitto allocatori OpenMP su Windows), fixest multi-thread (demeaning CPU-bound)
+- Libreria originale `Code/Analysis/pta_functions.R` usata direttamente (nessuna patch necessaria per Fase 1)
+- Dataset originale mai toccato; tutto l'output va in `./New/`
+
+**Struttura cartelle creata:** `./New/Code/`, `./New/Data/`, `./New/Output/{OLS,PPML,CEM,Diagnostics}/`
+
+**Pending:** eseguire lo script su Windows; valutare checkpoint Fase 1 (stelle fpd+year sparite? ladder monotona? bootstrap p-val?); poi Fase 2 (tariffa preferenziale WITS).
+
 ## 2026-06-09 — Foundational literature search
 
 **Task:** Modified `/paper-search` skill — no date filter, sorted by citations, topic-driven queries targeting
