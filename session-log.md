@@ -1,5 +1,26 @@
 # Session Log — Paper_PTA
 
+## 2026-06-09 — Foundational literature search
+
+**Task:** Modified `/paper-search` skill — no date filter, sorted by citations, topic-driven queries targeting
+gaps in the existing wiki (env provisions in PTAs, gravity/PPML methodology, staggered DiD, clustering/inference).
+
+**Output:** 13 staging cards written to `~/Documents/work/research-wiki/staging/`:
+- `staging/environment-trade/`: Brandi2020_EPsGreenExports ⭐⭐⭐ (closest direct precedent),
+  Morin2018_TRENDDataset ⭐⭐ (TREND data reference), Morin2019_KickStartingDiffusion
+- `staging/pta/`: SantosSilvaTenreyro2006_LogGravity ⭐⭐⭐, HeadMayer2014_GravityWorkhorse ⭐⭐⭐,
+  Melitz2003_ImpactTrade ⭐⭐⭐, ManovaZhang2012_ExportPrices ⭐⭐
+- `staging/econometrics/` (new folder): BertrandDufloMullainathan2004_TrustDiD ⭐⭐⭐,
+  GoodmanBacon2021_DiDVariation ⭐⭐⭐, deChaisemartinDHaultfoeuille2020_TWFE ⭐⭐⭐,
+  CameronGelbachMiller2008_Bootstrap ⭐⭐⭐, CallawaySantAnna2021_DiDMultiplePeriods ⭐⭐,
+  AbadieAtheyImbensWooldridge2022_Clustering ⭐⭐⭐
+- `staging/foundational-digest.md` — summary table with priority-for-promotion ranking.
+
+**Not found in OpenAlex:** Hofmann-Osnago-Ruta (WB WP 7981), Bastiaens-Postnikov (2017).
+
+**Pending:** promote top-priority cards (Brandi 2020, Morin 2018, Santos Silva-Tenreyro 2006,
+BDM 2004, CGM 2008) to full wiki cards; then execute roadmap (Fase 1: re-cluster + wild bootstrap).
+
 ## 2026-06-08 (evening) — Results audit + roadmap
 
 **Data checks (on actual `.fst`):** confirmed `duty` = MFN tariff, not bilateral preferential

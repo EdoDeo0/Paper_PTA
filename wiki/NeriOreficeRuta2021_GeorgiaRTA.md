@@ -36,14 +36,17 @@ The dataset is an unbalanced panel at the firm–product–destination–year le
 - **Observations:** 224,889
 - **RTA depth range:** 6–48 policy areas across Georgia's 11 RTAs
 
-| Variable | Dimension |
-|---|---|
-| Export value (ln) | firm f × product k × destination j × year t |
-| RTA depth (0–1 normalized) | origin × destination j × year t |
-| Enforceable depth | origin × destination j × year t |
-| WTO+ provisions | origin × destination j × year t |
-| GVC firm (0/1) | firm f × year t |
-| Firm size category | firm f |
+### Illustrative dataset structure
+
+| Firm f | Product k (HS4) | Destination j | Year t | ln(export value) (f,k,j,t) | RTA depth (0–1) (j,t) | Enforceable depth | GVC firm (f,t) | Firm size cat. |
+|---|---|---|---|---|---|---|---|---|
+| F001 | 0901 (Coffee) | Turkey | 2004 | 10.2 | 0.21 | 0.15 | 0 | Small |
+| F001 | 0901 (Coffee) | Ukraine | 2007 | 11.8 | 0.38 | 0.25 | 0 | Small |
+| F002 | 2710 (Mineral oils) | EU | 2014 | 14.3 | 0.91 | 0.82 | 1 | Large |
+| F003 | 6204 (Women's suits) | Russia | 2010 | 9.5 | 0.42 | 0.31 | 0 | Medium |
+| F004 | 7208 (Steel sheets) | Armenia | 2016 | 12.6 | 0.25 | 0.19 | 0 | Small |
+
+*Note: Values illustrative. RTA depth = share of 48 policy areas covered by the RTA in force. Enforceable depth counts only provisions with binding dispute settlement. GVC firm = 1 if firm imports inputs in that year. Firm size is fixed at initial observed year.*
 
 ---
 

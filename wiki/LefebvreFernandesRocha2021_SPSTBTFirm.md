@@ -36,15 +36,17 @@ The dataset is constructed at the firm–HS 6-digit product–destination–year
 - **Key variables:** Export value (FOB, USD), firm initial-period market share in destination × HS6 product (size proxy), SPS provision count (normalized), TBT provision count (normalized), essential provisions dummy, harmonization dummies (SPS/TBT), mutual recognition dummies, transparency provisions, bilateral tariff (Teti 2020 database, HS6), PTA depth in other policy areas (non-SPS/TBT)
 - **Exclusions:** HS chapters 25–27 (mining/commodities) to avoid commodity price cycle bias; SPS analysis restricted to HS 01–24 (agricultural/agro-food)
 
-| Variable | Dimension |
-|---|---|
-| Export value (USD) | firm f × product k × destination j × year t |
-| SPS provision count (0–1) | origin i × destination j × year t |
-| TBT provision count (0–1) | origin i × destination j × year t |
-| Harmonization (SPS) dummy | origin i × destination j × year t |
-| Bilateral tariff | product k × origin i × destination j × year t |
-| Depth (other provisions) | origin i × destination j × year t |
-| Firm size tercile | firm f × product k × destination j (initial year) |
+### Illustrative dataset structure
+
+| Firm f | Product k (HS6) | Destination j | Year t | Export value USD (f,k,j,t) | SPS provs (0–1) | TBT provs (0–1) | Tariff τ (k,i,j,t) | Firm size tercile |
+|---|---|---|---|---|---|---|---|---|
+| F001 | 020110 (Beef cuts) | USA | 2002 | 120,400 | 0.73 | 0.48 | 0.04 | 3 |
+| F001 | 020110 (Beef cuts) | Canada | 2002 | 0 | 0.00 | 0.00 | 0.10 | 3 |
+| F002 | 481190 (Paper prod.) | Colombia | 2008 | 34,200 | 0.91 | 0.67 | 0.02 | 1 |
+| F003 | 611020 (Knitwear) | Germany | 2012 | 89,500 | 0.45 | 0.82 | 0.08 | 2 |
+| F004 | 070190 (Potatoes) | USA | 1999 | 0 | 0.55 | 0.31 | 0.05 | 1 |
+
+*Note: Values illustrative. SPS/TBT provision counts are normalized 0–1 within the EDD sample. Firm size tercile is fixed at the initial year the firm-product-destination cell is observed. Zero export = non-exporting spell in the expanded panel.*
 
 ---
 

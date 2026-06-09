@@ -35,15 +35,17 @@ The dataset is a large unbalanced panel at the firm–destination–year level (
 - **Coverage:** 15,484 exporting firms, 147 destination countries; ~40 million observations (including zero spells)
 - **Key variables:** Export participation dummy, export value, GVC status (firm imports inputs), bilateral GVC (imports from the PTA partner), TF provision count (0–1 normalized; 15–34 provisions across Peru's PTAs), RTA dummy, PTA depth
 
-| Variable | Dimension |
-|---|---|
-| Export participation (0/1) | firm f × destination j × year t |
-| Export value (USD) | firm f × destination j × year t |
-| PTA (0/1) | origin i × destination j × year t |
-| TF provisions (normalized) | origin i × destination j × year t |
-| GVC firm (0/1) | firm f × year t |
-| Bilateral GVC (0/1) | firm f × destination j × year t |
-| ln(GDP) | destination j × year t |
+### Illustrative dataset structure
+
+| Firm f | Destination j | Year t | Export partic. (f,j,t) | Export value USD | PTA (Peru,j,t) | TF provisions (0–1) | GVC firm (f,t) | Bilateral GVC (f,j,t) | ln(GDP_j) |
+|---|---|---|---|---|---|---|---|---|---|
+| F001 | USA | 2005 | 1 | 45,200 | 1 | 0.82 | 0 | 0 | 30.2 |
+| F001 | Chile | 2010 | 1 | 12,300 | 1 | 0.91 | 0 | 0 | 26.4 |
+| F002 | China | 2008 | 0 | 0 | 0 | 0.00 | 1 | 0 | 29.6 |
+| F003 | Canada | 2012 | 1 | 8,900 | 1 | 0.74 | 1 | 1 | 29.8 |
+| F004 | Brazil | 2003 | 0 | 0 | 0 | 0.00 | 0 | 0 | 28.1 |
+
+*Note: Values illustrative. GVC firm = 1 if the firm imports inputs in that year. Bilateral GVC = 1 if the firm imports from the PTA partner country. Zero export value = non-exporting spell (included via zero-inflated data construction).*
 
 ---
 

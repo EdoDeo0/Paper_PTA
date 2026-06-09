@@ -13,6 +13,10 @@
 
 - [[LarchShikherYotov2025_GravityRecommendations]] — Fifteen recommendations for gravity equation estimation: PPML preferred, use consecutive-year panel, domestic trade flows, asymmetric pair FEs, disaggregated data, and modern DiD methods
 
+## Environmental Provisions in Trade Agreements
+
+- [[Brandi2020_EPsGreenExports]] — First systematic test of EP effects on export composition: trade-restrictive provisions reduce dirty exports, liberal provisions increase green exports from developing countries; effects concentrated in "green" (high-EPI) developing countries
+
 ## Environmental Regulations & Trade Competitiveness
 
 - [[DechezleprêtreSato2017_EnvRegCompetitiveness]] — Literature review: environmental regulations have small but real pollution-haven effects on trade and investment; robust positive effects on green innovation; Porter hypothesis receives partial support

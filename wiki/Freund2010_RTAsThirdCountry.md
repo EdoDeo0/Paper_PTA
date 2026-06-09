@@ -35,12 +35,17 @@ The dataset is an unbalanced panel at the country × industry × year level.
 - **Time period:** ~1990–2001
 - **Key variables:** Preference margin (MFN tariff minus preferential tariff), MFN tariff, bilateral import value, ISIC 4-digit industry codes
 
-| Variable | Dimension |
-|---|---|
-| ln(Imports) (country i from country j, industry g, year t) | i × j × g × t |
-| Preference margin (country i, industry g, year t) | i × g × t |
-| MFN tariff | i × g × t |
-| ΔMFN tariff (change in applied MFN rate) | i × g × t |
+### Illustrative dataset structure
+
+| Importer i | Exporter j | Industry g (ISIC 4-digit) | Year t | ln(Imports) (i,j,g,t) | Preference margin (i,g,t) | MFN tariff (i,g,t) | ΔMFN tariff (i,g,t) |
+|---|---|---|---|---|---|---|---|
+| Mexico | USA | 3410 (Motor vehicles) | 1993 | 15.2 | 0.00 | 0.25 | 0.00 |
+| Mexico | USA | 3410 (Motor vehicles) | 1997 | 16.4 | 0.08 | 0.25 | 0.00 |
+| Brazil | Argentina | 3520 (Other chemicals) | 1994 | 12.1 | 0.05 | 0.18 | −0.02 |
+| Chile | Germany | 1511 (Meat products) | 1999 | 13.5 | 0.00 | 0.22 | 0.00 |
+| Chile | Germany | 1511 (Meat products) | 2001 | 13.8 | 0.12 | 0.20 | −0.02 |
+
+*Note: Values illustrative. Preference margin = MFN tariff − preferential tariff, set to 0 for non-PTA pairs. ΔMFN is the year-on-year change in the applied MFN rate. Trade equations estimated with country-pair × industry and year FEs.*
 
 ---
 

@@ -1,5 +1,11 @@
 # Wiki Log — Paper_PTA
 
+## [2026-06-09] update | CrowleyHanPrayer2021, LeeRochaRuta2021, LefebvreFernandesRocha2021, NeriOreficeRuta2021, Freund2010, Brandi2020
+Corrected illustrative dataset tables in all 6 cards: replaced "Variable | Dimension" summary columns with View(db)-style rows showing actual observation units and illustrative values.
+
+## [2026-06-09] ingest | Brandi2020_EPsGreenExports
+World Development (2020): first sectoral test of EP effects on export composition; trade-restrictive provisions reduce dirty exports (−5% of mean for developing countries), liberal provisions increase green exports (+17% of mean); effects concentrated in "green" developing countries (high Yale EPI).
+
 ## [2026-06-07] ingest | BedardDhuey2006_PersistenceEarlyChildhoodMaturity
 Cross-country IV study (TIMSS) showing relative age effects from school cutoff dates persist from grade 4 through grade 8 and into university enrollment in Canada and the US.
 

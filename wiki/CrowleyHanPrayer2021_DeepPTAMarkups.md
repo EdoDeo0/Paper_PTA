@@ -40,16 +40,17 @@ The dataset is an unbalanced panel at the firm–product–origin–destination�
 - **Observations:** 27,549,039 quintuplets total; estimation samples range from ~15M to ~23M depending on specification
 - **Key variables:** Firm export value, quantity, unit value (proxy for price), markup (from unit value with firm-origin-product-time FEs), PTA indicator, preferential/MFN tariff, competitor_pta (trade-weighted share of origin's competitors with PTA access), competitor_τ (trade-weighted average tariff on competitors), DTA provision indicators (ROO, competition, mutual recognition of standards/conformity assessment)
 
-| Variable | Dimension |
-|---|---|
-| Export value (ln) | f × i × o × d × t |
-| Export unit value — price (ln) | f × i × o × d × t |
-| Export unit value — markup (ln) | f × i × o × d × t |
-| PTA | o × d × t |
-| Bilateral tariff τ | i × o × d × t |
-| Competitor PTA (trade-weighted) | –o × i × d × t |
-| Competitor avg. tariff (trade-weighted) | –o × i × d × t |
-| DTA provision indicator | o × d × t |
+### Illustrative dataset structure
+
+| Firm f | HS6 product i | Origin o | Dest. d | Year t | ln(export value) | ln(unit value — price) | ln(markup) | PTA (o,d,t) | Tariff τ (i,o,d,t) | Competitor PTA share |
+|---|---|---|---|---|---|---|---|---|---|---|
+| F001 | 841781 (Pumps) | Mexico | USA | 2001 | 12.3 | 2.1 | 0.8 | 1 | 0.04 | 0.62 |
+| F001 | 841781 (Pumps) | Mexico | Germany | 2001 | 10.8 | 2.3 | 0.9 | 0 | 0.08 | 0.45 |
+| F002 | 610910 (T-shirts) | China | Chile | 2005 | 14.1 | 1.5 | 0.2 | 1 | 0.12 | 0.38 |
+| F003 | 392690 (Plastics) | Peru | USA | 2010 | 11.5 | 1.9 | 0.4 | 1 | 0.00 | 0.71 |
+| F004 | 720839 (Steel) | Bulgaria | Turkey | 2008 | 15.2 | 2.8 | 1.1 | 0 | 0.05 | 0.29 |
+
+*Note: Values illustrative. Markup is estimated from the residual of a unit-value regression absorbing firm-origin-product-time fixed effects. Competitor PTA share is the trade-weighted fraction of competing origins with PTA access to the destination.*
 
 ---
 
