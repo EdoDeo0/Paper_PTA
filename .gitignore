@@ -1,21 +1,20 @@
-.Rproj.user
+# Dati grandi — non versionati
+Data/Final Dataset/
+New/Data/
+*.fst
+*.dta
+
+# Output binari R
+*.rds
+New/Output/OLS/Models_Output/
+New/Output/OLS/Bootstrap/
+
+# Log di esecuzione
+New/*.log
+
+# File temporanei
 .Rhistory
 .RData
-.Ruserdata
-.DS_Store
-Code/.DS_Store
-.DS_Store
-Code/.DS_Store
-.DS_Store
-Data/.DS_Store
-.DS_Store
-.DS_Store
-Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst
-Data/Final Dataset/final_dataset_pta_env_indices_compressed.dta
-Data/TREND/TREND_Guide_EN.pdf
-Output/Analysis/CEM_Robustness/CEM_full/data_cem_matched_full.fst
-Output/Analysis/CEM_Robustness/CEM_no_asia/data_cem_matched_no_asia.fst
-Data/Matching/CEM_full/data_cem_matched_full.fst
-Data/Matching/CEM_no_asia/data_cem_matched_no_asia.fst
-Data/Final Dataset/ppml_agg_pdt_zerofill.fst
-Data/Final Dataset/data_cem_matched.fst
+*.Rproj.user/
+__pycache__/
+*.pyc

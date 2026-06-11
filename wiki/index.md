@@ -16,10 +16,17 @@
 ## Environmental Provisions in Trade Agreements
 
 - [[Brandi2020_EPsGreenExports]] — First systematic test of EP effects on export composition: trade-restrictive provisions reduce dirty exports, liberal provisions increase green exports from developing countries; effects concentrated in "green" (high-EPI) developing countries
+- [[AbmanLundbergRuta2024_EPsRTAsDeforestation]] — JEEA: forest/biodiversity provisions in RTAs fully offset the deforestation increase that follows RTAs without them; effects concentrated in tropical biodiverse developing countries; closest top-journal precedent for Paper_PTA
 
 ## Environmental Regulations & Trade Competitiveness
 
 - [[DechezleprêtreSato2017_EnvRegCompetitiveness]] — Literature review: environmental regulations have small but real pollution-haven effects on trade and investment; robust positive effects on green innovation; Porter hypothesis receives partial support
+
+## Trade & Environment: Micro Evidence and Surveys
+
+- [[Shapiro2021_EnvironmentalBiasTradePolicy]] — QJE: tariffs/NTBs are systematically lower on dirty (upstream) industries — an implicit carbon subsidy of hundreds of billions USD/yr; source of CO2-intensity data for our dirty_p classification
+- [[Cherniwchan2017_NAFTAEmissions]] — JIE: first plant-level evidence on trade-environment; NAFTA tariff cuts caused within-plant PM10/SO2 reductions explaining ~2/3 of US manufacturing emission decline 1994–98
+- [[CopelandShapiroTaylor2022_GlobalizationEnvironment]] — Handbook ch.: definitive survey; nine stylized facts; technique effect dominates; effects of environmental content in trade agreements flagged as open question
 
 ## RTAs & Multilateral Liberalization
 

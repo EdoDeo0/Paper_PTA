@@ -7,6 +7,11 @@
 >
 > Autore della diagnosi: sessione Opus del 2026-06-08.
 > Stato dati/codice fotografato in questo file: vedi sezioni §2–§3.
+>
+> ⚠️ **AGGIORNAMENTO 2026-06-09 — RIDISEGNO (§7).** Una revisione complessiva del progetto
+> ha prodotto un ridisegno dell'identificazione che **supera le Fasi 2–5 sottostanti**:
+> il nuovo piano operativo è in **§7**. La Fase 1 (§4) resta valida ed è in esecuzione.
+> Le vecchie Fasi 2–5 restano come riferimento ma vanno lette attraverso §7.
 
 ---
 
@@ -306,3 +311,83 @@ Costo quasi zero: i dati e i sotto-indici sono **già pronti**.
 Eseguire il **setup di §0**, poi partire dalla **Fase 1, punto 1** (clustering a `country_code`
 + wild bootstrap su `fpt+fpd`): è l'intervento singolo che decide se il paper è "null" o "con
 risultato". Tutto il resto discende da quell'esito.
+
+---
+
+## 7. RIDISEGNO 2026-06-09 — piano per la pubblicabilità in un top journal
+
+> Esito della revisione complessiva (sessione Opus 2026-06-09, piano approvato dall'utente).
+> Questo paragrafo **supera le Fasi 2–5 di §4**: la Fase 2 (tariffe WITS) viene assorbita
+> nella nuova Fase R2; le Fasi 3–5 sono riformulate attorno a un nuovo design identificativo.
+> Documento completo del piano: `C:\Users\edodr\.claude\plans\distributed-cuddling-crane.md`.
+
+### 7.0 Diagnosi aggiuntiva (oltre a §1)
+
+- **C1 — L'effetto-livello di EP depth non è identificabile.** Varia a livello dest×anno ed è
+  collineare con l'entrata in vigore del PTA stesso. Variazione effettiva: ~14 accordi (ASEAN
+  = un solo accordo per 10 destinazioni). Il livello va declassato a diagnostica (ladder).
+- **C2 — Mancano i dirty goods.** Solo `env_good` (lista OECD green). L'ipotesi pollution-haven
+  (EP ↓ export inquinanti) non è testabile senza intensità emissiva per HS6.
+- **C3 — Concordanza HS6 nel tempo probabilmente assente.** Il panel 2000–2015 attraversa le
+  revisioni HS 2002/2007/2012: se non concordato, gli FE `fpd`/`fpt` spezzano le serie e
+  `env_good` è mal assegnato. **Da verificare prima di tutto: può invalidare il pregresso.**
+- **C4 — Hong Kong e Macao (CEPA)** contaminano il trattato (entrepôt + accordo sui generis).
+  Escludere dalla specifica principale, robustezza con inclusione.
+- **C5 — EP depth correlata con la profondità totale dell'accordo.** Serve `TotalDepth_dt`
+  (costruibile dai file WB DTA in `Data/WB/`).
+- **C6 — PPML**: firm-level su flussi positivi resta (correzione eteroschedasticità), ma va
+  affiancato da PPML aggregato `pd×t` su griglia con zeri; PPML su unit value va eliminato.
+- **C7 — CEM** → appendice o fuori; sostituire con not-yet-treated + synthetic DiD.
+- **C8 — Inferenza**: oltre a WCB, **permutation inference** (riassegnare EP depth tra i ~14
+  accordi a timing PTA fisso → testa il *contenuto* ambientale, non l'accordo).
+
+### 7.1 Specifica principale (triple-difference sulla composizione)
+
+```r
+ln_export ~ EP_depth:green_p + EP_depth:dirty_p
+          + TotalDepth:green_p + TotalDepth:dirty_p
+          + tariffs_pref + AD_pdt
+          | fpd + fdt + pt,  cluster = ~country_code
+```
+
+- `fdt` (già nel `.fst`) assorbe **tutto** ciò che varia a impresa-dest-anno, incluso il PTA
+  stesso → il confound C1 sparisce per costruzione.
+- `pt` assorbe gli shock globali di prodotto; `fpd` il livello della relazione.
+- Identificazione: entro impresa-destinazione-anno, tra prodotti green/dirty vs neutri.
+- Event study differenziale: leads/lags entrata PTA × `green_p`/`dirty_p` (+ `sunab()`).
+- Inferenza a 3 livelli: cluster `~country_code`, WCB B=9999, permutation 1.000 draws.
+
+### 7.2 Fasi operative (sostituiscono Fasi 2–5 di §4)
+
+- **R0 — Chiudere Fase 1** (in corso): completare `01_inference_fix.R`, bootstrap, ladder.
+  Archiviati gli script superseded in `New/Code/_archive/`.
+- **R1 — Igiene dati**: audit concordanza HS (decisivo); tabella trattamento (14 accordi,
+  switch effettivi); peso HK+MO; trimming UV 1/99 within HS2-anno; consistenza `companyID`
+  (attenzione al 2004, liberalizzazione trading rights). Output in `New/Output/Diagnostics/`.
+- **R2 — Nuovi dati**: tariffe preferenziali AHS da WITS TRAINS (ex Fase 2); `TotalDepth`
+  non-ambientale dai file WB; `dirty_p` da intensità emissive (Shapiro 2021 / IPPS,
+  concordanza ISIC→HS6, top quartile; robustezza Mani-Wheeler). Opzionale: ownership e
+  regime processing/ordinary dal raw customs.
+- **R3 — Stime principali**: triple-diff (§7.1) su 3 outcome × {WB, TREND}; event study;
+  inferenza a 3 livelli; ladder come diagnostica; PPML doppio (firm-level positivi +
+  aggregato `pd×t` con zeri, FE `pd + pt + dt`).
+- **R4 — Margini e meccanismi**: margine estensivo (n. imprese/prodotti green per `d×t`,
+  entrata nuove imprese nei green); **riallocazione within-firm** (quota green nel paniere
+  delle multiprodotto verso `d`, FE `fdt`) ← potenziale risultato da top journal;
+  eterogeneità per sub-indice (`GreenMarketAccess`, `EnforcementDSM`, `Hard`/`Soft`) e
+  per size d'impresa.
+- **R5 — Robustezza (set chiuso)**: escl. HK+MO / incl.; escl. ASEAN; leave-one-out per
+  accordo; controllo `AD_pdt`; solo not-yet-treated; synthetic DiD su quota green a livello
+  destinazione; Callaway-Sant'Anna/dCDH su trattamento binario; UV trimmed vs non.
+- **R6 — Framing e scrittura**: descrittiva "gli EP cinesi nella distribuzione mondiale
+  TREND"; bivio di framing DOPO R3 (interazione sopravvive → JIE/JEEM, headline triple-diff
+  + within-firm; nulla sopravvive → precision null vs Brandi 2020 e Abman-Lundberg-Ruta
+  JEEA 2024 → World Development/JEEM). Wiki: aggiungere ALR 2024, Shapiro 2021,
+  Cherniwchan 2017, Copeland-Shapiro-Taylor 2022. Ridurre a 6–8 tabelle main.
+
+### 7.3 Cosa si abbandona
+
+- Effetto-livello EP come headline (→ diagnostica ladder).
+- PPML su unit value.
+- CEM come strategia identificativa principale.
+- Le 4 strutture FE come robustezza simmetrica (→ una principale + ladder).

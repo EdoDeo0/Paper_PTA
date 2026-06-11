@@ -1,5 +1,125 @@
 # Session Log — Paper_PTA
 
+## 2026-06-11 — Crash kernel, ladder generata, bootstrap abbandonato
+
+**Kernel crash (evento 41):** PC si è riavviato durante il bootstrap test, perdendo il processo R in corso.
+
+**Stato post-crash confermato:**
+- Tutti i **96 modelli OLS** in cache (`New/Output/OLS/Models_Output/`) — nessuna perdita.
+- **Bootstrap**: directory `New/Output/OLS/Bootstrap/` vuota; i run precedenti avevano sempre crashato (errori API `fwildclusterboot` v0.14.3: `seed` rimosso, `data` non valido, `lean=TRUE` richiesto).
+- **`OLS_Ladder_FE.tex`** generata correttamente via `_gen_ladder_tex.R` (standalone, senza bootstrap).
+
+**Ladder risultati (4 righe, tutte e 4 le strutture FE):**
+- `fpd+t`: WB 0.00143, TREND 0.00055 — non significativi
+- `fpt+pd`: WB 0.00439*, TREND 0.00114** — segnale marginale
+- `fpt+fpd`: WB 0.00031, TREND 0.00027 — **null**
+- `fpd+pt`: WB −0.00027, TREND 0.00031 — **null**
+Attenzione monotona confermata: effetto-livello è selezione assorbita dagli FE più alti.
+
+**Bootstrap abbandonato:** test B=100 su 5M righe impiegava 30+ minuti — `fpt+fpd` (FE altamente dimensionali) rende il WCB computazionalmente impraticabile a livello micro. Il null è già lampante dall'OLS (p≈0.91). Alternativa futura: permutation test su dati aggregati a livello accordo (più veloce, già nel piano).
+
+**Creato `.gitignore`** (mancante): esclude `.fst`, `.dta`, `.rds`, log, `Models_Output/`, `Bootstrap/`; include i `.tex`.
+
+**Pending:** Fare push della repo → rivalutare la strategia; poi Fase 1 audit igiene dati (Task #4) e Fase 2 nuovi dati (Task #5). Task #1 chiuso di fatto (ladder ✅, bootstrap ❌ → scelta deliberata).
+
+
+
+## 2026-06-11 — Fix crash + rilancio 01_inference_fix.R
+
+**Crash diagnosticato:** `recursive gc invocation` in `TREND_Int_fpt_fpd` (blocco 4/4
+della struttura fpt+fpd). Causa: `section_ols` eseguiva tutti e 4 i blocchi (WB_NI,
+WB_Int, TREND_NI, TREND_Int) in un unico sottoprocesso callr — la memoria si accumulava
+tra un blocco e l'altro e al 4° blocco l'allocatore crashava.
+
+**Fix applicato a `New/Code/01_inference_fix.R`:** ogni blocco è ora il proprio
+sottoprocesso separato (funzione `section_ols_block` + `run_one_block`). RAM completamente
+liberata tra un blocco e l'altro. 16 sottoprocessi totali (4 blocchi × 4 strutture FE).
+
+**Stato RDS al momento del rilancio:**
+- fpd+year: 4/4 blocchi DONE (24/24 RDS)
+- fpt+pd: 4/4 blocchi DONE (24/24 RDS)
+- fpt+fpd: WB_NI ✅, WB_Int ✅, TREND_NI ✅, TREND_Int 1/6 (crash a modello 2)
+- fpd+pt: 0/24 (non iniziato)
+
+**Rilanciato** come background task (bj77emi4o). Task completato parzialmente:
+- TREND_Int_fpt_fpd: ✅ 6/6 modelli in 281.7 min
+- fpd+pt WB_NI: CRASH immediato a modello 1 — `recursive gc invocation`
+
+**Diagnosi crash fpd+pt:** con callr::r(), un `R_Suicide`/abort() nel sottoprocesso
+propaga il segnale al processo padre attraverso callr. tryCatch non intercetta crash
+a livello C. Il crash fpd+pt avviene al primo modello anche in subprocess fresco —
+probabilmente resource exhaustion dopo ore di processo padre attivo.
+
+**Fix definitivo (bwd9zsdem):** creati due script standalone senza callr:
+- `New/Code/01c_fpd_pt.R` — 4 blocchi fpd+pt in sessione diretta, gc() tra i blocchi
+- `New/Code/01d_bootstrap_ladder.R` — bootstrap B=9999 + ladder table
+
+`01c_fpd_pt.R` lanciato come task bwd9zsdem, output in `New/fpd_pt_run.log`.
+Dopo completamento: `Rscript New/Code/01d_bootstrap_ladder.R`.
+
+**PDF working paper** aggiornato a 32 pagine con tabelle corrette (Paragraph objects).
+
+## 2026-06-10 — Monitoraggio processi + conferma screen-lock
+
+**Contesto:** Sessione breve post-compattazione, ripresa dopo context overflow.
+
+**Confermato:** Blocco schermo (Win+L) non interrompe processi R in background su Windows —
+solo ibernazione/sleep vera pauserebbe i processi. Due avvertenze: (1) verificare che
+"sospendi dopo N min" sia impostato a "Mai" in Impostazioni → Alimentazione (distinto
+dall'ibernazione); (2) Windows Update può riavviare il PC se ha aggiornamenti in coda.
+
+**Stato pipeline Fase 0 (da task output `brx1afgg0`):**
+- `fpd+pt` (sezione WB_NI): partito ma hit `*** recursive gc invocation` al primo modello
+  → stesso crash da concorrenza `.fst`/OpenMP già visto. Probabilmente il job `fpt+fpd`
+  era ancora attivo. Regola confermata: **un solo job pesante alla volta**.
+- Script già scritti e pronti: `02_data_hygiene_audit.R`, `04_wits_pref_tariffs.R`,
+  `05_dirty_goods.R`, `06_total_depth.R`, `07_triple_diff.R`.
+
+**Pending:** Verificare stato processi R in background → se completati, controllare
+output in `./New/Output/OLS/` e `bootstrap_summary.csv`; se crashati, rilanciarli
+singolarmente. Poi: audit R1 (02) → tariffe WITS (04) → dirty goods (05) + TotalDepth (06)
+→ triple-diff (07).
+
+## 2026-06-09/10 — Revisione complessiva + ridisegno (Opus) + esecuzione Fase 1
+
+**Revisione totale del progetto** (codice, dati, risultati, letteratura) → piano approvato
+dall'utente per la pubblicabilità in top journal. **Integrato in `New/ROADMAP.md` §7** (supera
+le vecchie Fasi 2–5). Punti chiave del ridisegno:
+- L'effetto-livello di EP depth NON è identificabile (collineare col PTA; ~14 accordi effettivi)
+  → declassato a diagnostica (ladder). Nuova specifica principale: **triple-diff sulla
+  composizione** `EP×green_p + EP×dirty_p | fpd + fdt + pt`, cluster `~country_code`.
+- Criticità da risolvere: dirty goods mancanti (Shapiro 2021 per intensità CO2); concordanza
+  HS6 2002/2007/2012 da verificare (può invalidare il pregresso); HK+Macao da escludere (CEPA,
+  entrepôt); controllo TotalDepth non-ambientale; permutation inference oltre a WCB.
+- Nuove fasi R0–R6 in §7.2; piano completo: `~/.claude/plans/distributed-cuddling-crane.md`.
+
+**Esecuzione (stato):**
+- Conflitto risorse risolto: girava ancora il vecchio `01c` dell'utente (4 thread, 18:35) in
+  parallelo al nuovo orchestratore → uccisi i duplicati. Scoperto che **2 processi R pesanti
+  concorrenti sul `.fst` causano il crash `recursive gc invocation`** (anche a 4 thread!) —
+  non è solo RStudio. Regola: **mai più di un job pesante alla volta**.
+- In corso: `_archive/01c_fpt_fpd.R` a **6 thread** (stabile da solo), modelli WB_NI 1–6 già
+  in cache. Alla fine: lanciare `01_inference_fix.R` (ora a 12 thread) per fpd_pt + bootstrap
+  + ladder. Fallback a 4 thread se crasha al primo modello.
+- Archiviati `01a–01e`, `run_fase1.*` in `New/Code/_archive/`; eliminato `common_sample.fst`.
+
+**Nuovi script (da eseguire):**
+- `New/Code/02_data_hygiene_audit.R` — Fase R1: stabilità HS6, mappa trattamento, peso HK+MO,
+  outlier UV, consistenza companyID. Eseguire DOPO le stime (un job alla volta).
+- `New/Code/04_wits_pref_tariffs.R` — Fase R2: download tariffe WITS TRAINS via API SDMX
+  (sintassi verificata: `rest/data/DF_WITS_Tariff_TRAINS/A.{rep}...reported`; PARTNER=000=MFN,
+  gruppi con TARIFFTYPE=PREF; pref_cina = min sui gruppi con Cina). Mode download/parse,
+  cache per file. Download = solo rete → può girare in parallelo alle stime.
+
+**Wiki:** aggiunte 4 card chiave: AbmanLundbergRuta2024 (JEEA — competitor diretto),
+Shapiro2021 (QJE — fonte per dirty_p), Cherniwchan2017 (JIE), CopelandShapiroTaylor2022
+(Handbook). Indice aggiornato. **Zotero in local-only mode: add via DOI fallito** — configurare
+ZOTERO_API_KEY o aggiungere a mano i 4 DOI (10.1093/jeea/jvae023, 10.1093/qje/qjaa042,
+10.1016/j.jinteco.2017.01.005, 10.1016/bs.hesint.2022.02.002).
+
+**Pending:** fine stime fpt_fpd → orchestratore (fpd_pt+bootstrap+ladder) → checkpoint Fase 1
+(p_wcr nulli? ladder monotona?) → audit R1 → risoluzione gruppi WITS → Fase R3 (triple-diff).
+
 ## 2026-06-09 — Fase 1: script inference_fix
 
 **Task:** Scritto `./New/Code/01_inference_fix.R` per la Fase 1 del ROADMAP.
