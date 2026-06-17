@@ -18,3 +18,4 @@ New/*.log
 *.Rproj.user/
 __pycache__/
 *.pyc
+.DS_Store
