@@ -1,5 +1,29 @@
 # Session Log — Paper_PTA
 
+## 2026-06-18 — Revisione complessiva "da zero" + controllo gruppi + PDF
+
+**Revisione strategica (Opus 4.8):** analisi a fondo di tutto il progetto con report
+`./New/REPORT_Ripartire_Da_Zero.md` (convertito anche in `REPORT_Ripartire_Da_Zero.pdf`).
+
+**Diagnosi principale del report:**
+- Problema di domanda, non esecuzione. EP depth non identificabile: ~14 accordi effettivi,
+  ASEAN=11 destinazioni con valori identici, quasi nessuna variazione within-paese nel tempo.
+- La ladder (`OLS_Ladder_FE.tex`) conferma la firma di selezione: effetto sparisce monotonicamente.
+- Raccomandazione: riformulare come domanda di composizione/riallocazione (triple-diff).
+
+**Discussione gruppi di controllo (à la Caselli et al. AD paper):**
+- Paper di riferimento letto: stesso dataset (49.2M obs, f×p×d×t), DDD con 4 gruppi controllo.
+- Differenza strutturale: AD varia a p×d (permette controlli within-prodotto e within-dest);
+  EP varia solo a d → i controlli non risolvono il problema dei pochi cluster (~14 accordi).
+- I gruppi controllo aiutano per selezione e dimensione campione, ma NON l'identificazione.
+- Proposta "Fase R-control": campione "solo-PTA, deep vs shallow EP" à la AbmanLundbergRuta2024.
+  Da registrare nel ROADMAP come fase futura (non eseguita).
+
+**Threading:** confermato `threads_fst(1)` + `setFixest_nthreads(N-1)` in `./New/Code/01_inference_fix.R`.
+
+**Pending:** aggiungere "Fase R-control" al ROADMAP §7; eseguire `01_inference_fix.R` su Windows;
+poi triple-diff (07) come spec principale.
+
 ## 2026-06-11 — Crash kernel, ladder generata, bootstrap abbandonato
 
 **Kernel crash (evento 41):** PC si è riavviato durante il bootstrap test, perdendo il processo R in corso.
