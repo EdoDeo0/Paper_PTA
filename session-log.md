@@ -1,5 +1,19 @@
 # Session Log — Paper_PTA
 
+## 2026-06-19 — Allineamento CLAUDE.md + aggiornamento log
+
+**Fix CLAUDE.md di progetto:** sezione "Reading PDFs" usava `markitdown` invece di `pymupdf4llm`.
+Corretta per allinearsi alle istruzioni globali (`~/.claude/CLAUDE.md`, sezione `## PDF Conversion`).
+Nessun'altra modifica ai file di codice o dati.
+
+**Confermato:** le istruzioni globali Claude Code mandano esplicitamente `pymupdf4llm` per PDF
+e `markitdown` per tutti gli altri formati (Word, HTML, PowerPoint, ecc.).
+
+**Pending (invariato):** aggiungere "Fase R-control" al ROADMAP §7; eseguire
+`./New/Code/01_inference_fix.R` su Windows; poi triple-diff (07) come spec principale.
+
+---
+
 ## 2026-06-18 — Revisione complessiva "da zero" + controllo gruppi + PDF
 
 **Revisione strategica (Opus 4.8):** analisi a fondo di tutto il progetto con report

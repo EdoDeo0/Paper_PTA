@@ -36,10 +36,12 @@ Academic research project on **Environmental Provisions (EPs) in Preferential Tr
 
 ## Reading PDFs
 
-Always use `markitdown` to convert PDFs before reading them:
+Always use `pymupdf4llm` to convert PDFs before reading them (handles double-column layout correctly):
 ```bash
-markitdown path/to/file.pdf
+python3 -c "import pymupdf4llm; open('/tmp/<slug>.md','w').write(pymupdf4llm.to_markdown('<path>.pdf'))"
 ```
+
+Save output to `/tmp/` using `AuthorYear_ShortTitle` naming. Check `/tmp/` first — if a converted `.md` already exists, read that instead of converting again.
 
 ## Environment Variables & External Resources
 
