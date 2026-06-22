@@ -62,7 +62,7 @@ where $\alpha_{ft}$ are firm-year fixed effects (absorbing all time-varying prod
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[HofmannOsnagoRuta2017_DeepTradeAgreements]]
 [[MattooRochaRuta2020_HandbookDeepTrade]]

@@ -1,5 +1,26 @@
 # Session Log — Paper_PTA
 
+## 2026-06-21 — Wiki lint, fix header References, ingest Rajan-Zingales (1998)
+
+**Wiki lint (`./wiki/`):** 5 orfani (BlackDevereux2011, CrowleyHanPrayer2021, LeeRochaRuta2021,
+LefebvreFernandesRocha2021, NeriOreficeRuta2021), nessun link rotto reale, alcuni cross-link
+mancanti tra paper "deep PTA" affini, index/log coerenti.
+
+**Fix strutturale:** header References corretto da `## References (Wikilinks)` a
+`### References (Wikilinks)` (spec corrente skill `/paper-card`) su tutte le 16 card.
+
+**Nuova card:** `RajanZingales1998_FinancialDependenceGrowth` (AER 1998) — design canonico di
+interazione cross-industry × cross-country, usato come template del triple-diff del progetto
+(prodotto green/dirty × destinazione EP-depth). Tag `area/methods/program-eval`. Salvata in
+`./wiki/` e nella wiki globale; nuova sezione "Identification Design References" in
+`./wiki/index.md`. PDF Zotero è scansione JSTOR senza testo estraibile — contenuto scritto da
+conoscenza consolidata + abstract verbatim, non da inferenza.
+
+**Pending (invariato):** "Fase R-control" nel ROADMAP §7; eseguire
+`./New/Code/01_inference_fix.R` su Windows; poi triple-diff (07) come spec principale.
+
+---
+
 ## 2026-06-19 — Allineamento CLAUDE.md + aggiornamento log
 
 **Fix CLAUDE.md di progetto:** sezione "Reading PDFs" usava `markitdown` invece di `pymupdf4llm`.

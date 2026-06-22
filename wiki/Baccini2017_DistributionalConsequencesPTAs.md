@@ -92,7 +92,7 @@ At the country-industry-period level, OLS regresses HHI (and four-firm ratio) on
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[AlleeElsig2016_PTADisputeSettlement]]
 [[BacciniUrpelainen2014_CuttingGordianKnot]]

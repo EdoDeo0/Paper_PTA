@@ -75,7 +75,7 @@ For prices and markups the same covariates are used with the log unit value as d
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[AndersonVanWincoop2003_GravityTrade]]
 [[AtkesonBurstein2008_PricingMarkups]]

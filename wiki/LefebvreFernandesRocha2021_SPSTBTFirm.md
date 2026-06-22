@@ -68,7 +68,7 @@ The triple fixed effects structure is central: $\alpha_{fjk}$ (firm × destinati
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[BaierBergstrand2007_RTAsPanelData]]
 [[CorreiaGuimaraesZylkin2020_PPMLHDFE]]

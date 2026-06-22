@@ -67,7 +67,7 @@ This review is directly relevant to the project's core research question on envi
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[GrossmanKrueger1995_EconomicGrowthEnvironment]]
 [[LevinsonTaylor2008_PollutionHaven]]

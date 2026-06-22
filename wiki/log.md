@@ -1,5 +1,11 @@
 # Wiki Log — Paper_PTA
 
+## [2026-06-21] ingest | RajanZingales1998_FinancialDependenceGrowth
+AER (1998): canonical cross-industry × cross-country interaction design — industries more dependent on external finance grow disproportionately faster in countries with developed financial markets; level effects absorbed by country/industry FE. Added under new "Identification Design References" section; this is the design template for the project's triple-diff (product green/dirty × destination EP-depth). Tagged area/methods/program-eval, copied to both wikis.
+
+## [2026-06-21] update | header References (16 card)
+Corrected References section header from `## References (Wikilinks)` to `### References (Wikilinks)` in all 16 wiki cards, aligning with the current /paper-card skill spec. Wikilink contents unchanged.
+
 ## [2026-06-09] update | CrowleyHanPrayer2021, LeeRochaRuta2021, LefebvreFernandesRocha2021, NeriOreficeRuta2021, Freund2010, Brandi2020
 Corrected illustrative dataset tables in all 6 cards: replaced "Variable | Dimension" summary columns with View(db)-style rows showing actual observation units and illustrative values.
 

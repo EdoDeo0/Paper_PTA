@@ -54,7 +54,7 @@ Do environmental provisions in RTAs have measurable effects on environmental out
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[Brandi2020_EPsGreenExports]]
 [[Shapiro2021_EnvironmentalBiasTradePolicy]]

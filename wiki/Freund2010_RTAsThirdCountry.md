@@ -67,7 +67,7 @@ $\beta_0 < 0$ means rising preference margins lead to subsequent MFN cuts (build
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[BagwellStaiger1999_PoliticalEconomyWTO]]
 [[BaierBergstrand2004_RTAsTrade]]

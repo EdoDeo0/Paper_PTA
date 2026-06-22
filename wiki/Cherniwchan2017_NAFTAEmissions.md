@@ -49,7 +49,7 @@ What happens *within plants* when trade is liberalized? Aggregate trade-environm
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[CopelandShapiroTaylor2022_GlobalizationEnvironment]]
 [[Shapiro2021_EnvironmentalBiasTradePolicy]]

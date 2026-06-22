@@ -114,7 +114,7 @@ Beyond the IV and event study, the authors: (i) use a weighted count of RTA prov
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[AtkesonBurstein2008_PricingToMarket]]
 [[BaierBergstrand2018_HeterogeneousEIAs]]

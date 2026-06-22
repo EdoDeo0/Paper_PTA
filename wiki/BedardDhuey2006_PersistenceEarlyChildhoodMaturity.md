@@ -110,7 +110,7 @@ The main threat to identification is strategic birth timing: if parents target f
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[AllenBarnsley1993_StreamsAndTiers]]
 [[AngristKrueger1991_CompulsorySchoolingEarnings]]

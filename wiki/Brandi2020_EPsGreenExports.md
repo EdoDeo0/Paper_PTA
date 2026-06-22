@@ -87,7 +87,7 @@ where:
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[Baccini2017_DistributionalConsequencesPTAs]]
 [[DechezleprêtreSato2017_EnvRegCompetitiveness]]

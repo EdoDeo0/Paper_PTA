@@ -32,6 +32,10 @@
 
 - [[Freund2010_RTAsThirdCountry]] — Latin American RTA panel: no evidence of trade diversion; preference margins predict lower future MFN tariffs (+1pp margin → –0.3pp MFN next year), supporting the building block hypothesis
 
+## Identification Design References
+
+- [[RajanZingales1998_FinancialDependenceGrowth]] — Canonical cross-industry × cross-country interaction design (finance/growth); template for the project's triple-diff: industry/country roles played by product green-dirty / destination EP-depth, with FE absorbing level effects
+
 ## School Starting Age & Relative Age Effects
 
 - [[BedardDhuey2006_PersistenceEarlyChildhoodMaturity]] — International evidence that relative age at school entry persistently affects test scores through grade 8 and university enrollment across 19 OECD countries

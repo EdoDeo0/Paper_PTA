@@ -36,7 +36,7 @@ The definitive modern survey of trade and the environment. Organized around nine
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[Shapiro2021_EnvironmentalBiasTradePolicy]]
 [[Cherniwchan2017_NAFTAEmissions]]

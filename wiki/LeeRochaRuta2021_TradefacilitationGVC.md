@@ -65,7 +65,7 @@ The firm-year fixed effects ($\alpha_{it}$) absorb all time-varying firm-level p
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[BaierBergstrand2007_RTAsPanelData]]
 [[FernandesFreundPierola2016_ExporterDynamics]]

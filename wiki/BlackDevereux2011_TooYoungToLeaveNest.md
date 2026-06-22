@@ -123,7 +123,7 @@ Year-of-birth dummies absorb cohort-level secular trends (e.g., rising education
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[AngristKrueger1991_CompulsorySchoolingEarnings]]
 [[AngristPischke2009_MostlyHarmlessEconometrics]]

@@ -50,7 +50,7 @@ Is trade policy systematically biased with respect to the environment? I.e., doe
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[AbmanLundbergRuta2024_EPsRTAsDeforestation]]
 [[CopelandShapiroTaylor2022_GlobalizationEnvironment]]

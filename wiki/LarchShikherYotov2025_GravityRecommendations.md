@@ -75,7 +75,7 @@ This paper is a key methodological reference for the project's analysis scripts 
 
 ---
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[AndersonVanWincoop2003_GravityTrade]]
 [[BaierBergstrand2007_RTAsPanelData]]
