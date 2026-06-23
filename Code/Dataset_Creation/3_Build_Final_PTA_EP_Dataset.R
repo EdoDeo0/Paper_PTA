@@ -18,7 +18,7 @@ df <- read_dta("Data/Final Dataset/final_dataset_pta_env_indices_compressed.dta"
 write_fst(df, "Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
 
 # Set data file path
-data_file <- "C:\\Work\\Paper_PTA\\Data\\Final Dataset\\final_dataset_pta_env_indices_compressed.fst"
+data_file <- "C:\\Work\\projects\\Paper_PTA\\Data\\Final Dataset\\final_dataset_pta_env_indices_compressed.fst"
 
 # Columns to convert to integer
 fe_cols <- c(

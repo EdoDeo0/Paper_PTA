@@ -1,5 +1,29 @@
 # Session Log — Paper_PTA
 
+## 2026-06-24 — ROADMAP §7.4 "Fase R-control" (gruppi di controllo + sub-campioni)
+
+**Chiuso il pending storico** ("aggiungere Fase R-control al §7", aperto dal 2026-06-18). Aggiunta
+**§7.4** a `./New/ROADMAP.md` + banner + pointer in R3/R5. Solo letture leggere, nessun file
+dati/codice toccato. Innesco: modelli che crashano sul panel pieno (49,2M righe) → strategie di
+sub-campione "control group ad hoc" alla Caselli et al. (AD & Product Quality).
+- **§7.4**: doppia motivazione (feasibility PPML/DiD moderni + robustezza triple-diff §7.1);
+  due margini (destinazione = CEM già fatto ma taglia poco; prodotto = leva aperta); 5 strategie
+  ordinate per credibilità/taglia (C-prod-HS4, C-prod-match, C-overlap, C-deepshallow alla ALR
+  2024, C-aggr scaffolding) ciascuna col suo difetto econometrico.
+- **Verdetto**: restringere su covariate pre-trattamento = ATT condizionato valido; il vincolo
+  non sciolto = pochi cluster trattati (~19-25) → sempre WCB + permutation; il guadagno della
+  taglia = PPML estensivo (green trade creation) + DiD moderni eseguibili.
+- **Numeri ancorati**: green = 247 HS6 su 23 capitoli HS2 (~11% righe); CEM ~19+35 paesi.
+- **Note ambiente**: PDF→`%TEMP%` (Python Win non vede `/tmp`); Rscript non nel PATH; R via file
+  `.R` temporaneo (non `-e` inline).
+
+**Pending:** eseguire `./New/Code/01_inference_fix.R` → triple-diff (07); poi Fase R-control §7.4
+(prima conteggi leggeri switchers/righe, poi stime su ≥3 control group). **Pulizia disco**: i 2
+backup pre-audit in `./correspondence/audit/backup_pre_step3/` (~32 GB) — identici agli attivi —
+da cancellare tra qualche giorno (utente ha chiesto di aspettare).
+
+---
+
 ## 2026-06-21 — Wiki lint, fix header References, ingest Rajan-Zingales (1998)
 
 **Wiki lint (`./wiki/`):** 5 orfani (BlackDevereux2011, CrowleyHanPrayer2021, LeeRochaRuta2021,

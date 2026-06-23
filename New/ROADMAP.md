@@ -12,6 +12,12 @@
 > ha prodotto un ridisegno dell'identificazione che **supera le Fasi 2–5 sottostanti**:
 > il nuovo piano operativo è in **§7**. La Fase 1 (§4) resta valida ed è in esecuzione.
 > Le vecchie Fasi 2–5 restano come riferimento ma vanno lette attraverso §7.
+>
+> ⚠️ **AGGIORNAMENTO 2026-06-24 — FASE R-CONTROL (§7.4).** Aggiunti gruppi di controllo /
+> sub-campioni — sia per **feasibility** (rendere eseguibili PPML aggregato e stimatori DiD
+> moderni, oggi impossibili a 49,2M righe) sia per **robustezza** della triple-diff §7.1 — con
+> valutazione econometrica completa. Chiude il pending "Fase R-control" aperto nei log dal
+> 2026-06-18. Vedi **§7.4**.
 
 ---
 
@@ -370,7 +376,8 @@ ln_export ~ EP_depth:green_p + EP_depth:dirty_p
   regime processing/ordinary dal raw customs.
 - **R3 — Stime principali**: triple-diff (§7.1) su 3 outcome × {WB, TREND}; event study;
   inferenza a 3 livelli; ladder come diagnostica; PPML doppio (firm-level positivi +
-  aggregato `pd×t` con zeri, FE `pd + pt + dt`).
+  aggregato `pd×t` con zeri, FE `pd + pt + dt`). I sub-campioni di **§7.4** rendono eseguibili
+  il PPML aggregato e i DiD moderni (oggi impraticabili sul panel pieno).
 - **R4 — Margini e meccanismi**: margine estensivo (n. imprese/prodotti green per `d×t`,
   entrata nuove imprese nei green); **riallocazione within-firm** (quota green nel paniere
   delle multiprodotto verso `d`, FE `fdt`) ← potenziale risultato da top journal;
@@ -378,7 +385,8 @@ ln_export ~ EP_depth:green_p + EP_depth:dirty_p
   per size d'impresa.
 - **R5 — Robustezza (set chiuso)**: escl. HK+MO / incl.; escl. ASEAN; leave-one-out per
   accordo; controllo `AD_pdt`; solo not-yet-treated; synthetic DiD su quota green a livello
-  destinazione; Callaway-Sant'Anna/dCDH su trattamento binario; UV trimmed vs non.
+  destinazione; Callaway-Sant'Anna/dCDH su trattamento binario; UV trimmed vs non;
+  **stabilità dell'interazione lungo i gruppi di controllo di §7.4** (è il vero stress test).
 - **R6 — Framing e scrittura**: descrittiva "gli EP cinesi nella distribuzione mondiale
   TREND"; bivio di framing DOPO R3 (interazione sopravvive → JIE/JEEM, headline triple-diff
   + within-firm; nulla sopravvive → precision null vs Brandi 2020 e Abman-Lundberg-Ruta
@@ -391,3 +399,101 @@ ln_export ~ EP_depth:green_p + EP_depth:dirty_p
 - PPML su unit value.
 - CEM come strategia identificativa principale.
 - Le 4 strutture FE come robustezza simmetrica (→ una principale + ladder).
+
+---
+
+### 7.4 FASE R-CONTROL — gruppi di controllo e sub-campioni (feasibility + robustezza)
+
+> **Origine.** Discussione 2026-06-18 (control group à la Caselli, Huang, Tomasi & Zhu,
+> *Anti-dumping and Product Quality*) + approfondimento econometrico 2026-06-23/24. Chiude il
+> pending "Fase R-control" segnato nei log. **Non sostituisce la triple-diff §7.1**: la raffina
+> (control group più credibili) e la rende **eseguibile** (PPML aggregato + DiD moderni).
+
+#### 7.4.0 Motivazione doppia
+
+1. **Computazionale.** A 49,2M righe, PPML aggregato con zeri e gli stimatori DiD moderni
+   (Sun-Abraham, Callaway-Sant'Anna, dCDH) crashano / non terminano. Serve un sub-campione.
+2. **Identificazione.** Il control group di prodotto attuale (247 green vs **tutti** i 4.752
+   non-green) è l'analogo del loro *Full sample* — il più lasco possibile sul margine-prodotto.
+
+#### 7.4.1 Decomposizione in due margini (chiave concettuale)
+
+Il disegno è un triplo-differenza; il problema del control group si scompone in due margini:
+
+- **Margine destinazione** → già gestito dal **CEM-paese** (≈ loro *Control 2*). **Ma** il CEM
+  tiene le destinazioni più grandi per volume (KOR, IND, IDN, THA, SGP, AUS tra i trattati; USA,
+  DEU, GBR, FRA, ITA, BRA, MEX tra i controlli) → **taglia poche righe** (54/238 paesi ≠ 54/238
+  osservazioni) e **non scioglie i pochi cluster trattati**.
+- **Margine prodotto** → **leva ancora aperta**. green (247 HS6) vs non-green.
+
+> **Riconciliazione col log 2026-06-18** ("i gruppi di controllo aiutano selezione e taglia ma
+> NON l'identificazione"): vero per l'**effetto-livello** (EP varia solo a `d`). Per
+> l'**interazione** triple-diff (§7.1) i controlli di prodotto **affinano i trend comuni del
+> differenziale** green/dirty → qui sono econometricamente rilevanti, non solo cosmetici.
+
+#### 7.4.2 Numeri ancora (verificati 2026-06-24, letture leggere)
+
+- **green**: 247 HS6 distinti, su **23 capitoli HS2** (38,39,40,44,45,53,54,56,63,68,69,70,73,
+  76,83,84,85,86,87,89,90,94,95); ~11% delle righe (5,31M su 49,2M). File `Data/Env_Codes_HS.dta`.
+- **CEM** (`Output/CEM/matched_countries.csv`): ~19 trattati + ~35 controlli con `country_code`
+  valido; alcuni controlli (BHR, ISR, IRN…) senza `country_code` → non entrano nel `.fst`.
+
+#### 7.4.3 Strategie (mappate sui control group del paper), ordinate per credibilità/taglia
+
+- **C-prod-HS4 (≈ loro *Control 3*).** Tieni i non-green **entro la stessa HS4** dei green. Da
+  4.999 → poche centinaia di prodotti = **leva di taglia massima**. *Econometria:* affina i
+  common-trends dell'interazione e **non è ridondante coi FE** (i FE tolgono il livello, non il
+  trend differenziale). *Difetto reale:* **spillover within-firm cross-prodotto** (Eckel et al.
+  2023) — il non-green nello stesso HS4, esportato dalla stessa impresa, può essere contaminato
+  dalla riallocazione indotta dal PTA → **riportare insieme a un controllo più pulito, mai da
+  solo**. È la stessa ragione per cui il paper declassa Control 3/4.
+- **C-prod-match (≈ loro *Control 4*).** Dentro HS4, **bilancia** i non-green sui green su
+  covariate **pre-periodo** (dimensione del flusso, crescita, unit value, penetrazione import
+  cinese). *Nota:* trattarlo come **covariate balancing**, NON come propensity-to-be-green
+  (`env_good` è lista fissa OECD, non trattamento stocastico → il framing logit è artificioso).
+- **C-overlap (≈ loro *Control 1*, il più pulito).** Tieni solo gli HS6 esportati **sia** verso
+  partner-PTA **sia** verso controlli (common support prodotto×destinazione). Evita
+  l'estrapolazione, rinforza il CEM, immune allo spillover di C3/C4. **Leva di taglia minore.**
+- **C-deepshallow (à la Abman-Lundberg-Ruta 2024) — la più adatta al nostro vincolo.** Campione
+  **solo partner-PTA**, confronto **deep-EP vs shallow-EP**. Sidestep totale della selezione
+  trattati-vs-mai-trattati (il confound C1 sul margine within-treated). Da combinare con
+  `TotalDepth` (C5/R2) per separare il contenuto **ambientale** dalla profondità generale.
+- **(scaffolding, NON headline) C-aggr.** Collasso a `pd×anno` solo per **prototipare la pipeline
+  / girare veloce**. Reintroduce selezione d'impresa (Melitz) + bias di Jensen
+  (`ln Σexport ≠ Σ ln export`) → **mai** specifica principale.
+
+#### 7.4.4 Verdetto econometrico (cosa ci aspettiamo)
+
+- Sub-campioni su **covariate pre-trattamento** = ATT **condizionato valido** (nessun selection
+  bias indotto dal restringimento).
+- **Il risultato interessante È la stabilità** di `EP×green_p` (e `EP×dirty_p`) lungo
+  Full → CEM → C-overlap → C-prod-HS4 / C-deepshallow. Stabile = robusto (storia green market
+  access, da JIE/JEEM). Muore sotto i controlli puliti = il full-sample era artefatto (risultato
+  negativo ma vero). **La stabilità tra control group è il contributo**, non un dettaglio.
+- **Vincolo che i sub-campioni NON sciolgono:** **pochi cluster trattati** (~19-25 paesi;
+  ASEAN = 1 accordo). Ridurre le righe **non aumenta** i cluster trattati → la precisione cala
+  **meno** di quanto suggerisca il crollo di N (gli SE dipendono dai cluster, non dalle righe),
+  ma il **pavimento dell'inferenza** resta. Inferenza **sempre** con **wild cluster bootstrap su
+  `~country_code`** (+ permutation à la §7.0-C8), **mai** SE cluster asintotici.
+- **Guadagno vero della taglia ridotta:** rende eseguibili (i) **PPML aggregato con zeri** →
+  margine **estensivo** = *green trade creation*, dove plausibilmente vive il risultato nuovo
+  (l'OLS-su-log cattura solo l'intensivo, flussi positivi); (ii) **Sun-Abraham / Callaway-
+  Sant'Anna / dCDH** su timing scaglionato → robustezza ai pesi negativi TWFE.
+- **Focalizzare sull'interazione, non sul livello:** l'effetto-livello è ostaggio dei ~19 paesi
+  trattati; l'interazione è identificata *within-destinazione* tra prodotti (molti più cluster
+  effettivi) → più potente e più solida. P1/P3 agiscono proprio sul margine-prodotto.
+
+#### 7.4.5 Checkpoint Fase R-control
+
+- [ ] Quantificati (lettura leggera: solo colonne `hs6`/`hs4`/`country_code` dal `.fst`) gli
+      **switchers effettivi** e le **righe sopravvissute** a C-prod-HS4 (cutoff HS4 vs HS2) e
+      C-overlap → decidere sui numeri reali prima di stimare.
+- [ ] Triple-diff §7.1 rieseguita su **≥3 control group**; tabella di **stabilità del
+      coefficiente d'interazione** (stile loro Table 5).
+- [ ] **PPML aggregato con zeri** girato sul sub-campione (prima non fattibile).
+- [ ] Inferenza **WCB + permutation** su ogni control group; nessuna conclusione da SE
+      asintotici coi pochi cluster trattati.
+- [ ] **C-deepshallow** (solo-PTA, deep vs shallow EP) stimata come identificazione alternativa,
+      con controllo `TotalDepth`.
+- [ ] C-prod-HS4 riportata **accanto** a C-overlap (mai da sola) per esporre l'eventuale
+      spillover Eckel.

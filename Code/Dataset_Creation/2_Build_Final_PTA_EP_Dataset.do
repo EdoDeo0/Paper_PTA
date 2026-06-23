@@ -28,7 +28,7 @@ use final_dataset_pta.dta, clear // Loading the dataset
 
 // Merging PTA indices
 // The using dataset is created in the 1_Build_Final_PTA_EP_Dataset.R script
-merge m:1 country_code year using "C:\Work\Paper_PTA\Data\Merged\Merged_TREND_WB_Indices_Only.dta" // Specify path
+merge m:1 country_code year using "C:\Work\projects\Paper_PTA\Data\Merged\Merged_TREND_WB_Indices_Only.dta" // Specify path
 drop _merge
 
 //     Result                      Number of obs
@@ -46,7 +46,7 @@ drop _merge
 
 // Merging Environmental Codes
 // Environmental Codes are 
-merge m:1 hs6 using "C:\Work\Paper_PTA\Data\Env_Codes_HS.dta" // Specify path
+merge m:1 hs6 using "C:\Work\projects\Paper_PTA\Data\Env_Codes_HS.dta" // Specify path
 drop _merge
 
 

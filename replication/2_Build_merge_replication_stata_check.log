@@ -1,0 +1,96 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\replication\2_Build_merge_replication_stata_che
+> ck.do 
+
+. // Helper script for /audit cross-language replication.
+. // Reads the REAL output already produced by Code/Dataset_Creation/2_Build_Fi
+> nal_PTA_EP_Dataset.do
+. // (run for real in this audit session) and computes the same summary statist
+> ics as
+. // replication/2_Build_merge_replication.R, so the two independent computatio
+> ns can be
+. // compared. Does not re-derive anything Stata-side; it is a read-only check 
+> script.
+. // Never modifies the author's original scripts.
+. 
+. set more off
+
+. use "C:\Users\edodr\Desktop\final_dataset_pta_env_indices_compressed.dta", cl
+> ear
+
+. 
+. count
+  49,245,304
+
+. egen pdt_grp = group(hs6 country_code year)
+(9 missing values generated)
+
+. 
+. di "N_obs: " _N
+N_obs: 49245304
+
+. quietly summarize WB_EP_Depth
+
+. di "sum_WB_EP_Depth: " %20.4f r(sum)
+sum_WB_EP_Depth:        58536024.0000
+
+. quietly summarize TREND_EP_Count
+
+. di "sum_TREND_EP_Count: " %20.4f r(sum)
+sum_TREND_EP_Count:       108897238.0000
+
+. quietly summarize ln_export
+
+. di "mean_ln_export: " %20.10f r(mean)
+mean_ln_export:         9.2494617295
+
+. di "n_missing_ln_export: " %20.0f (_N - r(N))
+n_missing_ln_export:                   31
+
+. quietly summarize tariffs
+
+. di "mean_tariffs: " %20.10f r(mean)
+mean_tariffs:         1.5295834014
+
+. di "n_missing_tariffs: " %20.0f (_N - r(N))
+n_missing_tariffs:              4664650
+
+. quietly summarize ln_export_qua
+
+. di "mean_ln_export_qua: " %20.10f r(mean)
+mean_ln_export_qua:         7.3437124903
+
+. quietly summarize ln_export_value
+
+. di "mean_ln_export_value: " %20.10f r(mean)
+mean_ln_export_value:         1.9400379360
+
+. quietly summarize pdt_grp
+
+. di "n_distinct_pdt: " %20.0f r(max)
+n_distinct_pdt:              3862039
+
+. 
+end of do-file

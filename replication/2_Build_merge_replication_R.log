@@ -1,0 +1,31 @@
+Reading raw customs data (this is the slow/heavy step)...
+Loaded customs: 49245295 rows in 8.6 min
+
+--- Merge 1 (country_code year) ---
+Not matched from master: 36957491 
+Not matched from using: 0 
+Matched: 12287804 
+
+--- Merge 2 (hs6) ---
+Not matched from master: 43933429 
+Not matched from using: 9 
+Matched: 5311866 
+             used    (Mb)  gc trigger     (Mb)    max used     (Mb)
+Ncells    1056231    56.5     1815241     97.0     1815241     97.0
+Vcells 5763887727 43975.0 17673938392 134841.5 15711452818 119868.9
+
+--- Summary statistics (for comparison against Stata output) ---
+                   stat           value
+1                 N_obs 4.924529500e+07
+2       sum_WB_EP_Depth 5.853602400e+07
+3    sum_TREND_EP_Count 1.088972380e+08
+4        mean_ln_export 9.249461727e+00
+5          mean_tariffs 1.529583398e+00
+6    mean_ln_export_qua 7.343712483e+00
+7  mean_ln_export_value 1.940037934e+00
+8        n_distinct_pdt 3.862039000e+06
+9   n_missing_ln_export 2.200000000e+01
+10    n_missing_tariffs 4.664641000e+06
+
+Total time: 10.7 min
+Done.

@@ -1,0 +1,204 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\Code\Dataset_Creation\2_Build_Final_PTA_EP_Data
+> set.do 
+
+. ********************************************************
+. ************** MERGING INTO FINAL DATASET **************
+. ********************************************************
+. 
+. 
+. // Edoardo Vitella
+. // Phd Student at University of Trento and Free University of Bozen
+. // Creating final dataset for PTA Paper
+. 
+. // This script merges Chinese custom data with indeces on Environmental Provi
+> sions in PTAs previously constructed in 1_Build_Final_PTA_EP_Dataset.R starti
+> ng from World Bank and TREND data. Then it merges the Combined List of Enviro
+> nmental Goods provided by the OECD to track goods that are environmentally fr
+> iendly for further analysis.
+. 
+. // Input files:
+. //              - final_dataset (Chinese custom data)
+. //              - Data/Merged/Merged_TREND_WB_Indices_Only.dta (Created in th
+> e 1_Build_Final_PTA_EP_Dataset.R script)
+. //              - Data/Env_Codes_HS.dta (Manually created based on OECD data)
+. 
+. // Output files:
+. //              - final_dataset_pta_env_indices_compressed.dta
+. 
+. 
+. // Setup
+. set more off
+
+. cd "C:\Users\edodr\Desktop\china\final_dataset" // Original dataset directory
+>  where chinese custom data are located
+C:\Users\edodr\Desktop\china\final_dataset
+
+. // Note that this path does not go to the repository, as the dataset is too b
+> ig to be pushed to GitHub
+. use final_dataset_pta.dta, clear // Loading the dataset
+
+. 
+. 
+. 
+. // Merging PTA indices
+. // The using dataset is created in the 1_Build_Final_PTA_EP_Dataset.R script
+. merge m:1 country_code year using "C:\Work\projects\Paper_PTA\Data\Merged\Mer
+> ged_TREND_WB_Indices_Only.dta" // Specify path
+(variable country_code was int, now long to accommodate using data's values)
+(variable year was float, now double to accommodate using data's values)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,957,491
+        from master                36,957,491  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        12,287,804  (_merge==3)
+    -----------------------------------------
+
+. drop _merge
+
+. 
+. //     Result                      Number of obs
+. //     -----------------------------------------
+. //     Not matched                    36,957,491
+. //         from master                36,957,491  (_merge==1)
+. //         from using                          0  (_merge==2)
+. //
+. //     Matched                        12,287,804  (_merge==3)
+. //     -----------------------------------------
+. 
+. // This is correct: not every country-year pair has an acrive PTA with China,
+>  so it makes sense that we cannot merge every observation in the master.
+. 
+. 
+. 
+. // Merging Environmental Codes
+. // Environmental Codes are 
+. merge m:1 hs6 using "C:\Work\projects\Paper_PTA\Data\Env_Codes_HS.dta" // Spe
+> cify path
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,933,438
+        from master                43,933,429  (_merge==1)
+        from using                          9  (_merge==2)
+
+    Matched                         5,311,866  (_merge==3)
+    -----------------------------------------
+
+. drop _merge
+
+. 
+. 
+. //     Result                      Number of obs
+. //     -----------------------------------------
+. //     Not matched                    43,933,438
+. //         from master                43,933,429  (_merge==1)
+. //         from using                          9  (_merge==2)
+. //
+. //     Matched                         5,311,866  (_merge==3)
+. //     -----------------------------------------
+. 
+. // Correct merge: not matched from master are goods that are not classified a
+> s environmental goods in the main dataset, while not matched from using are g
+> reen goods (hs6 codes) that are not present in the master. Matched observatio
+> ns are the subsample of dirty goods in the master dataset.
+. 
+. 
+. 
+. // Generating variables for further analysis
+. gen ln_export = ln(export)
+(31 missing values generated)
+
+. gen tariffs = ln(1+duty)
+(4,664,650 missing values generated)
+
+. replace env_good = 0 if env_good == .
+(43,933,429 real changes made)
+
+. gen ln_export_qua = ln(exp_qua)
+(337,268 missing values generated)
+
+. replace WB_EP_Depth = 0 if WB_EP_Depth == .
+(36,957,500 real changes made)
+
+. replace TREND_EP_Count = 0 if TREND_EP_Count == .
+(36,957,500 real changes made)
+
+. gen ln_export_value = ln(uv_exp)
+(337,281 missing values generated)
+
+. egen long pdt = group(hs6 country_code year) // Forcing long format
+(9 missing values generated)
+
+. format pdt %12.0g // Forcing %12.0g display type according to long format
+
+. 
+. // Saving final (compressed) version of the dataset
+. compress // Reducing disk space without losing information (stata autonomousl
+> y chooses the best format for each variable)
+  variable country_code was long now int
+  variable dt was long now int
+  variable top_value was float now byte
+  variable prank_fct was float now byte
+  variable country_gad was float now int
+  variable prodclass was float now byte
+  variable oecd was float now byte
+  variable useu was float now byte
+  variable dev was float now byte
+  variable WB_GreenLiberalization was long now byte
+  variable WB_Assistance was long now byte
+  variable year was double now int
+  variable hs6 was double now long
+  variable TREND_EP_Count was double now byte
+  variable TREND_EP_Count_Binary was double now byte
+  variable TREND_Soft was double now byte
+  variable TREND_Hard was double now byte
+  variable TREND_EnforcementDSM was double now byte
+  variable TREND_RegulatorySpace was double now byte
+  variable TREND_GreenMarketAccess was double now byte
+  variable TREND_ClimateEnergy was double now byte
+  variable TREND_BiodivForestsFisheries was double now byte
+  variable WB_EP_Depth was double now byte
+  variable WB_EP_Depth_Binary was double now byte
+  variable WB_StandardsNonRegression was double now byte
+  variable WB_EnforcementDSM was double now byte
+  variable WB_RegulatorySpaceExceptions was double now byte
+  variable N_TREND_available was double now int
+  variable N_WB_available was double now byte
+  (7,436,040,904 bytes saved)
+
+. save "C:\Users\edodr\Desktop\final_dataset_pta_env_indices_compressed.dta", r
+> eplace
+(file C:\Users\edodr\Desktop\final_dataset_pta_env_indices_compressed.dta not
+    found)
+file C:\Users\edodr\Desktop\final_dataset_pta_env_indices_compressed.dta
+    saved
+
+. 
+. 
+end of do-file
