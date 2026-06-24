@@ -1,5 +1,24 @@
 # Session Log — Paper_PTA
 
+## 2026-06-24 (continuazione) — Script per i 4 sub-campioni + CEM v2
+
+Su richiesta dell'utente, dopo aver chiarito a parole la logica dei sub-campioni e risolto due dubbi
+econometrici (spillover within-firm Eckel et al. 2023 come motivo per non usare C-prod-HS4/match da
+soli; C-deepshallow sposta il controllo dal margine-destinazione al margine-prodotto, già assorbito
+dalle FE `fdt`), ho scritto 5 script R **nuovi** sotto `./New/Code/` (nessuno eseguito ancora):
+- `08_subsample_prodHS4.R` — C-prod-HS4 (non-verdi nella stessa famiglia HS4 di un verde)
+- `09_subsample_prodmatch.R` — C-prod-match (CEM su covariate pre-periodo, hs4 come match esatto)
+- `10_subsample_overlap.R` — C-overlap (HS6 con common support trattati/controlli, varianti loose/CEM)
+- `11_subsample_deepshallow.R` — C-deepshallow (solo partner PTA, split deep/shallow su WB_EP_Depth)
+- `12_cem_v2.R` — CEM destinazione migliorato (+ covariata baseline commerciale pre-PTA) e check di
+  bilanciamento diagnostico tra i gruppi deep/shallow dello script 11
+Tutti rispettano la regola "mai toccare fuori da `New/`", usano il pattern callr già visto in
+`01_inference_fix.R`/`07_triple_diff.R` per le letture pesanti dal `.fst`, e scrivono output su file
+(diagnostics .txt, flag .csv, love plot .png) così sono revisionabili anche dopo un'esecuzione fatta
+dall'utente in locale (es. VS Code) — confermato all'utente che posso valutare i risultati leggendo
+quei file a posteriori, anche senza eseguire io stesso gli script.
+**Pending:** utente vuole revisionare gli script prima di farli girare; nessuna esecuzione finora.
+
 ## 2026-06-24 — ROADMAP §7.4 "Fase R-control" (gruppi di controllo + sub-campioni)
 
 **Chiuso il pending storico** ("aggiungere Fase R-control al §7", aperto dal 2026-06-18). Aggiunta
