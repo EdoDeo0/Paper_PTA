@@ -1,5 +1,55 @@
 # Session Log — Paper_PTA
 
+## 2026-06-25/26 — Esecuzione Fase R-control (08-12) + chiusura vintage HS6 green goods
+
+**Parte A — esecuzione script 08-12.** Eseguiti tutti gli script scritti il 2026-06-24 (mai girati
+prima), con fix vari lungo il percorso (data.table dispatch in 09, API cutpoints di `cem()`, nessun
+metodo `summary.cem.match` reale → aggiunta diagnostica `imbalance()` L1 in 09/12). Risultati: **C-
+prod-HS4** 106 famiglie HS4, 20,5% righe sopravvivono; **C-prod-match** rilassato da HS4 a HS2 (HS4
+troppo sottile, 69% famiglie senza candidati) → 97% verdi matchati, L1 non comparabile pre/post (bin
+ricalcolati su campioni diversi) → usare love plot; **C-overlap** 98,5%/96,8% HS6, ~100% righe (leva
+debole su taglia, forte su identificazione, come atteso); **C-deepshallow** split 17/8 (mediana con
+pareggi), shallow ha solo 8 cluster → WCB ancora più fragile; **CEM v2** (baseline commerciale
+pre-PTA) testato e **scartato** (perde 5 trattati, non bilancia bene la covariata aggiunta) →
+mantenuto CEM originale. Dettagli completi in `New/ROADMAP.md` §7.4.5.
+
+**Parte B — dubbio vintage HS6 (il grosso della sessione).** L'utente ha chiesto se il pannello usa
+una vintage HS6 unica prima di fidarsi della Parte A. Indagine: `02_data_hygiene_audit.R` (mai
+eseguito prima) ha trovato un'anomalia enorme al confine 2006→2007 (6,03% valore export su codici
+"morti", soglia di concordanza superata, altri confini puliti). Tracciata la causa a una
+ristrutturazione di nomenclatura HS2007 (es. 854212/13/40/50 → 854230) confermata sistematicamente su
+tutti i 367 codici morti. Trovato che lo script grezzo originale (`Desktop/china/.../
+1_create_panel_export.do`, Step B) dichiara di armonizzare tutto a HS1996 ma le tabelle di
+corrispondenza locali non esistono più, e il file consegnato (`export_fpdt_2000_2015.dta`) ha gli
+stessi numeri non corretti del dataset finale → Step B non è mai stato eseguito sul file ricevuto.
+Fingerprint di `Data/Env_Codes_HS.dta` (lista green OCSE, 247 codici) contro le liste ufficiali per
+vintage: matcha **HS2012 al 100%** (vs 93-96% altre vintage) — coerente col fatto che l'OCSE ha
+pubblicato la sua "Combined List" nel 2014 in HS2012. Tentata una concordanza completa del pannello a
+HS1996 (`03_hs_concordance.R`) ma `concord()` restituisce NA sui casi-prova (854213/854230) →
+abbandonata.
+
+**Decisione finale dell'utente**: fidarsi della vintage HS1996 dichiarata dal fornitore del dataset
+(ricercatori affermati) e tradurre **solo la lista green** a HS1996, una volta, uniforme su tutti gli
+anni — non una concordanza per-blocco-anno. Test di verifica rigoroso (solo match univoci 1:1, non il
+fan-out di `concord(all=TRUE)` che gonfia falsamente i tassi di match) in
+`03b_green_codes_to_hs1996.R`: **247/247 codici verdi con match univoco**, nessuno split/non
+concordato, nessun crollo di valore sospetto 2006→2007. Output:
+`New/Data/Concordance/Env_Codes_HS1996.csv`. Aggiornati `08_subsample_prodHS4.R`,
+`09_subsample_prodmatch.R`, `10_subsample_overlap.R` per ricalcolare `env_good` da questa lista
+(anziché fidarsi della colonna `env_good` del `.fst`, mergiata HS2012-vs-HS1996 senza concordanza) e
+rieseguiti — numeri quasi invariati (C-prod-match leggermente diverso: 236 verdi candidati vs 229).
+Script 11/12 non toccano `env_good`, nessun aggiornamento necessario.
+
+**File nuovi non ancora committati**: `02b_hs_vintage_check.R` (primo tentativo, metodologia
+parzialmente superata ma tenuto come artefatto), `03_hs_concordance.R` (tentativo di concordanza
+completa, abbandonato/non funzionante ma tenuto per documentare il perché), `03b_green_codes_to_
+hs1996.R` (lo script che ha effettivamente risolto il problema). Tutte le regole di non-intervento su
+`Desktop/china` rispettate (sola lettura).
+
+**Pending**: nessun commit fatto in questa sessione (l'utente non l'ha richiesto). Prossimo passo
+naturale: rieseguire `07_triple_diff.R` con `env_good` corretto se la stima finale dipende da quella
+colonna del `.fst` principale (non solo dagli script 08-10 di sub-sampling).
+
 ## 2026-06-24 (continuazione) — Script per i 4 sub-campioni + CEM v2
 
 Su richiesta dell'utente, dopo aver chiarito a parole la logica dei sub-campioni e risolto due dubbi

@@ -91,7 +91,17 @@ build_deepshallow <- function(data_file, out_data, out_diag) {
             sum(prof$group == "deep"), sum(prof$group == "shallow")),
     sprintf("Righe: %s totali -> %s nel sub-campione solo-trattati (%.1f%%)",
             format(n_rows_tot, big.mark = ","), format(n_rows_treated, big.mark = ","),
-            100 * n_rows_treated / n_rows_tot)
+            100 * n_rows_treated / n_rows_tot),
+    "",
+    "ATTENZIONE — cluster nel gruppo 'shallow':",
+    sprintf("Il gruppo 'shallow' ha solo %d paesi (split sbilanciato 'deep'=%d/'shallow'=%d perche'",
+            sum(prof$group == "shallow"), sum(prof$group == "deep"), sum(prof$group == "shallow")),
+    "diversi paesi condividono lo stesso max_EP_depth esattamente alla mediana, e per costruzione",
+    "(>= mediana = deep) finiscono tutti nel gruppo 'deep'). E' un numero di cluster trattati ANCORA",
+    "piu' piccolo dei 19-25 gia' segnalati come vincolo per l'inferenza nel paper (Wild Cluster",
+    "Bootstrap, §7.4.4): con 8 cluster nel confronto deep/shallow, anche il WCB puo' avere una",
+    "copertura scadente. Da riportare esplicitamente come limite della stima 'deep:env_good',",
+    "non da correggere nello script (e' una proprieta' dei dati, non un bug)."
   )
   writeLines(diag_txt, file.path(out_diag, "deepshallow_diagnostics.txt"))
   cat(paste(diag_txt, collapse = "\n"), "\n")

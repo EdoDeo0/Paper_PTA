@@ -41,20 +41,32 @@ if (!requireNamespace("callr", quietly = TRUE)) install.packages("callr")
 library(callr); library(here)
 
 SHARED <- list(
-  data_file = here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst"),
-  out_data  = here("New/Data/Subsamples"),
-  out_diag  = here("New/Output/Subsamples")
+  data_file  = here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst"),
+  green_file = here("New/Data/Concordance/Env_Codes_HS1996.csv"),
+  out_data   = here("New/Data/Subsamples"),
+  out_diag   = here("New/Output/Subsamples")
 )
 
-build_prodHS4 <- function(data_file, out_data, out_diag) {
+build_prodHS4 <- function(data_file, green_file, out_data, out_diag) {
   library(fst); library(data.table)
   threads_fst(1)
   dir.create(out_data, recursive = TRUE, showWarnings = FALSE)
   dir.create(out_diag, recursive = TRUE, showWarnings = FALSE)
 
-  ## ── 1. Lettura leggera: solo hs6 e env_good ──────────────────────────
-  cat("Loading hs6, env_good (2 colonne, tutte le righe)...\n")
-  d <- as.data.table(read_fst(data_file, columns = c("hs6", "env_good")))
+  ## ── 1. Lettura leggera: solo hs6 ─────────────────────────────────────
+  ## env_good del pannello viene RICALCOLATO qui contro la lista green
+  ## tradotta a HS1996 (03b_green_codes_to_hs1996.R) invece di usare la
+  ## colonna env_good gia' presente nel .fst: quella e' stata costruita
+  ## mergiando Data/Env_Codes_HS.dta (nativo HS2012) direttamente contro
+  ## hs6 (trattato come HS1996), senza alcuna concordanza di vintage.
+  cat("Loading hs6 (1 colonna, tutte le righe)...\n")
+  d <- as.data.table(read_fst(data_file, columns = c("hs6")))
+  d[, hs6_str := sprintf("%06d", as.integer(hs6))]
+
+  green <- fread(green_file, colClasses = list(character = "hs6_final"))
+  green_codes <- unique(green$hs6_final)
+  d[, env_good := as.integer(hs6_str %in% green_codes)]
+  d[, hs6_str := NULL]
 
   ## hs4 = primi 4 digit del codice HS6 a 6 cifre (con zero padding)
   d[, hs4 := substr(sprintf("%06d", as.integer(hs6)), 1, 4)]
@@ -97,6 +109,7 @@ build_prodHS4 <- function(data_file, out_data, out_diag) {
   cat("[OK] flag_prodHS4.csv —", nrow(prod_tab), "codici HS6\n")
 }
 
+stopifnot("Lista green HS1996 non trovata — eseguire prima 03b_green_codes_to_hs1996.R" = file.exists(SHARED$green_file))
 callr::r(build_prodHS4, args = SHARED, show = TRUE)
 
 cat("\n=== DONE C-prod-HS4 ===\n")

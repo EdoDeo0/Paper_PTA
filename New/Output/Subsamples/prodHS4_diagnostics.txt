@@ -1,0 +1,4 @@
+=== C-prod-HS4 — diagnostica (checkpoint 7.4.5) ===
+HS4 'verdi' (contengono >=1 prodotto verde): 106
+Prodotti non-verdi: 4763 totali -> 353 entro HS4 verdi (7.4%)
+Righe (osservazioni): 49,245,304 totali -> 10,089,904 sopravvivono a C-prod-HS4 (20.5%)

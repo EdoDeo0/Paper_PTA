@@ -48,21 +48,31 @@ if (!requireNamespace("callr", quietly = TRUE)) install.packages("callr")
 library(callr); library(here)
 
 SHARED <- list(
-  data_file = here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst"),
-  cem_file  = here("Output/CEM/matched_countries.csv"),
-  out_data  = here("New/Data/Subsamples"),
-  out_diag  = here("New/Output/Subsamples")
+  data_file  = here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst"),
+  green_file = here("New/Data/Concordance/Env_Codes_HS1996.csv"),
+  cem_file   = here("Output/CEM/matched_countries.csv"),
+  out_data   = here("New/Data/Subsamples"),
+  out_diag   = here("New/Output/Subsamples")
 )
+stopifnot("Lista green HS1996 non trovata — eseguire prima 03b_green_codes_to_hs1996.R" = file.exists(SHARED$green_file))
 
-build_overlap <- function(data_file, cem_file, out_data, out_diag) {
+build_overlap <- function(data_file, green_file, cem_file, out_data, out_diag) {
   library(fst); library(data.table)
   threads_fst(1)
   dir.create(out_data, recursive = TRUE, showWarnings = FALSE)
   dir.create(out_diag, recursive = TRUE, showWarnings = FALSE)
 
-  cat("Loading hs6, country_code, env_good, WB_EP_Depth...\n")
+  cat("Loading hs6, country_code, WB_EP_Depth...\n")
   d <- as.data.table(read_fst(data_file,
-        columns = c("hs6", "country_code", "env_good", "WB_EP_Depth")))
+        columns = c("hs6", "country_code", "WB_EP_Depth")))
+
+  ## env_good RICALCOLATO contro la lista green tradotta a HS1996 (vedi
+  ## 03b_green_codes_to_hs1996.R), non la colonna env_good del .fst.
+  green <- fread(green_file, colClasses = list(character = "hs6_final"))
+  green_codes <- unique(green$hs6_final)
+  d[, hs6_str := sprintf("%06d", as.integer(hs6))]
+  d[, env_good := as.integer(hs6_str %in% green_codes)]
+  d[, hs6_str := NULL]
 
   ## ── 1. Universo "trattato" / "controllo" a livello di destinazione ──
   treated_dest <- unique(d[WB_EP_Depth > 0, country_code])
@@ -126,7 +136,7 @@ build_overlap <- function(data_file, cem_file, out_data, out_diag) {
   cat("[OK] flag_overlap.csv —", n_hs6_tot, "codici HS6\n")
 }
 
-callr::r(build_overlap, args = SHARED, show = TRUE)
+callr::r(build_overlap, args = SHARED[c("data_file", "green_file", "cem_file", "out_data", "out_diag")], show = TRUE)
 
 cat("\n=== DONE C-overlap ===\n")
 cat("Uso in 07_triple_diff.R: merge su hs6, poi d <- d[overlap_cem == TRUE] (preferito) o\n")

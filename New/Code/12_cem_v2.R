@@ -192,6 +192,21 @@ dt_matched <- dt_matched[weights > 0]
 cat(sprintf("CEM v2 — Matched: %d paesi (%d trattati, %d controlli)\n",
             nrow(dt_matched), sum(dt_matched$treated), sum(dt_matched$treated == 0)))
 
+## ── L1 imbalance pre/post (come in Code/Analysis/CEM.R) ───────────────
+## summary(cem_out) non produce una vera tabella di bilanciamento (il
+## pacchetto cem non ha un metodo summary per la classe "cem.match", vedi
+## stessa nota in 09_subsample_prodmatch.R): la diagnostica vera e' L1.
+## Qui (diversamente da 09) tutte le covariate sono numeriche, quindi il
+## confronto pre/post non ha il problema di bin ricalcolati su scale
+## diverse osservato in 09 con la variabile carattere hs2.
+imb_before <- imbalance(group = dt_match$treated, data = as.data.frame(dt_match[, ..covs]))
+imb_after  <- imbalance(group = dt_matched$treated, data = as.data.frame(dt_matched[, ..covs]))
+cat(sprintf("L1 imbalance — before matching: %.4f\n", imb_before$L1$L1))
+cat(sprintf("L1 imbalance — after matching:   %.4f\n", imb_after$L1$L1))
+write(sprintf("L1 imbalance — before: %.4f | after: %.4f",
+              imb_before$L1$L1, imb_after$L1$L1),
+      file.path(SHARED$out_cem, "CEM_v2_Summary.txt"), append = TRUE)
+
 fwrite(dt_matched[, .(iso3c, country_code, treated, subclass, weights,
                        gdp_growth_2000, log_gdppc_2000, mfn_tariff_2000, pre_ln_export_china)],
        file.path(SHARED$out_cem, "matched_countries_v2.csv"))
@@ -230,3 +245,7 @@ cat("\n=== DONE CEM v2 ===\n")
 cat("Output: New/Output/CEM_v2/{CEM_v2_Summary.txt, matched_countries_v2.csv, CEM_v2_LovePlot.png}\n")
 cat("Confrontare matched_countries_v2.csv con Output/CEM/matched_countries.csv (originale, invariato)\n")
 cat("per vedere quanto cambia l'insieme di destinazioni matchate aggiungendo la baseline commerciale.\n")
+cat("\nVERDETTO (eseguito 2026-06-25): CEM v2 SCARTATO. Perde 5 trattati rispetto al CEM originale\n")
+cat("(16->11 su matched_countries.csv), la covariata pre_ln_export_china aggiunta non raggiunge un\n")
+cat("buon bilanciamento nemmeno dopo il match (SMD ~0.55, soglia 0.1), e peggiora log_gdppc_2000\n")
+cat("(gia' bilanciata in v1). Mantenere Output/CEM/matched_countries.csv (v1) come riferimento.\n")

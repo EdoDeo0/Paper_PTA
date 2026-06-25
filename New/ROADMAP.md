@@ -485,6 +485,41 @@ Il disegno è un triplo-differenza; il problema del control group si scompone in
 
 #### 7.4.5 Checkpoint Fase R-control
 
+- [x] **Eseguiti 2026-06-25** gli script `New/Code/08-12_*.R` (uno per sub-campione + CEM v2).
+      Numeri ancorati: **C-prod-HS4** 106/103→ poi visto su 09 servono 351 non-green entro HS4
+      verdi, 10,09M righe (20,5%) sopravvivono. **C-prod-match**: match esatto HS4 troppo sottile
+      (69% famiglie senza candidati validi) → **rilassato a HS2** (22 capitoli, 97% dei verdi
+      matchati, 1.376/4.817 HS6); L1 di `imbalance()` non comparabile pre/post per il match esatto
+      carattere (bin ricalcolati su campioni diversi) — usare il **love plot** (migliora su tutte
+      le 3 covariate continue), non l'L1, come diagnostica di riferimento. **C-overlap**: 98,5%
+      HS6 / ~100% righe in overlap → tagli quasi nulla (atteso, è la leva debole sul fronte
+      taglia/forte sul fronte identificazione). **C-deepshallow**: split 17 deep/8 shallow (mediana
+      con pareggi), 30,9% righe sopravvivono; **shallow ha solo 8 cluster** → WCB ancora più
+      fragile dei 19-25 generali, da riportare come limite esplicito. **CEM v2** (baseline
+      commerciale pre-PTA come 4ª covariata): **testato e scartato** — perde 5 trattati rispetto al
+      CEM originale (16→11), non bilancia bene la covariata aggiunta (SMD ~0,55 post-match, soglia
+      0,1) e peggiora `log_gdppc_2000` (già bilanciata in v1). **Verdetto: mantenere il CEM
+      originale** (`Output/CEM/matched_countries.csv`), non sostituirlo con v2.
+- [x] **Chiuso 2026-06-25 — vintage HS6 dei green goods.** Indagine approfondita (script
+      `02_data_hygiene_audit.R`, `02b_hs_vintage_check.R`, `03_hs_concordance.R`, ad-hoc in `/tmp/`)
+      ha confermato un'anomalia reale al confine 2006→2007 (6,03% del valore export su codici
+      "morti", soglia di concordanza superata) e che la lista green (`Data/Env_Codes_HS.dta`) è
+      nativa **HS2012** (fingerprint 100%), mentre il pannello è dichiarato HS1996 dallo script
+      grezzo originale (`1_create_panel_export.do`, Step B — mai eseguito sul file consegnato,
+      verificato per confronto diretto). Tentata una concordanza completa del pannello a vintage
+      unica (`03_hs_concordance.R`) ma `concord()` non risolve i casi-prova (NA su 854213/854230).
+      **Decisione presa**: fidarsi della vintage HS1996 dichiarata dal fornitore del dataset e
+      tradurre **solo la lista green** a HS1996 una volta, applicata uniformemente a tutti gli anni
+      (`New/Code/03b_green_codes_to_hs1996.R` → `New/Data/Concordance/Env_Codes_HS1996.csv`).
+      Risultato: **247/247 codici verdi con match univoco 1:1** HS2012→HS1996, nessuno split/non
+      concordato, nessun crollo di valore sospetto 2006→2007 sui match univoci — traduzione pulita,
+      nessuna perdita. Gli script `08_subsample_prodHS4.R`, `09_subsample_prodmatch.R`,
+      `10_subsample_overlap.R` sono stati aggiornati per ricalcolare `env_good` da questa lista
+      (anziché fidarsi della colonna `env_good` del `.fst`, che viene da un merge diretto
+      HS2012-vs-HS1996 senza concordanza) e rieseguiti — numeri aggiornati: C-prod-HS4 invariato
+      (106 famiglie HS4, 20,5% righe); C-prod-match leggermente diverso (236 verdi candidati vs 229,
+      1.438/1.953 matchati a HS2, 228 verdi matchati); C-overlap invariato (98,5%/96,8%). Script 11/12
+      non toccano `env_good` direttamente, nessun aggiornamento necessario.
 - [ ] Quantificati (lettura leggera: solo colonne `hs6`/`hs4`/`country_code` dal `.fst`) gli
       **switchers effettivi** e le **righe sopravvissute** a C-prod-HS4 (cutoff HS4 vs HS2) e
       C-overlap → decidere sui numeri reali prima di stimare.
