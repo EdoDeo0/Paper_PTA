@@ -2,6 +2,13 @@
 ###### Fase R1 (chiusura) — Concordanza HS6 a vintage unica (HS1996) ###
 ########################################################################
 
+## *** DEPRECATO (2026-06-25) — NON ESEGUIRE ***
+## concord() restituisce NA sui casi-prova 8542xx (vedi R1c_concordance_report.md):
+## la concordanza completa del pannello e' stata abbandonata. Sostituito dalla
+## decisione "vintage HS1996 dichiarata dal fornitore" + traduzione della sola
+## lista green in 03b_green_codes_to_hs1996.R. Tenuto come documentazione del
+## tentativo. Richiede inoltre ~49,2M righe via haven: NON adatto a macchine 16GB.
+
 ## Author: Edoardo Vitella
 ##
 ## INTUIZIONE

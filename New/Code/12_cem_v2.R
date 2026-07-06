@@ -61,12 +61,13 @@ SHARED <- list(
 build_trade_baseline <- function(data_file, pre_years) {
   library(fst); library(data.table)
   threads_fst(1)
-  cat("Loading country_code, year, ln_export_value, filtro year <=", max(pre_years), "...\n")
-  d <- as.data.table(read_fst(data_file, columns = c("country_code", "year", "ln_export_value")))
+  cat("Loading country_code, year, export, filtro year <=", max(pre_years), "...\n")
+  d <- as.data.table(read_fst(data_file, columns = c("country_code", "year", "export")))
   d <- d[year %in% pre_years]
-  ## somma export (non media dei log: vogliamo il volume totale pre-PTA,
-  ## poi lo riportiamo in log per il matching) per destinazione
-  base <- d[, .(export_value = sum(exp(ln_export_value), na.rm = TRUE)), by = country_code]
+  ## somma del VALORE export grezzo (colonna `export`): NON ln_export_value,
+  ## che malgrado il nome e' il log dello UNIT VALUE, ln(uv_exp) — vedi
+  ## 2_Build_Final_PTA_EP_Dataset.do:73 (bug corretto 2026-07-03)
+  base <- d[, .(export_value = sum(export, na.rm = TRUE)), by = country_code]
   base[, pre_ln_export_china := log(export_value)]
   base[, export_value := NULL]
   base
@@ -245,7 +246,8 @@ cat("\n=== DONE CEM v2 ===\n")
 cat("Output: New/Output/CEM_v2/{CEM_v2_Summary.txt, matched_countries_v2.csv, CEM_v2_LovePlot.png}\n")
 cat("Confrontare matched_countries_v2.csv con Output/CEM/matched_countries.csv (originale, invariato)\n")
 cat("per vedere quanto cambia l'insieme di destinazioni matchate aggiungendo la baseline commerciale.\n")
-cat("\nVERDETTO (eseguito 2026-06-25): CEM v2 SCARTATO. Perde 5 trattati rispetto al CEM originale\n")
-cat("(16->11 su matched_countries.csv), la covariata pre_ln_export_china aggiunta non raggiunge un\n")
-cat("buon bilanciamento nemmeno dopo il match (SMD ~0.55, soglia 0.1), e peggiora log_gdppc_2000\n")
-cat("(gia' bilanciata in v1). Mantenere Output/CEM/matched_countries.csv (v1) come riferimento.\n")
+cat("\nVERDETTO SOSPESO (2026-07-03): la run del 2026-06-25 (che aveva portato a SCARTARE CEM v2:\n")
+cat("16->11 trattati, SMD ~0.55 sulla covariata nuova) era stata calcolata con pre_ln_export_china\n")
+cat("COSTRUITA MALE (somma di unit value, non di valore export — bug corretto sopra). Il verdetto\n")
+cat("va rifatto: rieseguire questo script su Windows e SOLO POI decidere se scartare o adottare v2.\n")
+cat("Fino ad allora resta in uso Output/CEM/matched_countries.csv (v1).\n")

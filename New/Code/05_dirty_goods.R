@@ -31,10 +31,12 @@ dirty_isic2      <- c("341", "351", "353", "371", "372")   # core Mani-Wheeler
 dirty_isic2_ext  <- c(dirty_isic2, "369")                  # + non-metallic minerals
 
 ## ── ISIC2 -> HS6 ──────────────────────────────────────────────────────
-## Il dataset doganale 2000-2015 e' (presumibilmente) in vintage miste HS;
-## generiamo la mappa per HS0 (1992), HS1 (1996) e HS2 (2002) e prendiamo l'unione,
-## in attesa dell'esito dell'audit concordanza (Fase R1).
-hs_versions <- c("HS0", "HS1", "HS2")
+## Esito audit vintage (Fase R1, chiusa 2026-06-25): il pannello si tratta
+## come HS1996 uniforme (decisione documentata in 03b_green_codes_to_hs1996.R).
+## La mappa dirty va quindi generata SOLO per HS1 (1996) — coerente con la
+## lista green tradotta a HS1996. (Prima era l'unione HS0/HS1/HS2 "in attesa
+## dell'audit": superato, fix 2026-07-03.)
+hs_versions <- c("HS1")
 
 map_isic_to_hs <- function(isic_codes, hs_ver) {
   res <- tryCatch(
@@ -84,18 +86,19 @@ if (file.exists(shp_file)) {
 }
 
 ## ── Diagnostica overlap con env_good ──────────────────────────────────
-env_file <- here("Data/Env_Codes_HS.dta")
+## Confronto con la lista green TRADOTTA A HS1996 (03b) — stessa vintage
+## della mappa dirty qui sopra. (Prima usava Data/Env_Codes_HS.dta, nativo
+## HS2012: vintage incoerente, fix 2026-07-03.)
+env_file <- here("New/Data/Concordance/Env_Codes_HS1996.csv")
 if (file.exists(env_file)) {
-  library(haven)
-  env <- as.data.table(read_dta(env_file))
-  env_col <- intersect(c("hs6", "HS6", "hs"), names(env))[1]
-  if (!is.na(env_col)) {
-    env_codes <- unique(sprintf("%06d", as.integer(env[[env_col]])))
-    overlap <- intersect(dt$hs6, env_codes)
-    cat(sprintf("Overlap dirty/env_good: %d codici (atteso ~0)\n", length(overlap)))
-    if (length(overlap) > 0) fwrite(data.table(hs6 = overlap),
-                                    file.path(out_dir, "overlap_dirty_green_CHECK.csv"))
-  }
+  env <- fread(env_file, colClasses = list(character = "hs6_final"))
+  env_codes <- unique(env$hs6_final)
+  overlap <- intersect(dt$hs6, env_codes)
+  cat(sprintf("Overlap dirty/env_good: %d codici (atteso ~0)\n", length(overlap)))
+  if (length(overlap) > 0) fwrite(data.table(hs6 = overlap),
+                                  file.path(out_dir, "overlap_dirty_green_CHECK.csv"))
+} else {
+  cat("[WARN] Env_Codes_HS1996.csv non trovato (eseguire prima 03b) — overlap check saltato.\n")
 }
 
 fwrite(dt, file.path(out_dir, "dirty_goods_hs6.csv"))

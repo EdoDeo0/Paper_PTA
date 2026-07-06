@@ -1,5 +1,22 @@
 # Session Log — Paper_PTA
 
+## 2026-07-03 — Audit completo (wiki-lint + /audit) + fix Fase A
+
+**Audit generale** su richiesta: wiki OK (5 problemi cosmetici), codice con **4 CRITICAL**,
+tutto documentato in `./New/AUDIT_PIANO_2026-07-03.md` (unico artefatto + piano in 3 fasi).
+- **C1/C2 (chiave):** `ln_export_value` nel .fst è il log dello **unit value** (`ln(uv_exp)`,
+  vedi `2_Build_Final_PTA_EP_Dataset.do:73`), NON del valore → 09 aveva 2/3 covariate di
+  matching sbagliate; 12 sommava unit value come "baseline commerciale" → il verdetto
+  "CEM v2 scartato" del 25/06 è SOSPESO, da rifare.
+- **C3:** 9/25 country_code errati in 04 (Svizzera=141 collideva col Vietnam). **C4:** 07
+  usava env_good stantio del .fst.
+**Fase A completata** (fix in `./New/Code/`, parse R OK): 09, 12, 07 (3 sezioni + diagnostica
+merge + event study), 04, 05 (dirty solo HS1996), banner deprecato su 01/03.
+**Valutazione econometrica d'insieme: l'impianto triple-diff regge**; minaccia principale da
+trattare esplicitamente nel paper: shock destinazione×green×tempo (preferenze verdi endogene).
+**Pending:** Fase B (fix wiki, su Mac); Fase C su Windows: check `hs6_final==orig` su
+Env_Codes_HS1996.csv → ri-run 05 → 09 → 12 → poi 07; drift .fst Mac/Windows (9 righe) da risolvere.
+
 ## 2026-06-25/26 — Esecuzione Fase R-control (08-12) + chiusura vintage HS6 green goods
 
 **Parte A — esecuzione script 08-12.** Eseguiti tutti gli script scritti il 2026-06-24 (mai girati

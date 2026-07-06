@@ -45,8 +45,8 @@
 ## comunque piu' stretta del full sample / di C-prod-HS4 stesso, che non
 ## fa alcun bilanciamento di covariate).
 ##
-## Lettura: 5 colonne dal .fst (hs6, env_good, year, ln_export_value,
-## ln_export_qua, ln_hhi_baci), filtrate a year <= 2001 e aggregate per
+## Lettura: 5 colonne dal .fst (hs6, year, ln_export, ln_export_value,
+## ln_hhi_baci), filtrate a year <= 2001 e aggregate per
 ## hs6 PRIMA di girare il matching — il matching stesso lavora su un
 ## dataset piccolissimo (qualche migliaio di righe, una per HS6).
 ##
@@ -75,7 +75,7 @@ stopifnot("Lista green HS1996 non trovata — eseguire prima 03b_green_codes_to_
 build_pre_covariates <- function(data_file, green_file, pre_years) {
   library(fst); library(data.table)
   threads_fst(1)
-  cols <- c("hs6", "year", "ln_export_value", "ln_export_qua", "ln_hhi_baci")
+  cols <- c("hs6", "year", "ln_export", "ln_export_value", "ln_hhi_baci")
   cat("Loading", length(cols), "colonne, poi filtro year <=", max(pre_years), "...\n")
   d <- as.data.table(read_fst(data_file, columns = cols))
   d <- d[year %in% pre_years]
@@ -92,10 +92,13 @@ build_pre_covariates <- function(data_file, green_file, pre_years) {
   d[, hs6_str := NULL]
 
   ## media per HS6 nel pre-periodo (un prodotto puo' avere piu' righe per
-  ## destinazione/anno: qui ci interessa solo il profilo "tipico" pre-PTA)
+  ## destinazione/anno: qui ci interessa solo il profilo "tipico" pre-PTA).
+  ## NB nomi colonna del .fst (2_Build_Final_PTA_EP_Dataset.do:67-73):
+  ##   ln_export       = ln(export)  -> log VALORE del flusso
+  ##   ln_export_value = ln(uv_exp)  -> log UNIT VALUE (nome ingannevole!)
   pre <- d[, .(
-    pre_lnvalue   = mean(ln_export_value, na.rm = TRUE),
-    pre_unitvalue = mean(ln_export_value - ln_export_qua, na.rm = TRUE),
+    pre_lnvalue   = mean(ln_export, na.rm = TRUE),
+    pre_unitvalue = mean(ln_export_value, na.rm = TRUE),
     pre_hhi       = mean(ln_hhi_baci, na.rm = TRUE),
     env_good      = first(env_good)
   ), by = .(hs6, hs4)]

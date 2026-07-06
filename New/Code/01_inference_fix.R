@@ -198,6 +198,11 @@ section_ols_block <- function(data_file, out_dir, nthreads, show_stats,
 # ─────────────────────────────────────────────────────────────────────
 # SEZIONE 5: WILD BOOTSTRAP + LADDER TABLE
 # Self-contained: non dipende da nulla definito fuori da questa funzione.
+# NB (2026-07-03): sezione di fatto DEPRECATA — l'API di fwildclusterboot e'
+# cambiata (boottest() v0.14.3+ non accetta piu' `seed`, richiede lean=TRUE)
+# e il bootstrap era gia' stato abbandonato per infeasibility (session-log
+# 2026-06-11); la ladder e' stata generata da _gen_ladder_tex.R. In pratica
+# viene sempre saltata perche' OLS_Ladder_FE.tex esiste gia'.
 # ─────────────────────────────────────────────────────────────────────
 section_bootstrap_ladder <- function(data_file, out_dir, nthreads, ...) {
   library(fst); library(fixest); library(data.table); library(here); library(fwildclusterboot)

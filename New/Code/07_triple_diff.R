@@ -11,6 +11,8 @@
 ## identificazione = entro impresa-destinazione-anno, tra prodotti green/dirty vs neutri.
 ##
 ## PREREQUISITI (eseguire prima):
+##   - New/Code/03b_green_codes_to_hs1996.R -> New/Data/Concordance/Env_Codes_HS1996.csv
+##     (env_good viene RICALCOLATO da questa lista, non letto dal .fst — fix 2026-07-03)
 ##   - New/Code/05_dirty_goods.R  -> New/Data/Dirty/dirty_goods_hs6.csv
 ##   - New/Code/06_total_depth.R  -> New/Data/TotalDepth/wb_totaldepth_country_year.csv
 ##   - [opzionale] WITS (04) per tariffs_pref; in assenza usa `tariffs` (MFN) con caveat
@@ -24,6 +26,7 @@ library(callr); library(here)
 
 SHARED <- list(
   data_file  = here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst"),
+  green_file = here("New/Data/Concordance/Env_Codes_HS1996.csv"),  # lista green HS1996 (03b)
   dirty_file = here("New/Data/Dirty/dirty_goods_hs6.csv"),
   depth_file = here("New/Data/TotalDepth/wb_totaldepth_country_year.csv"),
   out_dir    = here("New/Output/TripleDiff"),
@@ -34,7 +37,7 @@ SHARED <- list(
 # ─────────────────────────────────────────────────────────────────────
 # SEZIONE A — Stime principali (self-contained, gira in sottoprocesso)
 # ─────────────────────────────────────────────────────────────────────
-section_main <- function(data_file, dirty_file, depth_file, out_dir, nthreads, excl_hkmo) {
+section_main <- function(data_file, green_file, dirty_file, depth_file, out_dir, nthreads, excl_hkmo) {
   library(fst); library(fixest); library(data.table)
   threads_fst(1); setFixest_nthreads(nthreads)
   dir.create(file.path(out_dir, "Models_Output"), recursive = TRUE, showWarnings = FALSE)
@@ -44,17 +47,29 @@ section_main <- function(data_file, dirty_file, depth_file, out_dir, nthreads, e
   treats   <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")
 
   ## colonne necessarie (una sola lettura del fst)
-  cols <- unique(c(outcomes, unname(treats), "env_good", "hs6", "country_code", "year",
+  cols <- unique(c(outcomes, unname(treats), "hs6", "country_code", "year",
                    "fpd", "fdt", "pt", "tariffs", "ln_hhi_baci", "AD_pdt"))
   cat("Loading", length(cols), "columns...\n")
   d <- as.data.table(read_fst(data_file, columns = cols))
   if (excl_hkmo) { d <- d[!country_code %in% c(110L, 121L)]; cat("HK+MO esclusi\n") }
 
+  ## env_good RICALCOLATO dalla lista green tradotta a HS1996 (03b), NON la
+  ## colonna del .fst (merge HS2012-vs-HS1996 senza concordanza di vintage) —
+  ## stesso pattern degli script 08-10
+  green <- fread(green_file, colClasses = list(character = "hs6_final"))
+  green_codes <- unique(green$hs6_final)
+  d[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% green_codes)]
+
   ## merge classificazione dirty (hs6) e TotalDepth (country_code x year)
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
-  d[dirty, on = "hs6", dirty_p := i.dirty_p][is.na(dirty_p), dirty_p := 0L]
+  d[dirty, on = "hs6", dirty_p := i.dirty_p]
+  cat(sprintf("Merge dirty: %.2f%% righe con match (resto -> dirty_p = 0)\n",
+              100 * mean(!is.na(d$dirty_p))))
+  d[is.na(dirty_p), dirty_p := 0L]
   dep <- fread(depth_file)[, .(country_code, year, TotalDepth_nonEnv)]
   d[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
+  cat(sprintf("Merge TotalDepth: %.2f%% righe con match (atteso ~ quota trattati; resto -> 0)\n",
+              100 * mean(!is.na(d$TotalDepth_nonEnv))))
   d[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
   cat(sprintf("Rows: %s | green: %.1f%% | dirty: %.1f%%\n", format(nrow(d), big.mark = ","),
               100 * mean(d$env_good == 1, na.rm = TRUE), 100 * mean(d$dirty_p == 1)))
@@ -94,21 +109,26 @@ section_main <- function(data_file, dirty_file, depth_file, out_dir, nthreads, e
 # ─────────────────────────────────────────────────────────────────────
 # SEZIONE B — Event study differenziale (pre-trend del triple-diff)
 # ─────────────────────────────────────────────────────────────────────
-section_eventstudy <- function(data_file, depth_file, out_dir, nthreads, excl_hkmo) {
+section_eventstudy <- function(data_file, green_file, depth_file, out_dir, nthreads, excl_hkmo) {
   library(fst); library(fixest); library(data.table); library(ggplot2)
   threads_fst(1); setFixest_nthreads(nthreads)
   dir.create(file.path(out_dir, "Diagnostics"), recursive = TRUE, showWarnings = FALSE)
 
   d <- as.data.table(read_fst(data_file, columns = c(
-    "ln_export", "env_good", "country_code", "year", "fpd", "fdt", "pt", "WB_EP_Depth")))
+    "ln_export", "hs6", "country_code", "year", "fpd", "fdt", "pt", "WB_EP_Depth")))
   if (excl_hkmo) d <- d[!country_code %in% c(110L, 121L)]
+
+  ## env_good ricalcolato dalla lista green HS1996 (03b), come in sezione A
+  green <- fread(green_file, colClasses = list(character = "hs6_final"))
+  green_codes <- unique(green$hs6_final)
+  d[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% green_codes)]
 
   ## entry year per destinazione = primo anno con EP depth > 0
   entry <- d[WB_EP_Depth > 0, .(entry_year = min(year)), by = country_code]
   d[entry, on = "country_code", entry_year := i.entry_year]
-  d[, rel_time := fifelse(is.na(entry_year), -1000L, year - entry_year)]  # -1000 = mai trattato
-  d[, rel_time := pmax(pmin(rel_time, 5L), -6L)]                          # binning [-6, +5]
-  d[rel_time == -1000L | is.na(entry_year), rel_time := -1L]              # never-treated nel ref
+  d[, rel_time := year - entry_year]                # NA per i mai trattati
+  d[, rel_time := pmax(pmin(rel_time, 5L), -6L)]    # binning [-6, +5] (NA resta NA)
+  d[is.na(entry_year), rel_time := -1L]             # never-treated nel gruppo di riferimento
 
   rds <- file.path(out_dir, "Diagnostics", "eventstudy.rds")
   if (!file.exists(rds)) {
@@ -132,18 +152,26 @@ section_eventstudy <- function(data_file, depth_file, out_dir, nthreads, excl_hk
 
 # ─────────────────────────────────────────────────────────────────────
 # SEZIONE C — Permutation inference (su panel collassato d x t x green)
-# Riassegna il vettore EP depth tra le destinazioni trattate (timing fisso):
-# testa il CONTENUTO ambientale, non l'accordo. Collasso alla BDM (2004)
-# per rendere fattibili 1000 permutazioni.
+# Riassegna i PROFILI EP completi (depth E timing) tra le destinazioni
+# trattate: test congiunto del contenuto ambientale e del suo timing entro
+# il gruppo dei trattati — NON "contenuto a timing fisso": il timing viaggia
+# col profilo del donatore. Collasso alla BDM (2004) per rendere fattibili
+# 1000 permutazioni.
 # ─────────────────────────────────────────────────────────────────────
-section_permutation <- function(data_file, out_dir, nthreads, excl_hkmo, n_perm = 1000L) {
+section_permutation <- function(data_file, green_file, out_dir, nthreads, excl_hkmo, n_perm = 1000L) {
   library(fst); library(fixest); library(data.table)
   threads_fst(1); setFixest_nthreads(nthreads)
   dir.create(file.path(out_dir, "Diagnostics"), recursive = TRUE, showWarnings = FALSE)
 
   d <- as.data.table(read_fst(data_file, columns = c(
-    "ln_export", "env_good", "country_code", "year", "WB_EP_Depth")))
+    "ln_export", "hs6", "country_code", "year", "WB_EP_Depth")))
   if (excl_hkmo) d <- d[!country_code %in% c(110L, 121L)]
+
+  ## env_good ricalcolato dalla lista green HS1996 (03b), come in sezione A
+  green <- fread(green_file, colClasses = list(character = "hs6_final"))
+  green_codes <- unique(green$hs6_final)
+  d[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% green_codes)]
+  d[, hs6 := NULL]
 
   ## collasso: media ln_export per destinazione x anno x green
   cell <- d[!is.na(ln_export), .(y = mean(ln_export), n = .N,
@@ -179,16 +207,16 @@ section_permutation <- function(data_file, out_dir, nthreads, excl_hkmo, n_perm 
 # ─────────────────────────────────────────────────────────────────────
 # ESECUZIONE (un sottoprocesso alla volta)
 # ─────────────────────────────────────────────────────────────────────
-stopifnot(file.exists(SHARED$dirty_file), file.exists(SHARED$depth_file))
+stopifnot(file.exists(SHARED$green_file), file.exists(SHARED$dirty_file), file.exists(SHARED$depth_file))
 
 cat("\n=== SEZIONE A: stime principali ===\n")
-callr::r(section_main, args = SHARED[c("data_file","dirty_file","depth_file","out_dir","nthreads","excl_hkmo")], show = TRUE)
+callr::r(section_main, args = SHARED[c("data_file","green_file","dirty_file","depth_file","out_dir","nthreads","excl_hkmo")], show = TRUE)
 
 cat("\n=== SEZIONE B: event study ===\n")
-callr::r(section_eventstudy, args = SHARED[c("data_file","depth_file","out_dir","nthreads","excl_hkmo")], show = TRUE)
+callr::r(section_eventstudy, args = SHARED[c("data_file","green_file","depth_file","out_dir","nthreads","excl_hkmo")], show = TRUE)
 
 cat("\n=== SEZIONE C: permutation ===\n")
-callr::r(section_permutation, args = SHARED[c("data_file","out_dir","nthreads","excl_hkmo")], show = TRUE)
+callr::r(section_permutation, args = SHARED[c("data_file","green_file","out_dir","nthreads","excl_hkmo")], show = TRUE)
 
 cat("\n=== DONE Fase R3 (draft) ===\n")
 cat("Output: New/Output/TripleDiff/{Tables,Models_Output,Diagnostics}\n")

@@ -43,10 +43,12 @@ reporters <- data.table(
             "Iceland","Indonesia","India","KoreaRep","Laos","Malaysia","Macau","Myanmar",
             "NewZealand","Pakistan","Philippines","Peru","Singapore","SriLanka",
             "Switzerland","Thailand","TimorLeste","Vietnam"),
-  country_code = c(701L, 103L, 105L, 107L, 312L, 215L, 110L, 151L, 112L, 111L, 133L, 119L,
-                   122L, 121L, 106L, 702L, 127L, 129L, 313L, 132L, 134L, 141L, 136L, 148L, 142L)
-  # NB: country_code da verificare riga per riga con Data/Country_Codes_Custom_Data.csv
-  #     prima del merge finale (la numerazione custom continua oltre l'Asia).
+  country_code = c(601L, 103L, 105L, 107L, 412L, 415L, 110L, 322L, 112L, 111L, 133L, 119L,
+                   122L, 121L, 106L, 609L, 127L, 129L, 434L, 132L, 134L, 331L, 136L, 144L, 141L)
+  # NB: country_code VERIFICATI riga per riga con Data/Country_Codes_Custom_Data.csv
+  #     (audit 2026-07-03). La versione precedente aveva 9 codici errati (Australia,
+  #     Chile, CostaRica, Iceland, NewZealand, Peru, Switzerland, TimorLeste, Vietnam):
+  #     tra questi Switzerland=141 collideva col vero codice del Vietnam.
 )
 years <- 2000:2015
 
