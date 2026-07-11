@@ -1,0 +1,29 @@
+here() starts at C:/Work/projects/Paper_PTA
+
+=== SEZIONE A: stime principali ===
+Loading 14 columns...
+HK+MO esclusi
+Merge dirty: 7.90% righe con match (resto -> dirty_p = 0)
+Merge TotalDepth: 20.28% righe con match (atteso ~ quota trattati; resto -> 0)
+Rows: 45,781,211 | green: 11.5% | dirty: 7.0%
+Estimating: ln_export ~ WB_EP_Depth:env_good + WB_EP_Depth:dirty_p + TotalDepth_nonEnv:env_good + TotalDepth_nonEnv:dirty_p | fpd + fdt + pt 
+*** recursive gc invocation
+Error in `get_result(output = out, options)`:
+! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed
+---
+Standard output:
+Loading 14 columns...
+HK+MO esclusi
+Merge dirty: 7.90% righe con match (resto -> dirty_p = 0)
+Merge TotalDepth: 20.28% righe con match (atteso ~ quota trattati; resto -> 0)
+Rows: 45,781,211 | green: 11.5% | dirty: 7.0%
+Estimating: ln_export ~ WB_EP_Depth:env_good + WB_EP_Depth:dirty_p + TotalDepth_nonEnv:env_good + TotalDepth_nonEnv:dirty_p | fpd + fdt + pt
+---
+Standard error:
+*** recursive gc invocation
+---
+Backtrace:
+1. callr::r(section_main, args = SHARED[c("data_file", "green_file", …
+2. callr:::get_result(output = out, options)
+3. callr:::throw(new_callr_crash_error(output, killmsg))
+Esecuzione interrotta

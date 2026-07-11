@@ -14,10 +14,10 @@ n.groups          1   -none-     numeric
 group.idx         2   -none-     list     
 group.len         2   -none-     numeric  
 mstrata        1953   -none-     numeric  
-mstrataID        57   -none-     numeric  
+mstrataID        67   -none-     numeric  
 matched        1953   -none-     logical  
 baseline.group    1   -none-     character
 tab               6   -none-     numeric  
 k2k               1   -none-     logical  
 w              1953   -none-     numeric  
-L1 imbalance — before: 0.5244 | after: 0.5391
+L1 imbalance — before: 0.7264 | after: 0.7493

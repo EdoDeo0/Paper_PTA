@@ -1,3 +1,9 @@
+---
+area: school/ssa
+tags:
+  - area/school/ssa
+---
+
 # The Persistence of Early Childhood Maturity: International Evidence of Long-Run Age Effects
 
 **Bedard & Dhuey (2006)**

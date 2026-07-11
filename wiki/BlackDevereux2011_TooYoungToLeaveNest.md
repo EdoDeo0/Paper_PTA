@@ -1,3 +1,9 @@
+---
+area: school/ssa
+tags:
+  - area/school/ssa
+---
+
 # Too Young to Leave the Nest? The Effects of School Starting Age
 
 **Black, Devereux & Salvanes (2011)**

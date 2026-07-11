@@ -1,3 +1,9 @@
+---
+area: trade/firms
+tags:
+  - area/trade/firms
+---
+
 # The Role of Trade Facilitation Provisions in Trade Agreements: Evidence from Peruvian Firms
 
 **Lee, Woori, Nadia Rocha & Michele Ruta (2021)**
@@ -64,6 +70,10 @@ The firm-year fixed effects ($\alpha_{it}$) absorb all time-varying firm-level p
 **Target parameter:** Average treatment effect of PTA and TF provisions on firm-level export participation and value, separately for GVC and non-GVC firms.
 
 ---
+
+### Related (project wiki)
+
+[[LefebvreFernandesRocha2021_SPSTBTFirm]] — same team, PPML firm-level test of a different PTA provision type (SPS/TBT vs. trade facilitation)
 
 ### References (Wikilinks)
 

@@ -1,0 +1,19 @@
+here() starts at C:/Work/projects/Paper_PTA
+Destinazioni: 236 | trattate: 23 
+NOTES: 175 observations removed because of NA values (LHS: 175).
+       6/0 fixed-effect singletons were removed (6 observations).
+The variable 'year - entry_year::13' has been removed because of collinearity
+(see $collin.var).
+gap_green — ATT Sun-Abraham: -0.0440 (p=0.239)
+NOTES: 327 observations removed because of NA values (LHS: 327).
+       5/0 fixed-effect singletons were removed (5 observations).
+NOTE: 2 observations removed because of NA values (LHS: 2).
+The variable 'year - entry_year::13' has been removed because of collinearity
+(see $collin.var).
+gap_dirty — ATT Sun-Abraham: +0.0727 (p=0.275)
+Messaggi di avvertimento:
+1: The VCOV matrix is not positive semi-definite and was 'fixed' (see ?vcov). 
+2: The VCOV matrix is not positive semi-definite and was 'fixed' (see ?vcov). 
+3: The VCOV matrix is not positive semi-definite and was 'fixed' (see ?vcov). 
+4: The VCOV matrix is not positive semi-definite and was 'fixed' (see ?vcov). 
+[OK] sunab_gap.csv + eventstudy_sunab.png

@@ -1,3 +1,9 @@
+---
+area: trade/firms
+tags:
+  - area/trade/firms
+---
+
 # Heterogeneous Impacts of SPS and TBT Regulations: Firm-Level Evidence from Deep Trade Agreements
 
 **Fernandes, Ana Margarida, Kevin Lefebvre & Nadia Rocha (2021)**

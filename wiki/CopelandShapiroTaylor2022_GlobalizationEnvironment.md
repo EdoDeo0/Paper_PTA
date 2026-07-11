@@ -1,3 +1,9 @@
+---
+area: trade/environment
+tags:
+  - area/trade/environment
+---
+
 # Globalization and the Environment
 
 **Copeland, Shapiro & Taylor (2022)**

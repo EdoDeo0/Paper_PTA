@@ -1,5 +1,15 @@
 # Wiki Log — Paper_PTA
 
+## [2026-06-26] lint | 5 issues
+Fase B del piano di audit 2026-07-03 (`New/AUDIT_PIANO_2026-07-03.md`): (W1) header References
+`##`→`###` in RajanZingales1998 (unico card sfuggito al fix di massa del 2026-06-21, creato lo
+stesso giorno ma dopo quel fix); (W2) frontmatter `area:`/`tags:` aggiunto alle 16 card storiche
+prive di metadata (trade/firms ×6, trade/gravity ×1, trade/environment ×6, trade/policy ×1,
+school/ssa ×2); (W3) orfane ridotte da 6 a 3 (BlackDevereux2011, LeeRochaRuta2021,
+RajanZingales1998 restano legittimamente senza link in entrata); (W4) 4 cross-ref aggiunti
+(NeriLaine2023↔CrowleyHanPrayer2021, NeriLaine2023↔NeriOreficeRuta2021,
+LeeRochaRuta2021→LefebvreFernandesRocha2021, DechezleprêtreSato2017→Brandi2020); (W5) questa voce.
+
 ## [2026-06-21] ingest | RajanZingales1998_FinancialDependenceGrowth
 AER (1998): canonical cross-industry × cross-country interaction design — industries more dependent on external finance grow disproportionately faster in countries with developed financial markets; level effects absorbed by country/industry FE. Added under new "Identification Design References" section; this is the design template for the project's triple-diff (product green/dirty × destination EP-depth). Tagged area/methods/program-eval, copied to both wikis.
 

@@ -1,3 +1,9 @@
+---
+area: trade/firms
+tags:
+  - area/trade/firms
+---
+
 # The Trade Impact of RTAs: Firm-Level Evidence from Georgia
 
 **Neri-Laine, Barbara, Gianluca Orefice & Michele Ruta (2021)**

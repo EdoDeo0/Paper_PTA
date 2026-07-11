@@ -1,3 +1,9 @@
+---
+area: trade/environment
+tags:
+  - area/trade/environment
+---
+
 # Trade Liberalization and the Environment: Evidence from NAFTA and U.S. Manufacturing
 
 **Cherniwchan (2017)**

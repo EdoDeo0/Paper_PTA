@@ -115,6 +115,12 @@ crescita), non di un effetto causale delle EP.
 ## 2. MAPPA DEI DATI (colonne già verificate nel `.fst`)
 
 File: `final_dataset_pta_env_indices_compressed.fst` (~49,2 milioni di righe).
+
+> **Copia CANONICA (A3, chiuso 2026-07-06):** quella su **Windows**
+> (`C:\Work\projects\Paper_PTA\Data\Final Dataset\`), dove gira la pipeline.
+> Righe: **49.245.304** | MD5: `2045C2610AA2217D50C2637A585D8338`.
+> La copia Mac ha 9 righe in meno (49.245.295) → da riallineare a questa quando comodo;
+> fino ad allora i risultati si producono e confrontano solo su Windows.
 Caricare **solo le colonne necessarie** con `read_fst(path, columns = c(...))`.
 
 **Outcome (già in log nel dataset):**
@@ -490,16 +496,23 @@ Il disegno è un triplo-differenza; il problema del control group si scompone in
       verdi, 10,09M righe (20,5%) sopravvivono. **C-prod-match**: match esatto HS4 troppo sottile
       (69% famiglie senza candidati validi) → **rilassato a HS2** (22 capitoli, 97% dei verdi
       matchati, 1.376/4.817 HS6); L1 di `imbalance()` non comparabile pre/post per il match esatto
-      carattere (bin ricalcolati su campioni diversi) — usare il **love plot** (migliora su tutte
-      le 3 covariate continue), non l'L1, come diagnostica di riferimento. **C-overlap**: 98,5%
+      carattere (bin ricalcolati su campioni diversi) — usare il **love plot**, non l'L1, come
+      diagnostica di riferimento. ⚠️ **Aggiornamento post-fix C1 (audit 2026-07-03, ri-run
+      2026-07-06):** le covariate della run originale erano sbagliate (unit value al posto del
+      valore). Con le covariate corrette: `pre_lnvalue` ben bilanciata (SMD ~0,02) e
+      `pre_unitvalue` bilanciata (SMD ~0,085), ma **`pre_hhi` resta sopra soglia (SMD ~0,18
+      post-match vs ~0,21 pre)** → 2 covariate su 3 ok; la concentrazione di mercato è un limite
+      esplicito di C-prod-match da riportare nel paper. **C-overlap**: 98,5%
       HS6 / ~100% righe in overlap → tagli quasi nulla (atteso, è la leva debole sul fronte
       taglia/forte sul fronte identificazione). **C-deepshallow**: split 17 deep/8 shallow (mediana
       con pareggi), 30,9% righe sopravvivono; **shallow ha solo 8 cluster** → WCB ancora più
       fragile dei 19-25 generali, da riportare come limite esplicito. **CEM v2** (baseline
-      commerciale pre-PTA come 4ª covariata): **testato e scartato** — perde 5 trattati rispetto al
-      CEM originale (16→11), non bilancia bene la covariata aggiunta (SMD ~0,55 post-match, soglia
-      0,1) e peggiora `log_gdppc_2000` (già bilanciata in v1). **Verdetto: mantenere il CEM
-      originale** (`Output/CEM/matched_countries.csv`), non sostituirlo con v2.
+      commerciale pre-PTA come 4ª covariata): **testato e scartato**. La prima run (2026-06-25:
+      16→11 trattati, SMD ~0,55) usava una covariata costruita male (bug C2, audit 2026-07-03);
+      la ri-esecuzione col fix (2026-07-06) **conferma e peggiora**: 8 trattati matchati (vs 16
+      del v1), covariata nuova ancora squilibrata (SMD ~0,37, soglia 0,1), `gdp_growth_2000`
+      sopra soglia (~0,16). **Verdetto DEFINITIVO: mantenere il CEM originale**
+      (`Output/CEM/matched_countries.csv`, 16 trattati + 40 controlli), non sostituirlo con v2.
 - [x] **Chiuso 2026-06-25 — vintage HS6 dei green goods.** Indagine approfondita (script
       `02_data_hygiene_audit.R`, `02b_hs_vintage_check.R`, `03_hs_concordance.R`, ad-hoc in `/tmp/`)
       ha confermato un'anomalia reale al confine 2006→2007 (6,03% del valore export su codici
@@ -523,12 +536,102 @@ Il disegno è un triplo-differenza; il problema del control group si scompone in
 - [ ] Quantificati (lettura leggera: solo colonne `hs6`/`hs4`/`country_code` dal `.fst`) gli
       **switchers effettivi** e le **righe sopravvissute** a C-prod-HS4 (cutoff HS4 vs HS2) e
       C-overlap → decidere sui numeri reali prima di stimare.
-- [ ] Triple-diff §7.1 rieseguita su **≥3 control group**; tabella di **stabilità del
-      coefficiente d'interazione** (stile loro Table 5).
-- [ ] **PPML aggregato con zeri** girato sul sub-campione (prima non fattibile).
-- [ ] Inferenza **WCB + permutation** su ogni control group; nessuna conclusione da SE
-      asintotici coi pochi cluster trattati.
+- [x] **Fatto 2026-07-06** — Triple-diff §7.1 su 3 control group + panel collassato; tabella di
+      stabilità in `New/Output/TripleDiff/Tables/tripledd_stability.csv` (+ `tripledd_collapsed.csv`).
+      **Esito: EP×green è un null STABILE** (WB: −0,0009/−0,0022/−0,0021/−0,0023 su
+      prodHS4/CEM/deepshallow/collassato, mai p<0,4). EP×dirty (WB) negativo ma fragile:
+      −0,0089 p=0,006 sul collassato, −0,0040 p=0,056 su CEM, ma permutation aggregata p=0,50
+      con segno invertito e TREND non conferma → pista, non risultato. Caveat: (i) il **full
+      panel** (07/07b) crasha l'allocatore R con 3 FE alte-dim in ogni configurazione provata
+      (callr, diretta, 4-12 thread, 61GB RAM) → **RISOLTO 2026-07-06 sera via Stata/reghdfe**
+      (`16_tripledd_full.do`): 24,3M singleton rimossi, 21,5M oss., **WB×green −0,0021 p=0,55,
+      WB×dirty −0,0040 p=0,038 asint., F congiunto p=0,26; TREND×green −0,0001 p=0,91,
+      TREND×dirty −0,0009 p=0,15, F congiunto p=0,71** → precision null confermato al livello
+      impresa (`Tables/tripledd_full_reghdfe.csv`); (ii) deepshallow TREND e C-overlap mancanti
+      (stesso limite RAM — ora aggirabile con reghdfe se serve); (iii) inferenza: cluster
+      asintotici + permutation sul collassato (green p=0,45; dirty p=0,50) — WCB fatto (v. sotto).
+- [x] **Fatto 2026-07-07/08 — PPML aggregato con zeri** (`20_ppml_extensive.R` su
+      `ppml_agg_pdt_zerofill.fst`, 8,3M celle): nessuna green trade creation al margine
+      estensivo — EP×green +0,0014 (p=0,73) WB / +0,0001 (p=0,95) TREND; dirty n.s.
+      Stessa notte chiusi anche (run `17_remaining_models.do` + `18`/`19`): **C-overlap**
+      (WB −0,0021 p=0,55; TREND −0,0001 p=0,91), **deepshallow TREND** (−0,0004 p=0,72),
+      **robustezze full-panel** (controlli p=0,93; no-ASEAN p=0,42; incl-HKMO p=0,73),
+      **within-firm** (quota green: WB p=0,37, TREND −0,00006 p=0,044 — trascurabile),
+      **sotto-indici** (bundling: WB GreenLib ⊥ Standards con ρ=1,00 → eterogeneità per
+      clausola NON identificabile; placebo Soft/RegSpace correttamente nulli),
+      **Sun-Abraham sul gap** (ATT green p=0,24, dirty p=0,28 → la deriva a +5 era
+      eterogeneità di coorte). Output in `New/Output/TripleDiff/Tables/`.
+      **PRIMA BOZZA DEL PAPER**: `New/Paper/draft_paper.tex` (Overleaf-ready, figure incluse).
+- [x] **Fatto 2026-07-06 (sera) — WCB sul collassato + chiusura pista dirty.**
+      `15_wcb_collapsed.R` (WCB B=9999 via Frisch-Waugh: demean + lm, perché feols non-lean
+      crasha l'allocatore): **tutte e 4 le interazioni NON significative** — WB×green p=0,88,
+      **WB×dirty p=0,18** (il p asintotico 0,006 era illusione da pochi cluster), TREND×green
+      p=0,39, TREND×dirty p=0,85. `15b_dirty_leaveoneout.R`: coefficiente dirty stabile (~−0,009)
+      ma **togliendo la Corea (133) muore** (−0,0059, p=0,21) — uno dei 3 soli switcher within.
+      **VERDETTO: pista dirty CHIUSA, non robusta** (WCB + permutation aggregata segno opposto +
+      TREND nullo + dipendenza da un paese). Il paper è un **precision null su entrambi i margini
+      della composizione**, salvo conferma full-panel su macchina capiente. WCB sui sub-campioni
+      firm-level: non fattibile su questa macchina (richiede modelli non-lean), rimandato al server.
 - [ ] **C-deepshallow** (solo-PTA, deep vs shallow EP) stimata come identificazione alternativa,
       con controllo `TotalDepth`.
 - [ ] C-prod-HS4 riportata **accanto** a C-overlap (mai da sola) per esporre l'eventuale
       spillover Eckel.
+
+#### 7-R6 Audit post-bozza (Fable 5, 2026-07-08) e implementazione (Sonnet 5, 2026-07-08)
+
+- [x] **Audit completo** della campagna di stima 13–20/16.do/17.do e della bozza
+      (`New/Audit/2026-07-08_audit_report.md`): **nessun errore nelle stime**, tutti i numeri
+      del paper tracciano agli output; **3 CRITICAL** (tutti nel testo del paper): SD di
+      WB\_EP\_Depth sbagliata nel claim di magnitudine §4.1 (era "6 provisioni/1,4%", vero
+      3,09/2,7%); "249 country-year" includeva erroneamente HK-MO (giusto: 223, con il fatto
+      che GreenLib/Standards sono non-zero solo in 3 country-year, Corea 2015 e Svizzera
+      2014-15); citazione fantasma "Caselli et al." senza bibitem. Piano di correzione:
+      `New/PIANO_SONNET_2026-07-08.md`.
+- [x] **Correzioni A1-A9 applicate** a `draft_paper.tex`: i 3 CRITICAL sopra, nota permutation
+      (b\_obs=−0,0052 sul gap aggregato, non −0,0023 del collassato), split deep/shallow
+      corretto a 17 vs 6 (escl. HK-MO), arrotondamenti (no-ASEAN dirty −0,0041 non −0,0042),
+      `\label{sec:dirty}` al posto di "Section~4.4" hardcoded, riconciliazione celle
+      collassato (3,68M post-singleton / 3,77M pre), abstract "45,8M" (era "46M"),
+      `headmayer2014`/`larch2025` citati nel corpo, footnote metodologica sul WCB
+      Frisch-Waugh (pt non annidata nel cluster). Check statico A9: begin/end bilanciati
+      (25/25), nessuna cite/ref orfana, nessun pending.
+- [x] **Sotto-indici enforcement completati** (B1): rieseguito `18_subindices_collapsed.R`
+      (2 tentativi per il crash noto dell'allocatore su TREND\_EnforcementDSM) →
+      `subindices_collapsed.csv` ora 8/8 sotto-indici (32 righe). Entrambi nulli su
+      entrambi i margini (WB EnforcementDSM p=0,91/0,90; TREND EnforcementDSM p=0,78/0,71),
+      aggiunto al §5.1 del paper.
+- [x] **Replica cross-language esatta del collassato** (B2): nuovo `21_collapsed_replication.do`
+      + export R→Stata (`New/Data/Collapsed/panel_pdt_for_stata.dta`). Stata reghdfe sullo
+      stesso panel collassato: coefficienti identici a fixest entro 1e-9 (ben oltre 6
+      decimali), stesso N finale 3.681.023 (92.475 singleton, stesso insieme). Dettagli in
+      `New/Audit/comparison_collapsed.md`. Chiude lo Step 2 (cross-language) dell'audit per
+      la spec collassata; il full panel resta validato solo per coerenza di segno/ordine
+      di grandezza (allocatore R non regge il full panel 3-HDFE su questa macchina).
+- [x] **Diagnosi East Timor** (B3, `New/Code/22_check_timor.R`): l'origine è
+      `Code/Dataset_Creation/1_Build_Final_PTA_EP_Dataset.R` righe 244/316 — "East Timor"
+      elencato per errore nella lista ASEAN originale (mai stato membro). Non modificato
+      (file originale, fuori da `/New`). Impatto sulla stima collassata: differenza <1e-6 su
+      tutti e 4 i coefficienti WB (praticamente nulla) — 144 pesa 9.069/45,8M righe (0,02%).
+      Documentato in `New/Output/Diagnostics/timor_check.md` e nella nota di tab:treatment
+      (A6 del piano).
+- [x] **B4 (opzionale) — non aggiunta appendice Sun-Abraham.** La figura
+      `eventstudy_sunab.png` non era mai inclusa nel paper (file orfano, rimosso da
+      `figures/`). Nota per l'autore: il gap SA dirty a t=−6 è **+0,047 (p=0,001)**, un
+      pre-trend significativo appena fuori dal periodo di riferimento — se in futuro si
+      vuole includere la figura in appendice, va commentato esplicitamente (non è banale:
+      è in tensione con l'affermazione di pre-trend piatti del TWFE event study §4.2, che
+      usa un `rel_time` troncato diverso).
+- [x] **Igiene codice (C1-C2, C4)**: rimosso in `19_sunab_gap.R` il filtro no-op
+      `gap[entry_year != 10000L | TRUE]` e il modello `m_tw` mai usato/salvato. Corretto in
+      `17_remaining_models.do` il bug di quoting nel loop di append finale (r(601): i nomi
+      restituiti da `dir ... files` sono già tra virgolette compound e il primo giro deve
+      essere `use`, non `append`, su un dataset vuoto) — testato in isolamento sui `.dta`
+      di cache già esistenti, output identico a `tripledd_robustness_reghdfe.csv`. `/bibcheck`
+      manuale su `neri2023` e `larch2025` (formato non-.bib, verifica diretta via ricerca
+      web): entrambi i paper esistono ma con **titolo sbagliato** in entrambe le voci
+      (mancava "Heterogeneous" in neri2023; larch2025 aveva un titolo completamente diverso
+      da quello vero e "forthcoming" invece dei dati di pubblicazione reali, vol. 33(5),
+      1066–1092) — corretti.
+- [ ] **C3 — commit non ancora proposto/eseguito**: tutta la campagna 2026-07-06/08 e la
+      bozza restano non committate (regola di sicurezza: mai commit senza conferma esplicita
+      dell'utente).

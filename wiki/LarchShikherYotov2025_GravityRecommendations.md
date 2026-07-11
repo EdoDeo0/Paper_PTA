@@ -1,3 +1,9 @@
+---
+area: trade/gravity
+tags:
+  - area/trade/gravity
+---
+
 # Estimating Gravity Equations: Theory Implications, Econometric Developments, and Practical Recommendations
 
 **Larch, Mario, Serge Shikher & Yoto V. Yotov (2025)**

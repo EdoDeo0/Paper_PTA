@@ -1,3 +1,9 @@
+---
+area: trade/environment
+tags:
+  - area/trade/environment
+---
+
 # The Impacts of Environmental Regulations on Competitiveness
 
 **Dechezleprêtre, Antoine & Misato Sato (2017)**
@@ -66,6 +72,10 @@ The authors emphasise that the use of disaggregated (firm/facility-level) data a
 This review is directly relevant to the project's core research question on environmental provisions (EPs) in Chinese PTAs. It establishes the empirical background on the **pollution haven hypothesis**: whether differences in environmental stringency across countries shift pollution-intensive production and investment to lower-regulation jurisdictions. The project's central question is whether EPs in PTAs mitigate this dynamic. Dechezleprêtre & Sato (2017) confirm that pollution haven effects exist but are modest, providing the empirical motivation for studying whether EP provisions can meaningfully alter trade and investment flows.
 
 ---
+
+### Related (project wiki)
+
+[[Brandi2020_EPsGreenExports]] — applies the pollution-haven/Porter-hypothesis logic reviewed here to PTA environmental provisions specifically
 
 ### References (Wikilinks)
 

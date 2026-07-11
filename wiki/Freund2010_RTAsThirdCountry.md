@@ -1,3 +1,9 @@
+---
+area: trade/policy
+tags:
+  - area/trade/policy
+---
+
 # Are Regional Trade Agreements Building or Stumbling Blocks?
 
 **Freund, Caroline (2010)**

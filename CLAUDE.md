@@ -45,7 +45,7 @@ Save output to `/tmp/` using `AuthorYear_ShortTitle` naming. Check `/tmp/` first
 
 ## Environment Variables & External Resources
 
-- `$RESEARCH_HOME` → `~/Documents/work`
+- `$RESEARCH_HOME` → environment variable, set per device (e.g. `~/Documents/work` on Mac, `C:\Work` on Windows)
 - Global research wiki: `$RESEARCH_HOME/research-wiki`
 - Global skills: `$RESEARCH_HOME/research-config/skills/`
 - Local project wiki: `./wiki/` (create if it doesn't exist)

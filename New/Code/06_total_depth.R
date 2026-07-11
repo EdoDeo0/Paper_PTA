@@ -80,15 +80,24 @@ d_nonenv <- build_depth(!is_env, "TotalDepth_nonEnv")
 d_env    <- build_depth(is_env,  "WB_EP_Depth_check")
 out <- merge(d_nonenv, d_env, by = c("Country", "year"))
 
-## ── 4. VALIDAZIONE contro l'indice esistente ──────────────────────────
+## ── 4. country_code (spostato PRIMA della validazione: il file di
+## riferimento Merged_TREND_WB_Indices_Only.csv ha solo country_code, non un
+## nome paese — la validazione va fatta su quella chiave, non su "Country") ──
+cc <- fread(here("Data/Country_Codes_Custom_Data.csv"), sep = ";")
+out <- merge(out, cc, by.x = "Country", by.y = "country", all.x = TRUE)
+if (out[is.na(country_code), .N] > 0) {
+  cat("[WARN] Paesi senza country_code:", paste(unique(out[is.na(country_code), Country]), collapse = ", "), "\n")
+}
+
+## ── 5. VALIDAZIONE contro l'indice esistente (fix 2026-06-26: prima
+## saltava sempre, perche' cercava una colonna "Country" nel file di
+## riferimento che non esiste li' — solo country_code) ────────────────────
 merged_file <- here("Data/Merged/Merged_TREND_WB_Indices_Only.csv")
 if (file.exists(merged_file)) {
   ref <- fread(merged_file)
-  yr_col <- intersect(c("Year", "year"), names(ref))[1]
-  ctry_col <- intersect(c("Country", "Country_WB", "country"), names(ref))[1]
-  if (!is.na(yr_col) && !is.na(ctry_col) && "WB_EP_Depth" %in% names(ref)) {
-    chk <- merge(out, ref[, .(Country = get(ctry_col), year = get(yr_col), WB_EP_Depth)],
-                 by = c("Country", "year"), all.x = TRUE)
+  if (all(c("country_code", "year", "WB_EP_Depth") %in% names(ref))) {
+    chk <- merge(out, ref[, .(country_code, year, WB_EP_Depth)],
+                 by = c("country_code", "year"), all.x = TRUE)
     n_match <- chk[, sum(WB_EP_Depth_check == WB_EP_Depth, na.rm = TRUE)]
     n_tot   <- chk[!is.na(WB_EP_Depth), .N]
     cat(sprintf("\nVALIDAZIONE: EP depth replicata = esistente in %d/%d country-year\n", n_match, n_tot))
@@ -100,13 +109,6 @@ if (file.exists(merged_file)) {
     }
   } else cat("\n[WARN] Colonne attese non trovate in Merged_TREND_WB_Indices_Only.csv — validazione saltata.\n")
 } else cat("\n[WARN] Merged_TREND_WB_Indices_Only.csv non trovato — validazione saltata.\n")
-
-## ── 5. country_code e salvataggio ─────────────────────────────────────
-cc <- fread(here("Data/Country_Codes_Custom_Data.csv"), sep = ";")
-out <- merge(out, cc, by.x = "Country", by.y = "country", all.x = TRUE)
-if (out[is.na(country_code), .N] > 0) {
-  cat("[WARN] Paesi senza country_code:", paste(unique(out[is.na(country_code), Country]), collapse = ", "), "\n")
-}
 fwrite(out, file.path(out_dir, "wb_totaldepth_country_year.csv"))
 cat("[OK] wb_totaldepth_country_year.csv —", nrow(out), "country-year\n")
 cat("Uso in Fase R3: merge su country_code x year; regressore TotalDepth_nonEnv (x green_p/dirty_p).\n")

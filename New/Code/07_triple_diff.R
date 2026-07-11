@@ -30,7 +30,7 @@ SHARED <- list(
   dirty_file = here("New/Data/Dirty/dirty_goods_hs6.csv"),
   depth_file = here("New/Data/TotalDepth/wb_totaldepth_country_year.csv"),
   out_dir    = here("New/Output/TripleDiff"),
-  nthreads   = 12L,
+  nthreads   = 6L,   # 6 = valore storicamente stabile per un singolo job pesante
   excl_hkmo  = TRUE   # C4: Hong Kong (110) e Macao (121) fuori dalla main spec
 )
 
@@ -61,11 +61,23 @@ section_main <- function(data_file, green_file, dirty_file, depth_file, out_dir,
   d[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% green_codes)]
 
   ## merge classificazione dirty (hs6) e TotalDepth (country_code x year)
-  dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
-  d[dirty, on = "hs6", dirty_p := i.dirty_p]
-  cat(sprintf("Merge dirty: %.2f%% righe con match (resto -> dirty_p = 0)\n",
-              100 * mean(!is.na(d$dirty_p))))
-  d[is.na(dirty_p), dirty_p := 0L]
+  ## (05 SBLOCCATO 2026-07-06: dirty da tabella WITS HS1996->ISIC3, settori
+  ## Mani-Wheeler, 1.139 codici HS6 gia' al netto dei 17 in overlap col green.
+  ## Il ramo else qui sotto resta solo come fallback se il file manca.)
+  if (file.exists(dirty_file)) {
+    dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
+    d[dirty, on = "hs6", dirty_p := i.dirty_p]
+    cat(sprintf("Merge dirty: %.2f%% righe con match (resto -> dirty_p = 0)\n",
+                100 * mean(!is.na(d$dirty_p))))
+    d[is.na(dirty_p), dirty_p := 0L]
+  } else {
+    cat("\n[ATTENZIONE] New/Data/Dirty/dirty_goods_hs6.csv assente (05_dirty_goods.R sospeso:\n")
+    cat("  il pacchetto 'concordance' non supporta ISIC2, nessuna tabella disponibile).\n")
+    cat("  dirty_p impostato a 0 per TUTTE le righe su decisione esplicita dell'autore.\n")
+    cat("  I coefficienti su :dirty_p in questa run sono privi di significato (zero-variance,\n")
+    cat("  fixest li droppera' o li stimera' a 0/NA) - NON interpretarli come 'effetto dirty nullo'.\n\n")
+    d[, dirty_p := 0L]
+  }
   dep <- fread(depth_file)[, .(country_code, year, TotalDepth_nonEnv)]
   d[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
   cat(sprintf("Merge TotalDepth: %.2f%% righe con match (atteso ~ quota trattati; resto -> 0)\n",
@@ -207,7 +219,10 @@ section_permutation <- function(data_file, green_file, out_dir, nthreads, excl_h
 # ─────────────────────────────────────────────────────────────────────
 # ESECUZIONE (un sottoprocesso alla volta)
 # ─────────────────────────────────────────────────────────────────────
-stopifnot(file.exists(SHARED$green_file), file.exists(SHARED$dirty_file), file.exists(SHARED$depth_file))
+stopifnot(file.exists(SHARED$green_file), file.exists(SHARED$depth_file))
+if (!file.exists(SHARED$dirty_file)) {
+  cat("[ATTENZIONE] dirty_goods_hs6.csv assente — si procede con dirty_p = 0 ovunque (vedi nota in section_main).\n")
+}
 
 cat("\n=== SEZIONE A: stime principali ===\n")
 callr::r(section_main, args = SHARED[c("data_file","green_file","dirty_file","depth_file","out_dir","nthreads","excl_hkmo")], show = TRUE)

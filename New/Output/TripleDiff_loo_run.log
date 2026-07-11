@@ -1,0 +1,32 @@
+here() starts at C:/Work/projects/Paper_PTA
+Paesi trattati: 23 
+[FALLITO] baseline 
+[FALLITO] lista_estesa 
+senza_103     : -0.00877 (p=0.0063)
+senza_105     : -0.00887 (p=0.0056)
+senza_106     : -0.00881 (p=0.0062)
+[FALLITO] senza_107 
+senza_111     : -0.00901 (p=0.0032)
+[FALLITO] senza_112 
+[FALLITO] senza_119 
+[FALLITO] senza_122 
+[FALLITO] senza_127 
+[FALLITO] senza_129 
+[FALLITO] senza_132 
+senza_133     : -0.00593 (p=0.2102)
+[FALLITO] senza_134 
+senza_136     : -0.00908 (p=0.0042)
+senza_141     : -0.00943 (p=0.0022)
+senza_144     : -0.00886 (p=0.0056)
+[FALLITO] senza_322 
+[FALLITO] senza_331 
+senza_412     : -0.00956 (p=0.0014)
+[FALLITO] senza_415 
+senza_434     : -0.00991 (p=0.0005)
+[FALLITO] senza_601 
+senza_609     : -0.00886 (p=0.0065)
+
+=== VERDETTO leave-one-out ===
+Cambi di segno: 0/11 | p>0.10: 1/11
+Significativita' persa togliendo: 133 
+[OK] dirty_leaveoneout.csv

@@ -1,3 +1,9 @@
+---
+area: trade/firms
+tags:
+  - area/trade/firms
+---
+
 # Deep Trade Agreements and Heterogeneous Firms Exports
 
 **Neri-Lainé, Orefice & Ruta (2023)**
@@ -113,6 +119,11 @@ Firm-year FEs ($\theta_{ft}$) absorb all time-varying firm-specific characterist
 Beyond the IV and event study, the authors: (i) use a weighted count of RTA provisions (weighting by 1 minus provision frequency) as an alternative depth measure; (ii) explicitly control for the RTA binary dummy despite collinearity concerns; (iii) restrict the sample to country-pairs that change RTA status during the period; (iv) test with non-parametric binned interactions of DTA with three size bins; (v) apply the robust TWFE estimator of De Chaisemartin & D'Haultfoeuille (2020) to check for negative weights bias from heterogeneous staggered treatment; (vi) run OLS log-linear regressions as a benchmark (setting log of zero exports to zero).
 
 ---
+
+### Related (project wiki)
+
+[[CrowleyHanPrayer2021_DeepPTAMarkups]] — same deep-PTA pro-competitive-effects filone, complementary firm-level mechanism (markups vs. exports)
+[[NeriOreficeRuta2021_GeorgiaRTA]] — same authors/method, single-country (Georgia) firm-level RTA-depth application
 
 ### References (Wikilinks)
 

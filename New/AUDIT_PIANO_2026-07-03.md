@@ -165,8 +165,8 @@ NA vengono azzerati in silenzio (righe 55–58). Aggiungere 2 righe di conteggio
 | C3 | 9/25 country_code errati (CH→VN collision) | CRITICAL | 04_wits_pref_tariffs.R | **FIXED 2026-07-03** |
 | C4 | env_good stantio (HS2012 non concordato) | CRITICAL | 07_triple_diff.R | **FIXED 2026-07-03** (mai eseguito, ora pronto) |
 | A1 | Dirty list unione HS0/HS1/HS2 vs decisione HS1996 | WARNING | 05_dirty_goods.R | **FIXED 2026-07-03** (da ri-eseguire) |
-| A2 | Continuity-check su codici sbagliati, codes_h1 inutilizzato | WARNING | 03b_green_codes_to_hs1996.R | Open (check 1' su Windows, Fase C-7) |
-| A3 | .fst Mac ≠ .fst Windows (9 righe) | WARNING | dati | Open (Fase C-12) |
+| A2 | Continuity-check su codici sbagliati, codes_h1 inutilizzato | WARNING | 03b_green_codes_to_hs1996.R | **CLOSED 2026-07-06** (03c → R1e: 10/247 codici a rischio, 0 crolli sospetti) |
+| A3 | .fst Mac ≠ .fst Windows (9 righe) | WARNING | dati | **CLOSED 2026-07-06** (Windows canonico: 49.245.304 righe, md5 in ROADMAP §2) |
 | A4 | Permutation: "timing fisso" impreciso | WARNING | 07_triple_diff.R | **FIXED 2026-07-03** (commento corretto) |
 | A5 | Merge senza diagnostica | WARNING | 07_triple_diff.R | **FIXED 2026-07-03** |
 | N1 | Event study: condizione rel_time morta | NOTE | 07_triple_diff.R | **FIXED 2026-07-03** |
@@ -177,6 +177,14 @@ NA vengono azzerati in silenzio (righe 55–58). Aggiungere 2 righe di conteggio
 **Aggiornamento 2026-07-03 (stesso giorno, sessione Fable):** Fase A completata — tutti i fix
 applicati in `New/Code/`, parse R OK su tutti i 7 file toccati. Restano: Fase B (wiki, Mac) e
 Fase C (ri-esecuzioni su Windows: check A2 → 05 → 09 → 12 → 07, poi A3 e 04-parse).
+
+**Aggiornamento 2026-07-06 (Fase C su Windows):** step 7 (A2) ✅, step 8 (09: 2/3 covariate ok,
+pre_hhi residua) ✅, step 9 (12: CEM v2 definitivamente scartato, si tiene v1) ✅, step 10 (05
+SBLOCCATO via tabella WITS HS1996→ISIC3, 1.139 codici dirty al netto dell'overlap col green) ✅,
+step 12 (A3: .fst Windows canonico) ✅, step 13 (04: download WITS avviato) in corso, step 11
+(07 con dirty reale) in esecuzione. Nota crash: i riavvii Kernel-Power durante i run NON erano
+colpa del codice — BSOD 0x9F da driver allo spegnimento schermo (serie preesistente al progetto,
+marzo/aprile 2026); mitigato impostando lo schermo su "mai spegnere".
 
 **Verdetto: FAIL (condizionale)** — nessun risultato *già pubblicato nel paper* dipende dai
 CRITICAL (07 non è mai girato; 09/12 sono diagnostiche di sub-campione; 04 non è arrivato al

@@ -1,0 +1,148 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\21_collapsed_replication.do 
+
+. *****************************************************************************
+> ***
+. ****** Replica cross-language: panel COLLASSATO, Stata reghdfe vs R fixest **
+> ****
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. *
+. * PERCHE': chiude lo Step 2 (Cross-Language Replication) dell'audit del
+. * 2026-07-08 (New/Audit/2026-07-08_audit_report.md). La spec principale del
+. * panel collassato e' stimata in R (14_tripledd_collapsed.R, fixest); qui si
+. * ristima IDENTICA in Stata (reghdfe) sullo stesso dataset esportato da R
+. * (New/Data/Collapsed/panel_pdt_for_stata.dta, colonne gia' pronte: y, n,
+. * wb_green, wb_dirty, td_green, td_dirty, pd, dt, pt, country_code — generato
+. * da uno script R temporaneo di export, non incluso nel repo, che replica le
+. * righe 67-81 di 14_tripledd_collapsed.R).
+. *
+. * ATTENZIONE: reghdfe rimuove i singleton in modo ITERATIVO, fixest in un sol
+> o
+. * passaggio: N finale puo' differire leggermente; il confronto è sui coeffici
+> enti.
+. *
+. * ESECUZIONE BATCH (dalla root del repo):
+. *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\21_collapsed
+> _replication.do"
+. * Output: New/Output/TripleDiff/Tables/tripledd_collapsed_reghdfe.csv (+ .log
+>  accanto)
+. 
+. clear all
+
+. set more off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. use "$ROOT\New\Data\Collapsed\panel_pdt_for_stata.dta", clear
+
+. count
+  3,773,498
+
+. di "Righe (pre-singleton): " r(N)
+Righe (pre-singleton): 3773498
+
+. 
+. cap mkdir "$ROOT\New\Output\TripleDiff"
+
+. cap mkdir "$ROOT\New\Output\TripleDiff\Tables"
+
+. 
+. reghdfe y wb_green wb_dirty td_green td_dirty [aw=n], ///
+>     absorb(pd dt pt) vce(cluster country_code) compact
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       7.13
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0022566   .0063333    -0.36   0.722    -.0147362    .0102231
+    wb_dirty |   -.008864   .0031663    -2.80   0.006    -.0151031   -.0026249
+    td_green |  -.0001267   .0002465    -0.51   0.608    -.0006124     .000359
+    td_dirty |   .0002838   .0002017     1.41   0.161    -.0001137    .0006813
+       _cons |   9.266942   .0006766  1.4e+04   0.000     9.265609    9.268276
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. regsave using "$ROOT\New\Output\TripleDiff\Tables\_collapsed_reghdfe.dta", //
+> /
+>     tstat pval ci replace addlabel(treat, WB)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\_collapsed_reghdf
+    > e.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\_collapsed_reghdf
+    > e.dta saved
+
+. 
+. use "$ROOT\New\Output\TripleDiff\Tables\_collapsed_reghdfe.dta", clear
+
+. export delimited "$ROOT\New\Output\TripleDiff\Tables\tripledd_collapsed_reghd
+> fe.csv", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\tripledd_collapse
+    > d_reghdfe.csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\tripledd_collapsed
+> _reghdfe.csv saved
+
+. di "[OK] tripledd_collapsed_reghdfe.csv"
+[OK] tripledd_collapsed_reghdfe.csv
+
+. 
+end of do-file

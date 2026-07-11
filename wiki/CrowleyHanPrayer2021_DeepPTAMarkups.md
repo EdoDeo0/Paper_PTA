@@ -1,3 +1,9 @@
+---
+area: trade/firms
+tags:
+  - area/trade/firms
+---
+
 # The Value of Deep Trade Agreements in the Presence of Pricing-to-Market
 
 **Crowley, Meredith A., Lu Han & Thomas Prayer (2021)**

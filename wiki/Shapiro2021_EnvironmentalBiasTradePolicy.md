@@ -1,3 +1,9 @@
+---
+area: trade/environment
+tags:
+  - area/trade/environment
+---
+
 # The Environmental Bias of Trade Policy
 
 **Shapiro (2021)**

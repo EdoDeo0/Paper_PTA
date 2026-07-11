@@ -1,0 +1,25 @@
+here() starts at C:/Work/projects/Paper_PTA
+=== WB_GreenLiberalization ===
+  WB_GreenLiberalization x env_good  : -0.01127 (p=0.8981)
+  WB_GreenLiberalization x dirty_p   : -0.08756 (p=0.0713)
+=== TREND_GreenMarketAccess ===
+  TREND_GreenMarketAccess x env_good  : -0.02695 (p=0.3751)
+  TREND_GreenMarketAccess x dirty_p   : -0.04907 (p=0.0446)
+=== WB_StandardsNonRegression ===
+  WB_StandardsNonRegression x env_good  : -0.00376 (p=0.8981)
+  WB_StandardsNonRegression x dirty_p   : -0.02919 (p=0.0713)
+=== WB_EnforcementDSM ===
+[FALLITO] WB_EnforcementDSM 
+=== TREND_EnforcementDSM ===
+[FALLITO] TREND_EnforcementDSM 
+=== TREND_Hard ===
+  TREND_Hard x env_good  : +0.00221 (p=0.6355)
+  TREND_Hard x dirty_p   : -0.00129 (p=0.7246)
+=== TREND_Soft ===
+  TREND_Soft x env_good  : +0.01327 (p=0.2731)
+  TREND_Soft x dirty_p   : +0.00195 (p=0.8572)
+=== TREND_RegulatorySpace ===
+  TREND_RegulatorySpace x env_good  : -0.00151 (p=0.8908)
+  TREND_RegulatorySpace x dirty_p   : -0.00169 (p=0.8813)
+
+[OK] subindices_collapsed.csv

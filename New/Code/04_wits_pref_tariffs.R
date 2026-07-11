@@ -14,6 +14,17 @@
 ##   - pref verso Cina = min tra le PREF dei gruppi che includono la Cina
 ##   - AHS = min(MFN, pref_cina)
 ##
+## ⚠️ STATO API (verificato 2026-07-06): l'API SDMX di WITS e' ROTTA lato server.
+##   Testato con richieste manuali (PowerShell, Invoke-WebRequest):
+##   - wildcard tutti-prodotti (URL di questo script)      -> HTTP 413 (troppo grande)
+##   - con partner specifico (000 o 156) e prodotto vuoto  -> HTTP 500
+##   - PERFINO l'esempio letterale della documentazione
+##     (A.840.000.020110.reported)                          -> HTTP 500
+##   Non e' un problema di questo script: riprovare in un altro momento.
+##   Alternativa se persiste: bulk download UNCTAD TRAINS (trainsonline.unctad.org)
+##   o WITS "Tariff Download Facility". Le tariffe sono un CONTROLLO (tariffs_pref):
+##   07 nel frattempo usa la MFN (`tariffs`) con caveat, come previsto dal ROADMAP.
+##
 ## Due modalita' (variabile `mode` sotto):
 ##   "download" -> scarica gli XML grezzi in New/Data/WITS/raw/ (cache: skip se esiste)
 ##                 leggero (rete), puo' girare in parallelo alle stime

@@ -1,0 +1,12 @@
+here() starts at C:/Work/projects/Paper_PTA
+Loading 9 columns...
+            used   (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells    579287   31.0    1203231   64.3    701680   37.5
+Vcells 298585314 2278.1  771428069 5885.6 767775833 5857.7
+            used   (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells    590275   31.6    1203231   64.3    701680   37.5
+Vcells 344401193 2627.6  771428069 5885.6 767775833 5857.7
+Rows: 45,781,211 
+Stima diretta (WB x ln_export x base)...
+*** recursive gc invocation
+*** recursive gc invocation

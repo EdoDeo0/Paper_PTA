@@ -1,3 +1,9 @@
+---
+area: trade/environment
+tags:
+  - area/trade/environment
+---
+
 # The Effectiveness of Environmental Provisions in Regional Trade Agreements
 
 **Abman, Lundberg & Ruta (2024)**

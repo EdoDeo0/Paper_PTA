@@ -1,3 +1,9 @@
+---
+area: trade/firms
+tags:
+  - area/trade/firms
+---
+
 # The Distributional Consequences of Preferential Trade Liberalization: Firm-Level Evidence
 
 **Baccini, Pinto & Weymouth (2017)**

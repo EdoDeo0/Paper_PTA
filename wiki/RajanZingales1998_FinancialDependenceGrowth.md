@@ -53,7 +53,7 @@ The main threat to identification is that US-measured external dependence might 
 
 This is the paper referenced in the Paper_PTA working-paper build script ([New/working_paper_build.py:316](../New/working_paper_build.py:316)) as the template for the project's triple-difference specification: there, the role of "industry × external dependence" is played by "product × green/dirty classification," and the role of "country × financial development" is played by "destination × EP depth," with firm–destination and firm–time fixed effects absorbing the corresponding level effects.
 
-## References (Wikilinks)
+### References (Wikilinks)
 
 [[Jensen1976_TheoryOfTheFirm]]
 [[Mankiw1992_EmpiricsEconomicGrowth]]

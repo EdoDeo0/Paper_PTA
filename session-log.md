@@ -1,5 +1,208 @@
 # Session Log — Paper_PTA
 
+## 2026-07-11 — Q&A identificazione/WCB, fix CLAUDE.md, PDF (Sonnet 5)
+
+- **CLAUDE.md**: chiarito che `$RESEARCH_HOME` è una env var per-dispositivo (non solo
+  `~/Documents/work` stile Mac) — su questa macchina Windows è `C:\Work`. Confermato che
+  `./research-wiki` era già raggiungibile cross-device senza nuova configurazione.
+- **Q&A concettuale estesa** su perché l'identificazione del paper passa da "livello" a
+  "composizione" (le FE fpd+fdt+pt assorbono qualunque effetto di livello collineare con
+  "avere l'accordo"; resta identificato solo lo spostamento relativo del paniere tra
+  categorie di prodotto). Spiegata la "saturation ladder" (`OLS_Ladder_FE.tex`) con i
+  numeri reali: il coefficiente di livello scende da 0,0044** (fpt+pd) a ~0 (fpt+fpd) man
+  mano che si satura — corretto in corso d'opera che la ladder NON raggiunge la saturazione
+  letteraria fdt (quello è un argomento separato, puramente meccanico/di collinearità), e
+  che la citazione Bertrand-Duflo-Mullainathan 2004 è usata in modo generico, non come
+  applicazione letterale. Discussa anche l'ipotesi di aggregazione a livello di settore per
+  cogliere ricomposizione within-industry non visibile a livello impresa (idea plausibile,
+  non implementata). Spiegato WCB (wild cluster bootstrap) con esempio semplice su richiesta
+  esplicita dell'utente.
+- **Tentativo WCB sulla ladder (WB baseline, fpt+fpd)**: fallito — `callr::r(..., timeout =
+  420)` non ha completato entro ~426s (demeaning + `boottest` su pannello 49M righe troppo
+  pesante). Nessun output salvato. **Rimasto irrisolto**: non ho ancora una risposta
+  dell'utente su come procedere (timeout più lungo, pannello collassato più leggero, o
+  documentare come limitazione). Script tentativo in scratchpad, non nel repo.
+- **Generazione PDF del draft** (`New/Paper/draft_paper.tex`): avviata (install `tectonic`
+  via chocolatey, nessun LaTeX locale presente) ma **interrotta dall'utente a metà** —
+  stato install non verificato, nessun PDF prodotto. Non ripresa.
+- Nessuna modifica a file di codice o al paper in questa sessione (solo CLAUDE.md).
+
+## 2026-07-08 — Implementazione piano post-audit (Sonnet 5)
+
+**Eseguito `New/PIANO_SONNET_2026-07-08.md` per intero (sezioni A, B, C).**
+
+- **A (paper, `draft_paper.tex`):** applicate A1-A9. I 3 CRITICAL corretti (magnitudine
+  SD=3,09/2,7%; 223 non 249 + fatto Corea/Svizzera; citazione "Caselli et al." rimossa
+  senza inventare un riferimento — nessun paper del genere trovato su Zotero). WARNING e
+  NOTE risolti: nota permutation, split 17 vs 6, `\label{sec:dirty}`, riconciliazione
+  celle, abstract 45,8M, `headmayer2014`/`larch2025` citati nel corpo. Check statico A9
+  pulito (begin/end 25/25, nessuna cite/ref orfana).
+- **B1 — sotto-indici enforcement completati**: `subindices_collapsed.csv` ora 8/8 (32
+  righe); entrambi nulli, aggiunti al §5.1.
+- **B2 — replica cross-language esatta** (`21_collapsed_replication.do` + export dati):
+  Stata reghdfe vs R fixest sul collassato, coefficienti identici entro 1e-9, N identico
+  (3.681.023, 92.475 singleton). `New/Audit/comparison_collapsed.md`.
+- **B3 — diagnosi East Timor** (`22_check_timor.R`): origine trovata in
+  `Code/Dataset_Creation/1_Build_Final_PTA_EP_Dataset.R:244,316` (lista ASEAN
+  dell'autore include per errore "East Timor", mai stato membro). File originale non
+  toccato. Impatto sulla stima: <1e-6 su tutti i coefficienti WB. Nota aggiunta a
+  tab:treatment. `New/Output/Diagnostics/timor_check.md`.
+- **B4 (opzionale) — non implementata**: rimosso solo il PNG orfano `eventstudy_sunab.png`
+  da `figures/`. **Nota per l'autore**: il gap Sun-Abraham dirty a t=−6 è +0,047 (p=0,001),
+  un pre-trend significativo — da valutare con calma prima di eventualmente aggiungerlo
+  in appendice, perché in tensione con l'affermazione di pre-trend piatti nel §4.2.
+- **C1-C2, C4 — igiene codice**: dead code rimosso in `19_sunab_gap.R`; bug di append
+  (r(601)) corretto in `17_remaining_models.do` e testato in isolamento sui `.dta` già
+  cacheati (output identico). `/bibcheck` manuale (niente file `.bib`, verifica diretta):
+  **entrambe le voci avevano il titolo sbagliato** — `neri2023` mancava "Heterogeneous",
+  `larch2025` aveva un titolo completamente diverso da quello reale e "forthcoming" invece
+  dei dati di pubblicazione veri (vol. 33(5), 1066–1092) — corrette.
+- **C3 — commit NON eseguito**: proposto ma in attesa di conferma esplicita dell'utente
+  (vedi messaggio finale della sessione).
+- **C5**: `New/ROADMAP.md` §7-R6 e questo log aggiornati.
+
+Dettagli completi in `New/ROADMAP.md` §7-R6.
+
+## 2026-07-08 — /audit completo post-bozza (Fable 5) + piano per Sonnet 5
+
+**Obiettivo /goal: audit di tutto il progetto ora che esiste la bozza, con piano
+dettagliato di correzioni da far implementare a Sonnet 5 medium. FATTO.**
+
+- **Report:** `New/Audit/2026-07-08_audit_report.md`. Verdetto: **CONDITIONAL PASS** —
+  nessun errore nelle stime (tutti i numeri del paper tracciano ai CSV; joint F, WCB,
+  permutation, LOO, SA, PPML, within-firm ricontrollati uno per uno; ρ=1,000 e quote
+  descrittive ricalcolati da zero).
+- **3 CRITICAL, tutti nel testo del paper:** (1) claim di magnitudine §4.1 sbagliato
+  (SD vera = 3,09 non ≈6; bound corretto ≈2,7% non 1,4%); (2) "249 country-year" include
+  HK-MO (in-sample = 223) e manca il fatto forte: GreenLib/Standards non-zero solo in 3
+  country-year (Corea 2015, Svizzera 2014-15); (3) "Caselli et al." citato senza bibitem.
+- **WARNING principali:** East Timor codificato come membro ASEAN-Cina (cod. 144, 0,02%
+  delle righe — errore a monte, impatto nullo ma i conteggi del paper ne dipendono); nota
+  permutation imprecisa (design aggregato, b_obs −0,0052); "17 vs 8" → 17 vs 6 (HK-MO
+  esclusi); sotto-indici enforcement promessi in §2.1 ma mai stimati (2 crash).
+- **Piano operativo:** `New/PIANO_SONNET_2026-07-08.md` — A: correzioni LaTeX con
+  stringhe esatte old→new; B: stime leggere (rerun 18 per enforcement, replica esatta
+  R↔Stata del collassato, diagnosi Timor); C: igiene (dead code 19, append bug 17.do,
+  /bibcheck, commit da proporre). **Prossimo passo: `/model sonnet` e implementare il piano.**
+
+## 2026-07-07/08 — Chiusura roadmap + PRIMA BOZZA DEL PAPER
+
+**Obiettivo /goal: completare la roadmap e scrivere la bozza del paper. FATTO.**
+
+**Stime completate (notte, Stata `17_remaining_models.do` + R `18`/`19`/`20`):**
+- **Robustezze full-panel** (reghdfe): con controlli MFN+HHI+AD (green −0,0002 p=0,93),
+  senza ASEAN (−0,0025 p=0,42), con HK+MO (−0,0011 p=0,73), C-overlap WB+TREND (−0,0021
+  p=0,55 / −0,0001 p=0,91), deepshallow TREND (−0,0004 p=0,72). Dirty sempre ~−0,004/−0,005
+  con p asint. 0,02-0,05 → coerente col pattern "marginale asintotico, mai robusto".
+- **Within-firm (R4)**: quota green nel paniere impresa-dest-anno (13,3M oss., FE fd+anno):
+  WB p=0,37; TREND −0,00006 p=0,044 (≈0,03pp per sd — trascurabile). Le imprese NON
+  ribilanciano il paniere.
+- **PPML con zeri (margine estensivo)**: nessuna green trade creation (p=0,73/0,95).
+- **Sotto-indici (18)**: SCOPERTA di design — WB_GreenLiberalization e
+  WB_StandardsNonRegression perfettamente collineari (ρ=1,000) sui 249 country-year
+  trattati; TREND sub-indici correlati 0,5-0,9 → l'eterogeneità per tipo di clausola non
+  è identificabile con ~14 accordi (bundling). Placebo (Soft, RegSpace) correttamente nulli.
+  Enforcement ×2 crashati (allocatore) — non centrali.
+- **Sun-Abraham sul gap dest-anno (19)**: ATT green −0,044 (p=0,24), dirty +0,073 (p=0,28) —
+  la deriva verde a +5 dell'event study TWFE era eterogeneità di coorte, come previsto.
+- Bug fix noto: l'append finale di 17.do fallisce (quoting `\`` in `"$TAB\`f'"`) — CSV
+  assemblato in R (`tripledd_robustness_reghdfe.csv`). WITS API ancora rotta (ritestata).
+
+**PAPER**: prima bozza completa in **`New/Paper/draft_paper.tex`** (inglese, Overleaf-ready;
+figure in `New/Paper/figures/`): abstract, intro, letteratura, dati+descrittive (2 tabelle),
+strategia (eq. principale + inferenza), risultati (main + stabilità 8 design), event study
+(TWFE + SA), anatomia del falso positivo dirty, robustness (bundling, PPML, within-firm,
+campioni), conclusioni, 29 voci bibliografiche embedded. Nessun placeholder residuo.
+
+**Verdetto scientifico finale**: precision null su TUTTI i margini (intensivo, estensivo,
+within-firm, per sotto-indice) — la storia del paper è chiusa e internamente coerente.
+
+**Pending minori**: WITS API (esterno); Shapiro intensità continua (robustezza futura);
+Enforcement sub-indici (2 stime, marginali); driver AMD; reinstall R.
+
+## 2026-07-06 — Fase C completata + PRIME STIME triple-diff (sub-campioni e collassato)
+
+**Diagnosi crash PC (decisiva):** i riavvii Kernel-Power 41 durante i job R **non sono colpa del
+codice né della RAM**: BugCheck 0x9F `DRIVER_POWER_STATE_FAILURE` (driver bloccato allo
+spegnimento schermo dopo 10 min), serie preesistente al progetto (crash identici 02/03 e 11/04,
+prima di qualsiasi job pesante). Mitigato: schermo su "mai spegnere" (fatto dall'utente).
+Da fare prima o poi: aggiornare driver AMD; minidump in C:\WINDOWS\Minidump (serve WinDbg+admin).
+
+**Fase C (audit 2026-07-03) chiusa quasi tutta:** A2 ✅ (03c → R1e: 0 crolli sui codici corretti);
+09 ✅ (covariate giuste: 2/3 bilanciate, `pre_hhi` SMD ~0,18 residuo = limite dichiarato);
+12 ✅ (**CEM v2 definitivamente scartato**: 8 trattati vs 16 del v1, SMD ~0,37 → si tiene v1);
+**05 SBLOCCATO** ✅: il pacchetto `concordance` non ha tabelle ISIC → riscritta la mappatura con
+la tabella ufficiale WITS HS1996↔ISIC3 (scaricata/cachata) + mapping manuale ISIC2→ISIC3 dei 6
+settori Mani-Wheeler → `dirty_goods_hs6.csv` con **1.139 HS6 dirty** (al netto di 17 overlap col
+green, risolti con precedenza alla lista green); A3 ✅ (.fst Windows canonico: 49.245.304 righe,
+MD5 nel ROADMAP §2); 04 ⛔ rimandato: **l'API SDMX WITS è rotta lato server** (HTTP 500 perfino
+sull'esempio della documentazione; 413 sui wildcard) — documentato nello script, riprovare.
+
+**Campagna di stima (la parte importante):**
+- **07 full-panel NON fattibile su questa macchina**: `recursive gc invocation` (allocatore R)
+  con 3 FE alte-dim (fpd+fdt+pt) su 45,8M righe, in OGNI configurazione (callr 12t, callr 4t
+  post-fix schermo, **07b sessione diretta 4t + mem.clean → segfault**). Non è la RAM fisica
+  (61,6GB, 52 liberi). Opzioni future: server, o reghdfe Stata, o pre-demeaning manuale.
+- **13_tripledd_stability.R** (nuovo): triple-diff §7.1 sui sub-campioni. prodHS4 ✅, cem_v1 ✅,
+  deepshallow WB ✅ (recuperato da cache; TREND crashato), overlap saltato (tiene ~100% righe).
+- **14_tripledd_collapsed.R** (nuovo): panel collassato hs6×dest×anno (3,77M celle, cache in
+  `New/Data/Collapsed/`), FE pd+dt+pt pesate — main WB/TREND + **event study** (pre-trend piatti,
+  nessun salto a t=0, deriva verde negativa a +5) + **permutation green p=0,451**.
+- **14b_permutation_dirty.R** (nuovo): permutation sul dirty → segno INVERTITO a livello
+  aggregato (+0,004, p=0,50) vs prodotto (−0,0089, p=0,006) → fragile.
+
+**Esito sostanziale (primi numeri veri del ridisegno §7):**
+- **EP×green = null stabilissimo** attraverso tutti i design (WB ~−0,002 ovunque, mai p<0,4;
+  permutation p=0,45; event study piatto). Il "green market access" cinese non esiste nei dati.
+- **EP×dirty = pista negativa non robusta** (collassato p=0,006 e CEM p=0,056 con segno −, ma
+  permutation aggregata p=0,50 con segno + e TREND nullo). Da inseguire con WCB e full panel,
+  non da vendere come risultato.
+- Direzione paper: al momento siamo sul ramo **precision null** (vs Brandi 2020 / ALR 2024),
+  con l'opzione dirty da chiudere prima del bivio definitivo (ROADMAP §7-R6).
+
+**Sera — WCB e chiusura pista dirty (script 15, 15b):**
+- `15_wcb_collapsed.R`: WCB B=9999 sul collassato. Trucco necessario: feols NON-lean crasha
+  l'allocatore anche a 3,7M celle → **Frisch-Waugh** (fixest::demean pesato + lm sui demeanati,
+  coefficienti identici verificati) e boottest sull'lm. Esito: **WB×green p_wcb=0,88 |
+  WB×dirty p_wcb=0,18 | TREND×green p=0,39 | TREND×dirty p=0,85** — niente sopravvive.
+- `15b_dirty_leaveoneout.R`: leave-one-out sui 23 trattati (un sottoprocesso callr per stima —
+  l'allocatore crasha alla 2ª feols nella stessa sessione; anche così ~50% di crash casuali,
+  11/23 riusciti + baseline nota). Coefficiente stabile ~−0,009 MA **senza la Corea (133) muore**
+  (p=0,21): è uno dei 3 soli switcher within-country, porta da sola la significatività asintotica.
+- **VERDETTO: pista dirty CHIUSA (non robusta). Il progetto è un precision null su entrambi i
+  margini della composizione** — coerente col ramo "null di precisione" di ROADMAP §7-R6, da
+  posizionare vs Brandi 2020 / ALR 2024. Resta solo la conferma full-panel su macchina capiente.
+- Nota macchina: l'instabilità dell'allocatore R (recursive gc invocation) è ormai sistematica
+  su questa installazione (R 4.5.2, pacchetti compilati per 4.5.3): colpisce feols non-lean,
+  seconde stime in sessione, e ~50% dei sottoprocessi. Valutare reinstallazione R aggiornata.
+
+**Notte — FULL PANEL RIUSCITO via Stata/reghdfe (16_tripledd_full.do) + report PDF:**
+- Su idea dell'utente, la specifica principale §7.1 è stata stimata su Stata (StataNow19 SE,
+  batch): **reghdfe riesce dove R/fixest crashava** — rimozione iterativa di 24,3M singleton →
+  21,5M oss. effettive, convergenza in 89 iterazioni. ATTENZIONE lancio batch: da Git Bash il
+  flag `/e` viene manglato in `E:/` (MSYS path conversion) → lanciare da PowerShell.
+- **Risultato WB full panel: EP×green −0,0021 (p=0,55)** — quinto design consecutivo con lo
+  stesso coefficiente ~−0,002; **EP×dirty −0,0040 (p asint. 0,038)**, stessa grandezza del CEM,
+  non robusto per le ragioni già stabilite (WCB/LOO/Corea). **Test congiunto F(4;224)=1,32,
+  p=0,26**: composizione congiuntamente nulla anche con SE asintotici. TREND in coda nello
+  stesso .do (capture: se muore, WB resta salvato). Il precision null è CONFERMATO al livello
+  impresa. Merge Stata coerenti al centesimo con la pipeline R (cross-check indipendente).
+- **Event study v2** (14c): faccette, riferimento t=−1 esplicito, bande 90/95%, bin etichettati —
+  risposta alla review esterna (clustering e "no break at t=0" respinti con argomenti: il
+  cluster è al livello del trattamento; il no-break È la tesi precision-null).
+- **Report PDF completo** per lettori esterni: `New/Output/Status_Report_2026-07.pdf` (13 pagine,
+  generatore `New/status_report_build.py`): progetto da zero, ogni scelta econometrica con
+  riferimento bibliografico, 31 voci di bibliografia, tabelle con i numeri reali e figura.
+
+- **TREND full-panel completato** (stessa run): green −0,0001 (p=0,91), dirty −0,0009 (p=0,15),
+  **F congiunto p=0,71**. Campagna full-panel CHIUSA su entrambi gli indici: il precision null
+  sulla composizione è confermato a tutti i livelli. CSV: `Tables/tripledd_full_reghdfe.csv`.
+
+**Pending:** deepshallow TREND + overlap (ora aggirabili via reghdfe se servono); ritentare API
+WITS (04); Shapiro 2021 intensità continua; PPML aggregato con zeri (§7.4.5); sotto-indici EP
+(GreenMarketAccess, Hard/Soft) come estensione; Sun-Abraham sull'event study; within-firm (R4);
+driver AMD; possibile reinstall R (allocatore).
+
 ## 2026-07-03 — Audit completo (wiki-lint + /audit) + fix Fase A
 
 **Audit generale** su richiesta: wiki OK (5 problemi cosmetici), codice con **4 CRITICAL**,

@@ -1,3 +1,9 @@
+---
+area: trade/environment
+tags:
+  - area/trade/environment
+---
+
 # Do Environmental Provisions in Trade Agreements Make Exports from Developing Countries Greener?
 
 **Brandi, Schwab, Berger & Morin (2020)**

@@ -1,0 +1,14 @@
+here() starts at C:/Work/projects/Paper_PTA
+=== PPML WB ===
+                               coef    pval
+WB_EP_Depth:env_good        0.00142 0.72945
+WB_EP_Depth:dirty_p        -0.02121 0.15988
+env_good:TotalDepth_nonEnv -0.00005 0.84775
+dirty_p:TotalDepth_nonEnv   0.00056 0.50417
+=== PPML TREND ===
+                               coef    pval
+TREND_EP_Count:env_good     0.00012 0.95159
+TREND_EP_Count:dirty_p      0.00278 0.55233
+env_good:TotalDepth_nonEnv  0.00000 0.99159
+dirty_p:TotalDepth_nonEnv  -0.00090 0.37943
+[OK] ppml_extensive.csv
