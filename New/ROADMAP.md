@@ -18,6 +18,11 @@
 > moderni, oggi impossibili a 49,2M righe) sia per **robustezza** della triple-diff §7.1 — con
 > valutazione econometrica completa. Chiude il pending "Fase R-control" aperto nei log dal
 > 2026-06-18. Vedi **§7.4**.
+>
+> ⚠️ **AGGIORNAMENTO 2026-07-12 — REVISIONE PRE-SUBMISSION (§7-R7).** Referee report
+> simulato sulla bozza → 11 task in 4 priorità. Bloccante: il pre-trend Sun-Abraham dirty
+> a t=−6 (R7.1, ex pending B4). Poi riframing a costo zero (R7.2-R7.5), diagnostiche
+> leggere (R7.6-R7.8), stime nuove (R7.9-R7.11). Vedi **§7-R7** in fondo al file.
 
 ---
 
@@ -179,6 +184,13 @@ Caricare **solo le colonne necessarie** con `read_fst(path, columns = c(...))`.
 - `Code/Analysis/CEM.R`, `OLS_CEM.R`, `PPML_CEM.R` — matching e stime sul campione matchato.
 
 ---
+
+> 🗄️ **STORICO — SUPERATO (2026-07-12).** Le §4–§7.4 qui sotto sono la checklist *pre-bozza*:
+> tutti i loro checkpoint sono stati assorbiti nella campagna di stima e nella bozza
+> `New/Paper/draft_paper.tex` (esiti in **§7-R6**). Restano come memoria del percorso, **non
+> sono lavoro aperto**. L'unico checkpoint pre-bozza mai chiuso — le tariffe preferenziali
+> WITS (§4 Fase R2) — è ora un caveat dichiarato nel paper e un task vivo in **§7-R7** (R7.11
+> non lo copre; vedi housekeeping). Le cose da fare vere sono **solo in §7-R7** (in fondo).
 
 ## 4. ROADMAP OPERATIVA
 
@@ -635,3 +647,77 @@ Il disegno è un triplo-differenza; il problema del control group si scompone in
 - [ ] **C3 — commit non ancora proposto/eseguito**: tutta la campagna 2026-07-06/08 e la
       bozza restano non committate (regola di sicurezza: mai commit senza conferma esplicita
       dell'utente).
+
+#### 7-R7 Revisione pre-submission da peer review simulata (Fable 5, 2026-07-12)
+
+Origine: referee report simulato "da top journal" sulla bozza `New/Paper/draft_paper.tex`
+(sessione 2026-07-12). Verdetto simulato: **major revision** — esecuzione giudicata solida
+(replica R↔Stata, LOO, joint F, battery inferenziale già oltre lo standard), le richieste
+vere sono di framing + 4 analisi aggiuntive. Bilancio completo nella conversazione;
+qui i task ordinati per priorità di attacco.
+
+**Priorità 1 — il fatto avverso noto (bloccante per la submission)**
+
+- [ ] **R7.1 (Major 6) — Dinamiche Sun-Abraham complete.** Il gap SA dirty a t=−6 è
+      **+0,047 (p=0,001)** (pending B4 di §7-R6, mai risolto). Indagare PRIMA di ogni
+      altra cosa: scomposizione per coorte (il sospetto è che venga dalle coorti early
+      ASEAN/Cile con pochi anni di pre-periodo), sensibilità alla scelta dei bin/troncamento
+      di `rel_time`, confronto col TWFE §4.2. Esito atteso: o si spiega e si mostra in
+      appendice con discussione, o si capisce che invalida "pre-trend piatti" per il dirty.
+      Script di partenza: `19_sunab_gap.R`. Il paper NON va sottomesso senza questa risposta.
+
+**Priorità 2 — riscrittura a costo zero (un pomeriggio, nessun calcolo)**
+
+- [ ] **R7.2 (Major 1) — Riframing centrale**: da "null generale sulle EP" a "i capitoli
+      dominati da cooperazione (il contenuto modale dei PTA cinesi) non hanno morso
+      commerciale; le clausole con meccanismo esistono in soli 3 country-year e non sono
+      testabili". L'evidenza (ρ=1,00, 3 country-year) è GIÀ nel §5.1: va portata in
+      abstract e introduzione come tesi, non come caveat.
+- [ ] **R7.3 (Major 2) — Brandi come conferma, non contrasto**: l'abstract dice "contrast
+      with brandi2020"; il null è invece ciò che l'eterogeneità di Brandi predice per
+      accordi senza clausole trade-restrictive/liberalizing. Allineare abstract+intro
+      alla conclusione (che già lo dice).
+- [ ] **R7.4 (Major 3, parte testo) — argomento del bias conservativo**: se le EP profonde
+      correlano con preferenze verdi crescenti nella destinazione, il bias su EP×green è
+      POSITIVO → il null osservato è un limite superiore. Aggiungere al §3.2.
+- [ ] **R7.5 (Minori 1-8)**: switcher in tab:treatment (leggere `B_treatment_entry.csv`);
+      nota dagger → testo §4.4; armonizzare "five designs" vs 9 righe tab:stability; frase
+      re-export HK verso terzi (Feenstra-Hanson); caveat TD×green come proxy imperfetto
+      delle concessioni green-specific; frase di qualificazione sull'analogia RZ (green/dirty
+      è policy-defined, non tecnologica); 4 bibitem nuovi: Baghdadi-MartinezZarzoso-Zitouna
+      2013 (JEEM), MacKinnon-Webb 2017 (JAE), Conley-Taber 2011 (REStat), Roodman et al.
+      2019 (Stata Journal).
+
+**Priorità 3 — diagnostiche leggere (Windows, letture singole)**
+
+- [ ] **R7.6 (Major 4) — corr(EP_dt, TotalDepth_dt)** sui 223 country-year trattati
+      in-sample + VIF/partialling-out dell'interazione. Un minuto di calcolo; riportare nel
+      §3.2. Se ρ alto, qualificare "precise null".
+- [ ] **R7.7 (Major 4) — benchmarking formale vs Brandi**: convertire il +17%-della-media
+      green di Brandi nelle nostre unità (per provision o per SD) e mostrarlo contro i CI
+      di full panel e collapsed. Sostituisce l'attuale frase singola sul 2,7%.
+- [ ] **R7.8 (Major 8) — caratterizzazione campione post-singleton**: quota di valore
+      export che sopravvive nei 21,5M, quote green/dirty pre/post rimozione, N prodotti
+      green/dirty nelle celle identificanti (Minor 8). Un solo script diagnostico.
+
+**Priorità 4 — stime nuove (Windows, run pesanti)**
+
+- [ ] **R7.9 (Major 3, parte stima) — robustezza con trend lineari destinazione×green**
+      sul collapsed panel (fattibile; sul full panel solo se regge la RAM).
+- [ ] **R7.10 (Major 5) — permutation sulla specifica collapsed vera** (non sull'aggregato):
+      1.000 riassegnazioni × feols su 3,68M celle ≈ lancio notturno. Se infattibile,
+      documentare perché e difendere l'aggregato nel testo. In ogni caso: citare e discutere
+      MacKinnon-Webb (pochi cluster TRATTATI) e Conley-Taber nel §3.3.
+- [ ] **R7.11 (Major 7) — dirty continuo alla Shapiro (2021)**: scaricare il replication
+      package (link già in `05_dirty_goods.R`, che ha lo stub `shapiro2021_intensity.csv`),
+      concordanza industria→HS6, interazione EP×intensità come robustezza. Rinviabile a
+      dopo la circolazione come working paper, ma un referee vero la chiederà.
+
+**Housekeeping (pre-esistenti, restano aperti)**
+
+- [ ] C3 di §7-R6: commit dell'intera campagna 2026-07-06/12 (in attesa di conferma
+      esplicita dell'utente).
+- [ ] PDF del draft: install tectonic su Windows interrotto a metà (2026-07-11), da
+      completare o compilare su Overleaf.
+- [ ] WCB sulla ladder full-panel: timeout a ~426s (2026-07-11) — decidere se timeout
+      più lungo, collassato, o documentare come limitazione.

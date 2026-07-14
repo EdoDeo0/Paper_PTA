@@ -1,5 +1,23 @@
 # Session Log — Paper_PTA
 
+## 2026-07-12/14 — Peer review simulata, §7-R7, progetto Todoist (Fable/Opus)
+
+- **Referee report simulato** "da top journal" sulla bozza `./New/Paper/draft_paper.tex`:
+  verdetto **major revision** (esecuzione solida; richieste su framing + 4 analisi nuove).
+  Il rilievo bloccante è il pre-trend Sun-Abraham dirty a t=−6 (+0,047, p=0,001, ex pending B4).
+- **Nuova fase §7-R7** aggiunta a `./New/ROADMAP.md`: 11 task in 4 priorità (P1 bloccante,
+  P2 riscrittura a costo zero, P3 diagnostiche leggere, P4 stime nuove) + housekeeping.
+  Banner di rimando in testa al file.
+- **Pulizia ROADMAP**: aggiunto banner "STORICO — SUPERATO" in cima a §4–§7.4 (checklist
+  pre-bozza, tutti i checkpoint assorbiti nella campagna/bozza; NON cancellati). Gli unici
+  da-fare veri restano §7-R7.
+- **Progetto Todoist creato** ("Paper PTA — Revisione pre-submission", vista board): 5 sezioni,
+  15 task principali + 12 sotto-task (R7.1 scomposta in 4, R7.5 negli 8 minori del referee).
+- **Bilancio**: esecuzione blindata (replica R↔Stata, audit, LOO). Prossimo passo obbligato:
+  R7.1 (Sun-Abraham) PRIMA di tutto — il paper non va sottomesso senza quella risposta.
+- **Pending housekeeping invariati**: commit campagna 2026-07-06/12 (mai fatto, attende
+  conferma); PDF draft (tectonic Windows interrotto); WCB ladder full-panel (timeout).
+
 ## 2026-07-11 — Q&A identificazione/WCB, fix CLAUDE.md, PDF (Sonnet 5)
 
 - **CLAUDE.md**: chiarito che `$RESEARCH_HOME` è una env var per-dispositivo (non solo
