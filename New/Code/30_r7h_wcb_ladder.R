@@ -1,0 +1,95 @@
+########################################################################
+###### R7-housekeeping — WCB sulla ladder full-panel (fpt+fpd)       ###
+########################################################################
+
+## Author: Edoardo Vitella
+##
+## Chiude il pending aperto dal 2026-06-11 (bootstrap_summary.csv mai
+## prodotto da 01d: boottest su feols da 49,2M righe impraticabile; il
+## tentativo diretto del 2026-07-11 e' andato in timeout a ~426s).
+## SOLUZIONE: Frisch-Waugh come in 15/27/29 — si demeanano solo le colonne
+## necessarie rispetto a fpt+fpd con fixest::demean(), poi lm() leggero e
+## boottest sull'lm. Stesse 4 spec di 01d (WB/TREND x baseline/controlli),
+## stesso campione (full panel, HK+MO INCLUSI come nella ladder), cluster
+## ~country_code, B=9999. VERIFICA: il coefficiente FW deve coincidere con
+## la colonna corrispondente di OLS_Ladder_FE.tex (stampato a confronto).
+##
+## Un sottoprocesso callr per spec, cache .rds: rilanciabile.
+## Lancio detached (da PowerShell):
+##   Start-Process "C:\Program Files\R\R-4.5.2\bin\Rscript.exe" `
+##     -ArgumentList '"C:\Work\projects\Paper_PTA\New\Code\30_r7h_wcb_ladder.R"' `
+##     -WindowStyle Hidden `
+##     -RedirectStandardOutput "C:\Work\projects\Paper_PTA\New\Output\r7h_wcb_ladder.log" `
+##     -RedirectStandardError  "C:\Work\projects\Paper_PTA\New\Output\r7h_wcb_ladder.err"
+##
+## Output: New/Output/OLS/Bootstrap/bootstrap_summary.csv (finalmente)
+
+library(callr); library(here); library(data.table)
+
+BOOT_DIR <- here("New/Output/OLS/Bootstrap")
+if (!dir.exists(BOOT_DIR)) dir.create(BOOT_DIR, recursive = TRUE)
+
+## attesi dalla ladder pubblicata (OLS_Ladder_FE.tex, riga fpt+fpd)
+ATTESI <- c(wb_baseline = 0.00031, wb_controls = 0.00038,
+            trend_baseline = 0.00027, trend_controls = 0.00028)
+
+run_spec <- function(spec_name) {
+  library(fst); library(fixest); library(data.table); library(fwildclusterboot)
+  threads_fst(1); setFixest_nthreads(2)
+  base <- "C:/Work/projects/Paper_PTA"
+
+  ep_var   <- if (grepl("^wb", spec_name)) "WB_EP_Depth" else "TREND_EP_Count"
+  controls <- grepl("controls$", spec_name)
+  cols <- c("ln_export", ep_var, "fpt", "fpd", "country_code",
+            if (controls) c("tariffs", "ln_hhi_baci"))
+
+  d <- as.data.table(read_fst(
+    file.path(base, "Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst"),
+    columns = cols))
+  d <- na.omit(d)                      # feols scarta gli NA per-spec: idem
+  cat(sprintf("[%s] righe dopo na.omit: %s\n", spec_name, format(nrow(d), big.mark = ",")))
+
+  vars <- c("ln_export", ep_var, if (controls) c("tariffs", "ln_hhi_baci"))
+  X <- as.matrix(fixest::demean(d[, ..vars], f = d[, .(fpt, fpd)]))
+  cc <- d$country_code
+  rm(d); gc()
+
+  df <- as.data.frame(X); rm(X); gc()
+  names(df) <- c("y", "ep", if (controls) c("x1", "x2"))
+  df$country_code <- cc
+  ## NB: per le baseline si tiene l'intercetta (sui dati demeanati e' ~0 e non
+  ## cambia il coefficiente): boottest crasha deterministicamente sui design a
+  ## UNA colonna con 49M righe (verificato 4/4 il 2026-07-15), con 2+ funziona.
+  f <- if (controls) y ~ 0 + ep + x1 + x2 else y ~ ep
+  m_lm <- lm(f, data = df)
+  cat(sprintf("[%s] coef FW ep: %+.6f\n", spec_name, coef(m_lm)[["ep"]]))
+
+  set.seed(42)
+  bt <- boottest(m_lm, param = "ep", clustid = "country_code", B = 9999)
+  data.table(spec = spec_name, coef = coef(m_lm)[["ep"]],
+             p_wcb = bt$p_val, conf_low = bt$conf_int[1],
+             conf_high = bt$conf_int[2], nobs = nrow(df), B = 9999L)
+}
+
+res <- list()
+for (sp in names(ATTESI)) {
+  rds <- file.path(BOOT_DIR, sprintf("fw_boot_%s.rds", sp))
+  if (file.exists(rds)) { res[[sp]] <- readRDS(rds); cat("[cache]", sp, "\n"); next }
+  ok <- FALSE
+  for (tent in 1:4) {
+    cat(sprintf("== %s (tentativo %d) — %s\n", sp, tent, format(Sys.time(), "%H:%M:%S")))
+    r <- tryCatch(callr::r(run_spec, args = list(spec_name = sp), show = TRUE),
+                  error = function(e) { cat("[CRASH]", conditionMessage(e), "\n"); NULL })
+    if (!is.null(r)) {
+      cat(sprintf("   atteso (ladder tex): %+.5f | ottenuto: %+.6f | p_wcb = %.4f\n",
+                  ATTESI[[sp]], r$coef, r$p_wcb))
+      saveRDS(r, rds); res[[sp]] <- r; ok <- TRUE; break
+    }
+  }
+  if (!ok) cat("[SPEC FALLITA dopo 4 tentativi]", sp, "— proseguo\n")
+}
+
+out <- rbindlist(res)
+print(out)
+fwrite(out, file.path(BOOT_DIR, "bootstrap_summary.csv"))
+cat("[OK] bootstrap_summary.csv —", format(Sys.time()), "\n")

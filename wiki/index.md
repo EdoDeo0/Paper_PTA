@@ -17,6 +17,7 @@
 
 - [[Brandi2020_EPsGreenExports]] — First systematic test of EP effects on export composition: trade-restrictive provisions reduce dirty exports, liberal provisions increase green exports from developing countries; effects concentrated in "green" (high-EPI) developing countries
 - [[AbmanLundbergRuta2024_EPsRTAsDeforestation]] — JEEA: forest/biodiversity provisions in RTAs fully offset the deforestation increase that follows RTAs without them; effects concentrated in tropical biodiverse developing countries; closest top-journal precedent for Paper_PTA
+- [[Sauvage2014_StringencyEnvironmentalGoods]] — OECD working paper: more stringent environmental regulation is associated with higher revealed comparative advantage in the 248-product Combined List of Environmental Goods (CLEG); primary source of the project's `env_good` classification (247/248 codes verified matching, 2026-07-15)
 
 ## Environmental Regulations & Trade Competitiveness
 
@@ -35,6 +36,10 @@
 ## Identification Design References
 
 - [[RajanZingales1998_FinancialDependenceGrowth]] — Canonical cross-industry × cross-country interaction design (finance/growth); template for the project's triple-diff: industry/country roles played by product green-dirty / destination EP-depth, with FE absorbing level effects
+
+## Internal Methods Notes
+
+- [[Inference_Battery_Guide]] — Not a paper card: plain-language guide to every econometric test in the draft (WCB, permutation, leave-one-out, Sun-Abraham, saturation ladder), what threat each one addresses, and why the few-treated-clusters regime (23 destinations, ~14 agreements) justifies a battery that standard PTA papers (e.g. Brandi 2020, 680 agreements) don't need
 
 ## School Starting Age & Relative Age Effects
 

@@ -1,0 +1,106 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\replication\r79_desttrends_replication.do 
+
+. *****************************************************************************
+> ***
+. ****** AUDIT 2026-07-15 — Replica Stata di 26_r79_desttrends.R (WB)      ****
+> **
+. *****************************************************************************
+> ***
+. * Replica cross-language della spec R7.9 (trend lineari destinazione x
+. * green/dirty, full-sample) via reghdfe con slopes eterogenei:
+. *   absorb(pd dt pt c.trend_g#i.country_code c.trend_b#i.country_code)
+. * Atteso (R fixest, r79_desttrends.csv):
+. *   wb_green -0.0053700198 | wb_dirty -0.0070168665
+. *   td_green +0.0001844383 | td_dirty +0.0003176243
+. * BATCH da PowerShell (mai Git Bash: il flag /e viene manglato).
+. 
+. clear all
+
+. set more off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. 
+. use "$ROOT\New\Data\Collapsed\panel_trends_for_stata.dta", clear
+
+. 
+. reghdfe y wb_green wb_dirty td_green td_dirty [aw=n], ///
+>     absorb(pd dt pt c.trend_g#i.country_code c.trend_b#i.country_code) ///
+>     vce(cluster country_code) compact
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 113 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 5 HDFE groups                           F(   4,    227) =       1.56
+Statistics robust to heteroskedasticity           Prob > F        =     0.1864
+                                                  R-squared       =     0.8433
+                                                  Adj R-squared   =     0.8190
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5781
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |    -.00537   .0033003    -1.63   0.105    -.0118731    .0011331
+    wb_dirty |  -.0070169   .0038301    -1.83   0.068     -.014564    .0005303
+    td_green |   .0001844   .0001727     1.07   0.287    -.0001558    .0005247
+    td_dirty |   .0003176   .0001789     1.78   0.077    -.0000349    .0006701
+       _cons |   9.265905   .0005082  1.8e+04   0.000     9.264904    9.266907
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------+
+            Absorbed FE | Categories  - Redundant  = Num. Coefs |
+------------------------+---------------------------------------|
+                     pd |    421664      421664           0    *|
+                     dt |      3507        3507           0    *|
+                     pt |     68569           1       68568     |
+ country_code#c.trend_g |       228           4         224    ?|
+ country_code#c.trend_b |       228           7         221    ?|
+----------------------------------------------------------------+
+? = number of redundant parameters may be higher
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. regsave using "$ROOT\New\replication\r79_desttrends_stata.dta", ///
+>     tstat pval ci replace addlabel(model, r79_WB_stata)
+(file C:\Work\projects\Paper_PTA\New\replication\r79_desttrends_stata.dta not
+    found)
+file C:\Work\projects\Paper_PTA\New\replication\r79_desttrends_stata.dta
+    saved
+
+. export delimited "$ROOT\New\replication\r79_desttrends_stata.csv", replace
+(file C:\Work\projects\Paper_PTA\New\replication\r79_desttrends_stata.csv not
+    found)
+file C:\Work\projects\Paper_PTA\New\replication\r79_desttrends_stata.csv saved
+
+. di "[OK] replica r79 WB completata"
+[OK] replica r79 WB completata
+
+. 
+end of do-file

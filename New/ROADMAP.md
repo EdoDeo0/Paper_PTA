@@ -23,6 +23,12 @@
 > simulato sulla bozza → 11 task in 4 priorità. Bloccante: il pre-trend Sun-Abraham dirty
 > a t=−6 (R7.1, ex pending B4). Poi riframing a costo zero (R7.2-R7.5), diagnostiche
 > leggere (R7.6-R7.8), stime nuove (R7.9-R7.11). Vedi **§7-R7** in fondo al file.
+>
+> ⚠️ **AGGIORNAMENTO 2026-07-15 — RIORDINO E RISCRITTURA DI `New/`.** Campagna §7-R7
+> completata. Prossimo cantiere: pulizia, riorganizzazione e riscrittura leggibile di
+> tutti gli script in `New/Code/` con verifica di equivalenza degli output (condizione
+> non negoziabile). Piano dettagliato e autosufficiente per un modello più economico:
+> **`New/PIANO_RIORDINO_2026-07-15.md`**.
 
 ---
 
@@ -658,60 +664,170 @@ qui i task ordinati per priorità di attacco.
 
 **Priorità 1 — il fatto avverso noto (bloccante per la submission)**
 
-- [ ] **R7.1 (Major 6) — Dinamiche Sun-Abraham complete.** Il gap SA dirty a t=−6 è
+- [x] **R7.1 (Major 6) — Dinamiche Sun-Abraham complete.** Il gap SA dirty a t=−6 è
       **+0,047 (p=0,001)** (pending B4 di §7-R6, mai risolto). Indagare PRIMA di ogni
       altra cosa: scomposizione per coorte (il sospetto è che venga dalle coorti early
       ASEAN/Cile con pochi anni di pre-periodo), sensibilità alla scelta dei bin/troncamento
       di `rel_time`, confronto col TWFE §4.2. Esito atteso: o si spiega e si mostra in
       appendice con discussione, o si capisce che invalida "pre-trend piatti" per il dirty.
       Script di partenza: `19_sunab_gap.R`. Il paper NON va sottomesso senza questa risposta.
+      **RISOLTO 2026-07-14** (`23_r71_sunab_diag.R` → `r71_sunab_diag.{csv,md}`): il t=−6
+      NON è un pre-trend. (i) È identificato da sole 8 destinazioni (coorti 2006-15); (ii) i
+      coefficienti coorte-specifici sono contraddittori (Cile −0,49, Perù −0,33, NZ +0,14,
+      Australia +0,10 — segni opposti); (iii) leave-one-cohort-out: senza la sola Australia
+      (coorte 2015) il coefficiente INVERTE segno (−0,051, p=0,11); senza le coorti 2014-15
+      diventa −0,109 — il "+0,047 significativo" è interamente sospeso all'Australia via
+      pesi n_tot; (iv) la VCOV clusterizzata è non-PSD (23 cluster vs ~28 coefficienti):
+      i p-value sui singoli lead sono comunque inaffidabili; (v) l'ATT resta nullo in ogni
+      variante (p 0,27/0,11/0,29) e i lead vicini [−5,−2] sono tutti piatti, come nel TWFE.
+      Testo FATTO (2026-07-14): Appendix A (`app:sunab`) in `draft_paper.tex` con figura
+      `figures/eventstudy_sunab.png` + i 4 argomenti; rimando aggiunto in §4 Dynamics.
 
 **Priorità 2 — riscrittura a costo zero (un pomeriggio, nessun calcolo)**
 
-- [ ] **R7.2 (Major 1) — Riframing centrale**: da "null generale sulle EP" a "i capitoli
+- [x] **R7.2 (Major 1) — Riframing centrale**: da "null generale sulle EP" a "i capitoli
       dominati da cooperazione (il contenuto modale dei PTA cinesi) non hanno morso
       commerciale; le clausole con meccanismo esistono in soli 3 country-year e non sono
       testabili". L'evidenza (ρ=1,00, 3 country-year) è GIÀ nel §5.1: va portata in
       abstract e introduzione come tesi, non come caveat.
-- [ ] **R7.3 (Major 2) — Brandi come conferma, non contrasto**: l'abstract dice "contrast
+      **FATTO 2026-07-14**: abstract riscritto (il "central reading" è ora il bundling,
+      non il null generico); paragrafo finale dell'intro riorganizzato con la tesi in
+      apertura invece che come terzo di tre motivi.
+- [x] **R7.3 (Major 2) — Brandi come conferma, non contrasto**: l'abstract dice "contrast
       with brandi2020"; il null è invece ciò che l'eterogeneità di Brandi predice per
       accordi senza clausole trade-restrictive/liberalizing. Allineare abstract+intro
       alla conclusione (che già lo dice).
-- [ ] **R7.4 (Major 3, parte testo) — argomento del bias conservativo**: se le EP profonde
+      **FATTO 2026-07-14**: abstract e intro ora dicono esplicitamente "consistent with,
+      not a contrast to, Brandi et al." e agganciano anche Abman et al. sulla stessa logica.
+- [x] **R7.4 (Major 3, parte testo) — argomento del bias conservativo**: se le EP profonde
       correlano con preferenze verdi crescenti nella destinazione, il bias su EP×green è
       POSITIVO → il null osservato è un limite superiore. Aggiungere al §3.2.
-- [ ] **R7.5 (Minori 1-8)**: switcher in tab:treatment (leggere `B_treatment_entry.csv`);
+      **FATTO 2026-07-14**: nuovo paragrafo in §3.2 dopo la definizione delle FE.
+- [x] **R7.5 (Minori 1-8)**: switcher in tab:treatment (leggere `B_treatment_entry.csv`);
       nota dagger → testo §4.4; armonizzare "five designs" vs 9 righe tab:stability; frase
       re-export HK verso terzi (Feenstra-Hanson); caveat TD×green come proxy imperfetto
       delle concessioni green-specific; frase di qualificazione sull'analogia RZ (green/dirty
       è policy-defined, non tecnologica); 4 bibitem nuovi: Baghdadi-MartinezZarzoso-Zitouna
       2013 (JEEM), MacKinnon-Webb 2017 (JAE), Conley-Taber 2011 (REStat), Roodman et al.
       2019 (Stata Journal).
+      **FATTO 2026-07-14** (tutti gli 8 punti + 5 bibitem, non 4 — aggiunto anche
+      Feenstra-Hanson 2004 per il punto re-export HK, mancante nell'elenco originale).
+      Switcher identificati via query diretta sul `.fst` (non c'era uno script dedicato):
+      Laos (2002→2005), Singapore (2005→2009), Corea (2002→2015) — nomi aggiunti alla nota
+      di `tab:treatment`. Bibliografia verificata via WebSearch prima di scrivere (non a
+      memoria): **Baghdadi et al. 2013 è in Journal of International Economics, non JEEM
+      come indicato nel piano originale** — corretto alla fonte reale. Conteggio "five
+      designs" era sbagliato: i sub-campioni di controllo enumerati nel testo sono 4
+      (C-prod-HS4, CEM, deep/shallow, common support), non 3 — abstract/intro ora dicono
+      "six designs (... four control-group subsamples)"; §4.2 chiarisce che la tabella ha
+      9 righe totali (6 design + 3 varianti di campione). Rimosso durante la scrittura un
+      rimando in avanti a un risultato non ancora esistente (R7.6, corr(EP,TotalDepth)) che
+      avevo scritto per errore nel paragrafo del proxy TD — corretto prima del check statico.
+      Check statico pulito: begin/end bilanciati, nessun ref/cite orfano, nessun bibitem
+      inutilizzato (script `check_refs2.py`, scratchpad).
 
 **Priorità 3 — diagnostiche leggere (Windows, letture singole)**
 
-- [ ] **R7.6 (Major 4) — corr(EP_dt, TotalDepth_dt)** sui 223 country-year trattati
+- [x] **R7.6 (Major 4) — corr(EP_dt, TotalDepth_dt)** sui 223 country-year trattati
       in-sample + VIF/partialling-out dell'interazione. Un minuto di calcolo; riportare nel
       §3.2. Se ρ alto, qualificare "precise null".
-- [ ] **R7.7 (Major 4) — benchmarking formale vs Brandi**: convertire il +17%-della-media
+      **FATTO 2026-07-14** (`24_r76_collinearity.R` → `r76_collinearity.md`): WB corr
+      grezza 0,88, within (FE paese+anno) **0,95**, VIF 4,4 (≈ il max 4,6 di Brandi);
+      TREND molto meno collineare (0,50/0,85). Dichiarato apertamente in §3.2 con la
+      qualificazione: il coefficiente è identificato dalla quota modesta di variazione EP
+      ortogonale a TD, già prezzata negli SE (ed è il motivo per cui i CI WB sono più
+      larghi dei TREND); che due codings con collinearità così diversa diano lo stesso
+      null è di per sé rassicurante. Disambiguato anche il VIF di §5.1 (sub-indici).
+- [x] **R7.7 (Major 4) — benchmarking formale vs Brandi**: convertire il +17%-della-media
       green di Brandi nelle nostre unità (per provision o per SD) e mostrarlo contro i CI
       di full panel e collapsed. Sostituisce l'attuale frase singola sul 2,7%.
-- [ ] **R7.8 (Major 8) — caratterizzazione campione post-singleton**: quota di valore
+      **FATTO 2026-07-14**: numeri verificati dalla card wiki (Brandi: +0,4pp/provision
+      liberale = +17% della quota green media ⇒ ≈ +0,16 log points nella nostra metrica;
+      dirty: −5% della media ⇒ ≈ −0,05). Nuovo paragrafo in §4.1: il CI full panel
+      [−0,0088, +0,0046] per provision ha upper bound ≈ 1/35 dell'effetto Brandi-equivalente;
+      collapsed [−0,0147, +0,0100]; dirty: anche prendendo il point estimate asintotico
+      (−0,0040) è un ordine di grandezza sotto. Caveat esplicito: le clausole di Brandi
+      sono liberal/restrictive, quasi assenti negli accordi cinesi — che è la tesi stessa.
+      La frase per-SD (−2,7%/+1,4%) conservata in coda.
+- [x] **R7.8 (Major 8) — caratterizzazione campione post-singleton**: quota di valore
       export che sopravvive nei 21,5M, quote green/dirty pre/post rimozione, N prodotti
       green/dirty nelle celle identificanti (Minor 8). Un solo script diagnostico.
+      **FATTO 2026-07-14** (`25_r78_sample_character.R` → `r78_sample_character.md`,
+      replica della rimozione singleton in data.table puro, 8 iterazioni, converge a
+      21.519.537 vs 21.519.511 di reghdfe — differenza di 26 oss., verosimilmente NA su
+      ln_export scartati da reghdfe a monte): sopravvive il **47% delle oss. ma il 70,4%
+      del valore export**; quote green 11,5→11,9% e dirty 7,0→6,4% (composizione stabile);
+      celle fdt trattate identificanti: 26% green / 12% dirty, mediana 1 prodotto
+      green/dirty per cella, 3 prodotti per cella trattata. Testo aggiunto al §3.2
+      (paragrafo implementazione). Check statico finale pulito.
 
 **Priorità 4 — stime nuove (Windows, run pesanti)**
 
-- [ ] **R7.9 (Major 3, parte stima) — robustezza con trend lineari destinazione×green**
+- [x] **R7.9 (Major 3, parte stima) — robustezza con trend lineari destinazione×green**
       sul collapsed panel (fattibile; sul full panel solo se regge la RAM).
-- [ ] **R7.10 (Major 5) — permutation sulla specifica collapsed vera** (non sull'aggregato):
+      **FATTO 2026-07-14, con colpo di scena gestito.** Tre script:
+      `26_r79_desttrends.R` (trend full-sample via varying slopes fixest),
+      `27_r79b_wcb_trends.R` (WCB con Frisch-Waugh esteso agli slopes — demean() con
+      slope.vars/slope.flag; equivalenza FW↔feols verificata a 1e-9),
+      `28_r79c_pretrend_variant.R` (trend stimati SOLO sul pre-periodo e proiettati).
+      Esito: (1) trend full-sample — WB invariato (green p_wcb 0,28, dirty 0,28), ma
+      **TREND×green inverte segno (+0,0018 n.s. → −0,0022) e sopravvive al WCB (p=0,013)**,
+      unico coefficiente del paper a farlo; (2) firma Wolfers 2006 (unit trends che
+      assorbono dinamica post) + coding gemello che non conferma + coerenza con la deriva
+      di coorte già smontata da Sun-Abraham; (3) variante pre-period trends: TUTTO torna
+      nullo (TREND green +0,0074 p_wcb 0,18; WB green +0,0176 p_wcb 0,46; dirty 0,30-0,61)
+      — il segno dipende interamente da come si stimano i trend ⇒ artefatto di specifica.
+      Nuova sottosezione "Destination-specific trends in the composition gap" in §5 del
+      paper con entrambe le varianti e la lettura completa; bibitem `wolfers2006` aggiunto
+      (verificato via WebSearch: AER 96(5), 1802-1820). CSV: `r79_desttrends.csv`,
+      `r79b_wcb_trends.csv`, `r79c_pretrends.csv`. Check statico pulito.
+- [x] **R7.10 (Major 5) — permutation sulla specifica collapsed vera** (non sull'aggregato):
       1.000 riassegnazioni × feols su 3,68M celle ≈ lancio notturno. Se infattibile,
       documentare perché e difendere l'aggregato nel testo. In ogni caso: citare e discutere
       MacKinnon-Webb (pochi cluster TRATTATI) e Conley-Taber nel §3.3.
-- [ ] **R7.11 (Major 7) — dirty continuo alla Shapiro (2021)**: scaricare il replication
+      **IN ESECUZIONE 2026-07-14 ~16:47** (`29_r710_permutation_true.R`, processo detached
+      via PowerShell, log in `New/Output/r710_run.log`). Molto più veloce del previsto
+      (~1-2s/permutazione grazie al Frisch-Waugh incrementale: y e TD demeanati una volta
+      per batch, a ogni draw solo le 2 colonne EP + QR solve): stima ~1,5-2h per 2×1.000
+      draws, non serve la notte. Smoke test superato (identità FW = coefficienti di 14
+      esatti per WB e TREND). Batch da 50 con cache RDS in `Models/r710_batches/`:
+      rilanciabile, riparte dai batch fatti. Schema permutazione identico a 14 (remap dei
+      profili EP tra le 23 trattate, seed 1000+batch). Citazioni MacKinnon-Webb/Conley-Taber
+      in §3.3: GIÀ FATTE in R7.5.
+      **COMPLETATA 2026-07-14 18:24** (1h37m, 40/40 batch senza crash). Risultati
+      (`r710_permutation_summary.csv`, 1.000 draws per indice): WB×green p_perm=**0,897**;
+      WB×dirty p_perm=**0,079** (marginale, coerente con WCB 0,18); TREND×green 0,170;
+      TREND×dirty 0,852. Paper aggiornato: riga permutation di tab:main ora sulla spec
+      esatta (0,90/0,079/0,17/0,85), nota tabella riscritta (l'aggregato con inversione di
+      segno resta come variante), §4.1, §4.4 (tolto il riferimento al dagger, non più in
+      tabella) e intro allineati. Check statico pulito. Draws completi in
+      `r710_permutation_draws.csv`.
+- [x] **R7.11 (Major 7) — dirty continuo alla Shapiro (2021)**: scaricare il replication
       package (link già in `05_dirty_goods.R`, che ha lo stub `shapiro2021_intensity.csv`),
       concordanza industria→HS6, interazione EP×intensità come robustezza. Rinviabile a
       dopo la circolazione come working paper, ma un referee vero la chiederà.
+      **FATTA 2026-07-15** (`31_r711_shapiro_intensity.R`). Package scaricato da Harvard
+      Dataverse (doi:10.7910/DVN/CTUS2E, 4,2MB) in `New/Data/Dirty/shapiro2021/`.
+      **Verifica chiave del crosswalk** (non assunta): il file `combined_exiobase_s.dta`
+      etichetta un sottoinsieme di p-code con nomi leggibili — confermato che il prefisso
+      a 2 cifre = divisione ISIC3/NACE 1.1 (Pulp=p21, Coke oven=p23.1, fertilizzanti=
+      p24.c/d, mattoni/cemento=p26.c/d, preziosi/alluminio/ferro-acciaio=p27.41-45+a),
+      esattamente le divisioni dei 6 settori Mani-Wheeler già usati per `dirty_p` binario.
+      **Bug trovato e risolto in corsa**: il primo sanity check (media CO2 per `dirty_p`
+      da `dirty_goods_hs6.csv`) dava un segno NEGATIVO/contro-intuitivo — causa: quel file
+      ha come popolazione base SOLO l'insieme esteso Mani-Wheeler (include il cemento),
+      quindi confrontava "dirty core" contro "dirty esteso ma non core" (= cemento, il
+      settore più intenso in assoluto), non contro i veri neutri. Rifatto il check contro
+      la tricotomia vera del pannello: dirty 0,00115 > neutral 0,00078 > green 0,00061 —
+      gradiente corretto, copertura crosswalk 90,5% degli HS6. Imputazione HS6 non
+      concordati alla MEDIA campionaria (non zero, che avrebbe distorto sotto il "verde").
+      **Stima** (collapsed panel, EP×intensità standardizzata al posto del binario,
+      Frisch-Waugh+WCB come 27/29/30): WB null (−0,0033, p_wcb 0,52); TREND marginale
+      che si affievolisce sotto WCB (asintotico p=0,012 → p_wcb 0,06) — stesso pattern
+      "significatività asintotica fragile" di tutto il §4.4, non un risultato nuovo o più
+      forte. Nuova sottosezione nel paper ("A continuous dirty margin: CO2 intensity") in
+      §5, dopo i trend destinazione. Output: `New/Data/Dirty/co2_intensity_hs6.csv`,
+      `New/Output/TripleDiff/Tables/r711_shapiro_intensity.csv`.
 
 **Housekeeping (pre-esistenti, restano aperti)**
 
@@ -719,5 +835,41 @@ qui i task ordinati per priorità di attacco.
       esplicita dell'utente).
 - [ ] PDF del draft: install tectonic su Windows interrotto a metà (2026-07-11), da
       completare o compilare su Overleaf.
-- [ ] WCB sulla ladder full-panel: timeout a ~426s (2026-07-11) — decidere se timeout
+- [x] WCB sulla ladder full-panel: timeout a ~426s (2026-07-11) — decidere se timeout
       più lungo, collassato, o documentare come limitazione.
+      **RISOLTO 2026-07-15** (`30_r7h_wcb_ladder.R`, Frisch-Waugh come 15/27/29):
+      `bootstrap_summary.csv` finalmente prodotto (pending dal 2026-06-11). Le 4 spec
+      di 01d (fpt+fpd, WB/TREND × baseline/controlli, B=9999): p_wcb 0,910/0,885/
+      0,644/0,617 — il null della riga più saturata regge anche sotto WCB; frase
+      aggiunta al §3.2. Bug trovato: boottest crasha sui design a 1 colonna con 49M
+      righe → fix con intercetta (innocua su dati demeanati). Dettagli in
+      `correspondence/audit/2026-07-15_audit_report.md`.
+- [x] **Provenienza della lista green (247 HS6) VERIFICATA 2026-07-15**, su richiesta
+      esplicita dell'utente ("da dove viene questa lista?"). La nota del
+      2026-06-25/26 ("l'OCSE ha pubblicato la sua Combined List nel 2014 in HS2012")
+      era un'ipotesi plausibile ma MAI verificata con una fonte primaria. Trovata e
+      confermata: **Sauvage, J. (2014), "The Stringency of Environmental Regulations
+      and Trade in Environmental Goods", OECD Trade and Environment Working Papers
+      No. 2014/03** (DOI 10.1787/5jxrjn7xsnmq-en), Tabella A.1 (Annex 1, pag. 51-56):
+      248 codici HS6 della CLEG. Primo controllo (contro un documento OECD 2005 con
+      lista più vecchia, 132 codici) aveva dato un falso allarme — confrontava con la
+      vintage sbagliata. Estratti programmaticamente tutti e 248 i codici della
+      Tabella A.1 e confrontati uno per uno con `Data/Env_Codes_HS.dta`: **246/248 in
+      comune (99,2%)**, unica differenza `871410` (progetto, aggregato) vs
+      `871411`+`871419` (CLEG 2014, split più granulare) — stessa voce doganale,
+      differenza di granularità, non un errore di classificazione. Citazione
+      `sauvage2014` aggiunta alla bibliografia del paper (§2.2, prima non citata).
+
+**Opzionale (non prioritario, valutare in futuro)**
+
+- [ ] **Aggregazione country-year alla Brandi (2020)**: collassare il pannello a
+      livello destinazione-anno (DIRTSHARE/GREENSHARE come in Brandi) invece di
+      firm-product-destinazione-anno, come ulteriore robustness check di livello di
+      aggregazione (discusso in paper a §5.1, "A second, compounding difference is
+      the level of aggregation..."). Valutato il 2026-07-15: **non è una vera
+      replica di Brandi**, perché Brandi sfrutta variazione cross-country
+      (476.152 flussi bilaterali, molti esportatori), mentre qui c'è un solo
+      esportatore (Cina) — collassare produce solo ~368 country-year (23
+      destinazioni × ~16 anni), meno potenza del disegno attuale, non di più.
+      Nessuna vera potenza aggiuntiva attesa; da fare solo se un referee lo chiede
+      esplicitamente come robustness check aggiuntivo, non come priorità.

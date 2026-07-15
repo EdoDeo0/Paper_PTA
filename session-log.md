@@ -1,5 +1,30 @@
 # Session Log — Paper_PTA
 
+## 2026-07-14/15 — Campagna §7-R7 COMPLETATA + audit (Fable 5/Sonnet 5)
+
+- **§7-R7 chiuso** (tranne stima R7.11, rinviabile): R7.1 (t=−6 SA dirty = artefatto
+  single-cohort/Australia, sign-flip su LOO → Appendix A nel paper); P2 riscrittura;
+  R7.6 (corr EP↔TD within 0,95, dichiarata in §3.2); R7.7 (benchmark Brandi: upper
+  bound ≈1/35 dell'effetto-equivalente); R7.8 (post-singleton: 47% oss ma 70% valore);
+  R7.9 (trend dest×green: TREND −0,0022 p_wcb 0,013 SMONTATO con variante pre-period
+  → +0,0074 n.s.; Wolfers 2006; nuova sottosezione §5); R7.10 (permutation sulla spec
+  VERA, 2×1.000 draws: green 0,90/0,17, dirty 0,079/0,85 → paper aggiornato).
+- **R7.11 ricognizione**: package Shapiro scaricato (`./New/Data/Dirty/shapiro2021/`),
+  43 paesi (Cina inclusa) × 47 industrie EXIOBASE, piano merge in ROADMAP. NB: zip 4MB
+  non coperto da .gitignore.
+- **Nuova §2.3 del paper**: dataset + 4 subsample di controllo (tab:samples).
+- **WCB ladder full-panel RISOLTO** (pending dal 2026-06-11): Frisch-Waugh (script 30)
+  → `bootstrap_summary.csv`: p_wcb 0,91/0,885/0,644/0,617. Bug: boottest crasha su
+  design a 1 colonna/49M righe → fix intercetta. Frase in §3.2.
+- **`/audit` completo** (`./correspondence/audit/2026-07-15_audit_report.md`): **PASS**.
+  Tutti i numeri tracciano; 5 imprecisioni minori corrette; permutation ricalcolata in
+  Python dai draws (esatta); replica Stata di R7.9 (coef a 9 decimali, reghdfe con
+  slopes); 26-obs discrepancy risolta (30 righe ln_export NA).
+- Script nuovi: 23-30 in `./New/Code/`; replica in `./New/replication/`.
+- Lezione (in memoria persistente): MAI editare un .R mentre un Rscript detached lo
+  sta eseguendo (source incrementale → parse corrotto).
+- **Pending**: commit (utente); PDF draft (tectonic); stima R7.11.
+
 ## 2026-07-12/14 — Peer review simulata, §7-R7, progetto Todoist (Fable/Opus)
 
 - **Referee report simulato** "da top journal" sulla bozza `./New/Paper/draft_paper.tex`:
