@@ -1,0 +1,25 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{\textit{WB EP Depth}} & \multicolumn{2}{c}{\textit{TREND EP Count}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Fixed Effects & (1) Baseline & (2) Controls & (3) Baseline & (4) Controls \\
+\midrule
+\textit{fpd} + \textit{t} & 0.00143 & 0.00127 & 0.00055 & 0.00049 \\
+ & (0.00246) & (0.00238) & (0.00048) & (0.00045) \\
+\addlinespace
+\textit{fpt} + \textit{pd} & 0.00439\sym{*} & 0.00415\sym{**} & 0.00114\sym{**} & 0.00120\sym{**} \\
+ & (0.00224) & (0.00209) & (0.00049) & (0.00049) \\
+\addlinespace
+\textit{fpt} + \textit{fpd} & 0.00031 & 0.00038 & 0.00027 & 0.00028 \\
+ & (0.00276) & (0.00278) & (0.00060) & (0.00059) \\
+\addlinespace
+\textit{fpd} + \textit{pt} & -0.00027 & -0.00017 & 0.00031 & 0.00035 \\
+ & (0.00232) & (0.00236) & (0.00043) & (0.00042) \\
+\midrule
+\multicolumn{5}{l}{\footnotesize \textit{Notes}: SEs clustered at destination (\texttt{country\_code}). N varies across specs.} \\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)} \\
+\bottomrule
+\end{tabular}
+}

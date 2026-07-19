@@ -1,0 +1,48 @@
+here() starts at C:/Work/projects/Paper_PTA
+            used   (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells    469222   25.1     887988   47.5    701680   37.5
+Vcells 229716197 1752.6  593908056 4531.2 588849234 4492.6
+iter 1: 45781211 -> 21895728 (drop 23885483)
+iter 2: 21895728 -> 21528561 (drop 367167)
+iter 3: 21528561 -> 21520092 (drop 8469)
+iter 4: 21520092 -> 21519592 (drop 500)
+iter 5: 21519592 -> 21519546 (drop 46)
+iter 6: 21519546 -> 21519538 (drop 8)
+iter 7: 21519538 -> 21519537 (drop 1)
+iter 8: 21519537 -> 21519537 (drop 0)
+            used  (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells    541823  29.0     887988   47.5    887988   47.5
+Vcells 130100990 992.6  364938071 2784.3 685552087 5230.4
+Messaggi di avvertimento:
+1: In prettyNum(.Internal(format(x, trim, digits, nsmall, width, 3L,  :
+  'big.mark' e 'decimal.mark' sono entrambi '.', una possibile fonte di confusione
+2: In prettyNum(.Internal(format(x, trim, digits, nsmall, width, 3L,  :
+  'big.mark' e 'decimal.mark' sono entrambi '.', una possibile fonte di confusione
+3: In prettyNum(.Internal(format(x, trim, digits, nsmall, width, 3L,  :
+  'big.mark' e 'decimal.mark' sono entrambi '.', una possibile fonte di confusione
+4: In prettyNum(.Internal(format(x, trim, digits, nsmall, width, 3L,  :
+  'big.mark' e 'decimal.mark' sono entrambi '.', una possibile fonte di confusione
+5: In prettyNum(.Internal(format(x, trim, digits, nsmall, width, 3L,  :
+  'big.mark' e 'decimal.mark' sono entrambi '.', una possibile fonte di confusione
+# 11 - Caratterizzazione campione post-singleton (full panel, HK+MO esclusi)
+
+## Rimozione iterativa (fpd, fdt, pt) - 8 iterazioni
+
+|                                  | Pre        | Post       | Quota superstite |
+|----------------------------------|-----------:|-----------:|-----------------:|
+| Osservazioni                     | 45.781.211 | 21.519.537 | 47.0% |
+| Valore export (somma)            | --- | --- | 70.4% |
+| Quota green (su N oss.)          | 11.53% | 11.89% | |
+| Quota dirty (su N oss.)          | 7.01% | 6.43% | |
+| Quota green (su valore)          | 11.11% | 10.46% | |
+| Quota dirty (su valore)          | 9.36% | 6.39% | |
+
+## Celle fdt identificanti (trattate, post-rimozione)
+
+- Celle trattate totali: 928.530
+- Celle con >=1 green e >=1 neutro: 241.340 (26.0% delle trattate);
+  prodotti green per cella: media 1.97, mediana 1
+- Celle con >=1 dirty e >=1 neutro: 114.311 (12.3% delle trattate);
+  prodotti dirty per cella: media 2.04, mediana 1
+- Prodotti per cella trattata (tutti): media 4.4, mediana 3
+[OK] 11_descriptives_sample.md

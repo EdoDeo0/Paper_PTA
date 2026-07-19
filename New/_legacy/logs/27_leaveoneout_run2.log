@@ -1,0 +1,56 @@
+here() starts at C:/Work/projects/Paper_PTA
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 11 
+[cache] baseline 
+lista_estesa  : -0.00917 (p=0.0045)
+[CRASH tentativo 1 ] senza_103 
+senza_103     : -0.00877 (p=0.0063)
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+senza_111     : -0.01452 (p=0.0650)
+senza_112     : -0.00898 (p=0.0051)
+[CRASH tentativo 1 ] senza_119 
+[CRASH tentativo 2 ] senza_119 
+senza_119     : -0.00884 (p=0.0059)
+[CRASH tentativo 1 ] senza_122 
+[CRASH tentativo 2 ] senza_122 
+[CRASH tentativo 3 ] senza_122 
+[CRASH tentativo 4 ] senza_122 
+[FALLITO dopo 4 tentativi] senza_122 
+[cache] senza_127 
+senza_129     : -0.00890 (p=0.0054)
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+senza_136     : -0.00908 (p=0.0042)
+[CRASH tentativo 1 ] senza_141 
+[CRASH tentativo 2 ] senza_141 
+[CRASH tentativo 3 ] senza_141 
+[CRASH tentativo 4 ] senza_141 
+[FALLITO dopo 4 tentativi] senza_141 
+[CRASH tentativo 1 ] senza_144 
+[CRASH tentativo 2 ] senza_144 
+senza_144     : -0.00886 (p=0.0056)
+[cache] senza_322 
+senza_331     : -0.01002 (p=0.0006)
+[CRASH tentativo 1 ] senza_412 
+[CRASH tentativo 2 ] senza_412 
+[CRASH tentativo 3 ] senza_412 
+senza_412     : -0.00956 (p=0.0014)
+[cache] senza_415 
+[cache] senza_434 
+[CRASH tentativo 1 ] senza_601 
+[CRASH tentativo 2 ] senza_601 
+[CRASH tentativo 3 ] senza_601 
+[CRASH tentativo 4 ] senza_601 
+[FALLITO dopo 4 tentativi] senza_601 
+[CRASH tentativo 1 ] senza_609 
+[CRASH tentativo 2 ] senza_609 
+[CRASH tentativo 3 ] senza_609 
+senza_609     : -0.00886 (p=0.0065)
+
+=== VERDETTO leave-one-out ===
+Cambi di segno: 0/20 | p>0.10: 2/20
+Significativita' persa togliendo: 132 133 
+[OK] dirty_leaveoneout.csv

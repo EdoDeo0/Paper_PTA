@@ -1,0 +1,61 @@
+
+==================
+WB_NI_fpd_pt
+==================
+
+=== WB_NI_fpd_pt ===
+  [1/6] ln_export ~ WB_EP_Depth | fpd + pt
+  [2/6] ln_export_qua ~ WB_EP_Depth | fpd + pt
+  [3/6] ln_export_value ~ WB_EP_Depth | fpd + pt
+  [4/6] ln_export ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt
+  [5/6] ln_export_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt
+  [6/6] ln_export_value ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt
+[OK] OLS_WB_No_Interaction_fpd_pt.tex 
+[OK] OLS_WB_No_Interaction_fpd_pt.tex — 4.9 min
+
+==================
+WB_Int_fpd_pt
+==================
+
+=== WB_Int_fpd_pt ===
+  [1/6] ln_export ~ WB_EP_Depth * env_good | fpd + pt
+  [2/6] ln_export_qua ~ WB_EP_Depth * env_good | fpd + pt
+  [3/6] ln_export_value ~ WB_EP_Depth * env_good | fpd + pt
+  [4/6] ln_export ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt
+  [5/6] ln_export_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt
+  [6/6] ln_export_value ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt
+[OK] OLS_WB_Interaction_fpd_pt.tex 
+[OK] OLS_WB_Interaction_fpd_pt.tex — 5.4 min
+
+==================
+TREND_NI_fpd_pt
+==================
+
+=== TREND_NI_fpd_pt ===
+  [1/6] ln_export ~ TREND_EP_Count | fpd + pt
+  [2/6] ln_export_qua ~ TREND_EP_Count | fpd + pt
+  [3/6] ln_export_value ~ TREND_EP_Count | fpd + pt
+  [4/6] ln_export ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt
+  [5/6] ln_export_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt
+  [6/6] ln_export_value ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt
+[OK] OLS_TREND_No_Interaction_fpd_pt.tex 
+[OK] OLS_TREND_No_Interaction_fpd_pt.tex — 5.0 min
+
+==================
+TREND_Int_fpd_pt
+==================
+
+=== TREND_Int_fpd_pt ===
+  [1/6] ln_export ~ TREND_EP_Count * env_good | fpd + pt
+  [2/6] ln_export_qua ~ TREND_EP_Count * env_good | fpd + pt
+  [3/6] ln_export_value ~ TREND_EP_Count * env_good | fpd + pt
+  [4/6] ln_export ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt
+  [5/6] ln_export_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt
+  [6/6] ln_export_value ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt
+[OK] OLS_TREND_Interaction_fpd_pt.tex 
+[OK] OLS_TREND_Interaction_fpd_pt.tex — 5.5 min
+
+========================================
+fpd+pt completo. Avvia bootstrap + ladder:
+  Rscript New/Code/01d_bootstrap_ladder.R
+========================================

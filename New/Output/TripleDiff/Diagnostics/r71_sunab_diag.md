@@ -1,4 +1,4 @@
-# R7.1 — Diagnosi Sun-Abraham gap_dirty t=-6
+# 19 (sezione B) - Diagnosi Sun-Abraham gap_dirty t=-6
 
 ## Coorti di entrata (23 trattate, HK+MO esclusi)
 

@@ -1,0 +1,4 @@
+
+=== Wild bootstrap (fpt+fpd, ln_export, B=9999) ===
+  Estimating: ln_export ~ WB_EP_Depth | fpt + fpd
+  Bootstrapping: wb_baseline (B=9999)...

@@ -1,0 +1,14 @@
+here() starts at C:/Work/projects/Paper_PTA
+
+=== Gruppo: prodHS4 ===
+[prodHS4] righe: 9,515,527 | green: 55.5% | dirty: 1.1%
+
+=== Gruppo: deepshallow ===
+[deepshallow] righe: 11,768,985 | green: 12.5% | dirty: 8.7%
+NOTES: 5 observations removed because of NA values (LHS: 5).
+       4,553,377/2,664,467/8,817 fixed-effect singletons were removed (6,506,687 observations).
+
+=== Gruppo: cem_v1 ===
+[cem_v1] righe: 27,752,774 | green: 11.4% | dirty: 7.0%
+
+[OK] tripledd_stability.csv - confrontare EP:env_good (e :dirty_p) tra i gruppi.

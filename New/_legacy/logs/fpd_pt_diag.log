@@ -1,0 +1,25 @@
+here() starts at C:/Work/projects/Paper_PTA
+Caricamento colonne necessarie...
+Righe totali: 49245295
+Gruppi fpd:   26247264
+Gruppi pt:    73359
+NA ln_export: 22
+Righe dopo NA drop: 49245273
+
+--- Test su 0M righe ---
+NOTE: 117,137/789 fixed-effect singletons were removed (117,653 observations).
+  OK — coef WB_EP_Depth: 0.003184
+
+--- Test su 2M righe ---
+NOTE: 483,655/1,920 fixed-effect singletons were removed (484,921 observations).
+  OK — coef WB_EP_Depth: 0.002608
+
+--- Test su 5M righe ---
+NOTE: 1,511,155/2,284 fixed-effect singletons were removed (1,512,660 observations).
+  OK — coef WB_EP_Depth: 0.001764
+
+--- Test su 10M righe ---
+NOTE: 3,440,500/2,666 fixed-effect singletons were removed (3,442,237 observations).
+  OK — coef WB_EP_Depth: 0.000673
+
+=== Fine diagnostica ===

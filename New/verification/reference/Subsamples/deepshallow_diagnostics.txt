@@ -1,0 +1,4 @@
+=== C-deepshallow — diagnostica (checkpoint 7.4.5) ===
+Paesi trattati: 25 | mediana max_EP_depth: 6.00
+Gruppo 'deep' (>= mediana): 17 paesi | 'shallow' (< mediana): 8 paesi
+Righe: 49,245,304 totali -> 15,233,078 nel sub-campione solo-trattati (30.9%)

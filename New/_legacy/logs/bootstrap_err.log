@@ -1,0 +1,36 @@
+here() starts at C:/Work/projects/Paper_PTA
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+Caricamento pacchetto: 'lubridate'
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+    week, yday, year
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+    date, intersect, setdiff, union
+
+NOTES: 22 observations removed because of NA values (LHS: 22).
+       12,529,628/18,247,593 fixed-effect singletons were removed (24,892,644 observations).
+Errore: in boottest.fixest(m, param = spec$param, clustid = ...: 
+'data' is not a valid argument of function boottest.fixest.
+In aggiunta: Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+Esecuzione interrotta

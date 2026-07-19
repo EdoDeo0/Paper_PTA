@@ -1,0 +1,5 @@
+=== C-overlap — diagnostica (checkpoint 7.4.5) ===
+HS6 totali: 5008
+HS6 in overlap_loose (verso trattati E verso qualunque non-trattato): 4931 (98.5%)
+HS6 in overlap_cem (verso trattati E verso controlli CEM): 4848 (96.8%)
+Righe: 49,245,304 totali -> 49,244,934 con overlap_loose (100.0%) -> 49,242,940 con overlap_cem (100.0%)

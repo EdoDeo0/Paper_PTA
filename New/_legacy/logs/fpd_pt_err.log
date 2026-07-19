@@ -1,0 +1,85 @@
+here() starts at C:/Work/projects/Paper_PTA
+
+Caricamento pacchetto: 'lubridate'
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+    week, yday, year
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+    date, intersect, setdiff, union
+
+NOTES: 22 observations removed because of NA values (LHS: 22).
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+NOTES: 337,259 observations removed because of NA values (LHS: 337,259).
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+NOTES: 337,272 observations removed because of NA values (LHS: 337,272).
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+NOTES: 4,865,283 observations removed because of NA values (LHS: 22, RHS: 4,865,264).
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+NOTES: 5,175,979 observations removed because of NA values (LHS: 337,259, RHS: 4,865,264).
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+NOTES: 5,175,992 observations removed because of NA values (LHS: 337,272, RHS: 4,865,264).
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+NOTES: 22 observations removed because of NA values (LHS: 22).
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 337,259 observations removed because of NA values (LHS: 337,259).
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 337,272 observations removed because of NA values (LHS: 337,272).
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 4,865,283 observations removed because of NA values (LHS: 22, RHS: 4,865,264).
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 5,175,979 observations removed because of NA values (LHS: 337,259, RHS: 4,865,264).
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 5,175,992 observations removed because of NA values (LHS: 337,272, RHS: 4,865,264).
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 22 observations removed because of NA values (LHS: 22).
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+NOTES: 337,259 observations removed because of NA values (LHS: 337,259).
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+NOTES: 337,272 observations removed because of NA values (LHS: 337,272).
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+NOTES: 4,865,283 observations removed because of NA values (LHS: 22, RHS: 4,865,264).
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+NOTES: 5,175,979 observations removed because of NA values (LHS: 337,259, RHS: 4,865,264).
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+NOTES: 5,175,992 observations removed because of NA values (LHS: 337,272, RHS: 4,865,264).
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+NOTES: 22 observations removed because of NA values (LHS: 22).
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 337,259 observations removed because of NA values (LHS: 337,259).
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 337,272 observations removed because of NA values (LHS: 337,272).
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 4,865,283 observations removed because of NA values (LHS: 22, RHS: 4,865,264).
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 5,175,979 observations removed because of NA values (LHS: 337,259, RHS: 4,865,264).
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).
+NOTES: 5,175,992 observations removed because of NA values (LHS: 337,272, RHS: 4,865,264).
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+The variable 'env_good' has been removed because of collinearity (see
+$collin.var).

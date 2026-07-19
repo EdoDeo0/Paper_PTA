@@ -1,0 +1,12 @@
+here() starts at C:/Work/projects/Paper_PTA
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+NOTES: 15 observations removed because of NA values (LHS: 15).
+       1,373,083/1,594,289 fixed-effect singletons were removed (2,357,334 observations).
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.

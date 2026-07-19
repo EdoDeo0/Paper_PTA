@@ -1,0 +1,4 @@
+here() starts at C:/Work/projects/Paper_PTA
+Errore in run_section("fpd + pt", tables = c("OLS_WB_No_Interaction_fpd_pt.tex",  : 
+  Errore in fpd + pt: ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed
+Esecuzione interrotta

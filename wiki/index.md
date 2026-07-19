@@ -19,6 +19,11 @@
 - [[AbmanLundbergRuta2024_EPsRTAsDeforestation]] — JEEA: forest/biodiversity provisions in RTAs fully offset the deforestation increase that follows RTAs without them; effects concentrated in tropical biodiverse developing countries; closest top-journal precedent for Paper_PTA
 - [[Sauvage2014_StringencyEnvironmentalGoods]] — OECD working paper: more stringent environmental regulation is associated with higher revealed comparative advantage in the 248-product Combined List of Environmental Goods (CLEG); primary source of the project's `env_good` classification (247/248 codes verified matching, 2026-07-15)
 
+## Dirty-Goods Classification (Sources)
+
+- [[ManiWheeler1998_PollutionHavensDirtyIndustry]] — Descriptive cross-region evidence (1960–1995) that pollution-haven formation is self-limiting, not durable; source (with Low & Yeats 1992) of the project's `dirty_p` core 5-sector classification (pulp&paper/chemicals/petroleum/iron&steel/non-ferrous metals)
+- [[LowYeats1992_DoDirtyIndustriesMigrate]] — RCA-based evidence (1965–1988) of a shift in dirty-industry comparative advantage toward developing countries, while OECD countries remained the largest absolute exporters; card built from secondary sources, primary text not directly verified (see sourcing note in the card)
+
 ## Environmental Regulations & Trade Competitiveness
 
 - [[DechezleprêtreSato2017_EnvRegCompetitiveness]] — Literature review: environmental regulations have small but real pollution-haven effects on trade and investment; robust positive effects on green innovation; Porter hypothesis receives partial support

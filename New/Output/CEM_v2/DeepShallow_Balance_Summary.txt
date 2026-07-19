@@ -1,4 +1,4 @@
-=== Bilanciamento macro/commerciale: deep vs shallow (script 11) ===
+=== Bilanciamento macro/commerciale: deep vs shallow (07 sezione C) ===
      group     n gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000
     <char> <int>           <num>          <num>           <num>
 1: shallow     8         5.07372       7.919877       12.621250

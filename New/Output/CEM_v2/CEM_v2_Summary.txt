@@ -20,4 +20,4 @@ baseline.group  1     -none-     character
 tab             6     -none-     numeric  
 k2k             1     -none-     logical  
 w              95     -none-     numeric  
-L1 imbalance — before: 0.8767 | after: 0.8095
+L1 imbalance - before: 0.8767 | after: 0.8095

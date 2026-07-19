@@ -1,0 +1,36 @@
+here() starts at C:/Work/projects/Paper_PTA
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 24 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[CRASH tentativo 1 ] senza_122 
+[CRASH tentativo 2 ] senza_122 
+[CRASH tentativo 3 ] senza_122 
+senza_122     : -0.00984 (p=0.0013)
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+[cache] senza_144 
+[cache] senza_322 
+[cache] senza_331 
+[cache] senza_412 
+[cache] senza_415 
+[cache] senza_434 
+[cache] senza_601 
+[cache] senza_609 
+
+=== VERDETTO leave-one-out ===
+Cambi di segno: 0/23 | p>0.10: 3/23
+Significativita' persa togliendo: 132 133 601 
+[OK] dirty_leaveoneout.csv

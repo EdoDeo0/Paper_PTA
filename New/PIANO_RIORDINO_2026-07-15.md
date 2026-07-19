@@ -273,6 +273,43 @@ Gli script `.do` restano in Stata (motivo documentato: fixest crasha sul full pa
 7. Aggiornare `ROADMAP.md` con una voce che documenta il riordino e la nuova mappa.
 8. Report finale all'utente con `equivalence_log.md` completo.
 
+## 7. CORREZIONI SCOPERTE IN FASE DI IMPLEMENTAZIONE (2026-07-16)
+
+- **`14b_permutation_dirty.R` non è del tutto ridondante.** Il piano originale
+  (§1.1) lo classificava come superato da `29_r710_permutation_true.R` e lo
+  spostava in `_legacy/`. In realtà il suo output (`permutation_collapsed_dirty.csv`,
+  b_obs=+0.00406, p=0.497) è citato ESPLICITAMENTE nel paper
+  (`draft_paper.tex` §"The dirty margin", "+0.004, p=0.50") come termine di
+  paragone "coarser" contro la permutazione esatta di 29/r710 (p=0.079) — le
+  due permutazioni misurano cose diverse (aggregato dest-year-product-type
+  grezzo vs. spec esatta) e sono entrambe parte della narrativa del paper.
+  **Correzione al piano**: quando si riscrive `18_permutation_inference.R`
+  (Fase 3D, sostituisce `29_r710_permutation_true.R`), includere ANCHE la
+  permutazione grezza aggregata (dirty, e per coerenza anche green — la
+  logica gemella e' nella sezione 4 di `14_tripledd_collapsed.R`) come
+  sezione separata e chiaramente etichettata "coarse aggregate permutation",
+  con lo stesso `set.seed(42)`. Verificare contro ENTRAMBI i riferimenti
+  congelati: `permutation_collapsed.csv` (green, da 14 sezione 4) e
+  `permutation_collapsed_dirty.csv` (dirty, da 14b, gia' in `_legacy/code/`
+  ma consultabile per il porting).
+- **La struttura `Output/Tables|Figures|Diagnostics|Cache` piatta (§2.1) NON e' stata
+  applicata.** Mantenuta invece la struttura nidificata gia' esistente
+  (`Output/TripleDiff/{Tables,Diagnostics,Models}`, `Output/OLS/{Tables,Bootstrap,
+  Models_Output}`, `Output/Diagnostics/`, `Output/CEM_v2/`, `Output/Subsamples/`):
+  verificato che il paper non fa `\input`/`\includegraphics` diretto da questi path
+  (solo da `Paper/figures/*.png`, copie manuali), quindi appiattire non era
+  necessario per la compilazione, ma avrebbe costretto a riscrivere i path in OGNI
+  script gia' verificato (01-12) e negli script `.do` Stata con cache per-modello su
+  disco (rischio di invalidare cache costose da ore senza beneficio reale). La
+  struttura nidificata per tipo di analisi (TripleDiff/OLS) e' gia' chiara.
+  Il resto della Fase 2 (cartelle `Code/stata/`, `verification/`, rinomina
+  `Data/Classifications`+`External`) resta come da piano originale.
+- **`06_collapsed_panel.R` estrae SOLO la sezione 1 di `14_tripledd_collapsed.R`**
+  (costruzione + cache di `panel_pdt_collapsed.fst`). Le sezioni 2-3 (stima
+  principale + event study TWFE) restano in `12_main_tripledd_collapsed.R`
+  come da piano originale. La sezione 4 (permutazione grezza) si sposta in
+  `18_permutation_inference.R` come sopra, NON in 12.
+
 ## 6. COSA NON FARE (anti-pattern già visti in questo progetto)
 
 - Non usare heredoc Bash (`cat << EOF`) per scrivere script R con regex/backslash:
