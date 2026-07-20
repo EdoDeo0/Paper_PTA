@@ -17,7 +17,7 @@
 ## (WB/TREND x baseline/controlli), stesso campione (full panel, HK+MO
 ## INCLUSI come nella ladder), cluster ~country_code, B=9999. VERIFICA: il
 ## coefficiente FW deve coincidere con la colonna corrispondente di
-## OLS_Ladder_FE.tex (15) - stampato a confronto ad ogni spec.
+## OLS_Ladder_FE.tex (19) - stampato a confronto ad ogni spec.
 ##
 ## NOTA (bug gia' risolto, preservato qui): boottest crashava
 ## deterministicamente sui design a UNA colonna con 49M righe (verificato

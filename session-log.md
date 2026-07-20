@@ -1,5 +1,42 @@
 # Session Log — Paper_PTA
 
+## 2026-07-20 — Review collaborativa `New/Code/` + integrazione dataset-creation nel reorg (Sonnet 5)
+
+- **Scope expansion su richiesta utente**: integrati come nuovi script numerati 01-04 gli
+  step di creazione dataset finora fuori da `New/` (`Code/WB/WB_Dataset_Conversion.do`,
+  `Code/Dataset_Creation/1-3_Build_Final_PTA_EP_Dataset.*`) — tutto il resto rinumerato +4
+  (ora 31 script totali). Step 0 reso portabile Win/Mac/Unix con macro `local` condizionali
+  su `c(os)` (pattern fornito dall'utente). Step 1-3 rieseguiti e verificati byte-per-byte
+  contro reference: Stata `cf _all using ... verbose` per il `.dta` da 49,2M righe (0 diff su
+  120 var), MD5+`fst::metadata_fst()` per `.fst` (identico), diff colonna-per-colonna in R
+  per CSV piccoli.
+- **Bug reale trovato e corretto** in `02_build_dataset_wb_trend_merge.R` (Step 1): mancava
+  la rimozione delle 7 righe "intestazione di capitolo" del questionario WB — produceva 7
+  colonne-provision spurie (tutte NA/zero, impatto nullo sulle stime ma fedeltà non completa).
+- **Difetto di design corretto (root-cause, non band-aid)**: `07_co2_intensity.R` dipendeva
+  da `panel_pdt_collapsed.fst` creato da uno script successivo (10). L'utente ha
+  esplicitamente respinto un fix con `file.exists()` chiedendo di eliminare la dipendenza
+  se possibile — risolto facendo leggere alla sezione 3 il pannello grezzo di root (stessa
+  identica popolazione HS6, disponibile prima) invece di quello collassato.
+- **Review riga per riga completata**: `05_green_goods_hs1996.R` (commento sezione 4 esteso),
+  `06_dirty_goods.R` (aggiunta bibliografia Mani-Wheeler 1998/Low-Yeats 1992 + nota ATTENZIONE
+  sul disallineamento cemento/petrolio vs Tabella 1 originale), `07_co2_intensity.R` (link
+  Shapiro Harvard Dataverse aggiunto; chiarito all'utente che il sanity-check Mani-Wheeler è
+  buono-ma-non-perfetto, che le righe 70-74 assegnano intensità a HS6 non fanno la concordanza
+  ISIC↔HS6, e che il secondo sanity-check NON è un problema — l'utente aveva letto la colonna
+  `n`/conteggio invece di `media_co2`, che è già ordinata dirty>neutral>green come atteso).
+- **Wiki**: nuove paper card `ManiWheeler1998_PollutionHavensDirtyIndustry` e
+  `LowYeats1992_DoDirtyIndustriesMigrate` (locale + globale), sezione dedicata in `wiki/index.md`.
+- **Correzioni documentazione**: `New/verification/equivalence_log.md` (rinumerazione +4 di
+  tutte le 27 righe pre-esistenti + 4 righe nuove per Step 0-4; un doppio-shift accidentale
+  risolto con `git checkout --` + singola passata corretta) e `New/ROADMAP.md` (riferimenti
+  a numeri di script obsoleti corretti, blocco di aggiornamento aggiunto in cima).
+- **Lezione riconfermata** (già in memoria persistente): mai band-aid difensivi
+  (`file.exists()`) su un problema di ordinamento/dipendenza — va eliminata la dipendenza o
+  fissato l'ordine reale, altrimenti non si risolve nulla.
+- **Pending**: continuare la review script-by-script da `08_total_depth.R` in poi; nessun
+  commit fatto (l'utente non l'ha richiesto).
+
 ## 2026-07-14/15 — Campagna §7-R7 COMPLETATA + audit (Fable 5/Sonnet 5)
 
 - **§7-R7 chiuso** (tranne stima R7.11, rinviabile): R7.1 (t=−6 SA dirty = artefatto

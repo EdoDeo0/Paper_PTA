@@ -18,7 +18,7 @@
 ## Input:  Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst (root)
 ##         New/Data/Classifications/green_codes_hs1996.csv (da 01)
 ##         New/Data/Classifications/dirty_goods_hs6.csv (da 02)
-## Output: New/Output/Diagnostics/11_descriptives_sample.md
+## Output: New/Output/Diagnostics/15_descriptives_sample.md
 
 ## --- Setup ---------------------------------------------------------------
 rm(list = ls())
@@ -125,5 +125,5 @@ mean(idd$n_dirty), as.integer(median(idd$n_dirty)),
 mean(cells[treated == TRUE, n_prod]), as.integer(median(cells[treated == TRUE, n_prod])))
 
 cat(out)
-writeLines(out, file.path(OUT_DIR, "11_descriptives_sample.md"))
-cat("[OK] 11_descriptives_sample.md\n")
+writeLines(out, file.path(OUT_DIR, "15_descriptives_sample.md"))
+cat("[OK] 15_descriptives_sample.md\n")

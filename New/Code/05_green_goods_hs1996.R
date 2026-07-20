@@ -24,7 +24,7 @@
 ## Input:  Data/Env_Codes_HS.dta (root  , sola lettura)
 ##         Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst (root, sola lettura)
 ## Output: New/Data/Classifications/green_codes_hs1996.csv
-##         New/Output/Diagnostics/01_green_goods_hs1996.md
+##         New/Output/Diagnostics/05_green_goods_hs1996.md
 
 ## --- Setup ---------------------------------------------------------------
 rm(list = ls())
@@ -180,5 +180,5 @@ report <- c(
   "HS1996 uniforme). I codici con vintage_note diverso da 'HS1996 (concordanza univoca)'",
   "sono una fonte di rumore residuo gia' nota e quantificata qui."
 )
-writeLines(report, file.path(OUT_DIAG, "01_green_goods_hs1996.md"))
-cat("[OK] Report:", file.path(OUT_DIAG, "01_green_goods_hs1996.md"), "\n")
+writeLines(report, file.path(OUT_DIAG, "05_green_goods_hs1996.md"))
+cat("[OK] Report:", file.path(OUT_DIAG, "05_green_goods_hs1996.md"), "\n")

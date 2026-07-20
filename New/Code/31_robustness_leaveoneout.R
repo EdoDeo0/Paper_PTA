@@ -6,10 +6,10 @@
 ##              stime, una per sottoprocesso callr).
 ##
 ## Cosa fa: EP(WB)xdirty e' negativo e asintoticamente significativo sul
-## panel collassato (12). Con ~25 paesi trattati un singolo paese puo'
+## panel collassato (16). Con ~25 paesi trattati un singolo paese puo'
 ## generare da solo il risultato. Due controlli:
 ##   1. LEAVE-ONE-OUT: ristima escludendo un paese trattato alla volta.
-##   2. LISTA ESTESA: dirty_ext (con cemento/minerali non metallici, 02) al
+##   2. LISTA ESTESA: dirty_ext (con cemento/minerali non metallici, 06) al
 ##      posto del core Mani-Wheeler.
 ##
 ## NOTA TECNICA: su questa macchina l'allocatore R crasha spesso alla

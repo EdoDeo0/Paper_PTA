@@ -10,14 +10,14 @@
 * configurazione. reghdfe usa Mata (gestione memoria diversa) e rimuove i
 * singleton in modo ITERATIVO prima di stimare - tentativo credibile.
 *
-* SPECIFICA (identica al panel collassato, 12_main_tripledd_collapsed.R):
+* SPECIFICA (identica al panel collassato, 16_main_tripledd_collapsed.R):
 *   ln_export ~ EP:green + EP:dirty + TotalDepth:green + TotalDepth:dirty
 *             | fpd + fdt + pt,  vce(cluster country_code), HK+MO esclusi
-* env_good RICALCOLATO dalla lista green HS1996 (01), dirty dalla lista (02),
-* TotalDepth dallo script (04) - NON le colonne stantie del .dta originale.
+* env_good RICALCOLATO dalla lista green HS1996 (05), dirty dalla lista (06),
+* TotalDepth dallo script (08) - NON le colonne stantie del .dta originale.
 *
 * ESECUZIONE BATCH (da PowerShell, non Git Bash: il flag /e viene manglato):
-*   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\13_main_tripledd_fullpanel.do"
+*   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\17_main_tripledd_fullpanel.do"
 * Output: New/Output/TripleDiff/Tables/tripledd_full_reghdfe.csv (+ .log accanto)
 
 clear all

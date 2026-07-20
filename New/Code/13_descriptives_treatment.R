@@ -19,7 +19,7 @@
 ##         Data/Country_Codes_Custom_Data.csv (root)
 ## Output: New/Output/Diagnostics/{A_hs6_stability,B_treatment_map,
 ##         B_treatment_entry,C_hkmo_share_by_year,E_firms_by_year}.csv
-##         New/Output/Diagnostics/09_descriptives_treatment.md
+##         New/Output/Diagnostics/13_descriptives_treatment.md
 
 ## --- Setup ---------------------------------------------------------------
 rm(list = ls())
@@ -139,5 +139,5 @@ report <- c(report, "## E. Imprese",
           100 * f_yr[year == 2005, entry_rate]), "")
 
 ## --- Salvataggio report -----------------------------------------------------
-writeLines(report, file.path(OUT_DIR, "09_descriptives_treatment.md"))
-cat("\n[OK] Report scritto in", file.path(OUT_DIR, "09_descriptives_treatment.md"), "\n")
+writeLines(report, file.path(OUT_DIR, "13_descriptives_treatment.md"))
+cat("\n[OK] Report scritto in", file.path(OUT_DIR, "13_descriptives_treatment.md"), "\n")

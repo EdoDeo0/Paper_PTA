@@ -3,12 +3,12 @@
 ########################################################
 ## Author: Edoardo Vitella
 ## Sostituisce: 31_r711_shapiro_intensity.R (SOLO la parte di stima, righe
-##              96-167; la costruzione del crosswalk e' in 03_co2_intensity.R).
+##              96-167; la costruzione del crosswalk e' in 07_co2_intensity.R).
 ##              Run: ~2-3 min.
 ##
 ## Cosa fa: sostituisce il dirty_p binario (02, 6 settori Mani-Wheeler) con
-## la misura CONTINUA di intensita' CO2 per HS6 costruita in 03, standardizzata
-## (z-score), e ristima la spec principale (12) con EP x intensita' al posto
+## la misura CONTINUA di intensita' CO2 per HS6 costruita in 07, standardizzata
+## (z-score), e ristima la spec principale (16) con EP x intensita' al posto
 ## di EP x dirty_p. Copertura crosswalk ~90,5% degli HS6 del pannello; i non
 ## concordati (WITS non li mappa a nessun ISIC3) prendono la MEDIA campionaria
 ## (z=0, "intensita' media", assunzione neutra) invece di 0 (che sarebbe

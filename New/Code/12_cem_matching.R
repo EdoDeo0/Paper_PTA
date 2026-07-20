@@ -20,8 +20,8 @@
 ## mantenendo le tre covariate originali per comparabilita' con il CEM v1.
 ## E' un complemento, non un sostituto: non risolve il vincolo di fondo
 ## (pochi cluster trattati) e non sostituisce i sotto-campioni di prodotto
-## (07). In piu': un secondo matching SOLO tra i partner-PTA, deep vs
-## shallow (07 sezione C), per verificare che i due gruppi siano
+## (11). In piu': un secondo matching SOLO tra i partner-PTA, deep vs
+## shallow (11 sezione C), per verificare che i due gruppi siano
 ## comparabili anche su queste covariate macro/commerciali.
 ##
 ## VERDETTO (gia' raggiunto, confermato qui): CEM v2 SCARTATO. Con
@@ -224,7 +224,7 @@ if (file.exists(DEEPSHALLOW_FILE)) {
              file.path(OUT_CEM, "DeepShallow_Balance_Summary.txt"))
   cat("\n=== Bilanciamento deep vs shallow (diagnostico) ===\n"); print(bal)
 } else {
-  cat("[INFO] flag_deepshallow.csv non trovato (eseguire prima 07_subsamples.R) - sezione C saltata.\n")
+  cat("[INFO] flag_deepshallow.csv non trovato (eseguire prima 11_subsamples.R) - sezione C saltata.\n")
 }
 
 cat("\n=== DONE CEM v2 ===\n")

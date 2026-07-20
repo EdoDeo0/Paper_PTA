@@ -8,7 +8,7 @@
 ## Cosa fa: l'indice aggregato EP somma clausole CON meccanismo commerciale
 ## (green market access, standard) e clausole SENZA (cooperazione,
 ## regulatory space): il null aggregato potrebbe nascondere un canale
-## specifico che "morde". Qui la triple-diff del collassato (12) viene
+## specifico che "morde". Qui la triple-diff del collassato (16) viene
 ## ristimata sostituendo all'indice aggregato un sotto-indice alla volta:
 ##   - meccanismo GREEN:  WB_GreenLiberalization, TREND_GreenMarketAccess
 ##   - meccanismo DIRTY:  WB_StandardsNonRegression

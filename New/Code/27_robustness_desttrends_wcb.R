@@ -5,7 +5,7 @@
 ## Sostituisce: 27_r79b_wcb_trends.R. Run: ~3-5 min (nessuna cache: B=9999
 ##              boottest x 2 termini x 2 indici, ogni volta).
 ##
-## Cosa fa: la spec con trend (22) produce TREND×green con segno invertito
+## Cosa fa: la spec con trend (26) produce TREND×green con segno invertito
 ## rispetto alla baseline e p ASINTOTICO marginale. Il paper insegna che le
 ## stelle asintotiche con 23 cluster trattati vanno bootstrappate prima di
 ## crederci. Stesso trucco di 16 (Frisch-Waugh + boottest), esteso ai

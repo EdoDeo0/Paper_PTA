@@ -29,7 +29,7 @@
 ## sottoprocesso callr (RAM liberata tra un blocco e l'altro).
 ##
 ## WCB: il wild cluster bootstrap sulla ladder (fpt+fpd, B=9999) e' in
-## 17_wcb_ladder_fullpanel.R (Fase D) via Frisch-Waugh, NON qui - il
+## 21_wcb_ladder_fullpanel.R (Fase D) via Frisch-Waugh, NON qui - il
 ## bootstrap diretto originariamente tentato in questo script (01d) non ha
 ## mai prodotto un bootstrap_summary.csv affidabile sul full panel ed e'
 ## stato superato dall'approccio Frisch-Waugh.
@@ -229,4 +229,4 @@ if (file.exists(ladder_path)) {
 }
 
 cat("\n=== Fase 15 completata ===\n")
-cat("  Il WCB sulla ladder (fpt+fpd) e' in 17_wcb_ladder_fullpanel.R.\n")
+cat("  Il WCB sulla ladder (fpt+fpd) e' in 21_wcb_ladder_fullpanel.R.\n")

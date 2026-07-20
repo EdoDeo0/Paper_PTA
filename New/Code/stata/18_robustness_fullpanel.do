@@ -12,11 +12,11 @@
 *   D. WB e TREND sul sub-campione C-overlap (common support)
 *   E. TREND su C-deepshallow (solo partner PTA)
 *   G. WITHIN-FIRM: quota green nel paniere impresa-dest-anno su EP
-* Stessa igiene di 13: env_good da lista HS1996 (01), dirty da (02), TotalDepth da (04).
+* Stessa igiene di 17: env_good da lista HS1996 (05), dirty da (06), TotalDepth da (08).
 *
 * BATCH (da PowerShell, non Git Bash: il flag /e viene manglato):
 *   Start-Process "C:\Program Files\StataNow19\StataSE-64.exe" `
-*     -ArgumentList '/e','do','"C:\Work\projects\Paper_PTA\New\Code\stata\14_robustness_fullpanel.do"' `
+*     -ArgumentList '/e','do','"C:\Work\projects\Paper_PTA\New\Code\stata\18_robustness_fullpanel.do"' `
 *     -WorkingDirectory 'C:\Work\projects\Paper_PTA\New\Output' -Wait
 
 clear all

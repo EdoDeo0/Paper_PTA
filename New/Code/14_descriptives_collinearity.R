@@ -14,7 +14,7 @@
 ##
 ## Input:  Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst (root)
 ##         New/Data/TotalDepth/wb_totaldepth_country_year.csv (da 04)
-## Output: New/Output/Diagnostics/10_descriptives_collinearity.md
+## Output: New/Output/Diagnostics/14_descriptives_collinearity.md
 
 ## --- Setup ---------------------------------------------------------------
 rm(list = ls())
@@ -84,5 +84,5 @@ interagita con green/dirty.
 ", nrow(trat), r_raw_wb, r_raw_tr, r_win_wb, r_win_tr, vif_wb, vif_tr)
 
 cat(out)
-writeLines(out, file.path(OUT_DIR, "10_descriptives_collinearity.md"))
-cat("[OK] 10_descriptives_collinearity.md\n")
+writeLines(out, file.path(OUT_DIR, "14_descriptives_collinearity.md"))
+cat("[OK] 14_descriptives_collinearity.md\n")

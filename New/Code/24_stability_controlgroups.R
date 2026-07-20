@@ -7,8 +7,8 @@
 ##              rifà quella stima su un sotto-campione da 5,3M righe con FE
 ##              fpd+fdt+pt, a rischio crash come da nota storica).
 ##
-## Cosa fa: rilancia la triple-diff (stessa formula del full panel, 13/14
-## Stata) sui sotto-campioni di controllo (07, 08) e produce la tabella di
+## Cosa fa: rilancia la triple-diff (stessa formula del full panel, 17/18
+## Stata) sui sotto-campioni di controllo (11, 12) e produce la tabella di
 ## stabilita' del coefficiente d'interazione (stile Caselli et al., Table 5):
 ##   prodHS4    -> solo gli HS6 con in_HS4match=TRUE (non-verdi nella stessa HS4 di un verde)
 ##   deepshallow-> solo partner PTA (group deep/shallow): identificazione within-treated

@@ -53,26 +53,58 @@
 > - **Scoperte fatte durante il riordino** (non note prima):
 >   1. **Bug di corruzione silenziosa**: un sottoprocesso `callr` crashato e
 >      ritentato può, raramente, restituire un coefficiente completamente
->      sbagliato SENZA sollevare errore (osservato 2 volte, su script 12 e
->      27). Mitigato con una verifica Frisch-Waugh interna (`stop()` se il
->      risultato non è auto-consistente). Salvato come memoria di progetto
->      permanente (`fixest-callr-crash-can-silently-corrupt-results`).
+>      sbagliato SENZA sollevare errore (osservato 2 volte, su script 16 e
+>      31 — numerazione aggiornata al 2026-07-20, vedi sotto). Mitigato con
+>      una verifica Frisch-Waugh interna (`stop()` se il risultato non è
+>      auto-consistente). Salvato come memoria di progetto permanente
+>      (`fixest-callr-crash-can-silently-corrupt-results`).
 >   2. **`fwildclusterboot` p_wcb non esattamente riproducibile**: il
 >      generatore `dqrng` interno non è seedato da `set.seed()` di R base;
 >      i p-value del wild cluster bootstrap oscillano di ~1pp anche tra run
 >      identiche (coefficienti restano deterministici). Non è un bug del
 >      nostro codice. Salvato come memoria di progetto permanente.
 >   3. **Il riferimento pre-riordino stesso era incompleto in due punti**,
->      mai notato prima: `deepshallow×TREND` (script 20/13) non aveva mai
->      una cache valida, e il leave-one-out dirty (script 27/15b) aveva solo
+>      mai notato prima: `deepshallow×TREND` (script 24/13) non aveva mai
+>      una cache valida, e il leave-one-out dirty (script 31/15b) aveva solo
 >      11/27 righe. Il riordino li ha completati per la prima volta — i
 >      nuovi numeri coincidono esattamente con quelli già citati nel paper
 >      (deep-vs-shallow TREND -0.0004/p=0.72; leave-one-out Corea -0.0059/p=0.21).
-> - **Non eseguito** (deliberatamente): `05_wits_tariffs.R` (API WITS-TRAINS
+> - **Non eseguito** (deliberatamente): `09_wits_tariffs.R` (API WITS-TRAINS
 >   nota come irraggiungibile, mai completata con successo, nessun output
 >   da riprodurre).
 > - Nessun commit fatto da Claude (regola del progetto): tutte le modifiche
 >   sono nel working tree, pronte per la review dell'utente.
+>
+> ✅ **AGGIORNAMENTO 2026-07-20 — INCLUSA LA COSTRUZIONE DEL DATASET DI BASE
+> (script 01-04), RINUMERAZIONE COMPLETA.** Il riordino del 07-16 partiva da
+> `final_dataset_pta_env_indices_compressed.fst` come input già dato: la
+> pipeline che lo COSTRUISCE (`Code/WB/WB_Dataset_Conversion.do` +
+> `Code/Dataset_Creation/1-3_Build_Final_PTA_EP_Dataset.*`, alla radice del
+> progetto, mai portata dentro `New/`) non era coperta. Su richiesta esplicita
+> dell'utente, integrata come nuovi **01-04**, e tutti i 27 script già
+> verificati **rinumerati di +4** (i vecchi 01-27 sono ora 05-31; mappatura
+> completa in `New/verification/equivalence_log.md`, ogni riferimento
+> incrociato nei commenti aggiornato di conseguenza).
+> - **01** (`stata/01_wb_dataset_conversion.do`): path Mac hardcoded
+>   sostituiti con macro `local` condizionali sul sistema operativo
+>   (Windows/MacOSX/Unix) - su richiesta esplicita dell'utente, che ha
+>   fornito un esempio di pattern da un altro suo progetto. Verificato
+>   IDENTICO (403 variabili confrontate una per una).
+> - **02** (`02_build_dataset_wb_trend_merge.R`): **bug trovato e corretto**
+>   durante la riscrittura (una riga di rimozione di 7 righe-intestazione
+>   di capitolo omessa per errore, causava 7 colonne spurie quasi-vuote
+>   `WB_51..WB_57`) - non alterava alcun numero del paper (le colonne spurie
+>   erano NA/0, ininfluenti su `WB_EP_Depth`), ma corretto per fedeltà
+>   completa. Dopo il fix: IDENTICO su tutti i valori dei 2 file consumati
+>   a valle.
+> - **03** (`stata/03_build_dataset_customs_merge.do`, lo step più pesante:
+>   merge sui 49,2M righe di dati doganali grezzi, 13,4 GB): path assoluti
+>   sostituiti con `global`. Verificato IDENTICO via `cf _all using` di
+>   Stata (nessuna differenza su 120 variabili x 49.245.304 righe).
+> - **04** (`04_build_dataset_convert_fst.R`, conversione a `.fst`, 18 GB
+>   in input): IDENTICO **MD5 byte-per-byte** al riferimento.
+> - Nessuna regressione: il dataset finale (`.fst` da cui partono tutti gli
+>   script 05+) è verificato bit-per-bit identico a quello già in uso.
 
 ---
 

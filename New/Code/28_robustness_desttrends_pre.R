@@ -4,8 +4,8 @@
 ## Author: Edoardo Vitella
 ## Sostituisce: 28_r79c_pretrend_variant.R. Run: ~3-5 min (nessuna cache).
 ##
-## Cosa fa: la spec con trend su tutto il campione (22) inverte il segno di
-## TREND×green ed e' significativa sotto WCB (23) - firma della
+## Cosa fa: la spec con trend su tutto il campione (26) inverte il segno di
+## TREND×green ed e' significativa sotto WCB (27) - firma della
 ## contaminazione alla Wolfers (2006): il trend stimato sull'intero periodo
 ## puo' assorbire dinamica POST-trattamento invece di essere un puro
 ## controllo di tendenza pre-esistente. Variante pulita per costruzione: i

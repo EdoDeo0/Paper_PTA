@@ -7,7 +7,7 @@
 ## Cosa fa: se le destinazioni con EP profonde hanno una domanda green in
 ## crescita PRE-esistente, il confronto green-vs-neutro potrebbe raccogliere
 ## quella deriva invece dell'effetto del PTA. Qui si aggiunge alla spec
-## collassata (12) un trend lineare destinazione-specifico del gap green e
+## collassata (16) un trend lineare destinazione-specifico del gap green e
 ## dirty:
 ##   y ~ EP:g + EP:b + TD:g + TD:b | pd + dt + pt + country[t*g] + country[t*b]
 ## Se il null regge anche al netto di derive lineari per-destinazione, il

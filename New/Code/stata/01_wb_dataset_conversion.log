@@ -1,0 +1,86 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do 01_wb_dataset_conversion.do 
+
+. ********************************************************************
+. *** 01 - Conversione dataset WB da xlsx a dta (Step 0 della pipeline)
+. ********************************************************************
+. * Author: Edoardo Vitella
+. * Sostituisce: Code/WB/WB_Dataset_Conversion.do (path Mac hardcoded,
+. *              ormai storici/inesistenti su questa macchina).
+. *
+. * Cosa fa: converte in formato .dta il foglio "STATA" del database WB sui
+. * PTA (fonte: https://datatopics.worldbank.org/dta/table.html), scaricato
+. * come xlsx e gia' presente in Data/WB/. E' l'unico step della pipeline di
+. * costruzione dataset che NON usa `here` (Stata non ce l'ha): i percorsi
+. * sono risolti con macro locali condizionali sul sistema operativo, cosi'
+. * lo stesso script gira senza modifiche su Windows/Mac/Unix - basta che il
+. * file sorgente sia nel posto giusto per quella macchina.
+. *
+. * NOTA: il file sorgente (xlsx) e il file di destinazione (.dta) sono
+. * entrambi gia' presenti in Data/WB/ su questa macchina (verificato
+. * 2026-07-16: il foglio "STATA" esiste nell'xlsx). Rieseguire questo script
+. * rigenera semplicemente lo stesso .dta da capo - utile solo se l'xlsx
+. * originale viene aggiornato dal WB.
+. *
+. * Input:  Data/WB/DTA 2.0 - Vertical Content (v2).xlsx (foglio "STATA")
+. * Output: Data/WB/WB_DTA.dta
+. 
+. clear all
+
+. set more off
+
+. 
+. * --- Percorsi radice per sistema operativo ---------------------------------
+. * Adattare il ramo del proprio OS se il progetto vive altrove sulla macchina.
+. if c(os) == "Windows" {
+.     local root "C:\Work\projects\Paper_PTA"
+. }
+
+. if c(os) == "MacOSX" {
+.     local root "~/Documents/work/projects/Paper_PTA"
+. }
+
+. if c(os) == "Unix" {
+.     local root "~/work/projects/Paper_PTA"
+. }
+
+. 
+. local wb_dir "`root'/Data/WB"
+
+. 
+. * --- Conversione -------------------------------------------------------
+. import excel "`wb_dir'/DTA 2.0 - Vertical Content (v2).xlsx", sheet("STATA") 
+> firstrow clear
+(403 vars, 1,071 obs)
+
+. save "`wb_dir'/WB_DTA.dta", replace
+file C:\Work\projects\Paper_PTA/Data/WB/WB_DTA.dta saved
+
+. 
+. display "[OK] WB_DTA.dta salvato in `wb_dir'"
+[OK] WB_DTA.dta salvato in C:\Work\projects\Paper_PTA/Data/WB
+
+. 
+end of do-file

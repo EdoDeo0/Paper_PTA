@@ -4,18 +4,19 @@
 ## Author: Edoardo Vitella
 ## Sostituisce: 31_r711_shapiro_intensity.R (SOLO la parte di costruzione
 ##              del crosswalk; la parte di stima e' in
-##              25_robustness_co2intensity.R). Run: ~1 min.
+##              29_robustness_co2intensity.R). Run: ~1 min.
 ##
 ## Cosa fa: costruisce una misura CONTINUA di intensita' CO2 per HS6, da
-## affiancare al dirty_p binario (02), usando il replication package di
-## Shapiro (QJE 2021), specifico per la CINA.
+## affiancare al dirty_p binario (06), usando il replication package di
+## Shapiro (QJE 2021), specifico per la CINA. Replication package scaricato
+## da Harvard Dataverse: https://doi.org/10.7910/DVN/CTUS2E
 ##
 ## Il file combined_exiobase.dta ha industry_code (es. "p24.c") senza chiave
 ## diretta verso un nome leggibile. Verifica fatta a mano contro 2_t1.do del
 ## replication package (Tabella 1 del paper, ordinata per co2_rate_total):
 ## il prefisso a 2 cifre del p-code = divisione ISIC Rev.3/NACE Rev.1.1 a 2
 ## cifre - le stesse 5 divisioni (21,23,24,26,27) gia' usate per dirty_p
-## binario in 02_dirty_goods.R. Crosswalk quindi al livello DIVISIONE (2
+## binario in 06_dirty_goods.R. Crosswalk quindi al livello DIVISIONE (2
 ## cifre): HS6 -> ISIC3 4-cifre (concordanza WITS, come in 02) -> divisione
 ## 2 cifre -> media semplice tra i p-code Cina della stessa divisione
 ## (nessun peso disponibile per i sotto-codici EXIOBASE nel package).
@@ -23,7 +24,8 @@
 ## Input:  New/Data/External/shapiro2021/extracted/dataSTATA/combined/combined_exiobase.dta
 ##         New/Data/Classifications/wits_h1_i3/*.CSV
 ##         New/Data/Classifications/green_codes_hs1996.csv, dirty_goods_hs6.csv
-##         New/Data/Collapsed/panel_pdt_collapsed.fst (solo per il cross-check diagnostico)
+##         Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst (root -
+##           SOLO la colonna hs6, per il cross-check diagnostico di sezione 3)
 ## Output: New/Data/Classifications/co2_intensity_hs6.csv (hs6_int, co2_total, co2_direct)
 
 ## --- Setup ---------------------------------------------------------------
@@ -39,7 +41,11 @@ CLASS_DIR  <- here("New/Data/Classifications")
 SHAPIRO    <- here("New/Data/External/shapiro2021/extracted/dataSTATA/combined/combined_exiobase.dta")
 WITS_CSV   <- list.files(file.path(CLASS_DIR, "wits_h1_i3"), pattern = "\\.CSV$",
                          full.names = TRUE, ignore.case = TRUE)[1]
-COLLAPSED_FST <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+# popolazione HS6 realmente scambiati: presa dal pannello GREZZO (root, da 04),
+# non da quello collassato (10) - stesso identico insieme di codici, ma cosi'
+# questo script non dipende dall'ordine di esecuzione rispetto a 10 (10 e' un
+# aggregato del pannello grezzo, non una fonte alternativa di codici HS6)
+RAW_FST <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
 
 ## --- Sezione 1: intensita' CO2 per divisione ISIC, Cina (da EXIOBASE) -----
 shp <- as.data.table(read_dta(SHAPIRO))
@@ -78,7 +84,7 @@ cat("[OK] co2_intensity_hs6.csv\n")
 # SOLO l'estesa Mani-Wheeler, quindi confrontarlo direttamente confronterebbe
 # "dirty core" contro "dirty esteso ma non core" (= cemento), non contro i
 # veri neutri (produceva un falso segnale negativo nel test preliminare)
-pop <- unique(as.data.table(read_fst(COLLAPSED_FST, columns = "hs6")))
+pop <- unique(as.data.table(read_fst(RAW_FST, columns = "hs6")))
 green_lookup <- fread(file.path(CLASS_DIR, "green_codes_hs1996.csv"),
                       colClasses = list(character = "hs6_final"))
 green_hs <- unique(as.integer(green_lookup$hs6_final))

@@ -23,7 +23,7 @@
 ## C) C-deepshallow: resta SOLO tra le destinazioni gia' trattate,
 ##    confrontando accordi con clausole ambientali "deep" (>= mediana)
 ##    contro "shallow" (< mediana). Elimina la selezione trattato-vs-mai-
-##    trattato; da usare sempre insieme al controllo TotalDepth_nonEnv (04).
+##    trattato; da usare sempre insieme al controllo TotalDepth_nonEnv (08).
 ##
 ## Input:  Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst (root)
 ##         New/Data/Classifications/green_codes_hs1996.csv (da 01)
@@ -44,7 +44,7 @@ OUT_DATA   <- here("New/Data/Subsamples")
 OUT_DIAG   <- here("New/Output/Subsamples")
 dir.create(OUT_DATA, recursive = TRUE, showWarnings = FALSE)
 dir.create(OUT_DIAG, recursive = TRUE, showWarnings = FALSE)
-stopifnot("Lista green HS1996 non trovata - eseguire prima 01_green_goods_hs1996.R" = file.exists(GREEN_FILE))
+stopifnot("Lista green HS1996 non trovata - eseguire prima 05_green_goods_hs1996.R" = file.exists(GREEN_FILE))
 
 ## ===========================================================================
 ## Sezione A: C-prod-HS4
@@ -58,7 +58,7 @@ build_prodHS4 <- function(data_file, green_file, out_data, out_diag) {
   d <- as.data.table(read_fst(data_file, columns = c("hs6")))
   d[, hs6_str := sprintf("%06d", as.integer(hs6))]
 
-  # env_good RICALCOLATO contro la lista green tradotta a HS1996 (01), non
+  # env_good RICALCOLATO contro la lista green tradotta a HS1996 (05), non
   # la colonna env_good gia' presente nel .fst (quella confronta HS2012
   # nativo contro hs6 trattato come HS1996, senza concordanza di vintage)
   green <- fread(green_file, colClasses = list(character = "hs6_final"))

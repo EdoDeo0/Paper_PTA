@@ -3,15 +3,15 @@
 ########################################################
 ## Author: Edoardo Vitella
 ## Sostituisce: sezioni 2-3 di 14_tripledd_collapsed.R (la costruzione del
-##              panel e' ora in 06_collapsed_panel.R; la sezione 4,
-##              permutazione grezza, e' in 18_permutation_inference.R).
+##              panel e' ora in 10_collapsed_panel.R; la sezione 4,
+##              permutazione grezza, e' in 22_permutation_inference.R).
 ##              Run: ~1 min (il panel collassato e' gia' cachato).
 ##
 ## Cosa fa: la triple-diff full-panel (Stata, fpd+fdt+pt su 45,8M righe)
 ## crasha l'allocatore R su questa macchina - tre FE ad alta dimensionalita'
 ## insieme non ci stanno. La domanda di COMPOSIZIONE non richiede pero' il
 ## livello impresa: sul panel collassato a cella hs6 x destinazione x anno
-## (06) si stima l'analogo diretto:
+## (10) si stima l'analogo diretto:
 ##
 ##   y_pdt ~ EP:green_p + EP:dirty_p + TotalDepth:green_p + TotalDepth:dirty_p
 ##         | pd + dt + pt,   weights = n. imprese-osservazioni, cluster ~dest
@@ -59,7 +59,7 @@ DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 OUT_DIR    <- here("New/Output/TripleDiff")
 dir.create(file.path(OUT_DIR, "Tables"), recursive = TRUE, showWarnings = FALSE)
 dir.create(file.path(OUT_DIR, "Diagnostics"), recursive = TRUE, showWarnings = FALSE)
-stopifnot("panel_pdt_collapsed.fst non trovato - eseguire prima 06_collapsed_panel.R" = file.exists(CACHE_FST))
+stopifnot("panel_pdt_collapsed.fst non trovato - eseguire prima 10_collapsed_panel.R" = file.exists(CACHE_FST))
 
 ## --- Caricamento dati ----------------------------------------------------
 cell <- as.data.table(read_fst(CACHE_FST))

@@ -12,14 +12,14 @@
 ##        341 pulp & paper | 351 industrial chemicals | 353 petroleum refining
 ##        371 iron & steel | 372 non-ferrous metals | [esteso: 369 cemento]
 ##   2. ESTESA: core + settore 369 (altri minerali non metallici, cemento).
-## La vintage HS1996 e' coerente con la lista green (01) e con il pannello
+## La vintage HS1996 e' coerente con la lista green (05) e con il pannello
 ## (trattato come HS1996 uniforme, vedi audit R1).
 ## Dove i due elenchi si sovrappongono, la lista green ha precedenza (e'
 ## curata a mano prodotto per prodotto; il dirty e' una classificazione
 ## settoriale grezza) - i codici in overlap escono dal dirty.
 ##
 ## Input:  New/Data/Classifications/wits_h1_i3/*.CSV (tabella WITS, gia' cachata)
-##         New/Data/Classifications/green_codes_hs1996.csv (da 01_green_goods_hs1996.R)
+##         New/Data/Classifications/green_codes_hs1996.csv (da 05_green_goods_hs1996.R)
 ## Output: New/Data/Classifications/dirty_goods_hs6.csv (hs6, dirty, dirty_ext)
 ##         New/Data/Classifications/overlap_dirty_green_CHECK.csv (se overlap > 0)
 ##
@@ -111,7 +111,7 @@ if (file.exists(GREEN_FILE)) {
                 length(overlap), nrow(dt)))
   }
 } else {
-  cat("[WARN] green_codes_hs1996.csv non trovato (eseguire prima 01_green_goods_hs1996.R) - overlap check saltato.\n")
+  cat("[WARN] green_codes_hs1996.csv non trovato (eseguire prima 05_green_goods_hs1996.R) - overlap check saltato.\n")
 }
 
 ## --- Sezione 4: salvataggio -----------------------------------------------
