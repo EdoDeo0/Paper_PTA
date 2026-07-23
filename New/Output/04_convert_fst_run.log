@@ -1,0 +1,32 @@
+here() starts at C:/Work/projects/Paper_PTA
+Lettura .dta e prima scrittura .fst (non compressa)...
+          used (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells  639521 34.2    1995463   106.6    1995463   106.6
+Vcells 1262314  9.7 6811688019 51969.1 5911676142 45102.6
+          used (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells  641940 34.3    1995463   106.6    1995463   106.6
+Vcells 1268202  9.7 5449350416 41575.3 5911676142 45102.6
+Rilettura completa per conversione a intero...
+          colonna na_before na_after differenza
+pd             pd         9        9          0
+fpd           fpd         9        9          0
+fpt           fpt         9        9          0
+fdt           fdt         9        9          0
+dt             dt         9        9          0
+ft             ft         9        9          0
+pt             pt         9        9          0
+p4d           p4d         9        9          0
+p4dt         p4dt         9        9          0
+p2dt         p2dt         9        9          0
+fp2dt       fp2dt         9        9          0
+pdt           pdt         9        9          0
+year         year         9        9          0
+hs2           hs2         9        9          0
+hs4           hs4         9        9          0
+hs6           hs6         0        0          0
+bec           bec        10       10          0
+oecd         oecd         9        9          0
+useu         useu         9        9          0
+dev           dev         9        9          0
+env_good env_good         0        0          0
+[OK] final_dataset_pta_env_indices_compressed.fst salvato correttamente.

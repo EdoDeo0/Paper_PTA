@@ -1,0 +1,44 @@
+here() starts at C:/Work/projects/Paper_PTA
+Stima CO2 continuo (tentativo 1)...
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+[WB] asintotico: ep_co2 -0.00255 (p=0.656) | ep_green -0.00503 (p=0.476)
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+  [WB] ep_green: p_wcb = 0.5477
+  [WB] ep_co2: p_wcb = 0.7092
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+[TREND] asintotico: ep_co2 -0.00131 (p=0.012) | ep_green +0.00089 (p=0.605)
+  [TREND] ep_green: p_wcb = 0.6700
+  [TREND] ep_co2: p_wcb = 0.0613
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+    treat     term          coef       se_asy     p_asy      p_wcb     conf_low
+   <char>   <char>         <num>        <num>     <num>      <num>        <num>
+1:     WB ep_green -0.0050254923 0.0070449327 0.4763628 0.54765477 -0.032999830
+2:     WB   ep_co2 -0.0025496924 0.0057106240 0.6556745 0.70917092 -0.054701726
+3:  TREND ep_green  0.0008897001 0.0017185896 0.6051773 0.66996700 -0.002608542
+4:  TREND   ep_co2 -0.0013137681 0.0005164994 0.0116366 0.06130613 -0.002688612
+      conf_high    nobs     B
+          <num>   <int> <int>
+1: 2.958821e-02 3681023  9999
+2: 8.770560e-03 3681023  9999
+3: 5.833591e-03 3681023  9999
+4: 8.128372e-05 3681023  9999
+[OK] r711_shapiro_intensity.csv

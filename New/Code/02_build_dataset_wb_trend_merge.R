@@ -273,8 +273,19 @@ df_merged <- df_merged %>%
 # nomi variabili originali WB/TREND sono lunghi e poco maneggevoli: creo una
 # mappatura a codici corti (WB_1, WB_2, ... e X-codes TREND gia' compatti)
 # PRIMA di rinominare, cosi' la mappatura resta leggibile
+#
+# Env_Laws_AC/Env_Laws_LE ESCLUSI dalla mappatura WB_* (e quindi da WB_EP_Depth
+# sotto): sono indicatori "horizontal content" (giudizio aggregato a livello di
+# INTERA AREA Environmental Laws - copertura/enforceability), non "vertical
+# content" (singola disposizione) come le altre 48 colonne WB_1..WB_48. Sommarli
+# nel conteggio delle disposizioni mescola due strumenti di misura diversi della
+# stessa fonte WB (Hofmann-Osnago-Ruta 2017 "Horizontal Depth" vs Monteiro-
+# Trachtman 2020 in Mattoo-Rocha-Ruta "Handbook of Deep Trade Agreements") - la
+# WB stessa li tratta come proxy separate, mai sommate in un solo indice.
+# Restano nel dataset con il nome originale (non rinominati WB_*) per un
+# eventuale uso futuro come variabili a parte.
 wb_vars_start <- 2
-wb_vars_end <- which(names(df_merged) == "Env_Laws_LE")
+wb_vars_end <- which(names(df_merged) == "Env_Laws_AC") - 1
 wb_variable_mapping <- data.frame(
   original_name = names(df_merged)[wb_vars_start:wb_vars_end],
   short_code = paste0("WB_", seq_len(wb_vars_end - wb_vars_start + 1)),
@@ -353,6 +364,9 @@ df_merged <- df_merged %>%
   mutate(TREND_BiodivForestsFisheries = rowSums(select(., X1_07_02, X1_07_03, matches("^X11_")), na.rm = TRUE))
 
 ## --- D2: indici solo-WB -----------------------------------------------------
+# WB_EP_Depth = somma delle sole 48 disposizioni "vertical content" (WB_1..
+# WB_48). Env_Laws_AC/Env_Laws_LE (horizontal content, giudizio di area) NON
+# ci sono dentro - vedi nota alla mappatura WB_* sopra.
 df_merged <- df_merged %>%
   mutate(
     WB_EP_Depth = rowSums(select(., starts_with("WB_")), na.rm = TRUE),

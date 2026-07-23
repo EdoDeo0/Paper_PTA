@@ -1,0 +1,26 @@
+here() starts at C:/Work/projects/Paper_PTA
+Stima WB_EP_Depth (tentativo 1)...
+NOTE: 89,440/83/3,856/4 fixed-effect singletons were removed (92,475 observations).
+Stima TREND_EP_Count (tentativo 1)...
+NOTE: 89,440/83/3,856/4 fixed-effect singletons were removed (92,475 observations).
+            treat                       term          coef           se
+           <char>                     <char>         <num>        <num>
+1:    WB_EP_Depth       WB_EP_Depth:env_good -0.0050755561 0.0038422148
+2:    WB_EP_Depth        WB_EP_Depth:dirty_p -0.0082437374 0.0045506959
+3:    WB_EP_Depth env_good:TotalDepth_nonEnv  0.0001557978 0.0001695165
+4:    WB_EP_Depth  dirty_p:TotalDepth_nonEnv  0.0003401630 0.0001846175
+5: TREND_EP_Count    TREND_EP_Count:env_good -0.0021552162 0.0006691010
+6: TREND_EP_Count     TREND_EP_Count:dirty_p -0.0013677332 0.0012390540
+7: TREND_EP_Count env_good:TotalDepth_nonEnv  0.0002830709 0.0001532082
+8: TREND_EP_Count  dirty_p:TotalDepth_nonEnv  0.0002266301 0.0002561327
+          pval    nobs
+         <num>   <int>
+1: 0.187832282 3681023
+2: 0.071379965 3681023
+3: 0.359033732 3681023
+4: 0.066702050 3681023
+5: 0.001464395 3681023
+6: 0.270825755 3681023
+7: 0.065958106 3681023
+8: 0.377192477 3681023
+[OK] r79_desttrends.csv

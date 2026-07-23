@@ -1,10 +1,10 @@
 === C-deepshallow - diagnostica ===
 Paesi trattati: 25 | mediana max_EP_depth: 6.00
-Gruppo 'deep' (>= mediana): 17 paesi | 'shallow' (< mediana): 8 paesi
+Gruppo 'deep' (>= mediana): 16 paesi | 'shallow' (< mediana): 9 paesi
 Righe: 49,245,304 totali -> 15,233,078 nel sub-campione solo-trattati (30.9%)
 
 ATTENZIONE - cluster nel gruppo 'shallow':
-Il gruppo 'shallow' ha solo 8 paesi (split sbilanciato 'deep'=17/'shallow'=8 perche'
+Il gruppo 'shallow' ha solo 9 paesi (split sbilanciato 'deep'=16/'shallow'=9 perche'
 diversi paesi condividono lo stesso max_EP_depth esattamente alla mediana, e per costruzione
 (>= mediana = deep) finiscono tutti nel gruppo 'deep'). E' un numero di cluster trattati ANCORA
 piu' piccolo dei 19-25 gia' segnalati come vincolo per l'inferenza nel paper (Wild Cluster

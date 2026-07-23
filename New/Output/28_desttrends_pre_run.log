@@ -1,0 +1,45 @@
+here() starts at C:/Work/projects/Paper_PTA
+Variante pre-period trends (tentativo 1)...
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+Slope pre-periodo stimate per 236 destinazioni (0 imposto alle altre)
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+[WB] asintotico: ep_green +0.01683 (p=0.209) | ep_dirty +0.06289 (p=0.158)
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+  [WB] ep_green: p_wcb = 0.7100
+  [WB] ep_dirty: p_wcb = 0.6163
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+[TREND] asintotico: ep_green +0.00742 (p=0.093) | ep_dirty +0.01514 (p=0.041)
+  [TREND] ep_green: p_wcb = 0.1809
+  [TREND] ep_dirty: p_wcb = 0.3012
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+    treat     term        coef      se_asy      p_asy     p_wcb     conf_low
+   <char>   <char>       <num>       <num>      <num>     <num>        <num>
+1:     WB ep_green 0.016827529 0.013344619 0.20860424 0.7099710 -0.172490111
+2:     WB ep_dirty 0.062888469 0.044383538 0.15787367 0.6162616 -0.330951683
+3:  TREND ep_green 0.007416349 0.004394572 0.09285844 0.1809181 -0.004950397
+4:  TREND ep_dirty 0.015135623 0.007347550 0.04054324 0.3012301 -0.009210547
+    conf_high    nobs     B
+        <num>   <int> <int>
+1: 0.13928661 3681023  9999
+2: 0.30901374 3681023  9999
+3: 0.01890438 3681023  9999
+4: 0.02958235 3681023  9999
+[OK] r79c_pretrends.csv

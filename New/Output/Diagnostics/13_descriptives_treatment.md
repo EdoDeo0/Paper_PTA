@@ -1,6 +1,6 @@
 # 09 - Descrittive: trattamento, HS6, imprese
 
-Data: 2026-07-16 - Righe: 49,245,304
+Data: 2026-07-21 - Righe: 49,245,304
 
 ## A. Stabilita' HS6
 - Quota export su codici NUOVI ai confini di revisione (2002/2007/2012): 2002: 0.02%, 2007: 0.00%, 2012: 0.03%

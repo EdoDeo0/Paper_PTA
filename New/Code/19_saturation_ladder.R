@@ -75,7 +75,9 @@ CM_TREND_INT <- c(
 )
 
 # strutture FE ad alta cardinalita' che richiedono nthreads=1 (crash noto altrimenti)
-HIGH_CARDINALITY_FE <- c("fpd_pt", "fpt_fpd")
+# fpt_pd aggiunta empiricamente durante il rerun 2026-07-22: stesso crash
+# "recursive gc invocation" di fpd_pt/fpt_fpd, ripetuto 3/3 volte a nthreads=10
+HIGH_CARDINALITY_FE <- c("fpd_pt", "fpt_fpd", "fpt_pd")
 
 make_formulas <- function(fe) list(
   WB_NI = c(

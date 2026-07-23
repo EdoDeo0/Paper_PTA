@@ -1,0 +1,340 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\17_main_tripledd_fullpanel.do 
+
+. *****************************************************************************
+> ***
+. ****** 13 — Triple-diff principale, FULL PANEL (Stata, reghdfe)            **
+> ****
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Sostituisce: 16_tripledd_full.do. Cache per modello (skip se gia' presente)
+> :
+. * rilanciabile senza rifare nulla se le stime esistono gia' in Output/TripleD
+> iff/Tables.
+. *
+. * PERCHE' STATA: fixest/R crasha l'allocatore ("recursive gc invocation") con
+. * le 3 FE ad alta dimensionalita' (fpd+fdt+pt) sul panel pieno, in qualsiasi
+. * configurazione. reghdfe usa Mata (gestione memoria diversa) e rimuove i
+. * singleton in modo ITERATIVO prima di stimare - tentativo credibile.
+. *
+. * SPECIFICA (identica al panel collassato, 16_main_tripledd_collapsed.R):
+. *   ln_export ~ EP:green + EP:dirty + TotalDepth:green + TotalDepth:dirty
+. *             | fpd + fdt + pt,  vce(cluster country_code), HK+MO esclusi
+. * env_good RICALCOLATO dalla lista green HS1996 (05), dirty dalla lista (06),
+. * TotalDepth dallo script (08) - NON le colonne stantie del .dta originale.
+. *
+. * ESECUZIONE BATCH (da PowerShell, non Git Bash: il flag /e viene manglato):
+. *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\17_mai
+> n_tripledd_fullpanel.do"
+. * Output: New/Output/TripleDiff/Tables/tripledd_full_reghdfe.csv (+ .log acca
+> nto)
+. 
+. clear all
+
+. set more off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. 
+. * dipendenze
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. *── 1. Liste ausiliarie (tempfile) ──────────────────────────────────────────
+> ───
+. * green HS1996 (codici tutti >= capitolo 38: import numerico sicuro)
+. import delimited "$ROOT\New\Data\Classifications\green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(6 vars, 247 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_381c_000001.tmp saved as .dta
+    format
+
+. 
+. * dirty (core Mani-Wheeler; capitoli >= 23: import numerico sicuro)
+. import delimited "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+
+. rename dirty dirty_p
+
+. tempfile dirty
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_381c_000002.tmp saved as .dta
+    format
+
+. 
+. * TotalDepth non ambientale (country_code x year)
+. import delimited "$ROOT\New\Data\TotalDepth\wb_totaldepth_country_year.csv", 
+> clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 249 obs)
+
+. keep country_code year totaldepth_nonenv
+
+. tempfile depth
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_381c_000003.tmp saved as .dta
+    format
+
+. 
+. *── 2. Panel: solo le variabili necessarie ──────────────────────────────────
+> ───
+. use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fdt pt ///
+>     using "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed.
+> dta", clear
+
+. drop if inlist(country_code, 110, 121)   // Hong Kong + Macao (entrepot)
+(3,464,093 observations deleted)
+
+. 
+. merge m:1 hs6 using `green', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,501,241
+        from master                40,501,241  
+        from using                          0  
+
+    Matched                         5,279,970  
+    -----------------------------------------
+
+. replace env_good_new = 0 if missing(env_good_new)
+(40,501,241 real changes made)
+
+. merge m:1 hs6 using `dirty', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    42,166,299
+        from master                42,166,299  
+        from using                          0  
+
+    Matched                         3,614,912  
+    -----------------------------------------
+
+. replace dirty_p = 0 if missing(dirty_p)
+(42,166,299 real changes made)
+
+. merge m:1 country_code year using `depth', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,496,372
+        from master                36,496,372  
+        from using                          0  
+
+    Matched                         9,284,839  
+    -----------------------------------------
+
+. replace totaldepth_nonenv = 0 if missing(totaldepth_nonenv)
+(36,496,372 real changes made)
+
+. 
+. count
+  45,781,211
+
+. di "Righe: " r(N)
+Righe: 45781211
+
+. qui sum env_good_new
+
+. di "green: " %4.1f 100*r(mean) "%"
+green: 11.5%
+
+. qui sum dirty_p
+
+. di "dirty: " %4.1f 100*r(mean) "%"
+dirty:  7.0%
+
+. 
+. * interazioni esplicite (piu' leggere di c.X#i.Y dentro reghdfe)
+. gen double wb_green = WB_EP_Depth    * env_good_new
+
+. gen double wb_dirty = WB_EP_Depth    * dirty_p
+
+. gen double tr_green = TREND_EP_Count * env_good_new
+
+. gen double tr_dirty = TREND_EP_Count * dirty_p
+
+. gen double td_green = totaldepth_nonenv * env_good_new
+
+. gen double td_dirty = totaldepth_nonenv * dirty_p
+
+. drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p totaldepth_nonenv hs6
+
+. 
+. *── 3. Stime (compact = risparmia RAM; cache: salta se gia' fatto) ──────────
+> ───
+. cap mkdir "$ROOT\New\Output\TripleDiff"
+
+. cap mkdir "$ROOT\New\Output\TripleDiff\Tables"
+
+. 
+. * WB
+. cap confirm file "$ROOT\New\Output\TripleDiff\Tables\_full_WB.dta"
+
+. if _rc {
+.     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
+>         absorb(fpd fdt pt) vce(cluster country_code) compact
+(dropped 2.43e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 21,519,511
+Absorbing 3 HDFE groups                           F(   4,    224) =       1.20
+Statistics robust to heteroskedasticity           Prob > F        =     0.3108
+                                                  R-squared       =     0.8734
+                                                  Adj R-squared   =     0.7440
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     1.3334
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0022477   .0039221    -0.57   0.567    -.0099767    .0054812
+    wb_dirty |  -.0043509   .0022266    -1.95   0.052    -.0087386    .0000368
+    td_green |   .0000606   .0001039     0.58   0.560     -.000144    .0002653
+    td_dirty |   .0001875   .0000963     1.95   0.053    -2.23e-06    .0003772
+       _cons |   9.573248   .0003558  2.7e+04   0.000     9.572547     9.57395
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6181372     6181372           0    *|
+         fdt |   4631458     4631458           0    *|
+          pt |     64508           1       64507     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+.     regsave using "$ROOT\New\Output\TripleDiff\Tables\_full_WB.dta", ///
+>         tstat pval ci replace addlabel(treat, WB)
+(file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\_full_WB.dta
+    not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\_full_WB.dta
+    saved
+. }
+
+. 
+. * TREND (capture: se muore, il risultato WB resta salvato)
+. cap confirm file "$ROOT\New\Output\TripleDiff\Tables\_full_TREND.dta"
+
+. if _rc {
+.     cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
+>         absorb(fpd fdt pt) vce(cluster country_code) compact
+(dropped 2.43e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 21,519,511
+Absorbing 3 HDFE groups                           F(   4,    224) =       0.53
+Statistics robust to heteroskedasticity           Prob > F        =     0.7103
+                                                  R-squared       =     0.8734
+                                                  Adj R-squared   =     0.7440
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     1.3334
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0001074   .0009934    -0.11   0.914    -.0020651    .0018502
+    tr_dirty |  -.0008965   .0006247    -1.43   0.153    -.0021276    .0003346
+    td_green |  -1.78e-06    .000162    -0.01   0.991     -.000321    .0003174
+    td_dirty |   .0001681    .000128     1.31   0.191    -.0000842    .0004204
+       _cons |   9.573072   .0005069  1.9e+04   0.000     9.572073    9.574071
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6181372     6181372           0    *|
+         fdt |   4631458     4631458           0    *|
+          pt |     64508           1       64507     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+.     if !_rc regsave using "$ROOT\New\Output\TripleDiff\Tables\_full_TREND.dta
+> ", ///
+>         tstat pval ci replace addlabel(treat, TREND)
+(file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\_full_TREND.dta
+    not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\_full_TREND.dta
+    saved
+. }
+
+. 
+. *── 4. Esporta CSV riassuntivo ──────────────────────────────────────────────
+> ───
+. use "$ROOT\New\Output\TripleDiff\Tables\_full_WB.dta", clear
+
+. cap append using "$ROOT\New\Output\TripleDiff\Tables\_full_TREND.dta"
+
+. export delimited "$ROOT\New\Output\TripleDiff\Tables\tripledd_full_reghdfe.cs
+> v", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\tripledd_full_reg
+    > hdfe.csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables\tripledd_full_regh
+> dfe.csv saved
+
+. di "[OK] tripledd_full_reghdfe.csv"
+[OK] tripledd_full_reghdfe.csv
+
+. 
+end of do-file

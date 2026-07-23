@@ -1,0 +1,116 @@
+here() starts at C:/Work/projects/Paper_PTA
+== wb_baseline (tentativo 1) - 21:33:12
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[wb_baseline] righe dopo na.omit: 49,245,273
+[wb_baseline] coef FW ep: +0.000106
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+Unfortunately, confidence inversion failed due to poorly chosen starting values.Please let the maintainer know about this by opening an issue on GitHub.No confidence interval is computed.
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+   atteso (ladder tex): +0.00031 | ottenuto: +0.000106 | p_wcb = 0.9743
+== wb_controls (tentativo 1) - 21:39:07
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[wb_controls] righe dopo na.omit: 44,380,012
+[wb_controls] coef FW ep: +0.000117
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+Unfortunately, confidence inversion failed due to poorly chosen starting values.Please let the maintainer know about this by opening an issue on GitHub.No confidence interval is computed.
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+   atteso (ladder tex): +0.00038 | ottenuto: +0.000117 | p_wcb = 0.9707
+== trend_baseline (tentativo 1) - 21:43:24
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[trend_baseline] righe dopo na.omit: 49,245,273
+[trend_baseline] coef FW ep: +0.000274
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+   atteso (ladder tex): +0.00027 | ottenuto: +0.000274 | p_wcb = 0.6406
+== trend_controls (tentativo 1) - 21:49:07
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[trend_controls] righe dopo na.omit: 44,380,012
+[trend_controls] coef FW ep: +0.000283
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+   atteso (ladder tex): +0.00028 | ottenuto: +0.000283 | p_wcb = 0.6109
+             spec         coef     p_wcb     conf_low   conf_high     nobs
+           <char>        <num>     <num>        <num>       <num>    <int>
+1:    wb_baseline 0.0001057973 0.9742974           NA          NA 49245273
+2:    wb_controls 0.0001168389 0.9706971           NA          NA 44380012
+3: trend_baseline 0.0002735314 0.6405641 -0.001462145 0.002307982 49245273
+4: trend_controls 0.0002829920 0.6108611 -0.001571543 0.002387993 44380012
+       B
+   <int>
+1:  9999
+2:  9999
+3:  9999
+4:  9999
+[OK] bootstrap_summary.csv - 2026-07-22 21:53:21 

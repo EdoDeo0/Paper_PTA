@@ -105,6 +105,49 @@
 >   in input): IDENTICO **MD5 byte-per-byte** al riferimento.
 > - Nessuna regressione: il dataset finale (`.fst` da cui partono tutti gli
 >   script 05+) è verificato bit-per-bit identico a quello già in uso.
+>
+> ✅ **AGGIORNAMENTO 2026-07-21/23 — FIX CONCETTUALE `WB_EP_Depth` (esclusione
+> `Env_Laws_AC`/`Env_Laws_LE`) + RIESECUZIONE COMPLETA DELLA CAMPAGNA DI STIME.**
+> Durante la review collaborativa di `08_total_depth.R`, la sua validazione
+> interna ha rivelato che `WB_EP_Depth` (calcolato in `02_build_dataset_wb_
+> trend_merge.R`) sommava per errore concettuale anche due indicatori
+> **"horizontal content"** (`Env_Laws_AC`, `Env_Laws_LE` — giudizio aggregato
+> a livello di intera area tematica, da `DTA 1.0 - Horizontal Content.xlsx`)
+> dentro il conteggio delle 48 disposizioni **"vertical content"** granulari
+> (da `WB_DTA.dta`). Verificato in letteratura (Hofmann-Osnago-Ruta 2017;
+> Abman-Lundberg-Ruta 2024, che usa la stessa fonte WB) che le due misure
+> vanno tenute separate. **Deciso con l'utente: sostituzione completa**, non
+> solo una robustezza aggiuntiva.
+> - **Fix**: `02_build_dataset_wb_trend_merge.R` — `Env_Laws_AC`/`Env_Laws_LE`
+>   esclusi dalla mappatura `WB_*` (restano nel dataset col nome originale,
+>   per un uso futuro separato). `WB_EP_Depth` passa da range 1-19 a 1-17
+>   (29/249 country-year toccati di 1-2 punti, correlazione 0,98 con la
+>   versione precedente).
+> - **Propagato Step 1→2→3**: dataset finale rigenerato (49.245.304 righe
+>   invariate). `08_total_depth.R` ora valida **249/249** (era 220/249).
+>   `ppml_agg_pdt_zerofill.fst` (input orfano di `30`, nessuno script lo
+>   ricostruiva) patchato via merge mirato su country_code+year (colonna
+>   passeggera, nessuna ricostruzione della griglia necessaria) — backup in
+>   `New/verification/reference/ppml_agg_pdt_zerofill_BACKUP_preEnvLawsFix.fst`.
+> - **Intera campagna di stime rieseguita** (script 10-31 + Stata 17-18,
+>   cache invalidata): risultati quasi tutti stabili (margine green
+>   confermato null ovunque), **eccetto il margine dirty**, che si è
+>   leggermente rafforzato: WCB collassato 0,18→0,072; permutation esatta
+>   0,079→0,023 (ora sotto 0,05); leave-one-out — il paese pivotale non è
+>   più la Corea (che ora resta marginale, p=0,095, se esclusa) ma
+>   l'Australia (p=0,236 se esclusa). Verdetto aggiornato nel paper
+>   (`New/Paper/draft_paper.tex`): dirty margin da "smontato" a **"fragile,
+>   non un falso positivo pulito"** — lettura più sfumata, non più un null
+>   netto su entrambi i margini.
+> - Script 19 (saturation ladder) ha richiesto 8 retry per il crash noto
+>   `recursive gc invocation`; una nuova struttura FE (`fpt_pd`) si è
+>   aggiunta empiricamente a `HIGH_CARDINALITY_FE` (nthreads=1). Script 22
+>   (permutation) si è bloccato ~13h per sospensione della macchina durante
+>   la notte (non un crash) — resuscitato con `taskkill` + rilancio.
+> - Bozza di uno script Stata equivalente per la ladder (`19b_saturation_
+>   ladder_fullpanel.do`, **non eseguito**, solo scritto) come possibile
+>   alternativa più stabile in futuro — reghdfe non soffre del conflitto
+>   R/OpenMP col garbage collector che causa i crash ricorrenti.
 
 ---
 

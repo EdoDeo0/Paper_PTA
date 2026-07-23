@@ -1,5 +1,57 @@
 # Session Log — Paper_PTA
 
+## 2026-07-23 — DiD audit (`/did-check`) + implementazione fix gratuiti nel paper (Sonnet 5)
+
+- **Audit DiD**: eseguito `/did-check` su `draft_paper.tex` (checklist Cunningham a 9 step +
+  "five pieces" + design assumptions + trappole staggered). Report scritto in
+  `./did-check-report.md`. Verdetti 🔴 principali: target parameter/estimand mancante, EPV
+  rule violata (coorte minima = 1 destinazione ma 3 controlli), stimatore robusto solo
+  parziale, sensitivity analysis (HonestDID/Goodman-Bacon) mancante, "bite" strutturalmente
+  non disponibile in questo disegno (triple-diff su composizione, non binary-treatment DiD
+  canonico). Punti forti confermati: clustering, honesty/pre-trend.
+- **Implementati i fix "gratuiti/veloci" richiesti dall'utente** in `New/Paper/draft_paper.tex`:
+  tabella coorti di trattamento (`tab:cohorts`, dati da `B_treatment_entry.csv`), paragrafo
+  estimand in notazione potential-outcomes, framing "falsification check, not proof" sui
+  pre-trend, paragrafo esplicito sul "bite" mancante, rietichettatura bundling/detrending come
+  argomenti mechanism-for-null/falsification, frase su assenza di treatment reversal, frase sul
+  peso di ASEAN nell'aggregazione.
+- **Verifica compilazione**: PDF fornito dall'utente (`draft_12 (1).pdf`) convertito via
+  pymupdf4llm e confrontato col `.tex` — tutte le modifiche presenti e coerenti, numeri delle
+  tabelle 5/6/7 invariati. Nessun problema reale trovato (solo probabili artefatti di
+  estrazione testo: legature "fi" mancanti, wrapping Tabella 4).
+- **Pending**: rollout plot (Step 3 dell'audit) NON ancora implementato. Punti a costo
+  medio/alto non ancora affrontati, in attesa di decisione utente: EPV rule/covariate
+  reframing, CEM balance table, Goodman-Bacon decomposition, HonestDID/Rambachan-Roth
+  sensitivity bounds, Sun-Abraham applicato alla spec principale. Nessun commit fatto.
+
+## 2026-07-21/23 — Fix `WB_EP_Depth` (Env_Laws_AC/LE) + riesecuzione completa campagna stime (Sonnet 5)
+
+- **Origine**: durante la review di `08_total_depth.R`, la sua validazione interna ha
+  rivelato che `WB_EP_Depth` sommava per errore concettuale due indicatori "horizontal
+  content" (`Env_Laws_AC`/`Env_Laws_LE`, giudizio aggregato a livello di intera area) dentro
+  il conteggio delle 48 disposizioni "vertical content" granulari. Verificato in letteratura
+  (Hofmann-Osnago-Ruta 2017; Abman-Lundberg-Ruta 2024, stessa fonte WB) che le due misure
+  vanno tenute separate — mai sommate in un solo indice. **Decisione dell'utente: sostituzione
+  completa**, non solo robustezza aggiuntiva.
+- **Fix propagato Step 1→2→3**: `WB_EP_Depth` passa da range 1-19 a 1-17 (29/249 country-year
+  toccati). `08_total_depth.R` ora valida 249/249 (era 220/249). `ppml_agg_pdt_zerofill.fst`
+  (input orfano, nessuno script lo ricostruiva) patchato via merge mirato, con backup.
+- **Intera campagna di stime rieseguita** (script 10-31 R + 17-18 Stata, ~20 script, cache
+  invalidata): margine green confermato null ovunque (coefficienti quasi invariati). Il
+  **margine dirty si è rafforzato**: WCB collassato 0,18→0,072, permutation esatta 0,079→0,023
+  (ora <0,05); leave-one-out — il paese pivotale non è più la Corea (ora marginale, p=0,095 se
+  esclusa) ma l'Australia (p=0,236 se esclusa). **Paper aggiornato**: la sezione dirty passa da
+  "smontato" a "fragile, non un falso positivo pulito" — lettura più sfumata su quel margine,
+  il resto della storia (green null, extensive margin null, within-firm null) confermato.
+- **Note operative**: script 19 (saturation ladder) ha richiesto 8 retry per il crash noto
+  `recursive gc invocation`; aggiunta empiricamente `fpt_pd` a `HIGH_CARDINALITY_FE`
+  (nthreads=1). Script 22 (permutation) bloccato ~13h per sospensione della macchina durante
+  la notte (non un crash, un hang silenzioso) — risolto con `taskkill` + rilancio. Scritta
+  (non eseguita) una bozza Stata equivalente della ladder (`19b_saturation_ladder_fullpanel.do`)
+  come possibile alternativa più stabile (reghdfe non soffre del conflitto R/OpenMP-GC).
+- **Pending**: nessun commit fatto (l'utente non l'ha richiesto). Prossimo passo naturale:
+  review del paper aggiornato da parte dell'utente, eventuale compilazione PDF.
+
 ## 2026-07-20 — Review collaborativa `New/Code/` + integrazione dataset-creation nel reorg (Sonnet 5)
 
 - **Scope expansion su richiesta utente**: integrati come nuovi script numerati 01-04 gli
