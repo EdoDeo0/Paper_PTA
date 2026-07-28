@@ -730,7 +730,17 @@ that governs the green margin.
 A natural objection is that the aggregate index dilutes provisions with a trade
 mechanism (green-goods liberalization; binding standards) with cooperation language that
 has none. The objection is correct in principle --- and unanswerable in this setting,
-which is itself a finding. What follows is a mechanism argument \emph{for the null}, not
+which is itself a finding. The imbalance can be quantified directly, and it is large in
+both codings. Summing WB\_EP\_Depth across the 25 treated destinations gives 150
+provisions checked in total; only 5.3\% of them fall in \texttt{GreenLiberalization} or
+\texttt{StandardsNonRegression}, the two sub-indices with a direct trade mechanism.
+TREND tells the same story on an independently coded, far more granular scheme: of 437
+provisions checked across the same destinations, \texttt{GreenMarketAccess} accounts for
+0.92\%. At the agreement level, TREND's own binding/non-binding distinction
+(\texttt{X5.01.01 Binding obligations}) is coded present in exactly one of the 14--15
+Chinese agreements in the database (China--Korea, 2015); every other agreement scores
+zero on that specific clause. Table~\ref{tab:mechanism-share} summarizes both codings
+side by side. What follows is a mechanism argument \emph{for the null}, not
 evidence of a positive causal channel: it explains why no effect is detected, rather
 than tracing how an effect would operate if one existed. Across the 223 treated country--year observations in the
 estimation sample, the two WB sub-indices with a direct mechanism
@@ -757,6 +767,36 @@ above is binding rather than providing a trade mechanism themselves --- are like
 null on both margins and both codings (WB \texttt{EnforcementDSM} $\times$ green:
 $p=0.91$; $\times$ dirty: $p=0.90$; TREND \texttt{EnforcementDSM} $\times$ green:
 $p=0.78$; $\times$ dirty: $p=0.71$).
+
+\begin{table}[htbp]
+\centering
+\caption{Trade-mechanism content as a share of all checked provisions}
+\label{tab:mechanism-share}
+\small
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+ & Total checked & Trade-mechanism & Share \\
+\midrule
+WB (\texttt{GreenLiberalization} + \texttt{StandardsNonRegression}) & 150 & 8 & 5.3\% \\
+TREND (\texttt{GreenMarketAccess}) & 437 & 4 & 0.92\% \\
+\midrule
+ & Agreements & With binding clause & \\
+\midrule
+TREND (\texttt{X5.01.01 Binding obligations}) & 14--15 & 1 (China--Korea, 2015) & 6.7--7.1\% \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item ``Total checked'' sums the relevant depth index (WB\_EP\_Depth or
+TREND\_EP\_Count) across the 25 treated destinations, using each destination's
+maximum (post-entry) value. ``Trade-mechanism'' sums the corresponding sub-index over
+the same destinations. The binding-clause row is agreement-level, not destination-level,
+which is why the agreement count differs from 25 (see Table~\ref{tab:cohorts}'s notes on
+ASEAN pooling and within-switchers). Source: \texttt{Data/Merged/Merged\_TREND\_WB\_Indices\_Only.csv}
+and \texttt{Data/TREND/TREND\_China\_2000\_2015.csv}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
 This bundling result also reconciles the null with \citet{brandi2020}'s positive finding,
 even though both papers draw on the same underlying TREND/World Bank provision coding.

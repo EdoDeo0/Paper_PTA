@@ -1,5 +1,30 @@
 # Session Log — Paper_PTA
 
+## 2026-07-28 — Verifica claim paper §5.1, FE literature guide, paper cards, fix Zotero (Sonnet 5)
+
+- **Verifica dati**: confermata accuratezza 100% di `WB_Variable_Mapping.csv` e
+  `TREND_Variable_Mapping.csv` contro i database sorgente. Quantificato quanto poche provision
+  siano trade-related/enforceable (WB 5.3%, TREND GreenMarketAccess 0.92%, TREND binding clause
+  1/14-15 accordi) — aggiunto a §5.1 di `New/Paper/draft_paper.tex` con nuova tabella
+  `tab:mechanism-share`.
+- **Chiarito** (senza modifiche al paper) perché levels+FE saturi collassano a zero (algebrico,
+  non identificato) mentre la composition mantiene variazione within-cell anche saturata —
+  verificato anche contro le vecchie stime `Code/Analysis/OLS_HDFE.R` (stesso pattern di
+  collasso, con caveat su `WB_EP_Depth` pre-fix range 1-19 vs 1-17).
+- **Creata** `wiki/Fixed_Effects_Guide.md`: guida approfondita su tutti gli FE utilizzabili in
+  panel firm×product×destination×year, con letteratura DOI-verificata affiancata a ogni caso
+  d'uso. Auto-corretto un errore (Manova&Zhang non usa `pdt`, verificato da PDF originale) con
+  nota di revisione trasparente.
+  Create/completate 5 paper card in `./wiki/` (Atalar2025, BermanMartinMayer2012,
+  FanLiYeaple2015, BasStraussKahn2015, FontagneOrefice2018), copiate in
+  `$RESEARCH_HOME/research-wiki/papers/`, aggiunte a `all-papers.bib`.
+- **Fix Zotero**: risolto blocco scrittura (serviva `ZOTERO_API_KEY`+`ZOTERO_LIBRARY_ID` in
+  `env` oltre a `ZOTERO_LOCAL=true` per "hybrid mode"). File di config reale su Windows non è
+  quello visibile ai tool (virtualizzato da MSIX), utente ha dovuto trovarlo ed editarlo a mano.
+  Tutti e 5 i paper aggiunti a Zotero con successo dopo il fix.
+- **Pending**: nessun task esplicito rimasto aperto. Offerta non confermata dall'utente: citare
+  nel paper il pattern di collasso delle vecchie stime OLS_HDFE.R.
+
 ## 2026-07-23 — DiD audit (`/did-check`) + implementazione fix gratuiti nel paper (Sonnet 5)
 
 - **Audit DiD**: eseguito `/did-check` su `draft_paper.tex` (checklist Cunningham a 9 step +

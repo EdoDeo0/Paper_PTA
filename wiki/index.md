@@ -8,6 +8,12 @@
 - [[LeeRochaRuta2021_TradefacilitationGVC]] — Trade facilitation provisions in PTAs increase Peruvian GVC firms' export participation by 1.8–9.9%; non-discriminatory spillovers confirmed; main channel is domestic border efficiency
 - [[NeriLaine2023_DeepTradeAgreements]] — PPML evidence that deeper RTAs boost exports on average (+3.6%), but the effect is positive only for large/GVC firms and negative for small firms, consistent with a pro-competitive selection effect
 - [[NeriOreficeRuta2021_GeorgiaRTA]] — OLS panel evidence that 10% more RTA depth raises Georgian firm exports by 0.46%; large firms gain +1.1%, small firms –1.2%; works through non-iceberg fixed costs
+- [[ManovaZhang2012_ExportPrices]] — Six stylized facts on Chinese firms' export prices; firm-product and destination-product fixed effects; unit-value quality proxy; validates the customs-data structure used in this project
+- [[BermanMartinMayer2012_ExportersExchangeRate]] — Firm-destination fixed effects isolate heterogeneous pricing-to-market: high-performance French exporters absorb depreciations into markups, low-performance firms into volumes
+- [[FanLiYeaple2015_TradeLiberalizationQuality]] — Chinese input-tariff cuts induce export quality upgrading; firm-product(-country) FE in levels, destination-year + product FE in the structural quality equation — the closest verified precedent for the `dt`+`p` logic used in this project's composition design
+- [[BasStraussKahn2015_InputTradeLiberalization]] — Quasi-natural experiment (ordinary vs. processing trade regime) shows input-tariff cuts raise both imported-input and export prices via quality upgrading; firm-product + origin-country + year FE
+- [[FontagneOrefice2018_TBTMultiDestinationFirms]] — Stringent TBTs push multi-destination French firms to reallocate exports toward TBT-free destinations; verified use of `pdt` (HS2-destination-year) fixed effects and why it's admissible there but not here
+- [[Atalar2025_TradeLiberalizationQualityThirdCountry]] — Third-country spillover: Turkish exporters upgrade quality in the EU market after the 2005 EU-China quota removal; triple-difference design closest to Paper_PTA's own
 
 ## Gravity Estimation & Methodology
 
@@ -45,6 +51,7 @@
 ## Internal Methods Notes
 
 - [[Inference_Battery_Guide]] — Not a paper card: plain-language guide to every econometric test in the draft (WCB, permutation, leave-one-out, Sun-Abraham, saturation ladder), what threat each one addresses, and why the few-treated-clusters regime (23 destinations, ~14 agreements) justifies a battery that standard PTA papers (e.g. Brandi 2020, 680 agreements) don't need
+- [[Fixed_Effects_Guide]] — Not a paper card: companion to the guide above. Maps all 15 possible fixed effects in the firm×product×destination×year panel, what each absorbs, which one (`pdt`) is structurally forbidden by this project's single-origin design, and who in the literature uses each — with citations verified against the primary text where possible
 
 ## School Starting Age & Relative Age Effects
 
