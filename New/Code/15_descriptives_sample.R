@@ -25,6 +25,7 @@ rm(list = ls())
 library(fst)
 library(data.table)
 library(here)
+source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 setDTthreads(4)
 
@@ -38,7 +39,7 @@ dir.create(OUT_DIR, recursive = TRUE, showWarnings = FALSE)
 ## --- Caricamento dati ----------------------------------------------------
 d <- as.data.table(read_fst(DATA_FILE, columns = c(
   "fpd", "fdt", "pt", "export", "hs6", "country_code", "WB_EP_Depth")))
-d <- d[!country_code %in% c(110L, 121L)]  # Hong Kong + Macao esclusi, come 09/13
+d <- hkmo_filter(d)  # Hong Kong + Macao: esclusi nella principale, tenuti nella robustezza
 gc()
 
 # green/dirty dalle liste canoniche (stesse fonti di 12, 16, 30 ecc.)
@@ -125,5 +126,5 @@ mean(idd$n_dirty), as.integer(median(idd$n_dirty)),
 mean(cells[treated == TRUE, n_prod]), as.integer(median(cells[treated == TRUE, n_prod])))
 
 cat(out)
-writeLines(out, file.path(OUT_DIR, "15_descriptives_sample.md"))
+writeLines(out, out_path(file.path(OUT_DIR, "15_descriptives_sample.md")))
 cat("[OK] 15_descriptives_sample.md\n")

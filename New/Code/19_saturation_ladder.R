@@ -39,15 +39,26 @@
 ##         New/Output/OLS/Tables/OLS_Ladder_FE.tex
 ##         New/Output/OLS/Models_Output/OLS_*.rds (96 modelli, cache)
 
+##
+## ATTENZIONE - VARIANTE DI CAMPIONE. Storicamente questa ladder girava sul
+## panel COMPLETO, HK+MO INCLUSI. Ora la variante e' parametrizzata via
+## _sample_config.R come nel resto della pipeline: il default (PTA_SAMPLE non
+## impostata) e' HK+MO ESCLUSI, coerente con la specifica principale del paper.
+## Gli output gia' presenti in New/Output/OLS/ senza suffisso provengono dal
+## vecchio run INCLUSIVO: vanno rinominati in New/Output/OLS_inclHKMO/ prima
+## di lanciare la variante esclusa, altrimenti la cache per nome file li fa
+## rileggere come se fossero il campione escluso.
+
 ## --- Setup ---------------------------------------------------------------
 rm(list = ls())
 library(here)
 library(callr)
 source(here("Code/Analysis/pta_functions.R"))
+source(here("New/Code/_sample_config.R"))
 
 ## --- Parametri e percorsi --------------------------------------------------
 DATA_FILE <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
-OUT_DIR   <- here("New/Output/OLS")
+OUT_DIR   <- out_path(here("New/Output/OLS"))
 SHOW_STATS <- c("nobs", "r2", "n_clust")
 dirs <- setup_output_dirs(OUT_DIR)
 
@@ -122,11 +133,26 @@ CM_BY_BLOCK <- list(WB_NI = CM_WB, WB_Int = CM_WB_INT, TREND_NI = CM_TREND, TREN
 # cachato come .rds da run_block (skip automatico se gia' presente); l'intero
 # blocco e' skippato se il .tex finale esiste gia'.
 run_block_subprocess <- function(data_file, out_dir, nthreads, show_stats,
-                                  cm, block_label, fe_label, formulas, tex_name) {
+                                  cm, block_label, fe_label, formulas, tex_name,
+                                  hkmo_drop) {
   library(fst); library(fixest); library(data.table); library(here); library(lubridate)
   threads_fst(1)
   setFixest_nthreads(nthreads)
   source(here("Code/Analysis/pta_functions.R"))
+
+  # Il filtro HK+MO non si puo' passare a run_block(): pta_functions.R sta fuori
+  # da New/ e non va modificato. Si maschera load_formula_data() nel global env
+  # del sottoprocesso - estimate_model() la risolve lessicalmente li' e prende
+  # questa. country_code e' sempre tra le colonne caricate perche' e' la
+  # variabile di cluster (vcov = ~country_code).
+  if (hkmo_drop) {
+    .load_orig <- load_formula_data
+    load_formula_data <<- function(data_file, formula_str, vcov = "HC1") {
+      d <- .load_orig(data_file, formula_str, vcov)
+      d[!country_code %in% c(110L, 121L)]
+    }
+  }
+
   dirs <- setup_output_dirs(out_dir)
   t0 <- now()
   stats <- run_block(formulas, paste0(block_label, "_", fe_label), "ols",
@@ -164,7 +190,7 @@ for (fe_label in names(fe_structures)) {
       callr::r(run_block_subprocess, args = list(
         data_file = DATA_FILE, out_dir = OUT_DIR, nthreads = nthreads, show_stats = SHOW_STATS,
         cm = CM_BY_BLOCK[[block_label]], block_label = block_label, fe_label = fe_label,
-        formulas = fms[[block_label]], tex_name = tex_name
+        formulas = fms[[block_label]], tex_name = tex_name, hkmo_drop = HKMO_DROP
       ), show = TRUE),
       error = function(e) e
     )

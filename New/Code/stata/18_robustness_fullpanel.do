@@ -8,7 +8,6 @@
 * Completa la ladder di saturazione con le robustezze mancanti dopo 13:
 *   A. WB con CONTROLLI (tariffs MFN + ln_hhi_baci + AD_pdt)  [colonna paper]
 *   B. WB escludendo l'ASEAN (l'accordo che domina i trattati) [robustezza]
-*   C. WB includendo Hong Kong + Macao                         [robustezza]
 *   D. WB e TREND sul sub-campione C-overlap (common support)
 *   E. TREND su C-deepshallow (solo partner PTA)
 *   G. WITHIN-FIRM: quota green nel paniere impresa-dest-anno su EP
@@ -21,8 +20,46 @@
 
 clear all
 set more off
-global ROOT "C:\Work\projects\Paper_PTA"
-global TAB  "$ROOT\New\Output\TripleDiff\Tables"
+* --- Percorsi radice per sistema operativo ---------------------------------
+* Stessa convenzione di 01_wb_dataset_conversion.do: lo stesso file gira senza
+* modifiche su Windows/Mac/Unix. Adattare il ramo del proprio OS se il progetto
+* vive altrove sulla macchina.
+if c(os) == "Windows" {
+    global ROOT "C:\Work\projects\Paper_PTA"
+}
+if c(os) == "MacOSX" {
+    global ROOT "~/Documents/work/projects/Paper_PTA"
+}
+if c(os) == "Unix" {
+    global ROOT "~/work/projects/Paper_PTA"
+}
+
+*-- Variante di campione HK+Macao (analogo Stata di New/Code/_sample_config.R) --
+*  ##########################################################################
+*  ##  UNICA COSA DA TOCCARE: la riga qui sotto.                          ##
+*  ##    "excl" -> Hong Kong e Macao ESCLUSI  (specifica principale)      ##
+*  ##    "incl" -> Hong Kong e Macao INCLUSI  (robustezza d'appendice)    ##
+*  ##########################################################################
+global PTA_SAMPLE "excl"
+
+* $HKMOEXPR e' sempre componibile con altri filtri:  if $HKMOEXPR & altra_cond
+* Gli output della variante "incl" prendono il suffisso $SFX e non
+* sovrascrivono quelli della variante "excl".
+if !inlist("$PTA_SAMPLE", "excl", "incl") {
+    di as error "PTA_SAMPLE deve essere excl o incl, trovato: $PTA_SAMPLE"
+    exit 198
+}
+if "$PTA_SAMPLE" == "incl" {
+    global HKMOEXPR "1"
+    global SFX "_inclHKMO"
+}
+else {
+    global HKMOEXPR "!hkmo"
+    global SFX ""
+}
+di "[campione] $PTA_SAMPLE (suffisso output: '$SFX')"
+
+global TAB  "$ROOT/New/Output/TripleDiff/Tables"
 
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -32,7 +69,7 @@ cap which regsave
 if _rc ssc install regsave
 
 *── Liste ausiliarie ───────────────────────────────────────────────────────────
-import delimited "$ROOT\New\Data\Classifications\green_codes_hs1996.csv", clear
+import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", clear
 keep hs6_final
 rename hs6_final hs6
 duplicates drop hs6, force
@@ -40,18 +77,18 @@ gen byte env_good_new = 1
 tempfile green
 save `green'
 
-import delimited "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv", clear
+import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
 keep hs6 dirty
 rename dirty dirty_p
 tempfile dirty
 save `dirty'
 
-import delimited "$ROOT\New\Data\TotalDepth\wb_totaldepth_country_year.csv", clear
+import delimited "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.csv", clear
 keep country_code year totaldepth_nonenv
 tempfile depth
 save `depth'
 
-import delimited "$ROOT\New\Data\Subsamples\flag_overlap.csv", clear
+import delimited "$ROOT/New/Data/Subsamples/flag_overlap.csv", clear
 keep if overlap_cem == "TRUE"
 keep hs6
 duplicates drop hs6, force
@@ -59,7 +96,7 @@ gen byte in_overlap = 1
 tempfile overlap
 save `overlap'
 
-import delimited "$ROOT\New\Data\Subsamples\flag_deepshallow.csv", clear
+import delimited "$ROOT/New/Data/Subsamples/flag_deepshallow.csv", clear
 keep if inlist(group, "deep", "shallow")
 keep country_code
 duplicates drop country_code, force
@@ -70,7 +107,7 @@ save `deepshallow'
 *── Panel preparato (una volta sola) ───────────────────────────────────────────
 use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fdt pt ///
     tariffs ln_hhi_baci AD_pdt companyID export ///
-    using "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed.dta", clear
+    using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_compressed.dta", clear
 
 gen byte hkmo = inlist(country_code, 110, 121)
 * membri ASEAN nei dati doganali (accordo unico 2005)
@@ -105,57 +142,53 @@ restore
 drop companyID export hs6 WB_EP_Depth TREND_EP_Count totaldepth_nonenv
 
 *── A. WB con controlli (HK+MO esclusi) ────────────────────────────────────────
-cap confirm file "$TAB\_rob_A_WB_controls.dta"
+cap confirm file "$TAB/_rob_A_WB_controls$SFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty tariffs ln_hhi_baci AD_pdt ///
-        if !hkmo, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB\_rob_A_WB_controls.dta", tstat pval ci replace addlabel(model, A_WB_controls)
+        if $HKMOEXPR, absorb(fpd fdt pt) vce(cluster country_code) compact
+    regsave using "$TAB/_rob_A_WB_controls$SFX.dta", tstat pval ci replace addlabel(model, A_WB_controls)
 }
 
 *── B. WB senza ASEAN ──────────────────────────────────────────────────────────
-cap confirm file "$TAB\_rob_B_WB_noASEAN.dta"
+cap confirm file "$TAB/_rob_B_WB_noASEAN$SFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
-        if !hkmo & !asean, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB\_rob_B_WB_noASEAN.dta", tstat pval ci replace addlabel(model, B_WB_noASEAN)
+        if $HKMOEXPR & !asean, absorb(fpd fdt pt) vce(cluster country_code) compact
+    regsave using "$TAB/_rob_B_WB_noASEAN$SFX.dta", tstat pval ci replace addlabel(model, B_WB_noASEAN)
 }
 
-*── C. WB con HK+MO inclusi ────────────────────────────────────────────────────
-cap confirm file "$TAB\_rob_C_WB_inclHKMO.dta"
-if _rc {
-    reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
-        absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB\_rob_C_WB_inclHKMO.dta", tstat pval ci replace addlabel(model, C_WB_inclHKMO)
-}
+* NOTA: il vecchio blocco C ("WB includendo HK+MO") e' stato rimosso. Ora si
+* ottiene lanciando questo stesso file con  global PTA_SAMPLE "incl", che
+* produce la variante inclusiva di TUTTI i blocchi, non solo di WB baseline.
 
 *── D. C-overlap (WB e TREND) ──────────────────────────────────────────────────
-cap confirm file "$TAB\_rob_D_WB_overlap.dta"
+cap confirm file "$TAB/_rob_D_WB_overlap$SFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
-        if !hkmo & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB\_rob_D_WB_overlap.dta", tstat pval ci replace addlabel(model, D_WB_overlap)
+        if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
+    regsave using "$TAB/_rob_D_WB_overlap$SFX.dta", tstat pval ci replace addlabel(model, D_WB_overlap)
 }
-cap confirm file "$TAB\_rob_D_TREND_overlap.dta"
+cap confirm file "$TAB/_rob_D_TREND_overlap$SFX.dta"
 if _rc {
     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
-        if !hkmo & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB\_rob_D_TREND_overlap.dta", tstat pval ci replace addlabel(model, D_TREND_overlap)
+        if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
+    regsave using "$TAB/_rob_D_TREND_overlap$SFX.dta", tstat pval ci replace addlabel(model, D_TREND_overlap)
 }
 
 *── E. C-deepshallow TREND ──────────────────────────────────────────────────────
-cap confirm file "$TAB\_rob_E_TREND_deepshallow.dta"
+cap confirm file "$TAB/_rob_E_TREND_deepshallow$SFX.dta"
 if _rc {
     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
-        if !hkmo & in_deepshallow, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB\_rob_E_TREND_deepshallow.dta", tstat pval ci replace addlabel(model, E_TREND_deepshallow)
+        if $HKMOEXPR & in_deepshallow, absorb(fpd fdt pt) vce(cluster country_code) compact
+    regsave using "$TAB/_rob_E_TREND_deepshallow$SFX.dta", tstat pval ci replace addlabel(model, E_TREND_deepshallow)
 }
 
 *── G. Within-firm: quota green nel paniere impresa-dest-anno ──────────────────
 * share_green_fdt = quota di valore export green dell'impresa f verso d in t.
 * EP varia a dest-anno: FE impresa-dest (fd) + anno; identificazione within-fd.
-cap confirm file "$TAB\_rob_G_WB_withinfirm.dta"
+cap confirm file "$TAB/_rob_G_WB_withinfirm$SFX.dta"
 if _rc {
-    use `forG' if !hkmo, clear
+    use `forG' if $HKMOEXPR, clear
     gen double exp_green = export * env_good_new
     collapse (sum) export exp_green ///
              (first) WB_EP_Depth TREND_EP_Count totaldepth_nonenv, ///
@@ -164,20 +197,28 @@ if _rc {
     egen long fd = group(companyID country_code)
     reghdfe share_green WB_EP_Depth totaldepth_nonenv, ///
         absorb(fd year) vce(cluster country_code)
-    regsave using "$TAB\_rob_G_WB_withinfirm.dta", tstat pval ci replace addlabel(model, G_WB_withinfirm)
+    regsave using "$TAB/_rob_G_WB_withinfirm$SFX.dta", tstat pval ci replace addlabel(model, G_WB_withinfirm)
     reghdfe share_green TREND_EP_Count totaldepth_nonenv, ///
         absorb(fd year) vce(cluster country_code)
-    regsave using "$TAB\_rob_G_TREND_withinfirm.dta", tstat pval ci replace addlabel(model, G_TREND_withinfirm)
+    regsave using "$TAB/_rob_G_TREND_withinfirm$SFX.dta", tstat pval ci replace addlabel(model, G_TREND_withinfirm)
 }
 
 *── Export riassuntivo ─────────────────────────────────────────────────────────
-* NOTA: "append using "$TAB\`f''" falliva con r(601) perche' `dir ... files`
+* NOTA: "append using "$TAB/`f''" falliva con r(601) perche' `dir ... files`
 * restituisce nomi gia' tra virgolette compound e append non accetta un
 * dataset vuoto in memoria come target del primissimo append: si usa `use`
 * per il primo file e `append` per i successivi, con path a forward slash
 * (Stata li accetta anche su Windows ed evita l'ambiguita' backslash-backtick).
+* Il glob non distingue le due varianti di campione: in modalita' "incl" si
+* tengono solo i file che finiscono in _inclHKMO, in "excl" solo quelli che NON
+* ci finiscono - altrimenti il CSV riassuntivo mescolerebbe i due campioni.
 clear
-local files : dir "$TAB" files "_rob_*.dta"
+local all : dir "$TAB" files "_rob_*.dta"
+local files ""
+foreach f of local all {
+    local isincl = strpos("`f'", "_inclHKMO") > 0
+    if ("$SFX" != "" & `isincl') | ("$SFX" == "" & !`isincl') local files `"`files' "`f'""'
+}
 local first = 1
 foreach f of local files {
     if `first' {
@@ -188,5 +229,5 @@ foreach f of local files {
         append using "$TAB/`f'"
     }
 }
-export delimited "$TAB\tripledd_robustness_reghdfe.csv", replace
-di "[OK] tripledd_robustness_reghdfe.csv"
+export delimited "$TAB/tripledd_robustness_reghdfe$SFX.csv", replace
+di "[OK] tripledd_robustness_reghdfe$SFX.csv"

@@ -1,5 +1,30 @@
 # Session Log — Paper_PTA
 
+## 2026-07-29 — Parametrizzazione campione HK/Macao (excl/incl) + Q&A draft_paper.tex (Sonnet 5)
+
+- **Completata** la parametrizzazione HK/Macao su tutta la pipeline `New/` (19 script R + 2
+  Stata): nuovo `New/Code/_sample_config.R` con costante editabile `SAMPLE <- "excl"|"incl"`
+  (no env var — corretto dopo feedback esplicito dell'utente: gli script devono restare
+  "apri e Run" su qualunque IDE/OS). Ogni output/cache path passa da `out_path()` per evitare
+  collisioni silenziose tra varianti. Stessa logica applicata a `22_permutation_inference.R`
+  per il flag smoke-test (`TEST <- FALSE` invece di `Sys.getenv("R710_TEST")`).
+- **Stata 17/18**: aggiunto `global ROOT` OS-conditional (Win/Mac/Unix, come in
+  `01_wb_dataset_conversion.do`) e convertiti i path a forward-slash — erano hardcoded Windows.
+  Rimosso il blocco C ridondante in 18 (ora coperto dal run parametrizzato generale).
+- **Verifica statica**: 0 errori di parse su 28 file R, 0 filtri HK/MO hardcoded residui, 0
+  `Sys.getenv` residui. Nessuna esecuzione fatta in questa fase (richiesto esplicitamente
+  dall'utente: solo codice, il rerun è un passo successivo).
+- **Q&A draft_paper.tex**: risposto a 12 domande metodologiche (switcher EP, Rajan-Zingales,
+  dynamic version, inferenza, collinearità sub-indici, TotalDepth WB-only, conteggio green
+  goods 247/248/245, concordanza HS2012→HS1996, §2.3, §3.1). Verificato tutto nei dati (non a
+  memoria): 3 switcher = Korea/Laos/Singapore; concordanza HS collassa 3 codici HS2012 su 1
+  HS1996 (247→245 unici). Confermato con l'utente che i valori 0 pre-entrata (es. Singapore
+  2000-2004) sono correttamente 0, non NA (l'NA appariva solo nel CSV piccolo, non nel `.fst`
+  completo).
+- **Pending, non confermato dall'utente**: fix testuali in `draft_paper.tex` — (a) conteggio
+  green goods (247→245 univoci), (b) frase esplicita su TotalDepth sempre WB-sourced, (c)
+  eventuale rewording "within-country variation" → "change after entry into force".
+
 ## 2026-07-28 — Verifica claim paper §5.1, FE literature guide, paper cards, fix Zotero (Sonnet 5)
 
 - **Verifica dati**: confermata accuratezza 100% di `WB_Variable_Mapping.csv` e

@@ -46,9 +46,10 @@ library(data.table)
 library(fst)
 library(fixest)
 library(callr)
+source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
@@ -94,21 +95,26 @@ run_coarse_permutation <- function(cell, group_var, term_label, out_file) {
 }
 
 cat("=== Sezione A: permutazione grezza GREEN (WB) ===\n")
-run_coarse_permutation(cell, "env_good", "GREEN", file.path(DIAG_DIR, "permutation_collapsed.csv"))
+run_coarse_permutation(cell, "env_good", "GREEN", out_path(file.path(DIAG_DIR, "permutation_collapsed.csv")))
 
 cat("\n=== Sezione A: permutazione grezza DIRTY (WB) ===\n")
-run_coarse_permutation(cell, "dirty_p", "DIRTY", file.path(DIAG_DIR, "permutation_collapsed_dirty.csv"))
+run_coarse_permutation(cell, "dirty_p", "DIRTY", out_path(file.path(DIAG_DIR, "permutation_collapsed_dirty.csv")))
 
 ## ============================================================================
 ## SEZIONE B — permutazione sulla spec esatta (3,68M celle, WB e TREND)
 ## ============================================================================
-## modalita' smoke test: R710_TEST=1 -> 1 batch da 3, cache separata
-TEST    <- identical(Sys.getenv("R710_TEST"), "1")
+## modalita' smoke test: prova veloce (1 batch da 3 permutazioni invece di
+## 1000, cache separata) per controllare che lo script non abbia errori prima
+## di lanciare il calcolo vero (~1h40m). Stessa logica di _sample_config.R:
+## si edita la riga qui sotto e si salva, nessuna variabile d'ambiente.
+##   FALSE -> run vero (1000 permutazioni)
+##   TRUE  -> prova veloce (3 permutazioni)
+TEST    <- FALSE
 N_PERM  <- if (TEST) 3L else 1000L
 BATCH   <- if (TEST) 3L else 50L
 N_BATCH <- N_PERM %/% BATCH
-BATCH_CACHE <- here(if (TEST) "New/Output/TripleDiff/Models/r710_smoke"
-                    else      "New/Output/TripleDiff/Models/r710_batches")
+BATCH_CACHE <- out_path(here(if (TEST) "New/Output/TripleDiff/Models/r710_smoke"
+                             else      "New/Output/TripleDiff/Models/r710_batches"))
 dir.create(BATCH_CACHE, recursive = TRUE, showWarnings = FALSE)
 
 # un batch: carica, demeana i fissi, poi BATCH permutazioni incrementali
@@ -193,7 +199,7 @@ for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
                   format(Sys.time(), "%H:%M:%S")))
       r <- tryCatch(callr::r(run_exact_batch, args = list(
         data_file = CACHE_FST, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
-        depth_file = DEPTH_FILE, tripledd_file = file.path(TAB_DIR, "tripledd_collapsed.csv"),
+        depth_file = DEPTH_FILE, tripledd_file = out_path(file.path(TAB_DIR, "tripledd_collapsed.csv")),
         treat_var = tv, batch_id = b, batch_size = BATCH
       ), show = TRUE), error = function(e) { cat("[CRASH]", conditionMessage(e), "\n"); NULL })
       if (!is.null(r)) { saveRDS(r, rds); ok <- TRUE; break }
@@ -206,10 +212,10 @@ for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
 files <- list.files(BATCH_CACHE, pattern = "^perm_.*\\.rds$", full.names = TRUE)
 draws <- rbindlist(lapply(files, readRDS))
 if (nrow(draws) == 0L) stop("Nessun batch riuscito: niente da aggregare.")
-suff <- if (TEST) "_smoke" else ""
+suff <- paste0(if (TEST) "_smoke" else "", SAMPLE_SUFFIX)
 fwrite(draws, file.path(TAB_DIR, sprintf("r710_permutation_draws%s.csv", suff)))
 
-obs <- fread(file.path(TAB_DIR, "tripledd_collapsed.csv"))
+obs <- fread(out_path(file.path(TAB_DIR, "tripledd_collapsed.csv")))
 summ <- list()
 for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
   tr_key <- if (tv == "WB_EP_Depth") "WB" else "TREND"

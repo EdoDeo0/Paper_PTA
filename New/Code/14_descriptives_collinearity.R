@@ -21,6 +21,7 @@ rm(list = ls())
 library(fst)
 library(data.table)
 library(here)
+source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 
 ## --- Parametri e percorsi --------------------------------------------------
@@ -42,8 +43,9 @@ u <- merge(u, td[, .(country_code, year, totaldepth_nonenv)],
            by = c("country_code", "year"), all.x = TRUE)
 u[is.na(totaldepth_nonenv), totaldepth_nonenv := 0]
 
-trat <- u[WB_EP_Depth > 0 & !country_code %in% c(110L, 121L)]
-cat("Country-year trattati in-sample (HK+MO esclusi):", nrow(trat), "\n\n")
+trat <- hkmo_filter(u[WB_EP_Depth > 0])
+cat(sprintf("Country-year trattati in-sample (HK+MO %s): %d\n\n",
+            if (HKMO_DROP) "esclusi" else "inclusi", nrow(trat)))
 
 ## --- Sezione 1: correlazione grezza sui trattati ---------------------------
 r_raw_wb <- cor(trat$WB_EP_Depth, trat$totaldepth_nonenv)
@@ -84,5 +86,5 @@ interagita con green/dirty.
 ", nrow(trat), r_raw_wb, r_raw_tr, r_win_wb, r_win_tr, vif_wb, vif_tr)
 
 cat(out)
-writeLines(out, file.path(OUT_DIR, "14_descriptives_collinearity.md"))
+writeLines(out, out_path(file.path(OUT_DIR, "14_descriptives_collinearity.md")))
 cat("[OK] 14_descriptives_collinearity.md\n")

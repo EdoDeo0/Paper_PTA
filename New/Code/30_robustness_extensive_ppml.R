@@ -23,6 +23,7 @@ rm(list = ls())
 library(callr)
 library(here)
 library(data.table)
+source(here("New/Code/_sample_config.R"))
 
 PPML_FILE  <- here("Data/Final Dataset/ppml_agg_pdt_zerofill.fst")
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
@@ -32,7 +33,7 @@ CACHE_DIR  <- here("New/Output/TripleDiff/Models_Output")
 dir.create(CACHE_DIR, recursive = TRUE, showWarnings = FALSE)
 
 ## --- Funzione: una stima, un sottoprocesso (allocatore fragile) -----------
-stima_ppml <- function(ppml_file, green_file, dirty_file, depth_file, tr) {
+stima_ppml <- function(ppml_file, green_file, dirty_file, depth_file, tr, hkmo_drop) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -42,7 +43,8 @@ stima_ppml <- function(ppml_file, green_file, dirty_file, depth_file, tr) {
   d <- as.data.table(read_fst(ppml_file, columns = c(
     "agg_export", "hs6", "country_code", "year",
     "WB_EP_Depth", "TREND_EP_Count", "pd", "dt", "pt")))
-  d <- d[!country_code %in% c(110, 121)]
+  # HK+MO: filtro inline, il sottoprocesso callr non eredita hkmo_filter()
+  if (hkmo_drop) d <- d[!country_code %in% c(110, 121)]
   green <- fread(green_file, colClasses = list(character = "hs6_final"))
   d[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% unique(green$hs6_final))]
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
@@ -64,13 +66,13 @@ rows <- list()
 for (tr in c("WB_EP_Depth", "TREND_EP_Count")) {
   tr_name <- if (tr == "WB_EP_Depth") "WB" else "TREND"
   cat("=== PPML", tr_name, "===\n")
-  rds <- file.path(CACHE_DIR, sprintf("PPML_ext_%s.rds", tr_name))
+  rds <- file.path(CACHE_DIR, sprintf("PPML_ext_%s%s.rds", tr_name, SAMPLE_SUFFIX))
   if (file.exists(rds)) {
     r <- readRDS(rds)
   } else {
     r <- tryCatch(callr::r(stima_ppml, args = list(
       ppml_file = PPML_FILE, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
-      depth_file = DEPTH_FILE, tr = tr
+      depth_file = DEPTH_FILE, tr = tr, hkmo_drop = HKMO_DROP
     )), error = function(e) { cat("[FALLITO]", tr_name, "\n"); NULL })
     if (!is.null(r)) saveRDS(r, rds)
   }
@@ -81,6 +83,6 @@ for (tr in c("WB_EP_Depth", "TREND_EP_Count")) {
   }
 }
 if (length(rows)) {
-  fwrite(rbindlist(rows), here("New/Output/TripleDiff/Tables/ppml_extensive.csv"))
+  fwrite(rbindlist(rows), out_path(here("New/Output/TripleDiff/Tables/ppml_extensive.csv")))
   cat("[OK] ppml_extensive.csv\n")
 }

@@ -29,8 +29,9 @@ library(callr)
 library(here)
 library(data.table)
 library(fst)
+source(here("New/Code/_sample_config.R"))
 
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
@@ -80,7 +81,7 @@ piano <- rbind(
 ## sottoprocessi crashano quasi sempre almeno una volta su questa macchina),
 ## riparte da li' invece di rifare tutto - stesso spirito degli altri script
 ## con cache, applicato qui via CSV invece di .rds per-spec
-OUT_FILE <- here("New/Output/TripleDiff/Tables/dirty_leaveoneout.csv")
+OUT_FILE <- out_path(here("New/Output/TripleDiff/Tables/dirty_leaveoneout.csv"))
 rows <- list()
 if (file.exists(OUT_FILE)) {
   prev <- fread(OUT_FILE)
@@ -112,7 +113,7 @@ for (i in seq_len(nrow(piano))) {
   }
 }
 loo <- rbindlist(rows)
-fwrite(loo, here("New/Output/TripleDiff/Tables/dirty_leaveoneout.csv"))
+fwrite(loo, OUT_FILE)
 
 ## --- Verdetto automatico (rispetto alla baseline core) ---------------------
 b0 <- loo[spec == "baseline", coef]

@@ -33,6 +33,7 @@ rm(list = ls())
 library(callr)
 library(here)
 library(data.table)
+source(here("New/Code/_sample_config.R"))
 
 ## --- Parametri e percorsi --------------------------------------------------
 DATA_FILE  <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
@@ -54,7 +55,8 @@ groups <- list(
 
 ## --- Stima di un gruppo (self-contained, gira in sottoprocesso callr) ------
 estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_dir,
-                           nthreads, group_name, keep_hs6, keep_cc) {
+                           nthreads, group_name, keep_hs6, keep_cc,
+                           hkmo_drop, suffix) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -64,7 +66,8 @@ estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_di
   cols <- c("ln_export", "WB_EP_Depth", "TREND_EP_Count", "hs6",
             "country_code", "year", "fpd", "fdt", "pt")
   d <- as.data.table(read_fst(data_file, columns = cols))
-  d <- d[!country_code %in% c(110L, 121L)]  # HK+MO fuori (come 13/14 Stata)
+  # HK+MO: filtro inline, il sottoprocesso callr non eredita hkmo_filter()
+  if (hkmo_drop) d <- d[!country_code %in% c(110L, 121L)]
   if (!is.null(keep_hs6)) d <- d[hs6 %in% keep_hs6]
   if (!is.null(keep_cc))  d <- d[country_code %in% keep_cc]
 
@@ -83,7 +86,8 @@ estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_di
   treats <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")
   for (tr_name in names(treats)) {
     tr <- treats[[tr_name]]
-    rds <- file.path(out_dir, "Models_Output", sprintf("STAB_%s_%s.rds", group_name, tr_name))
+    rds <- file.path(out_dir, "Models_Output",
+                     sprintf("STAB_%s_%s%s.rds", group_name, tr_name, suffix))
     if (file.exists(rds)) { out[[tr_name]] <- readRDS(rds); next }
     f <- sprintf("ln_export ~ %s:env_good + %s:dirty_p + TotalDepth_nonEnv:env_good + TotalDepth_nonEnv:dirty_p | fpd + fdt + pt", tr, tr)
     m <- feols(as.formula(f), data = d, cluster = ~country_code, lean = TRUE, mem.clean = TRUE)
@@ -108,7 +112,8 @@ for (g in names(groups)) {
       depth_file = DEPTH_FILE, out_dir = OUT_DIR, nthreads = NTHREADS,
       group_name = g,
       keep_hs6 = if (is.null(groups[[g]]$keep_hs6)) NULL else groups[[g]]$keep_hs6,
-      keep_cc  = if (is.null(groups[[g]]$keep_cc))  NULL else groups[[g]]$keep_cc
+      keep_cc  = if (is.null(groups[[g]]$keep_cc))  NULL else groups[[g]]$keep_cc,
+      hkmo_drop = HKMO_DROP, suffix = SAMPLE_SUFFIX
     ), show = TRUE),
     error = function(e) { cat("[FALLITO]", g, ":", conditionMessage(e), "\n"); NULL })
 }
@@ -124,5 +129,5 @@ for (g in names(results)) {
   }
 }
 stab <- rbindlist(rows)
-fwrite(stab, file.path(OUT_DIR, "Tables", "tripledd_stability.csv"))
+fwrite(stab, out_path(file.path(OUT_DIR, "Tables", "tripledd_stability.csv")))
 cat("\n[OK] tripledd_stability.csv - confrontare EP:env_good (e :dirty_p) tra i gruppi.\n")

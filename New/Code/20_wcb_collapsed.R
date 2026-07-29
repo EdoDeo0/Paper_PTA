@@ -29,15 +29,16 @@ library(data.table)
 library(fixest)
 library(fst)
 library(fwildclusterboot)
+source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 setFixest_nthreads(4)
 
 ## --- Parametri e percorsi --------------------------------------------------
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
-OUT_FILE   <- here("New/Output/TripleDiff/Tables/wcb_collapsed.csv")
+OUT_FILE   <- out_path(here("New/Output/TripleDiff/Tables/wcb_collapsed.csv"))
 
 ## --- Caricamento dati (stesso panel e stessi merge di 12) ------------------
 cell <- as.data.table(read_fst(CACHE_FST))

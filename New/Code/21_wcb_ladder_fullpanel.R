@@ -14,8 +14,11 @@
 ## Frisch-Waugh come in 16/23/25 - si demeanano solo le colonne necessarie
 ## rispetto a fpt+fpd con fixest::demean(), poi lm() leggero e boottest
 ## sull'lm invece che su un feols pesante. Stesse 4 spec dell'originale
-## (WB/TREND x baseline/controlli), stesso campione (full panel, HK+MO
-## INCLUSI come nella ladder), cluster ~country_code, B=9999. VERIFICA: il
+## (WB/TREND x baseline/controlli), stesso campione della ladder (19) -
+## variante HK+MO da _sample_config.R, default ESCLUSI; i risultati gia'
+## presenti senza suffisso vengono dal vecchio run INCLUSIVO e vanno spostati
+## in New/Output/OLS_inclHKMO/Bootstrap/ prima di rilanciare la variante
+## esclusa. Cluster ~country_code, B=9999. VERIFICA: il
 ## coefficiente FW deve coincidere con la colonna corrispondente di
 ## OLS_Ladder_FE.tex (19) - stampato a confronto ad ogni spec.
 ##
@@ -34,10 +37,11 @@ rm(list = ls())
 library(callr)
 library(here)
 library(data.table)
+source(here("New/Code/_sample_config.R"))
 
 ## --- Parametri e percorsi --------------------------------------------------
 DATA_FILE <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
-BOOT_DIR  <- here("New/Output/OLS/Bootstrap")
+BOOT_DIR  <- file.path(out_path(here("New/Output/OLS")), "Bootstrap")  # stessa dir variante di 19
 dir.create(BOOT_DIR, recursive = TRUE, showWarnings = FALSE)
 
 # attesi dalla ladder pubblicata (OLS_Ladder_FE.tex, riga fpt+fpd) - solo per
@@ -46,7 +50,7 @@ ATTESI <- c(wb_baseline = 0.00031, wb_controls = 0.00038,
             trend_baseline = 0.00027, trend_controls = 0.00028)
 
 ## --- Funzione: una spec, un sottoprocesso ----------------------------------
-run_spec <- function(data_file, spec_name) {
+run_spec <- function(data_file, spec_name, hkmo_drop) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -60,6 +64,8 @@ run_spec <- function(data_file, spec_name) {
             if (controls) c("tariffs", "ln_hhi_baci"))
 
   d <- as.data.table(read_fst(data_file, columns = cols))
+  # HK+MO: filtro inline, il sottoprocesso callr non eredita hkmo_filter()
+  if (hkmo_drop) d <- d[!country_code %in% c(110L, 121L)]
   d <- na.omit(d)  # feols scarta gli NA per-spec: idem
   cat(sprintf("[%s] righe dopo na.omit: %s\n", spec_name, format(nrow(d), big.mark = ",")))
 
@@ -100,7 +106,7 @@ for (sp in names(ATTESI)) {
   ok <- FALSE
   for (tent in 1:4) {
     cat(sprintf("== %s (tentativo %d) - %s\n", sp, tent, format(Sys.time(), "%H:%M:%S")))
-    r <- tryCatch(callr::r(run_spec, args = list(data_file = DATA_FILE, spec_name = sp), show = TRUE),
+    r <- tryCatch(callr::r(run_spec, args = list(data_file = DATA_FILE, spec_name = sp, hkmo_drop = HKMO_DROP), show = TRUE),
                   error = function(e) { cat("[CRASH]", conditionMessage(e), "\n"); NULL })
     if (!is.null(r)) {
       cat(sprintf("   atteso (ladder tex): %+.5f | ottenuto: %+.6f | p_wcb = %.4f\n",

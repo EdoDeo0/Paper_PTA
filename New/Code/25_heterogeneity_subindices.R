@@ -29,9 +29,10 @@ rm(list = ls())
 library(callr)
 library(here)
 library(data.table)
+source(here("New/Code/_sample_config.R"))
 
 ## --- Parametri e percorsi --------------------------------------------------
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
@@ -79,7 +80,7 @@ stima_sub <- function(cache_fst, green_file, dirty_file, depth_file, idx_file, s
 rows <- list()
 for (s in SUBS) {
   cat("===", s, "===\n")
-  rds <- file.path(CACHE_DIR, sprintf("SUBIDX_%s.rds", s))
+  rds <- file.path(CACHE_DIR, sprintf("SUBIDX_%s%s.rds", s, SAMPLE_SUFFIX))
   if (file.exists(rds)) {
     r <- readRDS(rds)
   } else {
@@ -99,5 +100,5 @@ for (s in SUBS) {
   }
 }
 out <- rbindlist(rows)
-fwrite(out, here("New/Output/TripleDiff/Tables/subindices_collapsed.csv"))
+fwrite(out, out_path(here("New/Output/TripleDiff/Tables/subindices_collapsed.csv")))
 cat("\n[OK] subindices_collapsed.csv\n")

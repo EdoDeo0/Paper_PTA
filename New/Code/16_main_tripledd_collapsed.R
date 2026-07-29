@@ -49,10 +49,11 @@ library(data.table)
 library(fst)
 library(callr)
 library(ggplot2)
+source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 
 ## --- Parametri e percorsi --------------------------------------------------
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
@@ -129,7 +130,7 @@ for (tr in c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")) {
   res[[key]] <- out
   print(res[[key]])
 }
-fwrite(rbindlist(res), file.path(OUT_DIR, "Tables", "tripledd_collapsed.csv"))
+fwrite(rbindlist(res), out_path(file.path(OUT_DIR, "Tables", "tripledd_collapsed.csv")))
 cat("[OK] tripledd_collapsed.csv\n")
 
 ## --- Sezione 2: event study differenziale (green e dirty vs neutri) --------
@@ -158,7 +159,7 @@ for (tent in 1:10) {
   if (!is.null(cf)) break
 }
 if (is.null(cf)) stop("Event study fallito dopo 10 tentativi")
-fwrite(cf, file.path(OUT_DIR, "Diagnostics", "eventstudy_collapsed.csv"))
+fwrite(cf, out_path(file.path(OUT_DIR, "Diagnostics", "eventstudy_collapsed.csv")))
 
 p <- ggplot(cf, aes(t, b, colour = quale)) +
   geom_hline(yintercept = 0, linetype = 2) + geom_vline(xintercept = -0.5, colour = "grey60") +
@@ -168,7 +169,7 @@ p <- ggplot(cf, aes(t, b, colour = quale)) +
   labs(x = "Anni dall'entrata in vigore del PTA", y = "Effetto differenziale vs prodotti neutri",
        title = "Event study (panel collassato): green e dirty vs neutri", colour = NULL) +
   theme_minimal()
-ggsave(file.path(OUT_DIR, "Diagnostics", "eventstudy_collapsed.png"), p, width = 9, height = 5)
+ggsave(out_path(file.path(OUT_DIR, "Diagnostics", "eventstudy_collapsed.png")), p, width = 9, height = 5)
 cat("[OK] eventstudy_collapsed.png - controllare pre-trend differenziali\n")
 
 cat("\n=== DONE 12 (triple-diff collassata) ===\n")

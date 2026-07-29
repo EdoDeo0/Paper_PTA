@@ -46,9 +46,10 @@ library(data.table)
 library(fixest)
 library(fst)
 library(ggplot2)
+source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 TAB_DIR    <- here("New/Output/TripleDiff/Tables")
@@ -99,7 +100,7 @@ for (g in c("gap_green", "gap_dirty")) {
                                     pval = pvalue(agg)[["ATT"]]))
 }
 sunab_out <- rbindlist(rows)
-fwrite(sunab_out, file.path(TAB_DIR, "sunab_gap.csv"))
+fwrite(sunab_out, out_path(file.path(TAB_DIR, "sunab_gap.csv")))
 
 # grafico: coefficienti sunab per anno relativo
 cf_plot <- sunab_out[grepl("year::", term)]
@@ -113,7 +114,7 @@ p_sunab <- ggplot(cf_plot[t >= -6 & t <= 5], aes(t, coef, colour = quale)) +
   labs(x = "Anni dall'entrata in vigore", y = "Gap di composizione vs neutri",
        title = "Event study Sun-Abraham sul gap di composizione (dest-anno)",
        colour = NULL) + theme_minimal()
-ggsave(file.path(DIAG_DIR, "eventstudy_sunab.png"), p_sunab, width = 9, height = 5)
+ggsave(out_path(file.path(DIAG_DIR, "eventstudy_sunab.png")), p_sunab, width = 9, height = 5)
 cat("[OK] sunab_gap.csv + eventstudy_sunab.png\n")
 
 ## ============================================================================
@@ -176,9 +177,9 @@ for (cy in coorti$entry_year) {
 diag_rows$loo <- rbindlist(loo)
 
 diag_out <- rbindlist(diag_rows, use.names = TRUE)
-fwrite(diag_out, file.path(DIAG_DIR, "r71_sunab_diag.csv"))
+fwrite(diag_out, out_path(file.path(DIAG_DIR, "r71_sunab_diag.csv")))
 
-sink(file.path(DIAG_DIR, "r71_sunab_diag.md"))
+sink(out_path(file.path(DIAG_DIR, "r71_sunab_diag.md")))
 cat("# 19 (sezione B) - Diagnosi Sun-Abraham gap_dirty t=-6\n\n")
 cat("## Coorti di entrata (23 trattate, HK+MO esclusi)\n\n")
 print(coorti)
@@ -205,7 +206,7 @@ cat("[OK] r71_sunab_diag.csv + r71_sunab_diag.md\n")
 ## ============================================================================
 ## SEZIONE C — grafico TWFE migliorato (nessuna ri-stima, solo presentazione)
 ## ============================================================================
-cf_es <- fread(file.path(DIAG_DIR, "eventstudy_collapsed.csv"))
+cf_es <- fread(out_path(file.path(DIAG_DIR, "eventstudy_collapsed.csv")))
 
 # punto di riferimento esplicito (t = -1, effetto 0 per definizione)
 rif <- data.table(term = "rif", b = 0, se = 0, t = -1L,
@@ -242,5 +243,5 @@ p_twfe <- ggplot(cf_es, aes(t, b)) +
   theme_minimal(base_size = 11) +
   theme(strip.text = element_text(face = "bold"))
 
-ggsave(file.path(DIAG_DIR, "eventstudy_collapsed_v2.png"), p_twfe, width = 11, height = 4.8, dpi = 200)
+ggsave(out_path(file.path(DIAG_DIR, "eventstudy_collapsed_v2.png")), p_twfe, width = 11, height = 4.8, dpi = 200)
 cat("[OK] eventstudy_collapsed_v2.png\n")

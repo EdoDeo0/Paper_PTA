@@ -24,9 +24,10 @@ rm(list = ls())
 library(callr)
 library(here)
 library(data.table)
+source(here("New/Code/_sample_config.R"))
 
 ## --- Parametri e percorsi --------------------------------------------------
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
@@ -67,7 +68,7 @@ stima_trend <- function(cache_fst, green_file, dirty_file, depth_file, treat_var
 ## --- Esecuzione: cache per indice, retry -----------------------------------
 res <- list()
 for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
-  rds <- file.path(CACHE_DIR, sprintf("r79_desttrends_%s.rds", tv))
+  rds <- file.path(CACHE_DIR, sprintf("r79_desttrends_%s%s.rds", tv, SAMPLE_SUFFIX))
   if (file.exists(rds)) { res[[tv]] <- readRDS(rds); cat("[cache]", tv, "\n"); next }
   ok <- FALSE
   for (tent in 1:4) {
@@ -83,5 +84,5 @@ for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
 
 out <- rbindlist(res)
 print(out)
-fwrite(out, here("New/Output/TripleDiff/Tables/r79_desttrends.csv"))
+fwrite(out, out_path(here("New/Output/TripleDiff/Tables/r79_desttrends.csv")))
 cat("[OK] r79_desttrends.csv\n")

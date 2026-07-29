@@ -31,8 +31,9 @@ rm(list = ls())
 library(callr)
 library(here)
 library(data.table)
+source(here("New/Code/_sample_config.R"))
 
-CACHE_FST  <- here("New/Data/Collapsed/panel_pdt_collapsed.fst")
+CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
@@ -133,5 +134,5 @@ for (tent in 1:4) {
 }
 if (is.null(res)) stop("Fallito dopo 4 tentativi")
 print(res)
-fwrite(res, here("New/Output/TripleDiff/Tables/r79c_pretrends.csv"))
+fwrite(res, out_path(here("New/Output/TripleDiff/Tables/r79c_pretrends.csv")))
 cat("[OK] r79c_pretrends.csv\n")
