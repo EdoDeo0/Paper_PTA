@@ -1,5 +1,33 @@
 # Session Log — Paper_PTA
 
+## 2026-07-30 — Q&A metodologiche su draft_paper.tex: identificazione, clustering, inferenza (Sonnet 5)
+
+- Sessione interamente di spiegazione/verifica (nessuna modifica al codice o al paper — l'utente
+  riscriverà il testo a mano). Argomenti coperti, tutti verificati nei dati o nel testo del paper
+  invece che a memoria:
+  - Logica "l'accordo colpisce tutti i prodotti allo stesso modo" → il FE
+    impresa-destinazione-anno assorbe la componente non ambientale del PTA (tariffe, dogana),
+    isolando il differenziale verde/neutro come segnale EP-specifico.
+  - Approccio econometrico di Abman, Lundberg & Ruta (2024) (letto da `./wiki/AbmanLundbergRuta2024_EPsRTAsDeforestation.md`):
+    DiD staggered su celle satellitari, contrasto "content conditional on agreement" (tra
+    firmatari, non firmatari vs non-firmatari) — stessa logica identificativa del design
+    verde/neutro del paper.
+  - **Trovato un problema di citazione**: la frase tra virgolette "content conditional on
+    agreement" attribuita a Abman et al. (2024) a riga 105-106 di `New/Paper/draft_paper.tex`
+    non risulta verbatim nel loro paper — è probabilmente una parafrasi presentata come citazione
+    diretta. Segnalato all'utente, che lo sistemerà lui stesso in fase di riscrittura.
+  - Motivazione del clustering per destinazione (non destinazione-anno): Bertrand-Duflo-Mullainathan
+    (2004) — il trattamento è persistente nel tempo per destinazione, clusterizzare troppo fine
+    ignora la correlazione seriale e sottostima i SE.
+  - Wild cluster bootstrap: letto full-text di Cameron-Gelbach-Miller (2008) da Zotero
+    (item FBQJXRBE). Chiarito un errore di verso nel ragionamento dell'utente (SE sottostimato →
+    t più grande → **più** rigetti, non meno) e distinti i due meccanismi di over-rejection:
+    Moulton (SE OLS di default, clustering ignorato del tutto) vs CGM (SE cluster-robusto corretto
+    ma downward-biased a campione finito con pochi cluster, 5-30) — il wild bootstrap-t di CGM
+    risolve il secondo, non il primo.
+- **Pending invariato**: fix testuali in `draft_paper.tex` (conteggio green goods, frase
+  TotalDepth WB-only, citazione Abman verbatim) — l'utente li farà a mano, non richiesti a me.
+
 ## 2026-07-29 — Parametrizzazione campione HK/Macao (excl/incl) + Q&A draft_paper.tex (Sonnet 5)
 
 - **Completata** la parametrizzazione HK/Macao su tutta la pipeline `New/` (19 script R + 2
