@@ -1,5 +1,24 @@
 # Session Log — Paper_PTA
 
+## 2026-07-31 — Q&A sull'inferenza (permutation/WCB/Fisher/Bertrand) con verifica full-text (Sonnet 5)
+
+- Sessione di spiegazione/verifica, nessuna modifica a codice o paper. Perché il draft cita
+  Fisher (1935) e Bertrand-Duflo-Mullainathan (2004) per il permutation test: letti entrambi
+  per intero (Fisher via un secondo PDF caricato dall'utente su Zotero con layer di testo,
+  BDM via l'attachment PDF completo, non solo l'abstract). Confermato: Fisher = origine del
+  metodo (lady tasting tea, cap. II), BDM = applicazione a un DiD con pochi cluster (placebo
+  laws), nessuno dei due è un falsification test in senso stretto — sono metodi di inferenza.
+- Verificata (papers non su Zotero, trovati e letti online come working paper gratuiti) la
+  ragione per cui il WCB non basta da solo: MacKinnon & Webb (2017, DOI 10.1002/jae.2508) e
+  Conley & Taber (2011, DOI 10.1162/REST_a_00049). **Autocorrezione**: la prima spiegazione
+  data (23 cluster trattati < soglia "sicura" di 8) era aritmeticamente sbagliata (23>8).
+  La ragione vera, verificata sui dati reali (`New/Data/Collapsed/panel_pdt_collapsed.fst`):
+  i 23 cluster trattati sono fortemente sbilanciati in dimensione (rapporto ~163x per peso
+  osservazioni, top-5 = 51% della massa trattata) — esattamente il caso "wildly different
+  cluster sizes" per cui MacKinnon-Webb dicono che la loro regola "8 a G-8" (derivata solo
+  per cluster di uguale dimensione) non si applica.
+- DOI di entrambi forniti all'utente per l'aggiunta a Zotero.
+
 ## 2026-07-30 — Q&A metodologiche su draft_paper.tex: identificazione, clustering, inferenza (Sonnet 5)
 
 - Sessione interamente di spiegazione/verifica (nessuna modifica al codice o al paper — l'utente
