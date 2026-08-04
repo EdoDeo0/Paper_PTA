@@ -75,6 +75,23 @@
 > - Nessun commit fatto da Claude (regola del progetto): tutte le modifiche
 >   sono nel working tree, pronte per la review dell'utente.
 >
+> ⚠️ **AGGIORNAMENTO 2026-08-03 — POTENZA E COLLINEARITÀ EP/TotalDepth (§8).** Discussione
+> Q&A (non un audit) partita dal finding #3 dell'audit `2026-08-02_audit_report.md`: la
+> collinearità within destinazione-anno tra `WB_EP_Depth` e `TotalDepth_nonEnv` (corr. 0,96,
+> VIF 5,76). Confrontato con Brandi et al. (2020, wiki), che ha lo stesso problema più diluito
+> (0,67, VIF 4,62) per scala campionaria, non per un trucco econometrico diverso.
+> **Scoperta che ha riordinato le priorità**: convertendo in MDE per 1 SD del regressore,
+> **TREND non è meno affetto di WB — è leggermente peggio** (7,4% vs 5,2%). Il VIF basso di
+> TREND (1,33) era fuorviante perché ignora la scala del regressore. Quindi il vincolo che
+> morde è la **potenza del disegno** (23 cluster trattati), non solo la collinearità di WB:
+> §8 è ordinata di conseguenza (prima quantificare la potenza, poi eventualmente mitigare).
+> **Due delle idee della prima stesura sono state corrette dopo verifica sui dati** e sono
+> conservate con la correzione a vista (§8.4 e §8.7): l'`EP_share` su tutto il campione
+> collassava a una dummy di trattamento (reintroduceva il confound C1), e i 3 "switcher" non
+> hanno la variazione che sembrava (Corea: salto grande ma **1 solo anno post**; Singapore:
+> salto di 1 unità). Piano operativo in **§8**, ordine di esecuzione in **§8.8**. Non ancora
+> eseguito nulla.
+
 > ✅ **AGGIORNAMENTO 2026-07-20 — INCLUSA LA COSTRUZIONE DEL DATASET DI BASE
 > (script 01-04), RINUMERAZIONE COMPLETA.** Il riordino del 07-16 partiva da
 > `final_dataset_pta_env_indices_compressed.fst` come input già dato: la
@@ -992,3 +1009,283 @@ qui i task ordinati per priorità di attacco.
       destinazioni × ~16 anni), meno potenza del disegno attuale, non di più.
       Nessuna vera potenza aggiuntiva attesa; da fare solo se un referee lo chiede
       esplicitamente come robustness check aggiuntivo, non come priorità.
+
+---
+
+## 8. POTENZA E COLLINEARITÀ EP/TotalDepth (2026-08-03)
+
+> **Origine.** Finding #3 dell'audit `correspondence/audit/2026-08-02_audit_report.md`:
+> `WB_EP_Depth` e `TotalDepth_nonEnv` hanno corr. within (FE destinazione+anno) **0,96**, VIF
+> **5,76** (`New/Output/Diagnostics/14_descriptives_collinearity.md`). L'IC WCB del
+> coefficiente principale (WB×green, `wcb_collapsed.csv`) va da −0,018 a +0,032 — troppo largo
+> per distinguere "nessun effetto" da "effetto non misurabile con questo disegno".
+>
+> ⚠️ **RISULTATO PRELIMINARE CHE RIORDINA LE PRIORITÀ (calcolato 2026-08-03, vedi 8.1).**
+> L'ipotesi di partenza era "il problema è la collinearità di WB; TREND (VIF 1,33) è meno
+> affetto". **È falsa.** Convertiti in unità comparabili (MDE per 1 SD del regressore), i due
+> indici stanno così:
+>
+> | | SE | MDE/unità | SD regressore | **MDE per 1 SD** |
+> |---|---:|---:|---:|---:|
+> | WB × green | 0,00696 | 0,0195 | 2,65 | **5,2 %** |
+> | TREND × green | 0,00182 | 0,0051 | 14,59 | **7,4 %** |
+>
+> (MDE = 2,80 × SE, potenza 80% al 5% bilaterale; SE da `tripledd_collapsed.csv`; SD dei
+> regressori da `Data/Merged/Merged_TREND_WB_Indices_Only.csv`, 249 country-year trattati.)
+>
+> **TREND non sta meglio: sta leggermente peggio.** Il VIF basso di TREND era fuorviante perché
+> non tiene conto della scala del regressore. Conseguenza per la roadmap: il vincolo che morde
+> **non è (solo) la collinearità WB/TotalDepth, è la potenza del disegno** — 23 destinazioni
+> trattate, di cui 2 coorti che ne contengono 15. Le mitigazioni 8.3–8.6 attaccano la
+> collinearità, che è una *parte* del problema; **nessuna di esse aumenta il numero di cluster
+> trattati**, che è il pavimento vero (già scritto in §7.4.4). Da qui l'ordine sotto: prima si
+> quantifica la potenza (8.1–8.2, costo ~zero, decidono il framing), poi eventualmente si
+> lavora sulla collinearità (8.3–8.6), che ha senso solo se 8.1 mostra che c'è margine.
+>
+> ⚠️ I numeri della tabella sopra sono un **back-of-envelope da rifare in R** (vedi 8.1): sono
+> calcolati a livello country-year sui soli trattati e non pesati, mentre il campione di stima è
+> a livello cella pesato per `n` e include le destinazioni mai-trattate con EP=0. L'ordine di
+> grandezza e il *confronto* WB-vs-TREND reggono (stesso metodo per entrambi), il livello no.
+>
+> **Confronto con la letteratura (Brandi et al. 2020, wiki `Brandi2020_EPsGreenExports.md`):**
+> stesso problema (corr. ENVPROVS-DEPTH 0,67, VIF 4,62), ma diluito da scala campionaria (680
+> PTA, 476.152 flussi, molti esportatori), **non risolto con uno strumento diverso** — il loro
+> presidio è lo stesso nostro (controllo per depth DESTA + VIF check). Con un solo esportatore e
+> 14 accordi ci si aspetta collinearità strutturalmente più alta: confermato (0,96 vs 0,67).
+> Utile in sede di scrittura: il limite è **intrinseco ai disegni single-exporter**, non un
+> difetto di esecuzione di questo paper.
+>
+> **Nessuna delle voci sotto sostituisce la spec principale (§7.1)**: sono diagnostiche o
+> robustezze d'appendice.
+
+### 8.1 MDE / test di equivalenza sul campione di stima vero  ⭐ priorità massima, costo ~zero
+
+Il deliverable minimo, e quello che l'audit indica come rischio n.1 in referaggio: sostituire
+ovunque "non troviamo effetto" con "escludiamo effetti sopra X". Non richiede nuove stime, solo
+gli SE già in `New/Output/TripleDiff/Tables/tripledd_collapsed.csv` più la SD dei regressori
+**nel campione di stima** (pesata per `n`, con gli zeri delle mai-trattate).
+
+- Nuovo script leggero `New/Code/32_mde_equivalence.R`: legge il panel collassato
+  (`New/Data/Collapsed/panel_pdt_collapsed.fst`) per le SD pesate di `WB_EP_Depth` e
+  `TREND_EP_Count`, legge SE e IC da `tripledd_collapsed.csv` + `wcb_collapsed.csv`, produce
+  una tabella con: SE, MDE/unità, SD del regressore, MDE per 1 SD, MDE per il salto tipico
+  osservato (es. Laos 1→6, Corea 1→17), e l'estremo superiore dell'IC WCB in % .
+- Riportare **sia** l'MDE basato sull'SE asintotico **sia** quello basato sull'IC WCB (più
+  onesto: il WCB è l'inferenza che il paper dichiara di usare).
+- Opzionale ma consigliato: **TOST / equivalence test** formale contro una soglia sostantiva
+  dichiarata a priori (es. "un effetto inferiore all'1% dell'export per unità di EP non è
+  economicamente rilevante" — la soglia va argomentata, non scelta per far tornare il test).
+
+**Checkpoint 8.1:**
+- [ ] `32_mde_equivalence.R` scritto ed eseguito → `New/Output/Diagnostics/32_mde_equivalence.md`.
+- [ ] Numeri della tabella nel cappello di §8 sostituiti con quelli veri (campione di stima,
+      pesati) — questo file aggiornato di conseguenza.
+- [ ] Confermato/smentito che TREND non è meglio di WB in unità comparabili.
+- [ ] Frase del paper riscritta: da "no effect" a "effetti sopra X esclusi al 95%; sotto X il
+      disegno non discrimina". Tutte le occorrenze, non solo l'abstract.
+
+### 8.2 Diagnostica di potenza per coorte/cluster (costo ~zero, chiude il quadro di 8.1)
+
+Documentare *perché* l'MDE è quello che è, così il limite è attribuito alla fonte giusta (pochi
+cluster trattati) e non letto come sciatteria. Materiale già quasi tutto prodotto:
+`Diagnostics/13_descriptives_treatment.md` (25 trattati, 3 switcher),
+`Diagnostics/r71_sunab_diag.md` (tabella coorti: 2002→5, 2005→10, poi 7 coorti singleton),
+`Diagnostics/15_descriptives_sample.md` (celle `fdt` identificanti: 26% green, 12% dirty).
+
+- Consolidare in un unico paragrafo/tabella d'appendice: n. cluster trattati, distribuzione
+  per coorte, quota di celle che identificano davvero l'interazione, sbilanciamento dei pesi
+  tra cluster (già noto: rapporto ~163× per peso osservazioni, top-5 = 51% della massa
+  trattata — vedi session-log 2026-07-31 e la memoria di progetto su MacKinnon-Webb).
+- Nessuna stima nuova.
+
+**Checkpoint 8.2:**
+- [ ] Tabella/paragrafo "power and identifying variation" pronto per l'appendice.
+- [ ] Collegato esplicitamente all'MDE di 8.1 nel testo ("l'MDE del 5% discende da…").
+
+### 8.3 Disaggregazione di TotalDepth per area (la mitigazione più promettente)
+
+Il controllo `TotalDepth_nonEnv` è uno scalare che assorbe **tutta** la profondità non
+ambientale. Se l'ambiente correla fortemente solo con *alcune* aree (es. standard tecnici,
+SPS) e debolmente con altre (es. investimenti, visti), controllare per l'aggregato drena
+variazione di EP senza necessità: un controllo mirato ne lascia di più.
+
+**Fattibilità verificata 2026-08-03**: `Data/WB/WB_DTA.dta` contiene le ~18-20 aree standard
+DTA 2.0 (confermata la presenza di Antidumping, Competition, Countervailing, Environmental,
+Investment, Intellectual Property, Labor, Movement of Capital, Public Procurement, Sanitary,
+Services, State-Owned Enterprises, Subsidies, Technical Barriers, Trade Facilitation, Visa,
+Customs — centinaia di provision ciascuna). `08_total_depth.R` legge già `wb$Area` e la usa
+per separare l'ambientale (`grepl("Environmental Laws", wb$Area)`): la stessa `build_depth()`
+applicata a sottoinsiemi di `Area` produce i sotto-totali senza riscrivere la logica.
+
+- Nuovo script `New/Code/33_totaldepth_byarea.R`: stessa logica di `08_total_depth.R`, ma
+  `build_depth()` chiamata una volta per gruppo di aree → `wb_totaldepth_byarea_country_year.csv`.
+- Calcolare corr. within (FE paese+anno, stesso metodo di `14_descriptives_collinearity.md`)
+  tra `WB_EP_Depth` e ciascun sotto-totale. **Attesa realistica**: le aree probabilmente
+  correlano *tutte* fortemente tra loro (un accordo profondo è profondo ovunque) — se è così
+  il guadagno è nullo e va documentato come tale, non forzato.
+- Se e solo se emergono aree a bassa correlazione: ristimare la spec principale con controllo
+  mirato (solo aree ad alta corr.) e confrontare SE/VIF con l'aggregato.
+
+**Checkpoint 8.3:**
+- [ ] Raggruppamento delle `Area` deciso e documentato (mappa area→gruppo tracciabile).
+- [ ] Matrice di corr. within EP vs ogni gruppo prodotta.
+- [ ] **Esito documentato anche se negativo** ("tutte le aree correlano >0,9 con EP: il
+      controllo aggregato non è migliorabile") — è comunque un risultato da citare in appendice.
+
+### 8.4 Contrasto deep-vs-shallow sui soli trattati (già parzialmente in casa)
+
+> ⚠️ **Correzione rispetto alla prima stesura di questa sezione (2026-08-03, pre-verifica).**
+> L'idea originale era usare `EP_share = EP/TotalDepth` come regressore alternativo su tutto il
+> campione. **Non funziona così**: per le mai-trattate `TotalDepth = 0`, quindi `EP_share` è
+> indefinita e porla a 0 rende la variabile ≈ una **dummy di trattamento riscalata** (0 per le
+> non trattate, ~0,03 per le trattate) → reintroduce esattamente il confound **C1 di §7.0**
+> (livello EP collineare con l'entrata in vigore del PTA) che tutto il disegno §7.1 esiste per
+> evitare. Il rapporto ha senso **solo condizionatamente all'avere un accordo**.
+
+Formulazione corretta: stimare **sul solo campione dei partner PTA** (nessuna mai-trattata),
+con `EP_share` — cioè "a parità di *avere* un accordo, un accordo più ambientale sposta la
+composizione?". È il contrasto *content conditional on agreement* di Abman-Lundberg-Ruta (2024)
+già citato nel paper, ed è **il sotto-campione `C-deepshallow` che esiste già**
+(`New/Data/Subsamples/flag_deepshallow.csv`, usato da `24_stability_controlgroups.R`).
+
+- Variazione disponibile, verificata 2026-08-03 sui 223 country-year trattati (excl. HK+MO):
+  `EP_share` va da 0,0119 a 0,0680, 12 valori distinti, **CV 0,184 contro 0,579 del livello EP**.
+  Varia, ma molto meno del livello → **attendersi SE ampi**: è un regressore a bassa varianza,
+  non una scorciatoia gratuita. Corr(EP, TotalDepth) *sui soli trattati* = 0,909 (contro 0,96
+  within complessivo): il restringimento ai trattati da solo non scioglie la collinearità.
+- Implementazione: estendere `24_stability_controlgroups.R` (che già filtra `deepshallow`)
+  con una riga di regressione aggiuntiva su `EP_share`, oppure nuovo
+  `New/Code/34_epshare_treatedonly.R` se si preferisce non toccare la cache di 24.
+- **Attenzione al cambio di estimando**: da "effetto marginale di una clausola EP in più" a
+  "effetto della composizione ambientale dell'accordo". Va dichiarato nel testo, non usato come
+  robustezza silenziosa.
+
+**Checkpoint 8.4:**
+- [ ] `EP_share` costruito sui soli trattati; distribuzione documentata (i 12 valori distinti).
+- [ ] Stima prodotta e confrontata con la spec principale (segno, ordine di grandezza, SE).
+- [ ] Se entra nel paper: paragrafo che dichiara il cambio di estimando + il legame con ALR 2024.
+
+### 8.5 VIF dei singoli sotto-indici (priorità bassa — probabile vicolo cieco)
+
+Verificare se un sotto-indice specifico correla con `TotalDepth_nonEnv` meno dell'aggregato.
+
+**Perché la priorità è bassa (verificato 2026-08-03).** I sotto-indici WB hanno range minuscolo:
+`WB_GreenLiberalization` ∈ {0,1}, `WB_StandardsNonRegression` ∈ {0,3},
+`WB_EnforcementDSM` ∈ {0,1,2,3}. Le uniche combinazioni osservate di
+(GreenLib, StandardsNonRegr, EnfDSM) sono (0,0,0), (0,0,1), (0,0,2), (1,3,2), (1,3,3). Un VIF
+basso su una variabile quasi-binaria sarebbe **meccanico** (poca varianza da condividere), non
+un segno di identificazione migliore — e l'MDE per 1 SD peggiorerebbe, non migliorerebbe. Vale
+la pena calcolarlo solo per **documentare** che questa strada è chiusa.
+
+- Prerequisito non negoziabile: correggere prima il **finding #2 dell'audit**
+  (`WB_GreenLiberalization` e `WB_StandardsNonRegression` sono lo stesso regressore, rapporto
+  esatto 3×) — altrimenti la tabella VIF conterrebbe due righe identiche.
+- Estendere `14_descriptives_collinearity.md` (o nuovo `14b_…_subindices.md`) con corr. within e
+  VIF per i sotto-indici di `25_heterogeneity_subindices.R`, **escludendo**
+  `WB_StandardsNonRegression`.
+
+**Checkpoint 8.5:**
+- [ ] Finding #2 dell'audit corretto in `25_heterogeneity_subindices.R` prima di procedere.
+- [ ] Tabella VIF + **MDE per 1 SD** per sotto-indice (il VIF da solo non basta: è la lezione
+      di 8.1).
+- [ ] Esito documentato, incluso l'esito negativo atteso.
+
+### 8.6 Bounds / partial identification (ultima risorsa di framing)
+
+Se 8.3–8.5 non stringono l'IC in modo sostanziale — esito **probabile**, viste 8.1 e la natura
+strutturale del vincolo — riportare un intervallo di stime plausibili sotto assunzioni
+alternative su come allocare la covarianza condivisa tra EP e TotalDepth, invece di un unico
+coefficiente puntuale che il disegno non separa con precisione.
+
+- Nessuno script per ora. Da valutare **solo dopo** 8.1 e 8.3. Se si procede, serve prima una
+  nota metodologica (letteratura partial identification, Manski) — non implementare a scatola
+  chiusa.
+- Alternativa più leggera e forse sufficiente: presentare in una sola tabella il coefficiente
+  EP×green sotto tre controlli (nessun controllo di depth / TotalDepth aggregato / controllo
+  mirato di 8.3) e lasciare che l'ampiezza del ventaglio parli da sola, senza formalismo
+  Manski. Spesso è ciò che un referee vuole davvero vedere.
+
+**Checkpoint 8.6:**
+- [ ] Deciso dopo 8.1/8.3 se serve.
+- [ ] Se sì: nota metodologica scritta prima del codice.
+
+### 8.7 Switcher within-country (declassato a check descrittivo — NON una stima)
+
+> ⚠️ **Correzione rispetto alla prima stesura (2026-08-03, pre-verifica).** Era indicata come
+> "identificazione più pulita disponibile, priorità alta". **La variazione non c'è.** Serie
+> complete verificate su `New/Data/TotalDepth/wb_totaldepth_country_year.csv`:
+>
+> | Paese | cc | Salto EP | Anno | Anni post nel campione |
+> |---|---|---|---|---|
+> | Corea | 133 | 1 → 17 | **2015** | **1** (ultimo anno del panel) |
+> | Laos | 119 | 1 → 6 | 2005 | 11 |
+> | Singapore | 132 | 6 → 7 | 2009 | 7 |
+>
+> Cioè: la Corea ha il salto grande ma **un solo anno post**; Singapore ha 7 anni post ma un
+> salto di **1 unità**; solo il **Laos** ha salto e finestra decenti. Una stima su 3 cluster di
+> cui uno con un anno di post-periodo non è "l'identificazione più pulita": è una stima che non
+> si può difendere.
+
+Cosa resta di utile: usare i tre switcher come **evidenza descrittiva** che la proporzionalità
+EP/TotalDepth non è perfetta (Corea: EP ×17 contro TotalDepth ×9,5 — quindi la variazione
+residua che identifica il coefficiente esiste, non è zero), a supporto del paragrafo di 8.2 su
+dove sta la variazione identificante. Un grafico o una riga di tabella, non una regressione.
+
+**Checkpoint 8.7:**
+- [ ] Tabella dei 3 switcher (salto EP, salto TotalDepth, anni post) in appendice.
+- [ ] **Non** stimare la spec sui soli switcher. Se lo si fa comunque per curiosità, non
+      riportarla nel paper senza dichiarare 3 cluster e 1 anno post per la Corea.
+
+---
+
+### 8.8 Ordine di esecuzione consigliato
+
+1. **8.1 + 8.2** (mezza giornata, nessuna stima pesante) → decidono il framing dell'intero
+   capitolo. Se l'MDE risulta accettabile per il tipo di effetto che la letteratura si aspetta,
+   il paper è a posto e 8.3–8.7 diventano appendice opzionale.
+2. **8.3** (la sola mitigazione con un meccanismo plausibile) → se dà un guadagno reale, si
+   ristima; se no, si documenta il vicolo cieco.
+3. **8.4** se si vuole il contrasto ALR-style esplicito (ha valore di framing anche a SE ampi).
+4. **8.5 / 8.6 / 8.7** solo su richiesta di un referee o se avanza tempo.
+
+> **Aspettativa onesta da tenere presente:** nessuna di queste voci trasforma il null in un
+> risultato. Servono a rendere il null **difendibile e quantificato** invece che ambiguo. La
+> decisione di framing (capitolo "null di precisione / limiti dei disegni single-exporter" vs
+> "effetto delle EP") va presa dopo 8.1, non prima.
+
+---
+
+## 9. ⚠️ RERUN DOVUTO — lista green goods corretta (2026-08-04)
+
+**Cosa è cambiato**: `Data/Env_Codes_HS.dta` (fonte dei prodotti "verdi", creata a mano
+tempo fa) aveva 247 codici invece dei 248 del CLEG originale (Sauvage 2014, Table A.1).
+Il codice mancante non era un'omissione ma un errore di trascrizione: il file aveva
+871410, un codice che **non esiste** in nessuna revisione HS verificata; l'originale ha
+invece due codici distinti, 871411 e 871419. **Corretto** il file sorgente (ora 248
+righe, 871410 → 871411 + 871419) — verificato via estrazione diretta della Table A.1 dal
+PDF ufficiale OECD (vedi `New/Output/Diagnostics/CLEG_Sauvage2014_extraction.md` e
+`New/Data/Classifications/CLEG_Sauvage2014_TableA1.csv`/`.dta`).
+
+**Perché serve un rerun (non ancora fatto)**: tradotto a HS1996 col metodo corretto, il
+fix aggiunge **1 codice HS1996 nuovo** (871411) che prima non veniva mai considerato
+"verde" nel matching contro il pannello doganale — i prodotti verdi finali passano da
+245 a 246 codici distinti. Impatto atteso piccolo (1 codice su ~246, stessa scala dei
+robustness leave-one-out già in appendice), ma non verificato: **nessuna stima è stata
+rifatta**. Finché non si rilancia la pipeline, tutti i numeri attuali nel paper restano
+basati sulla lista vecchia (245 codici, con 871410 fantasma).
+
+**Da fare, quando si decide di rilanciare (non ora — prima si cercano altri errori simili)**:
+1. Rilanciare `New/Code/05_green_goods_hs1996.R` (rigenera `green_codes_hs1996.csv` da
+   `Data/Env_Codes_HS.dta` corretto — leggero, ~2 min).
+2. Verificare se 871411 compare davvero nel pannello doganale con flussi non-zero (se
+   non compare, l'impatto pratico è zero anche sulla lista finale).
+3. Se compare, rilanciare l'intera pipeline `New/` (stime principali + robustezze) con
+   il conteggio verde aggiornato.
+4. Aggiornare `draft_paper.tex`: conteggio green (245→246, o quello che risulta), e
+   il passaggio confuso 247/248/246 di §2.2 (vedi conversazione 2026-08-04).
+
+**Nota collegata**: lo stesso controllo ha verificato che l'assunzione di vintage HS del
+CLEG nello script 05 (`origin = "HS4"`, cioè HS2012) è **sbagliata** — il paper dichiara
+HS2007 (`origin` dovrebbe essere `"HS3"`) — ma sui 247 codici originali questo non
+cambiava nulla a parte il codice 871410 stesso (245 distinti in entrambi i casi). Non
+richiede azione separata, il fix sopra la assorbe.
