@@ -1,5 +1,24 @@
 # Session Log — Paper_PTA
 
+## 2026-08-05 — Correzione lista green goods + DESTA depth come robustness per TotalDepth (Sonnet 4.6)
+
+- **Fix `Data/Env_Codes_HS.dta`**: rimosso 871410 (codice HS inesistente, errore di trascrizione),
+  aggiunti 871411 e 871419 (i due sotto-codici corretti dal CLEG Sauvage 2014, Table A.1). File
+  passa da 247 a 248 righe. Impatto pipeline: codici HS1996 finali passano da 245 a 246 (un codice
+  nuovo entra nel matching). **Rerun pipeline non ancora fatto** — vedi `New/ROADMAP.md` §9.
+- Creati `New/Data/Classifications/CLEG_Sauvage2014_TableA1.csv/.dta` (248 righe, estratti
+  direttamente dal PDF OECD con pdfplumber word-coordinates) e relativo diagnostico.
+- **DESTA depth**: scaricato DESTA v2.3, verificata copertura completa su tutti i 14 accordi
+  cinesi. Scritto `New/Code/32_desta_depth.R` → produce
+  `New/Data/TotalDepth/desta_depth_country_year.csv` (239 country-year, 25 paesi). Raw data in
+  `New/Data/External/DESTA/`.
+- **Correlazioni chiave** (su 236 obs complete): `WB_EP_Depth ~ TotalDepth_nonEnv = 0.86`,
+  `WB_EP_Depth ~ DESTA = 0.69`; `TREND_EP_Count ~ TotalDepth_nonEnv = 0.50`,
+  `TREND_EP_Count ~ DESTA = 0.72`. DESTA utile come robustness soprattutto per spec WB.
+  Brandi et al. (2020, WD) usano la stessa coppia DESTA+TREND e riportano cor=0.67, coerente.
+- **Prossimo passo**: scrivere script robustness con DESTA depth in luogo di TotalDepth_nonEnv
+  (solo spec WB è il caso più forte). Cercare altri errori simili al 871410 prima di rilanciare.
+
 ## 2026-07-31 — Q&A sull'inferenza (permutation/WCB/Fisher/Bertrand) con verifica full-text (Sonnet 5)
 
 - Sessione di spiegazione/verifica, nessuna modifica a codice o paper. Perché il draft cita
