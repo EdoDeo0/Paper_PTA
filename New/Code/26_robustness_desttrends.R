@@ -74,7 +74,7 @@ stima_trend <- function(cache_fst, green_file, dirty_file, depth_file, treat_var
 ## --- Esecuzione: cache per indice, retry -----------------------------------
 res <- list()
 for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
-  rds <- file.path(CACHE_DIR, sprintf("r79_desttrends_%s%s.rds", tv, SAMPLE_SUFFIX))
+  rds <- file.path(CACHE_DIR, sprintf("r79_desttrends_%s%s.rds", tv, OUT_SUFFIX))
   if (file.exists(rds)) { res[[tv]] <- readRDS(rds); cat("[cache]", tv, "\n"); next }
   ok <- FALSE
   for (tent in 1:4) {

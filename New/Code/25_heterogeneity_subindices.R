@@ -92,7 +92,7 @@ stima_sub <- function(cache_fst, green_file, dirty_file, depth_file, idx_file, s
 rows <- list()
 for (s in SUBS) {
   cat("===", s, "===\n")
-  rds <- file.path(CACHE_DIR, sprintf("SUBIDX_%s%s.rds", s, SAMPLE_SUFFIX))
+  rds <- file.path(CACHE_DIR, sprintf("SUBIDX_%s%s.rds", s, OUT_SUFFIX))
   if (file.exists(rds)) {
     r <- readRDS(rds)
   } else {

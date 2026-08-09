@@ -73,7 +73,7 @@ rows <- list()
 for (tr in c("WB_EP_Depth", "TREND_EP_Count")) {
   tr_name <- if (tr == "WB_EP_Depth") "WB" else "TREND"
   cat("=== PPML", tr_name, "===\n")
-  rds <- file.path(CACHE_DIR, sprintf("PPML_ext_%s%s.rds", tr_name, SAMPLE_SUFFIX))
+  rds <- file.path(CACHE_DIR, sprintf("PPML_ext_%s%s.rds", tr_name, OUT_SUFFIX))
   if (file.exists(rds)) {
     r <- readRDS(rds)
   } else {

@@ -84,7 +84,9 @@ run_estimate <- function(cache_fst, co2_file, green_file, depth_file, depth_var,
     cf_check <- qr.solve(as.matrix(df[, 1:5])[, -1] * sw, df$y * sw)
     if (max(abs(cf_check - coef(m)[c("ep_green", "ep_co2", "td_green", "td_co2")])) > 1e-5)
       stop("FW non riproduce feols")
+    rm(X, sw); gc()
     m_lm <- lm(y ~ 0 + ep_green + ep_co2 + td_green + td_co2, data = df, weights = n_w)
+    rm(df); gc()
 
     for (param in c("ep_green", "ep_co2")) {
       set.seed(42)

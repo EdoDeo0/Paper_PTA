@@ -218,7 +218,7 @@ for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
 files <- list.files(BATCH_CACHE, pattern = "^perm_.*\\.rds$", full.names = TRUE)
 draws <- rbindlist(lapply(files, readRDS))
 if (nrow(draws) == 0L) stop("Nessun batch riuscito: niente da aggregare.")
-suff <- paste0(if (TEST) "_smoke" else "", SAMPLE_SUFFIX)
+suff <- paste0(if (TEST) "_smoke" else "", OUT_SUFFIX)
 fwrite(draws, file.path(TAB_DIR, sprintf("r710_permutation_draws%s.csv", suff)))
 
 obs <- fread(out_path(file.path(TAB_DIR, "tripledd_collapsed.csv")))

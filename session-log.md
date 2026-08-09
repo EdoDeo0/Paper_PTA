@@ -1,5 +1,54 @@
 # Session Log — Paper_PTA
 
+## 2026-08-09 (notte, 2) — Piano di ripresa stime per handoff a Sonnet (Opus 4.8)
+
+- Scritto `./New/PIANO_RIPRESA_2026-08-09.md`: handoff self-contained per completare le 4 run
+  (2×2 SAMPLE×DEPTH) nel modo corretto post-audit. Contiene stato verificato su disco (non dal
+  log), matrice run×script con **21 rimosso e 17b aggiunto**, ricetta di lancio (template
+  PowerShell un-sottoprocesso-per-script + retry), checkpoint di verifica (test-spia: se un file
+  `_desta` == versione TD, il fix suffissi non ha agito → fermarsi), e lavoro paper-facing residuo.
+- Stato di ripartenza: Run 1 completa tranne Stata **17b**; Run 2 pendente su R **29,30,31** + tutta
+  Stata; Run 3/4 mai girate. Panel collassato è depth-indipendente → in Run 3/4 copiare il `.fst`
+  sul nome `_desta` invece di ricostruirlo.
+- **Comando per Sonnet**: leggere ed eseguire `./New/PIANO_RIPRESA_2026-08-09.md`, ordine Run 1→4,
+  non rifare le correzioni §0 (già applicate). Ricordargli che il ritiro dello script 21 è deciso.
+
+## 2026-08-09 (notte) — /audit indipendente del codice New/ + fix critici (Opus 4.8)
+
+Audit `/audit` in sessione separata sul codice di Sonnet. Report completo in
+`./correspondence/audit/2026-08-09_audit_report.md`. Bibliografia (36 voci) verificata, 0 errori.
+
+- **C1 RISOLTO** — la "correzione" di script 21 del 2026-08-09 era una **regressione**: metteva le
+  interazioni della triple-diff sotto le FE della ladder (`fpt+fpd`, manca `fdt`/`dt`), puntava a
+  path inesistenti (`New/Data/GreenGoods|DirtyGoods/`), non girava. Su decisione utente il WCB
+  sulla ladder è stato giudicato non portante e **rimosso**: tolta la frase dal paper (ex 422-423),
+  script 21 ripristinato da HEAD e ritirato in `./New/_legacy/code/`. Sostituito dal WCB full-panel
+  vero: nuovo `./New/Code/stata/17b_wcb_fullpanel.do` (reghdfe + boottest nativo su `fpd+fdt+pt`,
+  comparabile al collassato, più rigoroso dell'approssimazione FW-una-volta).
+- **C2 RISOLTO** — l'asse DEPTH non era nei suffissi di cache/output: 22,24,25,26,30 usavano
+  `SAMPLE_SUFFIX` invece di `OUT_SUFFIX` → una Run desta avrebbe riusato la cache totaldepth (numeri
+  sbagliati, file col nome giusto, nessun errore). Corretto (5 righe), parse-check pulito. Nessuna
+  cache cancellata: il fix redirige le Run desta su nomi `_desta` inesistenti.
+- **C3 aperto/differibile** — `33_mde_equivalence.R` incrocia panel di una variante con SE/IC di
+  un'altra (input non tutti suffissati); nessuna dipendenza a valle, sistemabile dopo.
+- **C4 rettificato** — Run 2 non è bloccata da un bug di cwd (già patchato da Sonnet con
+  `Set-Location`), ma dal crash noto dell'allocatore su script 29. Pipeline ferma, nessun processo R
+  attivo. Orchestratori nello scratchpad Sonnet (`run2_resume29.ps1`, `run3_orch_v5.ps1`).
+- **Warning per la scrittura**: event-study Sun-Abraham (23) senza depth control (estimand diverso);
+  manca il riferimento su trattamento continuo (Callaway-Goodman-Bacon-Sant'Anna, NBER 32117);
+  test F congiunto del paper senza script generatore; citazione Abman non-verbatim (pending).
+- **Pending**: Run 2 incompleta (29/30/31); Run 3 (excl+desta) partirà col fix suffissi già dentro e
+  salterà lo script 21 ritirato; `17b` da aggiungere agli orchestratori se serve per variante.
+
+## 2026-08-09 (sera) — Bug fix script 21 + Run 2 ripresa da script 22 (Sonnet 4.6)
+
+- **Bug trovato e corretto in `21_wcb_ladder_fullpanel.R`**: stimava la spec della ladder (senza depth control) invece della spec principale del paper (`EP:env_good + EP:dirty_p + DEPTH:env_good + DEPTH:dirty_p | fpt + fpd`). Bug preesistente, non introdotto ora. Cache errate eliminate da Run 1 e Run 2. Script riscritto con spec corretta e boottest separato su `ep_green` e `ep_dirty`.
+- **Script 21 rieseguito** per Run 1 (excl+totaldepth) e Run 2 (incl+totaldepth) con spec corretta.
+- **R aggiornato a 4.5.2**: tutti gli script chain aggiornati al nuovo path. Era il motivo del crash iniziale al resume di script 20.
+- **Run 2**: script 20 e 21 completati. Script 22 (permutation inference) in corso — 35/40 batch cachati, riprende dai 5 mancanti.
+- **Orchestratore Run 3 v3**: riscritto con path R corretto, attivo, aspetta `[DONE ALL]` di Run 2. Script 21 ora incluso in Run 3 e 4 (non più skippato perché dipende da DEPTH).
+- **Pending**: Run 2 finisce ~domani; Run 3 auto; Stata 18 Run 1 da fare quando temperature OK; Run 4 da configurare.
+
 ## 2026-08-09 — Fase B in corso: Run 1 completo, Run 2 in esecuzione (Sonnet 4.6)
 
 - **Fase B avviata**: 4 rerun 2×2 (SAMPLE × DEPTH) con lista green corretta (246 codici HS1996).

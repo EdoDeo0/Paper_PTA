@@ -119,7 +119,7 @@ for (g in names(groups)) {
       group_name = g,
       keep_hs6 = if (is.null(groups[[g]]$keep_hs6)) NULL else groups[[g]]$keep_hs6,
       keep_cc  = if (is.null(groups[[g]]$keep_cc))  NULL else groups[[g]]$keep_cc,
-      hkmo_drop = HKMO_DROP, suffix = SAMPLE_SUFFIX,
+      hkmo_drop = HKMO_DROP, suffix = OUT_SUFFIX,
       depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
     ), show = TRUE),
     error = function(e) { cat("[FALLITO]", g, ":", conditionMessage(e), "\n"); NULL })
