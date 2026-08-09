@@ -30,10 +30,8 @@ source(here("New/Code/_sample_config.R"))
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 CO2_FILE   <- here("New/Data/Classifications/co2_intensity_hs6.csv")
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
-
 ## --- Funzione: tutto in un sottoprocesso ------------------------------------
-run_estimate <- function(cache_fst, co2_file, green_file, depth_file) {
+run_estimate <- function(cache_fst, co2_file, green_file, depth_file, depth_var, depth_drop_unmeasured) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -55,9 +53,15 @@ run_estimate <- function(cache_fst, co2_file, green_file, depth_file) {
 
   green <- fread(green_file, colClasses = list(character = "hs6_final"))
   cell[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% unique(green$hs6_final))]
-  dep <- fread(depth_file)[, .(country_code, year, TotalDepth_nonEnv)]
-  cell[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
-  cell[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
+  if (depth_drop_unmeasured) {
+    n0 <- nrow(cell)
+    cell <- cell[!(is.na(get(depth_var)) & WB_EP_Depth > 0)]
+    cat(sprintf("[depth] %s: %d celle trattate senza copertura escluse (%.3f%%)\n",
+                depth_var, n0 - nrow(cell), 100 * (n0 - nrow(cell)) / n0))
+  }
+  cell[is.na(get(depth_var)), (depth_var) := 0]
   cell[, pd := .GRP, by = .(hs6, country_code)]
   cell[, dt := .GRP, by = .(country_code, year)]
   cell[, pt := .GRP, by = .(hs6, year)]
@@ -66,7 +70,7 @@ run_estimate <- function(cache_fst, co2_file, green_file, depth_file) {
   for (tr_name in c("WB", "TREND")) {
     tr <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")[[tr_name]]
     cell[, `:=`(ep_co2 = get(tr) * co2_z, ep_green = get(tr) * env_good,
-                td_co2 = TotalDepth_nonEnv * co2_z, td_green = TotalDepth_nonEnv * env_good)]
+                td_co2 = get(depth_var) * co2_z, td_green = get(depth_var) * env_good)]
     m <- feols(y ~ ep_green + ep_co2 + td_green + td_co2 | pd + dt + pt,
                data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
     cat(sprintf("[%s] asintotico: ep_co2 %+.5f (p=%.3f) | ep_green %+.5f (p=%.3f)\n",
@@ -101,7 +105,8 @@ res <- NULL
 for (tent in 1:4) {
   cat(sprintf("Stima CO2 continuo (tentativo %d)...\n", tent))
   res <- tryCatch(callr::r(run_estimate, args = list(
-    cache_fst = CACHE_FST, co2_file = CO2_FILE, green_file = GREEN_FILE, depth_file = DEPTH_FILE
+    cache_fst = CACHE_FST, co2_file = CO2_FILE, green_file = GREEN_FILE, depth_file = DEPTH_FILE,
+    depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
   ), show = TRUE), error = function(e) { cat("[CRASH]", conditionMessage(e), "\n"); NULL })
   if (!is.null(res)) break
 }

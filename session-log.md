@@ -1,5 +1,25 @@
 # Session Log — Paper_PTA
 
+## 2026-08-09 — Fase B in corso: Run 1 completo, Run 2 in esecuzione (Sonnet 4.6)
+
+- **Fase B avviata**: 4 rerun 2×2 (SAMPLE × DEPTH) con lista green corretta (246 codici HS1996).
+- **Run 1 (excl HK/MO + TotalDepth, spec. principale)**: tutti gli script R completati (10-31). Stata 17 completato; Stata 18 rimandato per temperature PC elevate.
+- **Run 2 (incl HK/MO + TotalDepth, robustezza campione)**: script 19 (saturation ladder OLS, ~8h/blocco) in corso — completati fpd+year, fpt+pd, fpt+fpd (3/4 strutture); manca fpd+pt. Catena 20-31 parte automaticamente al termine. Fix applicato: `HIGH_CARDINALITY_FE` esteso a includere `fpd_year` (OOM su campione più grande con nthreads>1).
+- **Run 3 (excl HK/MO + DESTA, robustezza depth)**: orchestratore pronto, parte automaticamente dopo Run 2. Salta script 15/19/21/23 (PIANO §B1).
+- **Run 4**: da configurare quando Run 3 è avviata.
+- **Stata batch mode**: confermato funzionante via `StataSE-64.exe /e do wrapper.do` con UTF-8 no-BOM. Log in root progetto.
+- **Prossimo passo**: Run 2 finisce ~domani mattina; Run 3 parte auto; Stata 18 Run 1 da fare quando temperature OK.
+
+## 2026-08-07 — Fase A completa: parametrizzazione DEPTH su tutta la pipeline (Sonnet 4.6)
+
+- **Obiettivo**: implementare piano `New/PIANO_RERUN_2026-08-07.md` — Fase A (codice, no stime).
+- **`New/Code/_sample_config.R`**: aggiunto asse DEPTH (`"totaldepth"`|`"desta"`), `DEPTH_FILE/VAR/SUFFIX/DROP_UNMEASURED`, `OUT_SUFFIX = paste0(SAMPLE_SUFFIX, DEPTH_SUFFIX)`.
+- **11 script R di stima parametrizzati** (16, 20, 22, 24, 25, 26, 27, 28, 29, 30, 31): rimosso `DEPTH_FILE` hardcoded, aggiornate firme callr, merge block parametrico, formule aggiornate, args callr estesi.
+- **`14_descriptives_collinearity.R`**: usa `DEPTH_COL = tolower(DEPTH_VAR)`; gestione `DEPTH_DROP_UNMEASURED` su unit di trattate.
+- **Stata 17 e 18**: aggiunto asse DEPTH con globals `PTA_DEPTH`, `DEPTHFILE`, `DEPTHVAR`, `DEPTHSFX`, `DROP_UNMEASURED`, `OUTSFX = SFX+DEPTHSFX`. Script 18 ha filtro export aggiornato per 4 varianti.
+- **Verifica statica**: parse R pulito (0 errori su tutti gli script in `New/Code`).
+- **Prossimo passo (Fase B)**: 4 rerun sequenziali — prima rieseguire 05_green_goods.R (rigenera `green_codes_hs1996.csv`), poi sezione 1 di 43 per ripristinare `apec_egl`, poi Run 1-4 per le 4 combinazioni SAMPLE×DEPTH.
+
 ## 2026-08-05 — Correzione lista green goods + DESTA depth come robustness per TotalDepth (Sonnet 4.6)
 
 - **Fix `Data/Env_Codes_HS.dta`**: rimosso 871410 (codice HS inesistente, errore di trascrizione),

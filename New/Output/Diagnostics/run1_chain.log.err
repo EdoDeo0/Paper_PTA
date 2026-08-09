@@ -1,0 +1,8 @@
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run1_chain.ps1:10 car:21
++ function Run-Script {
++                     ~
+'}' di chiusura mancante nel blocco di istruzioni o nella definizione del tipo.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 

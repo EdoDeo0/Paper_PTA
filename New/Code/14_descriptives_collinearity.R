@@ -26,7 +26,6 @@ threads_fst(1)
 
 ## --- Parametri e percorsi --------------------------------------------------
 DATA_FILE <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 OUT_DIR <- here("New/Output/Diagnostics")
 dir.create(OUT_DIR, recursive = TRUE, showWarnings = FALSE)
 
@@ -39,36 +38,39 @@ gc()
 
 td <- fread(DEPTH_FILE)
 setnames(td, tolower(names(td)))
-u <- merge(u, td[, .(country_code, year, totaldepth_nonenv)],
+DEPTH_COL <- tolower(DEPTH_VAR)
+u <- merge(u, td[, c("country_code", "year", DEPTH_COL), with = FALSE],
            by = c("country_code", "year"), all.x = TRUE)
-u[is.na(totaldepth_nonenv), totaldepth_nonenv := 0]
+if (DEPTH_DROP_UNMEASURED) {
+  u <- u[!(is.na(get(DEPTH_COL)) & WB_EP_Depth > 0)]
+}
+u[is.na(get(DEPTH_COL)), (DEPTH_COL) := 0]
 
 trat <- hkmo_filter(u[WB_EP_Depth > 0])
 cat(sprintf("Country-year trattati in-sample (HK+MO %s): %d\n\n",
             if (HKMO_DROP) "esclusi" else "inclusi", nrow(trat)))
 
 ## --- Sezione 1: correlazione grezza sui trattati ---------------------------
-r_raw_wb <- cor(trat$WB_EP_Depth, trat$totaldepth_nonenv)
-r_raw_tr <- cor(trat$TREND_EP_Count, trat$totaldepth_nonenv)
+r_raw_wb <- cor(trat$WB_EP_Depth, trat[[DEPTH_COL]])
+r_raw_tr <- cor(trat$TREND_EP_Count, trat[[DEPTH_COL]])
 
 ## --- Sezione 2: correlazione within (demeaning paese+anno) -----------------
-# demeaning alternato, 10 iterazioni: approssima la variazione residua sotto
-# FE paese+anno, la stessa che il triple-diff usa interagita con green/dirty
 w <- copy(trat)
 for (i in 1:10) {
   w[, `:=`(ep_w = WB_EP_Depth - mean(WB_EP_Depth),
            tr_w = TREND_EP_Count - mean(TREND_EP_Count),
-           td_w = totaldepth_nonenv - mean(totaldepth_nonenv)), by = country_code]
+           td_w = get(DEPTH_COL) - mean(get(DEPTH_COL))), by = country_code]
   w[, `:=`(ep_w = ep_w - mean(ep_w), tr_w = tr_w - mean(tr_w),
            td_w = td_w - mean(td_w)), by = year]
-  w[, `:=`(WB_EP_Depth = ep_w, TREND_EP_Count = tr_w, totaldepth_nonenv = td_w)]
+  w[, `:=`(WB_EP_Depth = ep_w, TREND_EP_Count = tr_w)]
+  w[, (DEPTH_COL) := td_w]
 }
 r_win_wb <- cor(w$ep_w, w$td_w)
 r_win_tr <- cor(w$tr_w, w$td_w)
 
 ## --- Sezione 3: VIF dalla regressione EP ~ TD (grezza, sui trattati) -------
-vif_wb <- 1 / (1 - summary(lm(WB_EP_Depth ~ totaldepth_nonenv, trat))$r.squared)
-vif_tr <- 1 / (1 - summary(lm(TREND_EP_Count ~ totaldepth_nonenv, trat))$r.squared)
+vif_wb <- 1 / (1 - summary(lm(as.formula(sprintf("WB_EP_Depth ~ %s", DEPTH_COL)), trat))$r.squared)
+vif_tr <- 1 / (1 - summary(lm(as.formula(sprintf("TREND_EP_Count ~ %s", DEPTH_COL)), trat))$r.squared)
 
 ## --- Sezione 4: salvataggio report -------------------------------------------
 out <- sprintf(

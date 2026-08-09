@@ -1,0 +1,22 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:4 car:1
++ & $rscript --vanilla $script 2>&1 | Tee-Object -FilePath $logfile
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Messaggio di avvertimento:
+il pacchetto 'concordance' è stato creato con R versione 4.5.3 
+Lista green originale: 248 codici (vintage HS2012)
+Messaggio di avvertimento:
+In concord_hs(sourcevar, origin, destination, dest.digit, all) :
+  Matches for HS4 code(s): 871411, 871419 not found and returned NA. Please double check input code and classification.
+
+Non concordati: 2 | match univoco 1:1: 246 | split ambiguo: 0
+
+Leggendo (sola lettura) il pannello per verificare continuita' export sui match univoci...
+
+Codici a sospetto crollo di export 2006->2007 (post < 5% di pre): 0 / 244
+
+[OK] Lista green tradotta a HS1996 salvata: C:/Work/projects/Paper_PTA/New/Data/Classifications/green_codes_hs1996.csv
+[OK] Report: C:/Work/projects/Paper_PTA/New/Output/Diagnostics/05_green_goods_hs1996.md 

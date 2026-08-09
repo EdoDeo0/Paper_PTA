@@ -34,17 +34,20 @@ if c(os) == "Unix" {
     global ROOT "~/work/projects/Paper_PTA"
 }
 
-*-- Variante di campione HK+Macao (analogo Stata di New/Code/_sample_config.R) --
+*-- Variante di campione e depth (analogo Stata di New/Code/_sample_config.R) --
 *  ##########################################################################
-*  ##  UNICA COSA DA TOCCARE: la riga qui sotto.                          ##
-*  ##    "excl" -> Hong Kong e Macao ESCLUSI  (specifica principale)      ##
-*  ##    "incl" -> Hong Kong e Macao INCLUSI  (robustezza d'appendice)    ##
+*  ##  DUE COSE DA TOCCARE (una per asse):                               ##
+*  ##  1. CAMPIONE HK/Macao:                                             ##
+*  ##       "excl" -> HK e Macao ESCLUSI  (specifica principale)         ##
+*  ##       "incl" -> HK e Macao INCLUSI  (robustezza)                   ##
+*  ##  2. DEPTH CONTROL:                                                  ##
+*  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
+*  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 *  ##########################################################################
 global PTA_SAMPLE "excl"
+global PTA_DEPTH  "totaldepth"
 
-* $HKMOEXPR e' sempre componibile con altri filtri:  if $HKMOEXPR & altra_cond
-* Gli output della variante "incl" prendono il suffisso $SFX e non
-* sovrascrivono quelli della variante "excl".
+* Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {
     di as error "PTA_SAMPLE deve essere excl o incl, trovato: $PTA_SAMPLE"
     exit 198
@@ -57,7 +60,27 @@ else {
     global HKMOEXPR "!hkmo"
     global SFX ""
 }
-di "[campione] $PTA_SAMPLE (suffisso output: '$SFX')"
+di "[campione] $PTA_SAMPLE"
+
+* Asse 2 — depth control
+if !inlist("$PTA_DEPTH", "totaldepth", "desta") {
+    di as error "PTA_DEPTH deve essere totaldepth o desta, trovato: $PTA_DEPTH"
+    exit 198
+}
+if "$PTA_DEPTH" == "desta" {
+    global DEPTHFILE "$ROOT/New/Data/TotalDepth/desta_depth_country_year.csv"
+    global DEPTHVAR  "desta_depth_index"
+    global DEPTHSFX  "_desta"
+    global DROP_UNMEASURED 1
+}
+else {
+    global DEPTHFILE "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.csv"
+    global DEPTHVAR  "totaldepth_nonenv"
+    global DEPTHSFX  ""
+    global DROP_UNMEASURED 0
+}
+global OUTSFX "$SFX$DEPTHSFX"
+di "[depth] $PTA_DEPTH ($DEPTHVAR) | suffisso output: '$OUTSFX'"
 
 global TAB  "$ROOT/New/Output/TripleDiff/Tables"
 
@@ -83,8 +106,8 @@ rename dirty dirty_p
 tempfile dirty
 save `dirty'
 
-import delimited "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.csv", clear
-keep country_code year totaldepth_nonenv
+import delimited "$DEPTHFILE", clear
+keep country_code year $DEPTHVAR
 tempfile depth
 save `depth'
 
@@ -119,7 +142,10 @@ replace env_good_new = 0 if missing(env_good_new)
 merge m:1 hs6 using `dirty', keep(master match) nogen
 replace dirty_p = 0 if missing(dirty_p)
 merge m:1 country_code year using `depth', keep(master match) nogen
-replace totaldepth_nonenv = 0 if missing(totaldepth_nonenv)
+if $DROP_UNMEASURED {
+    drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+}
+replace $DEPTHVAR = 0 if missing($DEPTHVAR)
 merge m:1 hs6 using `overlap', keep(master match) nogen
 replace in_overlap = 0 if missing(in_overlap)
 merge m:1 country_code using `deepshallow', keep(master match) nogen
@@ -129,32 +155,32 @@ gen double wb_green = WB_EP_Depth    * env_good_new
 gen double wb_dirty = WB_EP_Depth    * dirty_p
 gen double tr_green = TREND_EP_Count * env_good_new
 gen double tr_dirty = TREND_EP_Count * dirty_p
-gen double td_green = totaldepth_nonenv * env_good_new
-gen double td_dirty = totaldepth_nonenv * dirty_p
+gen double td_green = $DEPTHVAR * env_good_new
+gen double td_dirty = $DEPTHVAR * dirty_p
 
 * panel per il modulo within-firm (G), salvato PRIMA di droppare colonne
 preserve
 keep companyID country_code year export env_good_new WB_EP_Depth TREND_EP_Count ///
-     totaldepth_nonenv hkmo
+     $DEPTHVAR hkmo
 tempfile forG
 save `forG'
 restore
-drop companyID export hs6 WB_EP_Depth TREND_EP_Count totaldepth_nonenv
+drop companyID export hs6 WB_EP_Depth TREND_EP_Count $DEPTHVAR
 
 *── A. WB con controlli (HK+MO esclusi) ────────────────────────────────────────
-cap confirm file "$TAB/_rob_A_WB_controls$SFX.dta"
+cap confirm file "$TAB/_rob_A_WB_controls$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty tariffs ln_hhi_baci AD_pdt ///
         if $HKMOEXPR, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_A_WB_controls$SFX.dta", tstat pval ci replace addlabel(model, A_WB_controls)
+    regsave using "$TAB/_rob_A_WB_controls$OUTSFX.dta", tstat pval ci replace addlabel(model, A_WB_controls)
 }
 
 *── B. WB senza ASEAN ──────────────────────────────────────────────────────────
-cap confirm file "$TAB/_rob_B_WB_noASEAN$SFX.dta"
+cap confirm file "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
         if $HKMOEXPR & !asean, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_B_WB_noASEAN$SFX.dta", tstat pval ci replace addlabel(model, B_WB_noASEAN)
+    regsave using "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta", tstat pval ci replace addlabel(model, B_WB_noASEAN)
 }
 
 * NOTA: il vecchio blocco C ("WB includendo HK+MO") e' stato rimosso. Ora si
@@ -162,45 +188,45 @@ if _rc {
 * produce la variante inclusiva di TUTTI i blocchi, non solo di WB baseline.
 
 *── D. C-overlap (WB e TREND) ──────────────────────────────────────────────────
-cap confirm file "$TAB/_rob_D_WB_overlap$SFX.dta"
+cap confirm file "$TAB/_rob_D_WB_overlap$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
         if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_D_WB_overlap$SFX.dta", tstat pval ci replace addlabel(model, D_WB_overlap)
+    regsave using "$TAB/_rob_D_WB_overlap$OUTSFX.dta", tstat pval ci replace addlabel(model, D_WB_overlap)
 }
-cap confirm file "$TAB/_rob_D_TREND_overlap$SFX.dta"
+cap confirm file "$TAB/_rob_D_TREND_overlap$OUTSFX.dta"
 if _rc {
     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
         if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_D_TREND_overlap$SFX.dta", tstat pval ci replace addlabel(model, D_TREND_overlap)
+    regsave using "$TAB/_rob_D_TREND_overlap$OUTSFX.dta", tstat pval ci replace addlabel(model, D_TREND_overlap)
 }
 
 *── E. C-deepshallow TREND ──────────────────────────────────────────────────────
-cap confirm file "$TAB/_rob_E_TREND_deepshallow$SFX.dta"
+cap confirm file "$TAB/_rob_E_TREND_deepshallow$OUTSFX.dta"
 if _rc {
     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
         if $HKMOEXPR & in_deepshallow, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_E_TREND_deepshallow$SFX.dta", tstat pval ci replace addlabel(model, E_TREND_deepshallow)
+    regsave using "$TAB/_rob_E_TREND_deepshallow$OUTSFX.dta", tstat pval ci replace addlabel(model, E_TREND_deepshallow)
 }
 
 *── G. Within-firm: quota green nel paniere impresa-dest-anno ──────────────────
 * share_green_fdt = quota di valore export green dell'impresa f verso d in t.
 * EP varia a dest-anno: FE impresa-dest (fd) + anno; identificazione within-fd.
-cap confirm file "$TAB/_rob_G_WB_withinfirm$SFX.dta"
+cap confirm file "$TAB/_rob_G_WB_withinfirm$OUTSFX.dta"
 if _rc {
     use `forG' if $HKMOEXPR, clear
     gen double exp_green = export * env_good_new
     collapse (sum) export exp_green ///
-             (first) WB_EP_Depth TREND_EP_Count totaldepth_nonenv, ///
+             (first) WB_EP_Depth TREND_EP_Count $DEPTHVAR, ///
              by(companyID country_code year)
     gen double share_green = exp_green / export
     egen long fd = group(companyID country_code)
-    reghdfe share_green WB_EP_Depth totaldepth_nonenv, ///
+    reghdfe share_green WB_EP_Depth $DEPTHVAR, ///
         absorb(fd year) vce(cluster country_code)
-    regsave using "$TAB/_rob_G_WB_withinfirm$SFX.dta", tstat pval ci replace addlabel(model, G_WB_withinfirm)
-    reghdfe share_green TREND_EP_Count totaldepth_nonenv, ///
+    regsave using "$TAB/_rob_G_WB_withinfirm$OUTSFX.dta", tstat pval ci replace addlabel(model, G_WB_withinfirm)
+    reghdfe share_green TREND_EP_Count $DEPTHVAR, ///
         absorb(fd year) vce(cluster country_code)
-    regsave using "$TAB/_rob_G_TREND_withinfirm$SFX.dta", tstat pval ci replace addlabel(model, G_TREND_withinfirm)
+    regsave using "$TAB/_rob_G_TREND_withinfirm$OUTSFX.dta", tstat pval ci replace addlabel(model, G_TREND_withinfirm)
 }
 
 *── Export riassuntivo ─────────────────────────────────────────────────────────
@@ -209,15 +235,21 @@ if _rc {
 * dataset vuoto in memoria come target del primissimo append: si usa `use`
 * per il primo file e `append` per i successivi, con path a forward slash
 * (Stata li accetta anche su Windows ed evita l'ambiguita' backslash-backtick).
-* Il glob non distingue le due varianti di campione: in modalita' "incl" si
-* tengono solo i file che finiscono in _inclHKMO, in "excl" solo quelli che NON
-* ci finiscono - altrimenti il CSV riassuntivo mescolerebbe i due campioni.
+* Il glob non distingue le 4 varianti: si mantengono solo i file il cui nome
+* termina con OUTSFX.dta (suffisso composto campione+depth).
+* Per OUTSFX vuoto (spec principale) si escludono i file con _inclHKMO o _desta.
 clear
 local all : dir "$TAB" files "_rob_*.dta"
 local files ""
 foreach f of local all {
-    local isincl = strpos("`f'", "_inclHKMO") > 0
-    if ("$SFX" != "" & `isincl') | ("$SFX" == "" & !`isincl') local files `"`files' "`f'""'
+    local match 0
+    if "$OUTSFX" != "" {
+        if strpos("`f'", "$OUTSFX.dta") > 0 local match 1
+    }
+    else {
+        if !strpos("`f'", "_inclHKMO") & !strpos("`f'", "_desta") local match 1
+    }
+    if `match' local files `"`files' "`f'""'
 }
 local first = 1
 foreach f of local files {
@@ -229,5 +261,5 @@ foreach f of local files {
         append using "$TAB/`f'"
     }
 }
-export delimited "$TAB/tripledd_robustness_reghdfe$SFX.csv", replace
-di "[OK] tripledd_robustness_reghdfe$SFX.csv"
+export delimited "$TAB/tripledd_robustness_reghdfe$OUTSFX.csv", replace
+di "[OK] tripledd_robustness_reghdfe$OUTSFX.csv"

@@ -52,7 +52,6 @@ threads_fst(1)
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 DIAG_DIR   <- here("New/Output/TripleDiff/Diagnostics")
 TAB_DIR    <- here("New/Output/TripleDiff/Tables")
 dir.create(DIAG_DIR, recursive = TRUE, showWarnings = FALSE)
@@ -119,7 +118,7 @@ dir.create(BATCH_CACHE, recursive = TRUE, showWarnings = FALSE)
 
 # un batch: carica, demeana i fissi, poi BATCH permutazioni incrementali
 run_exact_batch <- function(data_file, green_file, dirty_file, depth_file, tripledd_file,
-                            treat_var, batch_id, batch_size) {
+                            treat_var, batch_id, batch_size, depth_var, depth_drop_unmeasured) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -132,14 +131,20 @@ run_exact_batch <- function(data_file, green_file, dirty_file, depth_file, tripl
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   cell[dirty, on = "hs6", dirty_p := i.dirty_p]
   cell[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, TotalDepth_nonEnv)]
-  cell[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
-  cell[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
+  if (depth_drop_unmeasured) {
+    n0 <- nrow(cell)
+    cell <- cell[!(is.na(get(depth_var)) & WB_EP_Depth > 0)]
+    cat(sprintf("[depth] %s: %d celle trattate senza copertura escluse (%.3f%%)\n",
+                depth_var, n0 - nrow(cell), 100 * (n0 - nrow(cell)) / n0))
+  }
+  cell[is.na(get(depth_var)), (depth_var) := 0]
   cell[, pd := .GRP, by = .(hs6, country_code)]
   cell[, dt := .GRP, by = .(country_code, year)]
   cell[, pt := .GRP, by = .(hs6, year)]
-  cell[, `:=`(td_green = TotalDepth_nonEnv * env_good,
-              td_dirty = TotalDepth_nonEnv * dirty_p)]
+  cell[, `:=`(td_green = get(depth_var) * env_good,
+              td_dirty = get(depth_var) * dirty_p)]
 
   fes <- cell[, .(pd, dt, pt)]
   # demean dei fissi (y, td) una volta sola
@@ -200,7 +205,8 @@ for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
       r <- tryCatch(callr::r(run_exact_batch, args = list(
         data_file = CACHE_FST, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
         depth_file = DEPTH_FILE, tripledd_file = out_path(file.path(TAB_DIR, "tripledd_collapsed.csv")),
-        treat_var = tv, batch_id = b, batch_size = BATCH
+        treat_var = tv, batch_id = b, batch_size = BATCH,
+        depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
       ), show = TRUE), error = function(e) { cat("[CRASH]", conditionMessage(e), "\n"); NULL })
       if (!is.null(r)) { saveRDS(r, rds); ok <- TRUE; break }
     }

@@ -28,12 +28,12 @@ source(here("New/Code/_sample_config.R"))
 PPML_FILE  <- here("Data/Final Dataset/ppml_agg_pdt_zerofill.fst")
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 CACHE_DIR  <- here("New/Output/TripleDiff/Models_Output")
 dir.create(CACHE_DIR, recursive = TRUE, showWarnings = FALSE)
 
 ## --- Funzione: una stima, un sottoprocesso (allocatore fragile) -----------
-stima_ppml <- function(ppml_file, green_file, dirty_file, depth_file, tr, hkmo_drop) {
+stima_ppml <- function(ppml_file, green_file, dirty_file, depth_file, tr, hkmo_drop,
+                       depth_var, depth_drop_unmeasured) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -50,13 +50,20 @@ stima_ppml <- function(ppml_file, green_file, dirty_file, depth_file, tr, hkmo_d
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   d[dirty, on = "hs6", dirty_p := i.dirty_p]
   d[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, TotalDepth_nonEnv)]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
   d[, country_code := as.integer(country_code)]
-  d[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
-  d[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
+  d[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
+  if (depth_drop_unmeasured) {
+    n0 <- nrow(d)
+    d <- d[!(is.na(get(depth_var)) & WB_EP_Depth > 0)]
+    cat(sprintf("[depth] %s: %d celle trattate senza copertura escluse (%.3f%%)\n",
+                depth_var, n0 - nrow(d), 100 * (n0 - nrow(d)) / n0))
+  }
+  d[is.na(get(depth_var)), (depth_var) := 0]
   cat(sprintf("[%s] celle: %s | quota zeri: %.1f%%\n", tr,
               format(nrow(d), big.mark = ","), 100 * mean(d$agg_export == 0)))
-  f <- sprintf("agg_export ~ %s:env_good + %s:dirty_p + TotalDepth_nonEnv:env_good + TotalDepth_nonEnv:dirty_p | pd + dt + pt", tr, tr)
+  f <- sprintf("agg_export ~ %s:env_good + %s:dirty_p + %s:env_good + %s:dirty_p | pd + dt + pt",
+               tr, tr, depth_var, depth_var)
   m <- fepois(as.formula(f), data = d, cluster = ~country_code, lean = TRUE)
   list(coefs = coef(m), se = se(m), pval = pvalue(m), nobs = m$nobs)
 }
@@ -72,7 +79,8 @@ for (tr in c("WB_EP_Depth", "TREND_EP_Count")) {
   } else {
     r <- tryCatch(callr::r(stima_ppml, args = list(
       ppml_file = PPML_FILE, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
-      depth_file = DEPTH_FILE, tr = tr, hkmo_drop = HKMO_DROP
+      depth_file = DEPTH_FILE, tr = tr, hkmo_drop = HKMO_DROP,
+      depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
     )), error = function(e) { cat("[FALLITO]", tr_name, "\n"); NULL })
     if (!is.null(r)) saveRDS(r, rds)
   }

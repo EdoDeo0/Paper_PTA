@@ -1,0 +1,1107 @@
+[CHAIN] Aspetto fine PID 24632 (script 19)...
+[DONE] Script 19 terminato
+[OK] Script 19: 16/16 tabelle OK
+[START] 20_wcb_collapsed.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+Panel: 3,773,498 celle | 236 cluster (paesi)
+
+[WB] coef lm demeanato: ep_green -0.004569 | ep_dirty -0.011873 (attesi = 12)
+  boottest: ep_green ... p_wcb = 0.6495
+  boottest: ep_dirty ... p_wcb = 0.0702
+
+[TREND] coef lm demeanato: ep_green +0.001812 | ep_dirty +0.000351 (attesi = 12)
+  boottest: ep_green ... p_wcb = 0.3910
+  boottest: ep_dirty ... p_wcb = 0.8527
+
+[OK] wcb_collapsed.csv
+    treat     term          coef      p_wcb     conf_low   conf_high     B
+   <char>   <char>         <num>      <num>        <num>       <num> <int>
+1:     WB ep_green -0.0045685006 0.64946495 -0.018156999 0.031683043  9999
+2:     WB ep_dirty -0.0118733871 0.07020702 -0.017931486 0.001776996  9999
+3:  TREND ep_green  0.0018115440 0.39103910 -0.001798386 0.007073650  9999
+4:  TREND ep_dirty  0.0003509727 0.85268527 -0.003229012 0.005412631  9999
+[DONE] 20_wcb_collapsed.R
+[START] 21_wcb_ladder_fullpanel.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+== wb_baseline (tentativo 1) - 12:47:46
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[wb_baseline] righe dopo na.omit: 45,781,181
+
+[wb_baseline] coef FW ep: +0.000097
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Unfortunately, confidence inversion failed due to poorly chosen starting values.Please let the maintainer know about this by opening an issue on GitHub.No confidence interval is computed.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00031 | ottenuto: +0.000097 | p_wcb = 0.9779
+== wb_controls (tentativo 1) - 12:53:02
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[wb_controls] righe dopo na.omit: 40,925,541
+
+[wb_controls] coef FW ep: +0.000103
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Unfortunately, confidence inversion failed due to poorly chosen starting values.Please let the maintainer know about this by opening an issue on GitHub.No confidence interval is computed.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00038 | ottenuto: +0.000103 | p_wcb = 0.9746
+== trend_baseline (tentativo 1) - 12:56:46
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[trend_baseline] righe dopo na.omit: 45,781,181
+
+[trend_baseline] coef FW ep: +0.000155
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00027 | ottenuto: +0.000155 | p_wcb = 0.7967
+== trend_controls (tentativo 1) - 13:01:59
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[trend_controls] righe dopo na.omit: 40,925,541
+
+[trend_controls] coef FW ep: +0.000158
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00028 | ottenuto: +0.000158 | p_wcb = 0.7869
+             spec         coef     p_wcb     conf_low   conf_high     nobs
+           <char>        <num>     <num>        <num>       <num>    <int>
+1:    wb_baseline 9.746912e-05 0.9778978           NA          NA 45781181
+2:    wb_controls 1.032530e-04 0.9745975           NA          NA 40925541
+3: trend_baseline 1.554496e-04 0.7966797 -0.001603161 0.002206742 45781181
+4: trend_controls 1.581907e-04 0.7868787 -0.001709899 0.002293467 40925541
+       B
+   <int>
+1:  9999
+2:  9999
+3:  9999
+4:  9999
+[OK] bootstrap_summary.csv - 2026-08-08 13:05:46 
+[DONE] 21_wcb_ladder_fullpanel.R
+[START] 22_permutation_inference.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+=== Sezione A: permutazione grezza GREEN (WB) ===
+[coarse GREEN] coeff osservato -0.006172 | p-value 0.4060 (n=1000)
+
+=== Sezione A: permutazione grezza DIRTY (WB) ===
+[coarse DIRTY] coeff osservato 0.004934 | p-value 0.4880 (n=1000)
+
+=== Sezione B: permutazione sulla spec esatta ===
+== WB_EP_Depth batch 1/20 (tentativo 1) - 13:06:07
+[check WB] FW identita': green -0.004569 (12: -0.004569) | dirty -0.011873 (12: -0.011873)
+
+  [WB_EP_Depth batch 1] 10/50
+
+  [WB_EP_Depth batch 1] 20/50
+
+  [WB_EP_Depth batch 1] 30/50
+
+  [WB_EP_Depth batch 1] 40/50
+
+  [WB_EP_Depth batch 1] 50/50
+
+== WB_EP_Depth batch 2/20 (tentativo 1) - 13:08:18
+  [WB_EP_Depth batch 2] 10/50
+
+  [WB_EP_Depth batch 2] 20/50
+
+  [WB_EP_Depth batch 2] 30/50
+
+  [WB_EP_Depth batch 2] 40/50
+
+  [WB_EP_Depth batch 2] 50/50
+
+== WB_EP_Depth batch 3/20 (tentativo 1) - 13:10:26
+  [WB_EP_Depth batch 3] 10/50
+
+  [WB_EP_Depth batch 3] 20/50
+
+  [WB_EP_Depth batch 3] 30/50
+
+  [WB_EP_Depth batch 3] 40/50
+
+  [WB_EP_Depth batch 3] 50/50
+
+== WB_EP_Depth batch 4/20 (tentativo 1) - 13:12:34
+  [WB_EP_Depth batch 4] 10/50
+
+  [WB_EP_Depth batch 4] 20/50
+
+  [WB_EP_Depth batch 4] 30/50
+
+  [WB_EP_Depth batch 4] 40/50
+
+  [WB_EP_Depth batch 4] 50/50
+
+== WB_EP_Depth batch 5/20 (tentativo 1) - 13:14:42
+  [WB_EP_Depth batch 5] 10/50
+
+  [WB_EP_Depth batch 5] 20/50
+
+  [WB_EP_Depth batch 5] 30/50
+
+  [WB_EP_Depth batch 5] 40/50
+
+  [WB_EP_Depth batch 5] 50/50
+
+== WB_EP_Depth batch 6/20 (tentativo 1) - 13:16:49
+  [WB_EP_Depth batch 6] 10/50
+
+  [WB_EP_Depth batch 6] 20/50
+
+  [WB_EP_Depth batch 6] 30/50
+
+  [WB_EP_Depth batch 6] 40/50
+
+  [WB_EP_Depth batch 6] 50/50
+
+== WB_EP_Depth batch 7/20 (tentativo 1) - 13:18:56
+  [WB_EP_Depth batch 7] 10/50
+
+  [WB_EP_Depth batch 7] 20/50
+
+  [WB_EP_Depth batch 7] 30/50
+
+  [WB_EP_Depth batch 7] 40/50
+
+  [WB_EP_Depth batch 7] 50/50
+
+== WB_EP_Depth batch 8/20 (tentativo 1) - 13:21:04
+  [WB_EP_Depth batch 8] 10/50
+
+  [WB_EP_Depth batch 8] 20/50
+
+  [WB_EP_Depth batch 8] 30/50
+
+  [WB_EP_Depth batch 8] 40/50
+
+  [WB_EP_Depth batch 8] 50/50
+
+== WB_EP_Depth batch 9/20 (tentativo 1) - 13:23:12
+  [WB_EP_Depth batch 9] 10/50
+
+  [WB_EP_Depth batch 9] 20/50
+
+  [WB_EP_Depth batch 9] 30/50
+
+  [WB_EP_Depth batch 9] 40/50
+
+  [WB_EP_Depth batch 9] 50/50
+
+== WB_EP_Depth batch 10/20 (tentativo 1) - 13:25:20
+  [WB_EP_Depth batch 10] 10/50
+
+  [WB_EP_Depth batch 10] 20/50
+
+  [WB_EP_Depth batch 10] 30/50
+
+  [WB_EP_Depth batch 10] 40/50
+
+  [WB_EP_Depth batch 10] 50/50
+
+== WB_EP_Depth batch 11/20 (tentativo 1) - 13:27:28
+  [WB_EP_Depth batch 11] 10/50
+
+  [WB_EP_Depth batch 11] 20/50
+
+  [WB_EP_Depth batch 11] 30/50
+
+  [WB_EP_Depth batch 11] 40/50
+
+  [WB_EP_Depth batch 11] 50/50
+
+== WB_EP_Depth batch 12/20 (tentativo 1) - 13:29:36
+  [WB_EP_Depth batch 12] 10/50
+
+  [WB_EP_Depth batch 12] 20/50
+
+  [WB_EP_Depth batch 12] 30/50
+
+  [WB_EP_Depth batch 12] 40/50
+
+  [WB_EP_Depth batch 12] 50/50
+
+== WB_EP_Depth batch 13/20 (tentativo 1) - 13:31:43
+  [WB_EP_Depth batch 13] 10/50
+
+  [WB_EP_Depth batch 13] 20/50
+
+  [WB_EP_Depth batch 13] 30/50
+
+  [WB_EP_Depth batch 13] 40/50
+
+  [WB_EP_Depth batch 13] 50/50
+
+== WB_EP_Depth batch 14/20 (tentativo 1) - 13:33:51
+  [WB_EP_Depth batch 14] 10/50
+
+  [WB_EP_Depth batch 14] 20/50
+
+  [WB_EP_Depth batch 14] 30/50
+
+  [WB_EP_Depth batch 14] 40/50
+
+  [WB_EP_Depth batch 14] 50/50
+
+== WB_EP_Depth batch 15/20 (tentativo 1) - 13:36:00
+  [WB_EP_Depth batch 15] 10/50
+
+  [WB_EP_Depth batch 15] 20/50
+
+  [WB_EP_Depth batch 15] 30/50
+
+  [WB_EP_Depth batch 15] 40/50
+
+  [WB_EP_Depth batch 15] 50/50
+
+== WB_EP_Depth batch 16/20 (tentativo 1) - 13:38:07
+  [WB_EP_Depth batch 16] 10/50
+
+  [WB_EP_Depth batch 16] 20/50
+
+  [WB_EP_Depth batch 16] 30/50
+
+  [WB_EP_Depth batch 16] 40/50
+
+  [WB_EP_Depth batch 16] 50/50
+
+== WB_EP_Depth batch 17/20 (tentativo 1) - 13:40:15
+  [WB_EP_Depth batch 17] 10/50
+
+  [WB_EP_Depth batch 17] 20/50
+
+  [WB_EP_Depth batch 17] 30/50
+
+  [WB_EP_Depth batch 17] 40/50
+
+  [WB_EP_Depth batch 17] 50/50
+
+== WB_EP_Depth batch 18/20 (tentativo 1) - 13:42:23
+  [WB_EP_Depth batch 18] 10/50
+
+  [WB_EP_Depth batch 18] 20/50
+
+  [WB_EP_Depth batch 18] 30/50
+
+  [WB_EP_Depth batch 18] 40/50
+
+  [WB_EP_Depth batch 18] 50/50
+
+== WB_EP_Depth batch 19/20 (tentativo 1) - 13:44:31
+  [WB_EP_Depth batch 19] 10/50
+
+  [WB_EP_Depth batch 19] 20/50
+
+  [WB_EP_Depth batch 19] 30/50
+
+  [WB_EP_Depth batch 19] 40/50
+
+  [WB_EP_Depth batch 19] 50/50
+
+== WB_EP_Depth batch 20/20 (tentativo 1) - 13:46:38
+  [WB_EP_Depth batch 20] 10/50
+
+  [WB_EP_Depth batch 20] 20/50
+
+  [WB_EP_Depth batch 20] 30/50
+
+  [WB_EP_Depth batch 20] 40/50
+
+  [WB_EP_Depth batch 20] 50/50
+
+== TREND_EP_Count batch 1/20 (tentativo 1) - 13:48:47
+[check TREND] FW identita': green +0.001812 (12: +0.001812) | dirty +0.000351 (12: +0.000351)
+
+  [TREND_EP_Count batch 1] 10/50
+
+  [TREND_EP_Count batch 1] 20/50
+
+  [TREND_EP_Count batch 1] 30/50
+
+  [TREND_EP_Count batch 1] 40/50
+
+  [TREND_EP_Count batch 1] 50/50
+
+== TREND_EP_Count batch 2/20 (tentativo 1) - 13:51:05
+  [TREND_EP_Count batch 2] 10/50
+
+  [TREND_EP_Count batch 2] 20/50
+
+  [TREND_EP_Count batch 2] 30/50
+
+  [TREND_EP_Count batch 2] 40/50
+
+  [TREND_EP_Count batch 2] 50/50
+
+== TREND_EP_Count batch 3/20 (tentativo 1) - 13:53:20
+  [TREND_EP_Count batch 3] 10/50
+
+  [TREND_EP_Count batch 3] 20/50
+
+  [TREND_EP_Count batch 3] 30/50
+
+  [TREND_EP_Count batch 3] 40/50
+
+  [TREND_EP_Count batch 3] 50/50
+
+== TREND_EP_Count batch 4/20 (tentativo 1) - 13:55:35
+  [TREND_EP_Count batch 4] 10/50
+
+  [TREND_EP_Count batch 4] 20/50
+
+  [TREND_EP_Count batch 4] 30/50
+
+  [TREND_EP_Count batch 4] 40/50
+
+  [TREND_EP_Count batch 4] 50/50
+
+== TREND_EP_Count batch 5/20 (tentativo 1) - 13:57:51
+  [TREND_EP_Count batch 5] 10/50
+
+  [TREND_EP_Count batch 5] 20/50
+
+  [TREND_EP_Count batch 5] 30/50
+
+  [TREND_EP_Count batch 5] 40/50
+
+  [TREND_EP_Count batch 5] 50/50
+
+== TREND_EP_Count batch 6/20 (tentativo 1) - 14:00:06
+  [TREND_EP_Count batch 6] 10/50
+
+  [TREND_EP_Count batch 6] 20/50
+
+  [TREND_EP_Count batch 6] 30/50
+
+  [TREND_EP_Count batch 6] 40/50
+
+  [TREND_EP_Count batch 6] 50/50
+
+== TREND_EP_Count batch 7/20 (tentativo 1) - 14:02:21
+  [TREND_EP_Count batch 7] 10/50
+
+  [TREND_EP_Count batch 7] 20/50
+
+  [TREND_EP_Count batch 7] 30/50
+
+  [TREND_EP_Count batch 7] 40/50
+
+  [TREND_EP_Count batch 7] 50/50
+
+== TREND_EP_Count batch 8/20 (tentativo 1) - 14:04:37
+  [TREND_EP_Count batch 8] 10/50
+
+  [TREND_EP_Count batch 8] 20/50
+
+  [TREND_EP_Count batch 8] 30/50
+
+  [TREND_EP_Count batch 8] 40/50
+
+  [TREND_EP_Count batch 8] 50/50
+
+== TREND_EP_Count batch 9/20 (tentativo 1) - 14:06:52
+  [TREND_EP_Count batch 9] 10/50
+
+  [TREND_EP_Count batch 9] 20/50
+
+  [TREND_EP_Count batch 9] 30/50
+
+  [TREND_EP_Count batch 9] 40/50
+
+  [TREND_EP_Count batch 9] 50/50
+
+== TREND_EP_Count batch 10/20 (tentativo 1) - 14:09:07
+  [TREND_EP_Count batch 10] 10/50
+
+  [TREND_EP_Count batch 10] 20/50
+
+  [TREND_EP_Count batch 10] 30/50
+
+  [TREND_EP_Count batch 10] 40/50
+
+  [TREND_EP_Count batch 10] 50/50
+
+== TREND_EP_Count batch 11/20 (tentativo 1) - 14:11:22
+  [TREND_EP_Count batch 11] 10/50
+
+  [TREND_EP_Count batch 11] 20/50
+
+  [TREND_EP_Count batch 11] 30/50
+
+  [TREND_EP_Count batch 11] 40/50
+
+  [TREND_EP_Count batch 11] 50/50
+
+== TREND_EP_Count batch 12/20 (tentativo 1) - 14:13:38
+  [TREND_EP_Count batch 12] 10/50
+
+  [TREND_EP_Count batch 12] 20/50
+
+  [TREND_EP_Count batch 12] 30/50
+
+  [TREND_EP_Count batch 12] 40/50
+
+  [TREND_EP_Count batch 12] 50/50
+
+== TREND_EP_Count batch 13/20 (tentativo 1) - 14:15:52
+  [TREND_EP_Count batch 13] 10/50
+
+  [TREND_EP_Count batch 13] 20/50
+
+  [TREND_EP_Count batch 13] 30/50
+
+  [TREND_EP_Count batch 13] 40/50
+
+  [TREND_EP_Count batch 13] 50/50
+
+== TREND_EP_Count batch 14/20 (tentativo 1) - 14:18:08
+  [TREND_EP_Count batch 14] 10/50
+
+  [TREND_EP_Count batch 14] 20/50
+
+  [TREND_EP_Count batch 14] 30/50
+
+  [TREND_EP_Count batch 14] 40/50
+
+  [TREND_EP_Count batch 14] 50/50
+
+== TREND_EP_Count batch 15/20 (tentativo 1) - 14:20:23
+  [TREND_EP_Count batch 15] 10/50
+
+  [TREND_EP_Count batch 15] 20/50
+
+  [TREND_EP_Count batch 15] 30/50
+
+  [TREND_EP_Count batch 15] 40/50
+
+  [TREND_EP_Count batch 15] 50/50
+
+== TREND_EP_Count batch 16/20 (tentativo 1) - 14:22:39
+  [TREND_EP_Count batch 16] 10/50
+
+  [TREND_EP_Count batch 16] 20/50
+
+  [TREND_EP_Count batch 16] 30/50
+
+  [TREND_EP_Count batch 16] 40/50
+
+  [TREND_EP_Count batch 16] 50/50
+
+== TREND_EP_Count batch 17/20 (tentativo 1) - 14:24:53
+  [TREND_EP_Count batch 17] 10/50
+
+  [TREND_EP_Count batch 17] 20/50
+
+  [TREND_EP_Count batch 17] 30/50
+
+  [TREND_EP_Count batch 17] 40/50
+
+  [TREND_EP_Count batch 17] 50/50
+
+== TREND_EP_Count batch 18/20 (tentativo 1) - 14:27:09
+  [TREND_EP_Count batch 18] 10/50
+
+  [TREND_EP_Count batch 18] 20/50
+
+  [TREND_EP_Count batch 18] 30/50
+
+  [TREND_EP_Count batch 18] 40/50
+
+  [TREND_EP_Count batch 18] 50/50
+
+== TREND_EP_Count batch 19/20 (tentativo 1) - 14:29:23
+  [TREND_EP_Count batch 19] 10/50
+
+  [TREND_EP_Count batch 19] 20/50
+
+  [TREND_EP_Count batch 19] 30/50
+
+  [TREND_EP_Count batch 19] 40/50
+
+  [TREND_EP_Count batch 19] 50/50
+
+== TREND_EP_Count batch 20/20 (tentativo 1) - 14:31:38
+  [TREND_EP_Count batch 20] 10/50
+
+  [TREND_EP_Count batch 20] 20/50
+
+  [TREND_EP_Count batch 20] 30/50
+
+  [TREND_EP_Count batch 20] 40/50
+
+  [TREND_EP_Count batch 20] 50/50
+
+    treat n_perm  b_obs_green p_perm_green   b_obs_dirty p_perm_dirty
+   <char>  <int>        <num>        <num>         <num>        <num>
+1:     WB   1000 -0.004568501        0.741 -0.0118733871        0.023
+2:  TREND   1000  0.001811544        0.176  0.0003509727        0.855
+[OK] r710_permutation_summary.csv - 2026-08-08 14:33:53
+[DONE] 22_permutation_inference.R
+[START] 23_eventstudy_sunab.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+Destinazioni: 236 | trattate: 23 
+gap_green - ATT Sun-Abraham: -0.0421 (p=0.255)
+gap_dirty - ATT Sun-Abraham: +0.0729 (p=0.273)
+[OK] sunab_gap.csv + eventstudy_sunab.png
+[OK] r71_sunab_diag.csv + r71_sunab_diag.md
+[OK] eventstudy_collapsed_v2.png
+[DONE] 23_eventstudy_sunab.R
+[START] 24_stability_controlgroups.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+
+=== Gruppo: prodHS4 ===
+[prodHS4] righe: 9,515,527 | green: 55.5% | dirty: 1.1%
+
+NOTES: 9 observations removed because of NA values (LHS: 9, Fixed-effects: 9, vcov: 9).
+
+       3,446,686/3,341,252/423 fixed-effect singletons were removed (5,742,663 observations).
+
+NOTES: 9 observations removed because of NA values (LHS: 9, Fixed-effects: 9, vcov: 9).
+
+       3,446,686/3,341,252/423 fixed-effect singletons were removed (5,742,663 observations).
+
+
+=== Gruppo: deepshallow ===
+[deepshallow] righe: 11,768,985 | green: 12.5% | dirty: 8.7%
+
+NOTES: 5 observations removed because of NA values (LHS: 5).
+
+       4,553,377/2,664,467/8,817 fixed-effect singletons were removed (6,506,687 observations).
+
+*** recursive gc invocation
+
+NOTES: 5 observations removed because of NA values (LHS: 5).
+
+       4,553,377/2,664,467/8,817 fixed-effect singletons were removed (6,506,687 observations).
+
+
+=== Gruppo: cem_v1 ===
+[cem_v1] righe: 27,752,774 | green: 11.4% | dirty: 7.0%
+
+NOTES: 22 observations removed because of NA values (LHS: 22, Fixed-effects: 9, vcov: 9).
+
+       9,482,900/6,163,463/7,523 fixed-effect singletons were removed (14,024,242 observations).
+
+NOTES: 22 observations removed because of NA values (LHS: 22, Fixed-effects: 9, vcov: 9).
+
+       9,482,900/6,163,463/7,523 fixed-effect singletons were removed (14,024,242 observations).
+
+
+[OK] tripledd_stability.csv - confrontare EP:env_good (e :dirty_p) tra i gruppi.
+[DONE] 24_stability_controlgroups.R
+[START] 25_heterogeneity_subindices.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+=== WB_GreenLiberalization ===
+  WB_GreenLiberalization x env_good  : -0.01153 (p=0.8957)
+  WB_GreenLiberalization x dirty_p   : -0.08759 (p=0.0711)
+=== TREND_GreenMarketAccess ===
+  TREND_GreenMarketAccess x env_good  : -0.02709 (p=0.3720)
+  TREND_GreenMarketAccess x dirty_p   : -0.04909 (p=0.0445)
+=== WB_EnforcementDSM ===
+  WB_EnforcementDSM x env_good  : -0.00482 (p=0.9026)
+  WB_EnforcementDSM x dirty_p   : +0.00672 (p=0.8982)
+=== TREND_EnforcementDSM ===
+  TREND_EnforcementDSM x env_good  : +0.00418 (p=0.7781)
+  TREND_EnforcementDSM x dirty_p   : -0.00525 (p=0.7090)
+=== TREND_Hard ===
+[FALLITO] TREND_Hard 
+=== TREND_Soft ===
+  TREND_Soft x env_good  : +0.01320 (p=0.2750)
+  TREND_Soft x dirty_p   : +0.00194 (p=0.8577)
+=== TREND_RegulatorySpace ===
+[FALLITO] TREND_RegulatorySpace 
+
+[OK] subindices_collapsed.csv
+[DONE] 25_heterogeneity_subindices.R
+[START] 26_robustness_desttrends.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+Stima WB_EP_Depth (tentativo 1)...
+NOTE: 89,440/83/3,856/4 fixed-effect singletons were removed (92,475 observations).
+
+Stima TREND_EP_Count (tentativo 1)...
+NOTE: 89,440/83/3,856/4 fixed-effect singletons were removed (92,475 observations).
+
+            treat                       term          coef           se
+           <char>                     <char>         <num>        <num>
+1:    WB_EP_Depth       WB_EP_Depth:env_good -0.0050988111 0.0038712255
+2:    WB_EP_Depth        WB_EP_Depth:dirty_p -0.0082465754 0.0045499239
+3:    WB_EP_Depth env_good:TotalDepth_nonEnv  0.0001580599 0.0001701464
+4:    WB_EP_Depth  dirty_p:TotalDepth_nonEnv  0.0003404390 0.0001845365
+5: TREND_EP_Count    TREND_EP_Count:env_good -0.0021694279 0.0006667413
+6: TREND_EP_Count     TREND_EP_Count:dirty_p -0.0013694834 0.0012390374
+7: TREND_EP_Count env_good:TotalDepth_nonEnv  0.0002865068 0.0001526747
+8: TREND_EP_Count  dirty_p:TotalDepth_nonEnv  0.0002270569 0.0002561046
+         pval    nobs
+        <num>   <int>
+1: 0.18913137 3681023
+2: 0.07123559 3681023
+3: 0.35389431 3681023
+4: 0.06636460 3681023
+5: 0.00131246 3681023
+6: 0.27020829 3681023
+7: 0.06185818 3681023
+8: 0.37624417 3681023
+[OK] r79_desttrends.csv
+[DONE] 26_robustness_desttrends.R
+[START] 27_robustness_desttrends_wcb.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+WCB spec con trend (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[WB] FW ep_green -0.0050988 (22: -0.0050988, diff 1.2e-09) | ep_dirty -0.0082466 (22: -0.0082466, diff 4.2e-09)
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+  [WB] ep_green: p_wcb = 0.5060
+
+  [WB] ep_dirty: p_wcb = 0.2798
+
+[TREND] FW ep_green -0.0021694 (22: -0.0021694, diff 1.3e-10) | ep_dirty -0.0013695 (22: -0.0013695, diff 8.2e-10)
+
+  [TREND] ep_green: p_wcb = 0.0128
+
+  [TREND] ep_dirty: p_wcb = 0.3528
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+    treat     term         coef      p_wcb     conf_low     conf_high     B
+   <char>   <char>        <num>      <num>        <num>         <num> <int>
+1:     WB ep_green -0.005098810 0.50595060 -0.064433836  0.0855479029  9999
+2:     WB ep_dirty -0.008246571 0.27982798 -0.015037199  0.0256715582  9999
+3:  TREND ep_green -0.002169428 0.01280128 -0.003783123 -0.0004393178  9999
+4:  TREND ep_dirty -0.001369483 0.35283528 -0.004077768  0.0026668509  9999
+[OK] r79b_wcb_trends.csv
+[DONE] 27_robustness_desttrends_wcb.R
+[START] 28_robustness_desttrends_pre.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+Variante pre-period trends (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+Slope pre-periodo stimate per 236 destinazioni (0 imposto alle altre)
+
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+
+[WB] asintotico: ep_green +0.01732 (p=0.186) | ep_dirty +0.06292 (p=0.157)
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+  [WB] ep_green: p_wcb = 0.6699
+
+  [WB] ep_dirty: p_wcb = 0.6182
+
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+
+[TREND] asintotico: ep_green +0.00728 (p=0.101) | ep_dirty +0.01512 (p=0.041)
+
+  [TREND] ep_green: p_wcb = 0.1817
+
+  [TREND] ep_dirty: p_wcb = 0.3012
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+    treat     term        coef      se_asy      p_asy     p_wcb     conf_low
+   <char>   <char>       <num>       <num>      <num>     <num>        <num>
+1:     WB ep_green 0.017318650 0.013068026 0.18641428 0.6698670 -0.173346076
+2:     WB ep_dirty 0.062921391 0.044348211 0.15732789 0.6181618 -0.325521643
+3:  TREND ep_green 0.007275258 0.004420202 0.10116597 0.1817182 -0.004992726
+4:  TREND ep_dirty 0.015115979 0.007348354 0.04082379 0.3012301 -0.009153776
+    conf_high    nobs     B
+        <num>   <int> <int>
+1: 0.13988991 3681023  9999
+2: 0.29838531 3681023  9999
+3: 0.01900168 3681023  9999
+4: 0.02972771 3681023  9999
+[OK] r79c_pretrends.csv
+[DONE] 28_robustness_desttrends_pre.R
+[START] 29_robustness_co2intensity.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+Stima CO2 continuo (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 2)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 3)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+
+[WB] asintotico: ep_co2 -0.00255 (p=0.656) | ep_green -0.00503 (p=0.476)
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+  [WB] ep_green: p_wcb = 0.5388
+
+  [WB] ep_co2: p_wcb = 0.7080
+
+NOTE: 89,440/83/3,856 fixed-effect singletons were removed (92,475 observations).
+
+[TREND] asintotico: ep_co2 -0.00131 (p=0.012) | ep_green +0.00088 (p=0.609)
+
+  [TREND] ep_green: p_wcb = 0.6781
+
+  [TREND] ep_co2: p_wcb = 0.0641
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+    treat     term          coef       se_asy      p_asy      p_wcb
+   <char>   <char>         <num>        <num>      <num>      <num>
+1:     WB ep_green -0.0050342865 0.0070464369 0.47568653 0.53875388
+2:     WB   ep_co2 -0.0025502302 0.0057111453 0.65563603 0.70797080
+3:  TREND ep_green  0.0008802405 0.0017165428 0.60859094 0.67806781
+4:  TREND   ep_co2 -0.0013142771 0.0005164391 0.01159516 0.06410641
+       conf_low    conf_high    nobs     B
+          <num>        <num>   <int> <int>
+1: -0.034158107 0.0297567157 3681023  9999
+2: -0.053898751 0.0085599429 3681023  9999
+3: -0.002593660 0.0058439365 3681023  9999
+4: -0.002673212 0.0001053496 3681023  9999
+[OK] r711_shapiro_intensity.csv
+[DONE] 29_robustness_co2intensity.R
+[START] 30_robustness_extensive_ppml.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+=== PPML WB ===
+                               coef    pval
+WB_EP_Depth:env_good        0.00153 0.73897
+WB_EP_Depth:dirty_p        -0.03014 0.05783
+env_good:TotalDepth_nonEnv -0.00005 0.84589
+dirty_p:TotalDepth_nonEnv   0.00085 0.27038
+=== PPML TREND ===
+                               coef    pval
+TREND_EP_Count:env_good     0.00012 0.95119
+TREND_EP_Count:dirty_p      0.00278 0.55232
+env_good:TotalDepth_nonEnv  0.00000 0.99198
+dirty_p:TotalDepth_nonEnv  -0.00090 0.37942
+[OK] ppml_extensive.csv
+[DONE] 30_robustness_extensive_ppml.R
+[START] 31_robustness_leaveoneout.R
+[config] campione: excl (HK+MO esclusi) | depth: TotalDepth_nonEnv
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 21 
+[CRASH tentativo 1 ] baseline 
+[CRASH tentativo 2 ] baseline 
+baseline      : -0.01187 (p=0.0001)
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_111 
+[CRASH tentativo 1 ] senza_112 
+[CRASH tentativo 2 ] senza_112 
+senza_112     : -0.01192 (p=0.0001)
+[cache] senza_119 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+[cache] senza_144 
+senza_322     : -0.01186 (p=0.0001)
+[cache] senza_331 
+[cache] senza_412 
+senza_415     : -0.01142 (p=0.0002)
+[cache] senza_434 
+[cache] senza_601 
+[cache] senza_609 
+
+=== VERDETTO leave-one-out ===
+Cambi di segno: 0/23 | p>0.10: 1/23
+Significativita' persa togliendo: 601 
+[OK] dirty_leaveoneout.csv
+[DONE] 31_robustness_leaveoneout.R
+[DONE ALL] Run 1 completata

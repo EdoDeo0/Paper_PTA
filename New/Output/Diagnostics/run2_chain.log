@@ -1,0 +1,1661 @@
+[START] 19_saturation_ladder.R (resume2 nthreads=1)
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+
+
+========== FE: fpd + year (nthreads=1) ==========
+  SKIP WB_NI_fpd_year (tabella gia' presente)
+  SKIP WB_Int_fpd_year (tabella gia' presente)
+  SKIP TREND_NI_fpd_year (tabella gia' presente)
+
+=== TREND_Int_fpd_year ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== TREND_Int_fpd_year ===
+
+  [1/6] ln_export ~ TREND_EP_Count * env_good | fpd + year
+
+    [SKIP] File already exists: C:/Work/projects/Paper_PTA/New/Output/OLS_inclHKMO/Models_Output/OLS_TREND_Int_fpd_year_1.rds
+
+  [2/6] ln_export_qua ~ TREND_EP_Count * env_good | fpd + year
+
+    [SKIP] File already exists: C:/Work/projects/Paper_PTA/New/Output/OLS_inclHKMO/Models_Output/OLS_TREND_Int_fpd_year_2.rds
+
+  [3/6] ln_export_value ~ TREND_EP_Count * env_good | fpd + year
+
+    [SKIP] File already exists: C:/Work/projects/Paper_PTA/New/Output/OLS_inclHKMO/Models_Output/OLS_TREND_Int_fpd_year_3.rds
+
+  [4/6] ln_export ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year
+
+    [SKIP] File already exists: C:/Work/projects/Paper_PTA/New/Output/OLS_inclHKMO/Models_Output/OLS_TREND_Int_fpd_year_4.rds
+
+  [5/6] ln_export_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year
+
+    [SKIP] File already exists: C:/Work/projects/Paper_PTA/New/Output/OLS_inclHKMO/Models_Output/OLS_TREND_Int_fpd_year_5.rds
+
+  [6/6] ln_export_value ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + year
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,489,232/0 fixed-effect singletons were removed (15,489,232 observations).
+
+[OK] OLS_TREND_Interaction_fpd_year.tex 
+
+[OK] TREND_Int_fpd_year - 0.3 min
+
+
+
+========== FE: fpt + pd (nthreads=1) ==========
+
+=== WB_NI_fpt_pd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== WB_NI_fpt_pd ===
+
+  [1/6] ln_export ~ WB_EP_Depth | fpt + pd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       11,366,403/112,151 fixed-effect singletons were removed (11,441,687 observations).
+
+  [2/6] ln_export_qua ~ WB_EP_Depth | fpt + pd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       11,301,065/111,982 fixed-effect singletons were removed (11,376,178 observations).
+
+  [3/6] ln_export_value ~ WB_EP_Depth | fpt + pd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       11,301,059/111,982 fixed-effect singletons were removed (11,376,172 observations).
+
+  [4/6] ln_export ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,774,878/87,058 fixed-effect singletons were removed (10,833,114 observations).
+
+  [5/6] ln_export_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,756/87,073 fixed-effect singletons were removed (10,769,979 observations).
+
+  [6/6] ln_export_value ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,748/87,073 fixed-effect singletons were removed (10,769,971 observations).
+
+[OK] OLS_WB_No_Interaction_fpt_pd.tex 
+
+[OK] WB_NI_fpt_pd - 19.2 min
+
+
+=== WB_Int_fpt_pd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== WB_Int_fpt_pd ===
+
+  [1/6] ln_export ~ WB_EP_Depth * env_good | fpt + pd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       11,366,403/112,151 fixed-effect singletons were removed (11,441,687 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [2/6] ln_export_qua ~ WB_EP_Depth * env_good | fpt + pd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       11,301,065/111,982 fixed-effect singletons were removed (11,376,178 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [3/6] ln_export_value ~ WB_EP_Depth * env_good | fpt + pd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       11,301,059/111,982 fixed-effect singletons were removed (11,376,172 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [4/6] ln_export ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,774,878/87,058 fixed-effect singletons were removed (10,833,114 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [5/6] ln_export_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,756/87,073 fixed-effect singletons were removed (10,769,979 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [6/6] ln_export_value ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,748/87,073 fixed-effect singletons were removed (10,769,971 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+[OK] OLS_WB_Interaction_fpt_pd.tex 
+
+[OK] WB_Int_fpt_pd - 19.7 min
+
+
+=== TREND_NI_fpt_pd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== TREND_NI_fpt_pd ===
+
+  [1/6] ln_export ~ TREND_EP_Count | fpt + pd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       11,366,403/112,151 fixed-effect singletons were removed (11,441,687 observations).
+
+  [2/6] ln_export_qua ~ TREND_EP_Count | fpt + pd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       11,301,065/111,982 fixed-effect singletons were removed (11,376,178 observations).
+
+  [3/6] ln_export_value ~ TREND_EP_Count | fpt + pd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       11,301,059/111,982 fixed-effect singletons were removed (11,376,172 observations).
+
+  [4/6] ln_export ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,774,878/87,058 fixed-effect singletons were removed (10,833,114 observations).
+
+  [5/6] ln_export_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,756/87,073 fixed-effect singletons were removed (10,769,979 observations).
+
+  [6/6] ln_export_value ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,748/87,073 fixed-effect singletons were removed (10,769,971 observations).
+
+[OK] OLS_TREND_No_Interaction_fpt_pd.tex 
+
+[OK] TREND_NI_fpt_pd - 19.2 min
+
+
+=== TREND_Int_fpt_pd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== TREND_Int_fpt_pd ===
+
+  [1/6] ln_export ~ TREND_EP_Count * env_good | fpt + pd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       11,366,403/112,151 fixed-effect singletons were removed (11,441,687 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [2/6] ln_export_qua ~ TREND_EP_Count * env_good | fpt + pd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       11,301,065/111,982 fixed-effect singletons were removed (11,376,178 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [3/6] ln_export_value ~ TREND_EP_Count * env_good | fpt + pd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       11,301,059/111,982 fixed-effect singletons were removed (11,376,172 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [4/6] ln_export ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,774,878/87,058 fixed-effect singletons were removed (10,833,114 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [5/6] ln_export_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,756/87,073 fixed-effect singletons were removed (10,769,979 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [6/6] ln_export_value ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + pd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       10,711,748/87,073 fixed-effect singletons were removed (10,769,971 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+[OK] OLS_TREND_Interaction_fpt_pd.tex 
+
+[OK] TREND_Int_fpt_pd - 19.8 min
+
+
+
+========== FE: fpt + fpd (nthreads=1) ==========
+
+=== WB_NI_fpt_fpd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== WB_NI_fpt_fpd ===
+
+  [1/6] ln_export ~ WB_EP_Depth | fpt + fpd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       12,529,628/18,247,593 fixed-effect singletons were removed (24,892,644 observations).
+
+  [2/6] ln_export_qua ~ WB_EP_Depth | fpt + fpd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       12,455,964/18,142,031 fixed-effect singletons were removed (24,749,200 observations).
+
+  [3/6] ln_export_value ~ WB_EP_Depth | fpt + fpd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       12,455,958/18,142,026 fixed-effect singletons were removed (24,749,192 observations).
+
+  [4/6] ln_export ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,884,831/16,369,195 fixed-effect singletons were removed (22,689,959 observations).
+
+  [5/6] ln_export_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,663/16,270,605 fixed-effect singletons were removed (22,554,506 observations).
+
+  [6/6] ln_export_value ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,655/16,270,600 fixed-effect singletons were removed (22,554,496 observations).
+
+[OK] OLS_WB_No_Interaction_fpt_fpd.tex 
+
+[OK] WB_NI_fpt_fpd - 274.5 min
+
+
+=== WB_Int_fpt_fpd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== WB_Int_fpt_fpd ===
+
+  [1/6] ln_export ~ WB_EP_Depth * env_good | fpt + fpd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       12,529,628/18,247,593 fixed-effect singletons were removed (24,892,644 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [2/6] ln_export_qua ~ WB_EP_Depth * env_good | fpt + fpd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       12,455,964/18,142,031 fixed-effect singletons were removed (24,749,200 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [3/6] ln_export_value ~ WB_EP_Depth * env_good | fpt + fpd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       12,455,958/18,142,026 fixed-effect singletons were removed (24,749,192 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [4/6] ln_export ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,884,831/16,369,195 fixed-effect singletons were removed (22,689,959 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [5/6] ln_export_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,663/16,270,605 fixed-effect singletons were removed (22,554,506 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [6/6] ln_export_value ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,655/16,270,600 fixed-effect singletons were removed (22,554,496 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+[OK] OLS_WB_Interaction_fpt_fpd.tex 
+
+[OK] WB_Int_fpt_fpd - 273.2 min
+
+
+=== TREND_NI_fpt_fpd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== TREND_NI_fpt_fpd ===
+
+  [1/6] ln_export ~ TREND_EP_Count | fpt + fpd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       12,529,628/18,247,593 fixed-effect singletons were removed (24,892,644 observations).
+
+  [2/6] ln_export_qua ~ TREND_EP_Count | fpt + fpd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       12,455,964/18,142,031 fixed-effect singletons were removed (24,749,200 observations).
+
+  [3/6] ln_export_value ~ TREND_EP_Count | fpt + fpd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       12,455,958/18,142,026 fixed-effect singletons were removed (24,749,192 observations).
+
+  [4/6] ln_export ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,884,831/16,369,195 fixed-effect singletons were removed (22,689,959 observations).
+
+  [5/6] ln_export_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,663/16,270,605 fixed-effect singletons were removed (22,554,506 observations).
+
+  [6/6] ln_export_value ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,655/16,270,600 fixed-effect singletons were removed (22,554,496 observations).
+
+[OK] OLS_TREND_No_Interaction_fpt_fpd.tex 
+
+[OK] TREND_NI_fpt_fpd - 280.6 min
+
+
+=== TREND_Int_fpt_fpd ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== TREND_Int_fpt_fpd ===
+
+  [1/6] ln_export ~ TREND_EP_Count * env_good | fpt + fpd
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       12,529,628/18,247,593 fixed-effect singletons were removed (24,892,644 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [2/6] ln_export_qua ~ TREND_EP_Count * env_good | fpt + fpd
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       12,455,964/18,142,031 fixed-effect singletons were removed (24,749,200 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [3/6] ln_export_value ~ TREND_EP_Count * env_good | fpt + fpd
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       12,455,958/18,142,026 fixed-effect singletons were removed (24,749,192 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [4/6] ln_export ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,884,831/16,369,195 fixed-effect singletons were removed (22,689,959 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [5/6] ln_export_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,663/16,270,605 fixed-effect singletons were removed (22,554,506 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [6/6] ln_export_value ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpt + fpd
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       11,813,655/16,270,600 fixed-effect singletons were removed (22,554,496 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+[OK] OLS_TREND_Interaction_fpt_fpd.tex 
+
+[OK] TREND_Int_fpt_fpd - 290.3 min
+
+
+
+========== FE: fpd + pt (nthreads=1) ==========
+
+=== WB_NI_fpd_pt ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== WB_NI_fpd_pt ===
+
+  [1/6] ln_export ~ WB_EP_Depth | fpd + pt
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+
+  [2/6] ln_export_qua ~ WB_EP_Depth | fpd + pt
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+
+  [3/6] ln_export_value ~ WB_EP_Depth | fpd + pt
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+
+  [4/6] ln_export ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+
+  [5/6] ln_export_qua ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+
+  [6/6] ln_export_value ~ WB_EP_Depth + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+
+[OK] OLS_WB_No_Interaction_fpd_pt.tex 
+
+[OK] WB_NI_fpd_pt - 4.8 min
+
+
+=== WB_Int_fpd_pt ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== WB_Int_fpd_pt ===
+
+  [1/6] ln_export ~ WB_EP_Depth * env_good | fpd + pt
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [2/6] ln_export_qua ~ WB_EP_Depth * env_good | fpd + pt
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [3/6] ln_export_value ~ WB_EP_Depth * env_good | fpd + pt
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [4/6] ln_export ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [5/6] ln_export_qua ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [6/6] ln_export_value ~ WB_EP_Depth * env_good + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+[OK] OLS_WB_Interaction_fpd_pt.tex 
+
+[OK] WB_Int_fpd_pt - 5.2 min
+
+
+=== TREND_NI_fpd_pt ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== TREND_NI_fpd_pt ===
+
+  [1/6] ln_export ~ TREND_EP_Count | fpd + pt
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+
+  [2/6] ln_export_qua ~ TREND_EP_Count | fpd + pt
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+
+  [3/6] ln_export_value ~ TREND_EP_Count | fpd + pt
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+
+  [4/6] ln_export ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+
+  [5/6] ln_export_qua ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+
+  [6/6] ln_export_value ~ TREND_EP_Count + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+
+[OK] OLS_TREND_No_Interaction_fpd_pt.tex 
+
+[OK] TREND_NI_fpd_pt - 4.9 min
+
+
+=== TREND_Int_fpd_pt ===
+here() starts at C:/Work/projects/Paper_PTA
+
+
+
+Caricamento pacchetto: 'lubridate'
+
+
+
+I seguenti oggetti sono mascherati da 'package:data.table':
+
+
+
+    hour, isoweek, isoyear, mday, minute, month, quarter, second, wday,
+
+    week, yday, year
+
+
+
+I seguenti oggetti sono mascherati da 'package:base':
+
+
+
+    date, intersect, setdiff, union
+
+
+
+
+
+=== TREND_Int_fpd_pt ===
+
+  [1/6] ln_export ~ TREND_EP_Count * env_good | fpd + pt
+
+NOTES: 31 observations removed because of NA values (LHS: 31, Fixed-effects: 9, vcov: 9).
+
+       17,428,838/4,384 fixed-effect singletons were removed (17,431,833 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [2/6] ln_export_qua ~ TREND_EP_Count * env_good | fpd + pt
+
+NOTES: 337,268 observations removed because of NA values (LHS: 337,268, Fixed-effects: 9, vcov: 9).
+
+       17,329,171/4,409 fixed-effect singletons were removed (17,332,181 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [3/6] ln_export_value ~ TREND_EP_Count * env_good | fpd + pt
+
+NOTES: 337,281 observations removed because of NA values (LHS: 337,281, Fixed-effects: 9, vcov: 9).
+
+       17,329,166/4,409 fixed-effect singletons were removed (17,332,176 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [4/6] ln_export ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 4,865,292 observations removed because of NA values (LHS: 31, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,582,931/4,622 fixed-effect singletons were removed (15,586,043 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [5/6] ln_export_qua ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,175,988 observations removed because of NA values (LHS: 337,268, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,191/4,649 fixed-effect singletons were removed (15,493,324 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+  [6/6] ln_export_value ~ TREND_EP_Count * env_good + tariffs + ln_hhi_baci | fpd + pt
+
+NOTES: 5,176,001 observations removed because of NA values (LHS: 337,281, RHS: 4,865,273, Fixed-effects: 9, vcov: 9).
+
+       15,490,186/4,649 fixed-effect singletons were removed (15,493,319 observations).
+
+The variable 'env_good' has been removed because of collinearity (see
+
+$collin.var).
+
+[OK] OLS_TREND_Interaction_fpd_pt.tex 
+
+[OK] TREND_Int_fpd_pt - 5.4 min
+
+
+=== Building ladder table ===
+Righe ladder: 4
+[OK] OLS_Ladder_FE.tex
+
+=== Fase 15 completata ===
+  Il WCB sulla ladder (fpt+fpd) e' in 21_wcb_ladder_fullpanel.R.
+[DONE] 19_saturation_ladder.R
+[START] 20_wcb_collapsed.R
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Panel: 3,862,038 celle | 238 cluster (paesi)
+
+[WB] coef lm demeanato: ep_green +0.001734 | ep_dirty -0.018871 (attesi = 12)
+  boottest: ep_green ... p_wcb = 0.8279
+  boottest: ep_dirty ... p_wcb = 0.0057
+
+[TREND] coef lm demeanato: ep_green +0.001779 | ep_dirty -0.000010 (attesi = 12)
+  boottest: ep_green ... p_wcb = 0.4011
+  boottest: ep_dirty ... p_wcb = 0.9956
+
+[OK] wcb_collapsed.csv
+    treat     term          coef      p_wcb     conf_low    conf_high     B
+   <char>   <char>         <num>      <num>        <num>        <num> <int>
+1:     WB ep_green  1.733852e-03 0.82788279 -0.012758457  0.050632144  9999
+2:     WB ep_dirty -1.887128e-02 0.00570057 -0.061808415 -0.008570505  9999
+3:  TREND ep_green  1.778575e-03 0.40114011 -0.001911504  0.007110284  9999
+4:  TREND ep_dirty -9.933709e-06 0.99559956           NA           NA  9999
+[DONE] 20_wcb_collapsed.R
+[START] 21_wcb_ladder_fullpanel.R
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+== wb_baseline (tentativo 1) - 17:01:05
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[wb_baseline] righe dopo na.omit: 49,245,273
+
+[wb_baseline] coef FW ep: +0.000106
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Unfortunately, confidence inversion failed due to poorly chosen starting values.Please let the maintainer know about this by opening an issue on GitHub.No confidence interval is computed.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00031 | ottenuto: +0.000106 | p_wcb = 0.9752
+== wb_controls (tentativo 1) - 17:06:50
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[wb_controls] righe dopo na.omit: 44,380,012
+
+[wb_controls] coef FW ep: +0.000117
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Unfortunately, confidence inversion failed due to poorly chosen starting values.Please let the maintainer know about this by opening an issue on GitHub.No confidence interval is computed.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00038 | ottenuto: +0.000117 | p_wcb = 0.9728
+== trend_baseline (tentativo 1) - 17:11:11
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[trend_baseline] righe dopo na.omit: 49,245,273
+
+[trend_baseline] coef FW ep: +0.000274
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00027 | ottenuto: +0.000274 | p_wcb = 0.6383
+== trend_controls (tentativo 1) - 17:17:06
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[trend_controls] righe dopo na.omit: 44,380,012
+
+[trend_controls] coef FW ep: +0.000283
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+   atteso (ladder tex): +0.00028 | ottenuto: +0.000283 | p_wcb = 0.6157
+             spec         coef     p_wcb     conf_low   conf_high     nobs
+           <char>        <num>     <num>        <num>       <num>    <int>
+1:    wb_baseline 0.0001057973 0.9751975           NA          NA 49245273
+2:    wb_controls 0.0001168389 0.9727973           NA          NA 44380012
+3: trend_baseline 0.0002735314 0.6382638 -0.001472136 0.002332167 49245273
+4: trend_controls 0.0002829920 0.6156616 -0.001562783 0.002424184 44380012
+       B
+   <int>
+1:  9999
+2:  9999
+3:  9999
+4:  9999
+[OK] bootstrap_summary.csv - 2026-08-09 17:21:32 
+[DONE] 21_wcb_ladder_fullpanel.R
+[START] 22_permutation_inference.R
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+=== Sezione A: permutazione grezza GREEN (WB) ===
+[coarse GREEN] coeff osservato -0.004665 | p-value 0.2810 (n=1000)
+
+=== Sezione A: permutazione grezza DIRTY (WB) ===
+[coarse DIRTY] coeff osservato 0.004397 | p-value 0.4340 (n=1000)
+
+=== Sezione B: permutazione sulla spec esatta ===
+== WB_EP_Depth batch 1/20 (tentativo 1) - 17:21:58
+[check WB] FW identita': green +0.001734 (12: +0.001734) | dirty -0.018871 (12: -0.018871)
+
+  [WB_EP_Depth batch 1] 10/50
+
+  [WB_EP_Depth batch 1] 20/50
+
+  [WB_EP_Depth batch 1] 30/50
+
+  [WB_EP_Depth batch 1] 40/50
+
+  [WB_EP_Depth batch 1] 50/50
+
+== WB_EP_Depth batch 2/20 (tentativo 1) - 17:24:41
+  [WB_EP_Depth batch 2] 10/50
+
+  [WB_EP_Depth batch 2] 20/50
+
+  [WB_EP_Depth batch 2] 30/50
+
+  [WB_EP_Depth batch 2] 40/50
+
+  [WB_EP_Depth batch 2] 50/50
+
+== WB_EP_Depth batch 3/20 (tentativo 1) - 17:27:19
+  [WB_EP_Depth batch 3] 10/50
+
+  [WB_EP_Depth batch 3] 20/50
+
+  [WB_EP_Depth batch 3] 30/50
+
+  [WB_EP_Depth batch 3] 40/50
+
+  [WB_EP_Depth batch 3] 50/50
+
+== WB_EP_Depth batch 4/20 (tentativo 1) - 17:29:56
+  [WB_EP_Depth batch 4] 10/50
+
+  [WB_EP_Depth batch 4] 20/50
+
+  [WB_EP_Depth batch 4] 30/50
+
+  [WB_EP_Depth batch 4] 40/50
+
+  [WB_EP_Depth batch 4] 50/50
+
+== WB_EP_Depth batch 5/20 (tentativo 1) - 17:32:34
+  [WB_EP_Depth batch 5] 10/50
+
+  [WB_EP_Depth batch 5] 20/50
+
+  [WB_EP_Depth batch 5] 30/50
+
+  [WB_EP_Depth batch 5] 40/50
+
+  [WB_EP_Depth batch 5] 50/50
+
+== WB_EP_Depth batch 6/20 (tentativo 1) - 17:35:12
+  [WB_EP_Depth batch 6] 10/50
+
+  [WB_EP_Depth batch 6] 20/50
+
+  [WB_EP_Depth batch 6] 30/50
+
+  [WB_EP_Depth batch 6] 40/50
+
+  [WB_EP_Depth batch 6] 50/50
+
+== WB_EP_Depth batch 7/20 (tentativo 1) - 17:37:50
+  [WB_EP_Depth batch 7] 10/50
+
+  [WB_EP_Depth batch 7] 20/50
+
+  [WB_EP_Depth batch 7] 30/50
+
+  [WB_EP_Depth batch 7] 40/50
+
+  [WB_EP_Depth batch 7] 50/50
+
+== WB_EP_Depth batch 8/20 (tentativo 1) - 17:40:27
+  [WB_EP_Depth batch 8] 10/50
+
+  [WB_EP_Depth batch 8] 20/50
+
+  [WB_EP_Depth batch 8] 30/50
+
+  [WB_EP_Depth batch 8] 40/50
+
+  [WB_EP_Depth batch 8] 50/50
+
+== WB_EP_Depth batch 9/20 (tentativo 1) - 17:43:05
+  [WB_EP_Depth batch 9] 10/50
+
+  [WB_EP_Depth batch 9] 20/50
+
+  [WB_EP_Depth batch 9] 30/50
+
+  [WB_EP_Depth batch 9] 40/50
+
+  [WB_EP_Depth batch 9] 50/50
+
+== WB_EP_Depth batch 10/20 (tentativo 1) - 17:45:43
+  [WB_EP_Depth batch 10] 10/50
+
+  [WB_EP_Depth batch 10] 20/50
+
+  [WB_EP_Depth batch 10] 30/50
+
+  [WB_EP_Depth batch 10] 40/50
+
+  [WB_EP_Depth batch 10] 50/50
+
+== WB_EP_Depth batch 11/20 (tentativo 1) - 17:48:20
+  [WB_EP_Depth batch 11] 10/50
+
+  [WB_EP_Depth batch 11] 20/50
+
+  [WB_EP_Depth batch 11] 30/50
+
+  [WB_EP_Depth batch 11] 40/50
+
+  [WB_EP_Depth batch 11] 50/50
+
+== WB_EP_Depth batch 12/20 (tentativo 1) - 17:50:59
+  [WB_EP_Depth batch 12] 10/50
+
+  [WB_EP_Depth batch 12] 20/50
+
+  [WB_EP_Depth batch 12] 30/50
+
+  [WB_EP_Depth batch 12] 40/50
+
+  [WB_EP_Depth batch 12] 50/50
+
+== WB_EP_Depth batch 13/20 (tentativo 1) - 17:53:37
+  [WB_EP_Depth batch 13] 10/50
+
+  [WB_EP_Depth batch 13] 20/50
+
+  [WB_EP_Depth batch 13] 30/50
+
+  [WB_EP_Depth batch 13] 40/50
+
+  [WB_EP_Depth batch 13] 50/50
+
+== WB_EP_Depth batch 14/20 (tentativo 1) - 17:56:14
+  [WB_EP_Depth batch 14] 10/50
+
+  [WB_EP_Depth batch 14] 20/50
+
+  [WB_EP_Depth batch 14] 30/50
+
+  [WB_EP_Depth batch 14] 40/50
+
+  [WB_EP_Depth batch 14] 50/50
+
+== WB_EP_Depth batch 15/20 (tentativo 1) - 17:58:53
+  [WB_EP_Depth batch 15] 10/50
+
+  [WB_EP_Depth batch 15] 20/50
+
+  [WB_EP_Depth batch 15] 30/50
+
+  [WB_EP_Depth batch 15] 40/50
+
+  [WB_EP_Depth batch 15] 50/50
+
+== WB_EP_Depth batch 16/20 (tentativo 1) - 18:01:31
+  [WB_EP_Depth batch 16] 10/50
+
+  [WB_EP_Depth batch 16] 20/50
+
+  [WB_EP_Depth batch 16] 30/50
+
+  [WB_EP_Depth batch 16] 40/50
+
+  [WB_EP_Depth batch 16] 50/50
+
+== WB_EP_Depth batch 17/20 (tentativo 1) - 18:04:10
+  [WB_EP_Depth batch 17] 10/50
+
+  [WB_EP_Depth batch 17] 20/50
+
+  [WB_EP_Depth batch 17] 30/50
+
+  [WB_EP_Depth batch 17] 40/50
+
+  [WB_EP_Depth batch 17] 50/50
+
+== WB_EP_Depth batch 18/20 (tentativo 1) - 18:06:49
+  [WB_EP_Depth batch 18] 10/50
+
+  [WB_EP_Depth batch 18] 20/50
+
+  [WB_EP_Depth batch 18] 30/50
+
+  [WB_EP_Depth batch 18] 40/50
+
+  [WB_EP_Depth batch 18] 50/50
+
+== WB_EP_Depth batch 19/20 (tentativo 1) - 18:09:27
+  [WB_EP_Depth batch 19] 10/50
+
+  [WB_EP_Depth batch 19] 20/50
+
+  [WB_EP_Depth batch 19] 30/50
+
+  [WB_EP_Depth batch 19] 40/50
+
+  [WB_EP_Depth batch 19] 50/50
+
+== WB_EP_Depth batch 20/20 (tentativo 1) - 18:12:04
+  [WB_EP_Depth batch 20] 10/50
+
+  [WB_EP_Depth batch 20] 20/50
+
+  [WB_EP_Depth batch 20] 30/50
+
+  [WB_EP_Depth batch 20] 40/50
+
+  [WB_EP_Depth batch 20] 50/50
+
+== TREND_EP_Count batch 1/20 (tentativo 1) - 18:14:41
+[check TREND] FW identita': green +0.001779 (12: +0.001779) | dirty -0.000010 (12: -0.000010)
+
+  [TREND_EP_Count batch 1] 10/50
+
+  [TREND_EP_Count batch 1] 20/50
+
+  [TREND_EP_Count batch 1] 30/50
+
+  [TREND_EP_Count batch 1] 40/50
+
+  [TREND_EP_Count batch 1] 50/50
+
+== TREND_EP_Count batch 2/20 (tentativo 1) - 18:17:31
+  [TREND_EP_Count batch 2] 10/50
+
+  [TREND_EP_Count batch 2] 20/50
+
+  [TREND_EP_Count batch 2] 30/50
+
+  [TREND_EP_Count batch 2] 40/50
+
+  [TREND_EP_Count batch 2] 50/50
+
+== TREND_EP_Count batch 3/20 (tentativo 1) - 18:20:16
+  [TREND_EP_Count batch 3] 10/50
+
+  [TREND_EP_Count batch 3] 20/50
+
+  [TREND_EP_Count batch 3] 30/50
+
+  [TREND_EP_Count batch 3] 40/50
+
+  [TREND_EP_Count batch 3] 50/50
+
+== TREND_EP_Count batch 4/20 (tentativo 1) - 18:23:02
+  [TREND_EP_Count batch 4] 10/50
+
+  [TREND_EP_Count batch 4] 20/50
+
+  [TREND_EP_Count batch 4] 30/50
+
+  [TREND_EP_Count batch 4] 40/50
+
+  [TREND_EP_Count batch 4] 50/50
+
+== TREND_EP_Count batch 5/20 (tentativo 1) - 18:25:49
+  [TREND_EP_Count batch 5] 10/50
+
+  [TREND_EP_Count batch 5] 20/50
+
+  [TREND_EP_Count batch 5] 30/50
+
+  [TREND_EP_Count batch 5] 40/50
+
+  [TREND_EP_Count batch 5] 50/50
+
+== TREND_EP_Count batch 6/20 (tentativo 1) - 18:28:35
+  [TREND_EP_Count batch 6] 10/50
+
+  [TREND_EP_Count batch 6] 20/50
+
+  [TREND_EP_Count batch 6] 30/50
+
+  [TREND_EP_Count batch 6] 40/50
+
+  [TREND_EP_Count batch 6] 50/50
+
+== TREND_EP_Count batch 7/20 (tentativo 1) - 18:31:21
+  [TREND_EP_Count batch 7] 10/50
+
+  [TREND_EP_Count batch 7] 20/50
+
+  [TREND_EP_Count batch 7] 30/50
+
+  [TREND_EP_Count batch 7] 40/50
+
+  [TREND_EP_Count batch 7] 50/50
+
+== TREND_EP_Count batch 8/20 (tentativo 1) - 18:34:06
+  [TREND_EP_Count batch 8] 10/50
+
+  [TREND_EP_Count batch 8] 20/50
+
+  [TREND_EP_Count batch 8] 30/50
+
+  [TREND_EP_Count batch 8] 40/50
+
+  [TREND_EP_Count batch 8] 50/50
+
+== TREND_EP_Count batch 9/20 (tentativo 1) - 18:36:52
+  [TREND_EP_Count batch 9] 10/50
+
+  [TREND_EP_Count batch 9] 20/50
+
+  [TREND_EP_Count batch 9] 30/50
+
+  [TREND_EP_Count batch 9] 40/50
+
+  [TREND_EP_Count batch 9] 50/50
+
+== TREND_EP_Count batch 10/20 (tentativo 1) - 18:39:31
+[ABORT] 22_permutation_inference.R exit -1

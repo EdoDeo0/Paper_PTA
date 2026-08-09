@@ -56,7 +56,6 @@ threads_fst(1)
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 OUT_DIR    <- here("New/Output/TripleDiff")
 dir.create(file.path(OUT_DIR, "Tables"), recursive = TRUE, showWarnings = FALSE)
 dir.create(file.path(OUT_DIR, "Diagnostics"), recursive = TRUE, showWarnings = FALSE)
@@ -72,9 +71,15 @@ cell[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% unique(green
 dirty <- fread(DIRTY_FILE)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
 cell[dirty, on = "hs6", dirty_p := i.dirty_p]
 cell[is.na(dirty_p), dirty_p := 0L]
-dep <- fread(DEPTH_FILE)[, .(country_code, year, TotalDepth_nonEnv)]
-cell[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
-cell[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
+dep <- fread(DEPTH_FILE)[, .(country_code, year, dep_val__ = get(DEPTH_VAR))]
+cell[dep, on = c("country_code", "year"), (DEPTH_VAR) := i.dep_val__]
+if (DEPTH_DROP_UNMEASURED) {
+  n0 <- nrow(cell)
+  cell <- cell[!(is.na(get(DEPTH_VAR)) & WB_EP_Depth > 0)]
+  cat(sprintf("[depth] %s: %d celle trattate senza copertura escluse (%.3f%%)\n",
+              DEPTH_VAR, n0 - nrow(cell), 100 * (n0 - nrow(cell)) / n0))
+}
+cell[is.na(get(DEPTH_VAR)), (DEPTH_VAR) := 0]
 
 # ID delle fixed effects (interi compatti)
 cell[, pd := .GRP, by = .(hs6, country_code)]
@@ -94,20 +99,21 @@ cat(sprintf("green: %.1f%% celle | dirty: %.1f%% celle\n",
 # gia' usato in 27/29/31): se i coefficienti non coincidono a 1e-6, la
 # funzione si ferma con un errore esplicito invece di restituire un risultato
 # non affidabile - il retry esterno riparte da capo.
-run_main_model <- function(cell, tr, key) {
+run_main_model <- function(cell, tr, key, depth_var) {
   library(fixest)
   library(data.table)
-  f <- sprintf("y ~ %s:env_good + %s:dirty_p + TotalDepth_nonEnv:env_good + TotalDepth_nonEnv:dirty_p | pd + dt + pt", tr, tr)
+  f <- sprintf("y ~ %s:env_good + %s:dirty_p + %s:env_good + %s:dirty_p | pd + dt + pt",
+               tr, tr, depth_var, depth_var)
   m <- feols(as.formula(f), data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
 
   cell[, `:=`(ep_green = get(tr) * env_good, ep_dirty = get(tr) * dirty_p,
-              td_green = TotalDepth_nonEnv * env_good, td_dirty = TotalDepth_nonEnv * dirty_p)]
+              td_green = get(depth_var) * env_good, td_dirty = get(depth_var) * dirty_p)]
   X <- as.matrix(fixest::demean(cell[, .(y, ep_green, ep_dirty, td_green, td_dirty)],
                                 f = cell[, .(pd, dt, pt)], weights = cell$n))
   sw <- sqrt(cell$n)
   cf_check <- qr.solve(X[, -1] * sw, X[, "y"] * sw)
   cf_m <- coef(m)[c(sprintf("%s:env_good", tr), sprintf("%s:dirty_p", tr),
-                    "env_good:TotalDepth_nonEnv", "dirty_p:TotalDepth_nonEnv")]
+                    sprintf("env_good:%s", depth_var), sprintf("dirty_p:%s", depth_var))]
   if (max(abs(cf_check - cf_m)) > 1e-6) stop("Frisch-Waugh non riproduce feols: risultato non affidabile")
 
   data.table(treat = key, term = names(coef(m)), coef = coef(m),
@@ -121,7 +127,7 @@ for (tr in c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")) {
   out <- NULL
   for (tent in 1:10) {
     out <- tryCatch(
-      callr::r(run_main_model, args = list(cell = cell, tr = tr, key = key), show = TRUE),
+      callr::r(run_main_model, args = list(cell = cell, tr = tr, key = key, depth_var = DEPTH_VAR), show = TRUE),
       error = function(e) { cat("[CRASH tentativo", tent, "]", conditionMessage(e), "\n"); NULL }
     )
     if (!is.null(out)) break

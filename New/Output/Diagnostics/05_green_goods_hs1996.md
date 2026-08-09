@@ -1,6 +1,6 @@
 # 01 - Lista green tradotta a HS1996 (vintage unica)
 
-Data: 2026-07-16
+Data: 2026-08-07
 
 ## Decisione
 Si e' scelto di fidarsi della vintage HS1996 dichiarata dal fornitore del dataset
@@ -12,14 +12,14 @@ Si accettano SOLO i match 1:1 univoci come traduzione affidabile; i codici con
 split 1->N (piu' candidati) o senza match mantengono il codice HS2012 originale
 come fallback, sempre flaggati.
 
-- Codici totali nella lista green: 247
-- Match univoco 1:1 HS2012->HS1996: 247 (100.0%)
+- Codici totali nella lista green: 248
+- Match univoco 1:1 HS2012->HS1996: 246 (99.2%)
 - Split 1->N (fallback HS2012 originale): 0 (0.0%)
-- Non concordato (fallback HS2012 originale): 0 (0.0%)
-- Codici dove hs6_final != codice originale (traduzione effettiva): 10 / 247
+- Non concordato (fallback HS2012 originale): 2 (0.8%)
+- Codici dove hs6_final != codice originale (traduzione effettiva): 9 / 248
 
 ## Verifica di continuita' di valore (filtrata sul codice CORRETTO hs6_final)
-Codici a sospetto crollo di export 2006->2007 (export medio post-2007 < 5% di pre-2007): 0 / 245
+Codici a sospetto crollo di export 2006->2007 (export medio post-2007 < 5% di pre-2007): 0 / 244
 Nessun codice a match univoco mostra un crollo sospetto - la traduzione univoca e' coerente nel tempo.
 
 ## Output

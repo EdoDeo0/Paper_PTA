@@ -39,7 +39,6 @@ source(here("New/Code/_sample_config.R"))
 DATA_FILE  <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 OUT_DIR    <- here("New/Output/TripleDiff")
 NTHREADS   <- 6L
 dir.create(file.path(OUT_DIR, "Models_Output"), recursive = TRUE, showWarnings = FALSE)
@@ -56,7 +55,7 @@ groups <- list(
 ## --- Stima di un gruppo (self-contained, gira in sottoprocesso callr) ------
 estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_dir,
                            nthreads, group_name, keep_hs6, keep_cc,
-                           hkmo_drop, suffix) {
+                           hkmo_drop, suffix, depth_var, depth_drop_unmeasured) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -76,9 +75,15 @@ estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_di
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   d[dirty, on = "hs6", dirty_p := i.dirty_p]
   d[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, TotalDepth_nonEnv)]
-  d[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
-  d[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  d[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
+  if (depth_drop_unmeasured) {
+    n0 <- nrow(d)
+    d <- d[!(is.na(get(depth_var)) & WB_EP_Depth > 0)]
+    cat(sprintf("[depth] %s: %d righe trattate senza copertura escluse (%.3f%%)\n",
+                depth_var, n0 - nrow(d), 100 * (n0 - nrow(d)) / n0))
+  }
+  d[is.na(get(depth_var)), (depth_var) := 0]
   cat(sprintf("[%s] righe: %s | green: %.1f%% | dirty: %.1f%%\n", group_name,
               format(nrow(d), big.mark = ","), 100 * mean(d$env_good), 100 * mean(d$dirty_p)))
 
@@ -89,7 +94,8 @@ estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_di
     rds <- file.path(out_dir, "Models_Output",
                      sprintf("STAB_%s_%s%s.rds", group_name, tr_name, suffix))
     if (file.exists(rds)) { out[[tr_name]] <- readRDS(rds); next }
-    f <- sprintf("ln_export ~ %s:env_good + %s:dirty_p + TotalDepth_nonEnv:env_good + TotalDepth_nonEnv:dirty_p | fpd + fdt + pt", tr, tr)
+    f <- sprintf("ln_export ~ %s:env_good + %s:dirty_p + %s:env_good + %s:dirty_p | fpd + fdt + pt",
+                 tr, tr, depth_var, depth_var)
     m <- feols(as.formula(f), data = d, cluster = ~country_code, lean = TRUE, mem.clean = TRUE)
     st <- list(group = group_name, treat = tr_name, coefs = coef(m), se = se(m),
                pval = pvalue(m), nobs = m$nobs)
@@ -113,7 +119,8 @@ for (g in names(groups)) {
       group_name = g,
       keep_hs6 = if (is.null(groups[[g]]$keep_hs6)) NULL else groups[[g]]$keep_hs6,
       keep_cc  = if (is.null(groups[[g]]$keep_cc))  NULL else groups[[g]]$keep_cc,
-      hkmo_drop = HKMO_DROP, suffix = SAMPLE_SUFFIX
+      hkmo_drop = HKMO_DROP, suffix = SAMPLE_SUFFIX,
+      depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
     ), show = TRUE),
     error = function(e) { cat("[FALLITO]", g, ":", conditionMessage(e), "\n"); NULL })
 }

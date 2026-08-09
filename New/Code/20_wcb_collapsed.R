@@ -37,7 +37,6 @@ setFixest_nthreads(4)
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 OUT_FILE   <- out_path(here("New/Output/TripleDiff/Tables/wcb_collapsed.csv"))
 
 ## --- Caricamento dati (stesso panel e stessi merge di 12) ------------------
@@ -47,9 +46,15 @@ cell[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% unique(green
 dirty <- fread(DIRTY_FILE)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
 cell[dirty, on = "hs6", dirty_p := i.dirty_p]
 cell[is.na(dirty_p), dirty_p := 0L]
-dep <- fread(DEPTH_FILE)[, .(country_code, year, TotalDepth_nonEnv)]
-cell[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
-cell[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
+dep <- fread(DEPTH_FILE)[, .(country_code, year, dep_val__ = get(DEPTH_VAR))]
+cell[dep, on = c("country_code", "year"), (DEPTH_VAR) := i.dep_val__]
+if (DEPTH_DROP_UNMEASURED) {
+  n0 <- nrow(cell)
+  cell <- cell[!(is.na(get(DEPTH_VAR)) & WB_EP_Depth > 0)]
+  cat(sprintf("[depth] %s: %d celle trattate senza copertura escluse (%.3f%%)\n",
+              DEPTH_VAR, n0 - nrow(cell), 100 * (n0 - nrow(cell)) / n0))
+}
+cell[is.na(get(DEPTH_VAR)), (DEPTH_VAR) := 0]
 cell[, pd := .GRP, by = .(hs6, country_code)]
 cell[, dt := .GRP, by = .(country_code, year)]
 cell[, pt := .GRP, by = .(hs6, year)]
@@ -62,8 +67,8 @@ for (tr_name in c("WB", "TREND")) {
   tr <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")[[tr_name]]
 
   # interazioni e demeaning Frisch-Waugh (pesato) rispetto a pd+dt+pt
-  cell[, `:=`(ep_green = get(tr) * env_good,       ep_dirty = get(tr) * dirty_p,
-              td_green = TotalDepth_nonEnv * env_good, td_dirty = TotalDepth_nonEnv * dirty_p)]
+  cell[, `:=`(ep_green = get(tr) * env_good,            ep_dirty = get(tr) * dirty_p,
+              td_green = get(DEPTH_VAR) * env_good, td_dirty = get(DEPTH_VAR) * dirty_p)]
   X <- fixest::demean(cell[, .(y, ep_green, ep_dirty, td_green, td_dirty)],
                       f = cell[, .(pd, dt, pt)], weights = cell$n)
   df <- as.data.frame(X)

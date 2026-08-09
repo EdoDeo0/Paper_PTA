@@ -34,10 +34,9 @@ source(here("New/Code/_sample_config.R"))
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
-DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
-
 ## --- Funzione: una singola stima, self-contained ---------------------------
-stima_una <- function(cache_fst, green_file, dirty_file, depth_file, drop_cc, dirty_var) {
+stima_una <- function(cache_fst, green_file, dirty_file, depth_file, drop_cc, dirty_var,
+                      depth_var, depth_drop_unmeasured) {
   library(fst)
   library(fixest)
   library(data.table)
@@ -51,15 +50,21 @@ stima_una <- function(cache_fst, green_file, dirty_file, depth_file, drop_cc, di
   cell[dirty, on = "hs6", `:=`(dirty_p = i.dirty_p, dirty_ext = i.dirty_ext)]
   cell[is.na(dirty_p), dirty_p := 0L]
   cell[is.na(dirty_ext), dirty_ext := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, TotalDepth_nonEnv)]
-  cell[dep, on = c("country_code", "year"), TotalDepth_nonEnv := i.TotalDepth_nonEnv]
-  cell[is.na(TotalDepth_nonEnv), TotalDepth_nonEnv := 0]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
+  if (depth_drop_unmeasured) {
+    n0 <- nrow(cell)
+    cell <- cell[!(is.na(get(depth_var)) & WB_EP_Depth > 0)]
+    cat(sprintf("[depth] %s: %d celle trattate senza copertura escluse (%.3f%%)\n",
+                depth_var, n0 - nrow(cell), 100 * (n0 - nrow(cell)) / n0))
+  }
+  cell[is.na(get(depth_var)), (depth_var) := 0]
   if (!is.na(drop_cc)) cell <- cell[country_code != drop_cc]
   cell[, pd := .GRP, by = .(hs6, country_code)]
   cell[, dt := .GRP, by = .(country_code, year)]
   cell[, pt := .GRP, by = .(hs6, year)]
-  f <- sprintf("y ~ WB_EP_Depth:env_good + WB_EP_Depth:%s + TotalDepth_nonEnv:env_good + TotalDepth_nonEnv:%s | pd + dt + pt",
-               dirty_var, dirty_var)
+  f <- sprintf("y ~ WB_EP_Depth:env_good + WB_EP_Depth:%s + %s:env_good + %s:%s | pd + dt + pt",
+               dirty_var, depth_var, depth_var, dirty_var)
   m <- feols(as.formula(f), data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
   key <- sprintf("WB_EP_Depth:%s", dirty_var)
   list(coef = coef(m)[[key]], pval = pvalue(m)[[key]])
@@ -97,7 +102,8 @@ for (i in seq_len(nrow(piano))) {
     r <- tryCatch(
       callr::r(stima_una, args = list(
         cache_fst = CACHE_FST, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
-        depth_file = DEPTH_FILE, drop_cc = p$drop_cc, dirty_var = p$dirty_var
+        depth_file = DEPTH_FILE, drop_cc = p$drop_cc, dirty_var = p$dirty_var,
+        depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
       )),
       error = function(e) { cat("[CRASH tentativo", tent, "]", p$label, "\n"); NULL })
     if (!is.null(r)) break

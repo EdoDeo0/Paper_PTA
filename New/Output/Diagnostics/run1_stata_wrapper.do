@@ -1,0 +1,8 @@
+cd "C:\Work\projects\Paper_PTA"
+global PTA_SAMPLE "excl"
+global PTA_DEPTH  "totaldepth"
+display "[RUN1-STATA] Avvio 17_main_tripledd_fullpanel.do"
+do "New/Code/stata/17_main_tripledd_fullpanel.do"
+display "[RUN1-STATA] Avvio 18_robustness_fullpanel.do"
+do "New/Code/stata/18_robustness_fullpanel.do"
+display "[RUN1-STATA] DONE"

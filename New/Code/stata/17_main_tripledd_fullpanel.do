@@ -36,17 +36,20 @@ if c(os) == "Unix" {
     global ROOT "~/work/projects/Paper_PTA"
 }
 
-*-- Variante di campione HK+Macao (analogo Stata di New/Code/_sample_config.R) --
+*-- Variante di campione e depth (analogo Stata di New/Code/_sample_config.R) --
 *  ##########################################################################
-*  ##  UNICA COSA DA TOCCARE: la riga qui sotto.                          ##
-*  ##    "excl" -> Hong Kong e Macao ESCLUSI  (specifica principale)      ##
-*  ##    "incl" -> Hong Kong e Macao INCLUSI  (robustezza d'appendice)    ##
+*  ##  DUE COSE DA TOCCARE (una per asse):                               ##
+*  ##  1. CAMPIONE HK/Macao:                                             ##
+*  ##       "excl" -> HK e Macao ESCLUSI  (specifica principale)         ##
+*  ##       "incl" -> HK e Macao INCLUSI  (robustezza)                   ##
+*  ##  2. DEPTH CONTROL:                                                  ##
+*  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
+*  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 *  ##########################################################################
 global PTA_SAMPLE "excl"
+global PTA_DEPTH  "totaldepth"
 
-* $HKMOEXPR e' sempre componibile con altri filtri:  if $HKMOEXPR & altra_cond
-* Gli output della variante "incl" prendono il suffisso $SFX e non
-* sovrascrivono quelli della variante "excl".
+* Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {
     di as error "PTA_SAMPLE deve essere excl o incl, trovato: $PTA_SAMPLE"
     exit 198
@@ -59,7 +62,27 @@ else {
     global HKMOEXPR "!hkmo"
     global SFX ""
 }
-di "[campione] $PTA_SAMPLE (suffisso output: '$SFX')"
+di "[campione] $PTA_SAMPLE"
+
+* Asse 2 — depth control
+if !inlist("$PTA_DEPTH", "totaldepth", "desta") {
+    di as error "PTA_DEPTH deve essere totaldepth o desta, trovato: $PTA_DEPTH"
+    exit 198
+}
+if "$PTA_DEPTH" == "desta" {
+    global DEPTHFILE "$ROOT/New/Data/TotalDepth/desta_depth_country_year.csv"
+    global DEPTHVAR  "desta_depth_index"
+    global DEPTHSFX  "_desta"
+    global DROP_UNMEASURED 1
+}
+else {
+    global DEPTHFILE "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.csv"
+    global DEPTHVAR  "totaldepth_nonenv"
+    global DEPTHSFX  ""
+    global DROP_UNMEASURED 0
+}
+global OUTSFX "$SFX$DEPTHSFX"
+di "[depth] $PTA_DEPTH ($DEPTHVAR) | suffisso output: '$OUTSFX'"
 
 * dipendenze
 cap which reghdfe
@@ -86,9 +109,9 @@ rename dirty dirty_p
 tempfile dirty
 save `dirty'
 
-* TotalDepth non ambientale (country_code x year)
-import delimited "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.csv", clear
-keep country_code year totaldepth_nonenv
+* Depth control (country_code x year)
+import delimited "$DEPTHFILE", clear
+keep country_code year $DEPTHVAR
 tempfile depth
 save `depth'
 
@@ -103,7 +126,10 @@ replace env_good_new = 0 if missing(env_good_new)
 merge m:1 hs6 using `dirty', keep(master match) nogen
 replace dirty_p = 0 if missing(dirty_p)
 merge m:1 country_code year using `depth', keep(master match) nogen
-replace totaldepth_nonenv = 0 if missing(totaldepth_nonenv)
+if $DROP_UNMEASURED {
+    drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+}
+replace $DEPTHVAR = 0 if missing($DEPTHVAR)
 
 count
 di "Righe: " r(N)
@@ -117,34 +143,34 @@ gen double wb_green = WB_EP_Depth    * env_good_new
 gen double wb_dirty = WB_EP_Depth    * dirty_p
 gen double tr_green = TREND_EP_Count * env_good_new
 gen double tr_dirty = TREND_EP_Count * dirty_p
-gen double td_green = totaldepth_nonenv * env_good_new
-gen double td_dirty = totaldepth_nonenv * dirty_p
-drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p totaldepth_nonenv hs6
+gen double td_green = $DEPTHVAR * env_good_new
+gen double td_dirty = $DEPTHVAR * dirty_p
+drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
 
 *── 3. Stime (compact = risparmia RAM; cache: salta se gia' fatto) ─────────────
 cap mkdir "$ROOT/New/Output/TripleDiff"
 cap mkdir "$ROOT/New/Output/TripleDiff/Tables"
 
 * WB
-cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB$SFX.dta"
+cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
         absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB$SFX.dta", ///
+    regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", ///
         tstat pval ci replace addlabel(treat, WB)
 }
 
 * TREND (capture: se muore, il risultato WB resta salvato)
-cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$SFX.dta"
+cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta"
 if _rc {
     cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
         absorb(fpd fdt pt) vce(cluster country_code) compact
-    if !_rc regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$SFX.dta", ///
+    if !_rc regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta", ///
         tstat pval ci replace addlabel(treat, TREND)
 }
 
 *── 4. Esporta CSV riassuntivo ─────────────────────────────────────────────────
-use "$ROOT/New/Output/TripleDiff/Tables/_full_WB$SFX.dta", clear
-cap append using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$SFX.dta"
-export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_reghdfe$SFX.csv", replace
-di "[OK] tripledd_full_reghdfe$SFX.csv"
+use "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", clear
+cap append using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta"
+export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_reghdfe$OUTSFX.csv", replace
+di "[OK] tripledd_full_reghdfe$OUTSFX.csv"

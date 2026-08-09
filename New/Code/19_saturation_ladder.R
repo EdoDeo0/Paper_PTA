@@ -88,7 +88,7 @@ CM_TREND_INT <- c(
 # strutture FE ad alta cardinalita' che richiedono nthreads=1 (crash noto altrimenti)
 # fpt_pd aggiunta empiricamente durante il rerun 2026-07-22: stesso crash
 # "recursive gc invocation" di fpd_pt/fpt_fpd, ripetuto 3/3 volte a nthreads=10
-HIGH_CARDINALITY_FE <- c("fpd_pt", "fpt_fpd", "fpt_pd")
+HIGH_CARDINALITY_FE <- c("fpd_year", "fpd_pt", "fpt_fpd", "fpt_pd")
 
 make_formulas <- function(fe) list(
   WB_NI = c(
@@ -173,7 +173,7 @@ fe_structures <- list(
 for (fe_label in names(fe_structures)) {
   fe_str <- fe_structures[[fe_label]]
   fms <- make_formulas(fe_str)
-  nthreads <- if (fe_label %in% HIGH_CARDINALITY_FE) 1L else 10L
+  nthreads <- if (fe_label %in% HIGH_CARDINALITY_FE) 1L else 4L
   cat(sprintf("\n\n========== FE: %s (nthreads=%d) ==========\n", fe_str, nthreads))
   for (block_label in names(fms)) {
     tex_name <- sprintf("OLS_%s_%s.tex",
