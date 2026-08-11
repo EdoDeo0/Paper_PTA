@@ -1,0 +1,40 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Misura continua di intensit\`a inquinante al posto della classificazione s\`i/no}
+\label{tab:co2}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Pannello A --- indice WB}} \\
+\addlinespace
+Profondit\`a EP $\times$ Verde & -0.00503 & 0.00044 & -0.00248 & -0.00414 \\
+ & (0.00705) & (0.00811) & (0.00494) & (0.00558) \\
+\quad $p$-value bootstrap & 0.539 & 0.961 & 0.799 & 0.796 \\
+\addlinespace
+Profondit\`a EP $\times$ Intensit\`a CO$_2$ & -0.00255 & -0.00485 & 0.00128 & 0.00280 \\
+ & (0.00571) & (0.00645) & (0.00311) & (0.00317) \\
+\quad $p$-value bootstrap & 0.708 & 0.536 & 0.766 & 0.390 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Pannello B --- indice TREND}} \\
+\addlinespace
+Conteggio EP $\times$ Verde & 0.00088 & 0.00086 & 0.00106 & -0.00002 \\
+ & (0.00172) & (0.00173) & (0.00178) & (0.00171) \\
+\quad $p$-value bootstrap & 0.678 & 0.689 & 0.660 & 0.993 \\
+\addlinespace
+Conteggio EP $\times$ Intensit\`a CO$_2$ & -0.00131$^{**}$ & -0.00136$^{**}$ & -0.00083$^{**}$ & -0.00018 \\
+ & (0.00052) & (0.00054) & (0.00039) & (0.00065) \\
+\quad $p$-value bootstrap & 0.064 & 0.059 & 0.080 & 0.825 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item \textbf{L'obiezione a cui risponde.} Classificare un prodotto come ``sporco'' s\`i o no \`e grossolano: l'acciaio e la carta non inquinano allo stesso modo. Qui la variabile binaria \`e sostituita da una misura continua di intensit\`a di CO$_2$ per settore, cos\`i i prodotti si ordinano lungo una scala invece che in due caselle.
+\item Un coefficiente negativo significherebbe che, dove il contenuto ambientale \`e pi\`u profondo, le esportazioni calano di pi\`u per i prodotti pi\`u inquinanti.
+\item Si riporta anche il $p$-value bootstrap perch\'e, come altrove, quello ordinario \`e troppo generoso con cos\`i pochi gruppi trattati.
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

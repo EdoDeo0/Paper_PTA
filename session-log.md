@@ -1,5 +1,33 @@
 # Session Log — Paper_PTA
 
+## 2026-08-11 (notte, 2) — 📊 TABELLE: generatore CSV→LaTeX + documento commentato (Opus 5, Mac)
+
+**Fatto il salto da "calcolo" a "scrittura".** Nuovo `./New/Code/44_make_tables_tex.R`: legge i
+CSV delle stime e scrive **19 frammenti .tex** in `./New/Paper/Tabelle/`. Nessun numero
+trascritto a mano — se una stima cambia, si rilancia lo script. Chiude la task "generatore" del
+progetto Todoist e attacca la lacuna delle 32 tabelle battute a mano (§10).
+
+**Documento**: `./New/Paper/Tabelle/Tabelle_Stime.tex` + `.pdf` (30 pagine). Ogni tabella ha un
+commento che spiega a quale obiezione risponde, il modello stimato, come si leggono coefficienti
+e significatività. Ordine narrativo (ladder → spec principale → inferenza → dinamiche →
+robustezza → meccanismo → margini → fragilità → MDE), non ordine degli script.
+**Compilazione pulita: 0 errori, 0 overfull, 0 riferimenti irrisolti.** Numeri verificati a
+campione contro i CSV sorgente.
+
+**Due bug trovati e corretti nel generatore**: (a) il simbolo `%` non protetto nella tabella MDE
+(in LaTeX apriva un commento e rompeva la riga); (b) leave-one-out senza le righe Hong Kong/Macao
+(costruivo l'elenco dal solo file baseline; ora unione delle 4 varianti, celle vuote dove il
+paese è già escluso).
+
+**Scelte di merito da rivedere insieme**: (1) Tab. 7 di sintesi costruita col **bootstrap in tutte
+e 8 le celle** — ne esce che il margine sporco sul full panel tiene con DESTA (p 0.035–0.049) ma
+non con TotalDepth (p 0.176–0.185); commento scritto come "suggestiva ma non conclusiva". (2)
+Segnalato in nota che le righe *Profondità accordo* non sono confrontabili fra colonne (1)-(2) e
+(3)-(4): scale diverse. (3) Pre-trend significativi del Sun-Abraham dichiarati apertamente.
+
+**Pending**: sostituire nel `draft_paper.tex` le tabelle a mano con `\input{}` dei frammenti;
+resta il test dei pesi (§11.2) come unico calcolo aperto. Nessun commit fatto in questa sessione.
+
 ## 2026-08-11 — ✅ Verificato su Windows: WCB baseline c'era, era solo un buco nel `.gitignore`
 
 Controllo richiesto dalla voce precedente (notte, dal Mac): `New/Output/OLS/Bootstrap/wcb_fullpanel.csv`

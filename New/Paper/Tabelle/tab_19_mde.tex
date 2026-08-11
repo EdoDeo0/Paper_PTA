@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Quanto dovrebbe essere grande un effetto perch\'e questo disegno riuscisse a vederlo}
+\label{tab:mde}
+\begin{threeparttable}
+\begin{tabular}{llcccc}
+\toprule
+Indice & Margine & Errore std. & Effetto minimo & Effetto minimo & Intervallo di confidenza \\
+ & & asintotico & rilevabile (1 dev.\ std.) & rilevabile, bootstrap & bootstrap (per unit\`a) \\
+\midrule
+WB & Verde & 0.0070 & 4.64\% & 5.90\% & [-1.77\%, 3.19\%] \\
+WB & Sporco & 0.0030 & 1.97\% & 2.40\% & [-1.84\%, 0.18\%] \\
+TREND & Verde & 0.0018 & 4.16\% & 3.62\% & [-0.18\%, 0.71\%] \\
+TREND & Sporco & 0.0016 & 3.65\% & 3.53\% & [-0.32\%, 0.54\%] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Campione di stima: pannello collassato, variante escl.\ HK/Macao. Deviazione standard dei regressori calcolata sul campione effettivo e pesata.
+\item \textbf{Perch\'e questa tabella \`e importante.} Un risultato nullo pu\`o significare due cose molto diverse: che l'effetto non c'\`e, oppure che c'\`e ma \`e troppo piccolo perch\'e i dati lo distinguano dal rumore. Questa tabella dice quale delle due.
+\item \textbf{Come si legge.} L'\emph{effetto minimo rilevabile} \`e la dimensione al di sotto della quale il disegno non \`e in grado di dire nulla. Sul margine verde, l'intervallo bootstrap esclude effetti superiori a circa il 3\% per disposizione: sopra quella soglia possiamo dire che l'effetto non c'\`e; sotto, il disegno semplicemente non discrimina.
+\item Ne discende una formulazione pi\`u corretta del risultato: non ``non troviamo alcun effetto'', ma ``possiamo escludere effetti superiori a questa soglia''.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

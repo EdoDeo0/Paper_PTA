@@ -1,0 +1,39 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Gruppi di controllo alternativi: il risultato cambia se cambia il termine di paragone?}
+\label{tab:stability}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Indice WB} & \multicolumn{2}{c}{Indice TREND} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Gruppo di controllo & $\times$ Verde & $\times$ Sporco & $\times$ Verde & $\times$ Sporco \\
+\midrule
+Solo prodotti della stessa famiglia merceologica & -0.00090 & 0.00655 & 0.00047 & 0.00242 \\
+ & (0.00505) & (0.00904) & (0.00115) & (0.00657) \\
+ & [0.858] & [0.469] & [0.680] & [0.714] \\
+\quad \textit{osservazioni: 3,772,855} & & & & \\
+\addlinespace
+Solo partner con accordo: profondi vs superficiali & -0.00222 & -0.00344 & -0.00036 & -0.00061 \\
+ & (0.00351) & (0.00289) & (0.00100) & (0.00101) \\
+ & [0.534] & [0.246] & [0.721] & [0.549] \\
+\quad \textit{osservazioni: 5,262,293} & & & & \\
+\addlinespace
+Solo destinazioni appaiate per caratteristiche & -0.00228 & -0.00417$^{*}$ & -0.00059 & -0.00115 \\
+ & (0.00371) & (0.00238) & (0.00109) & (0.00074) \\
+ & [0.543] & [0.085] & [0.590] & [0.129] \\
+\quad \textit{osservazioni: 13,728,510} & & & & \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Variante baseline, dati a livello di transazione, effetti fissi come nella Tabella \ref{tab:main-full}; errori raggruppati per destinazione.
+\item \textbf{A cosa serve.} Nella specificazione principale i prodotti verdi sono confrontati con \emph{tutti} gli altri. Qui il paragone viene ristretto in tre modi diversi e sempre pi\`u severi. Se il risultato dipendesse dalla scelta del termine di paragone, cambierebbe passando da una riga all'altra.
+\item \textit{Stessa famiglia merceologica}: i non-verdi ammessi come confronto sono solo quelli che condividono le prime quattro cifre del codice doganale con un prodotto verde.
+\item \textit{Profondi vs superficiali}: si tengono solo i partner che hanno gi\`a un accordo, e si confrontano quelli con contenuto ambientale sopra la mediana con quelli sotto. Cos\`i sparisce del tutto il confronto fra chi ha un accordo e chi non ce l'ha.
+\item \textit{Destinazioni appaiate}: si tengono solo i paesi di controllo simili ai trattati per reddito, crescita e livello dei dazi nel 2000 (\emph{coarsened exact matching}).
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

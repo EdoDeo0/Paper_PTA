@@ -1,0 +1,684 @@
+% ============================================================================
+% Raccolta commentata di tutte le stime — Paper PTA
+% Generato dai CSV via New/Code/44_make_tables_tex.R
+% Compilare con: pdflatex Tabelle_Stime.tex  (due volte, per i riferimenti)
+% ============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{float}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+
+% nomi in italiano senza dipendere da babel
+\renewcommand{\tablename}{Tabella}
+\renewcommand{\contentsname}{Indice}
+\renewcommand{\refname}{Riferimenti}
+
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+
+\title{\textbf{Le clausole ambientali negli accordi commerciali cinesi}\\[4pt]
+\large Raccolta commentata di tutte le stime}
+\author{Edoardo Vitella\\ \small Universit\`a di Trento \& Libera Universit\`a di Bolzano}
+\date{Agosto 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent Questo documento raccoglie \textbf{tutte} le stime prodotte per il lavoro sulle
+clausole ambientali negli accordi commerciali firmati dalla Cina fra il 2000 e il 2015.
+Ogni tabella \`e accompagnata da una spiegazione di che cosa \`e stato stimato, perch\'e,
+e come vanno letti i numeri. Le tabelle non sono trascritte a mano: nascono direttamente
+dai file di risultato tramite uno script, cos\`i che un aggiornamento delle stime si
+propaghi automaticamente. Il documento \`e pensato per essere letto anche da chi non
+conosce l'econometria applicata al commercio internazionale.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Come leggere questo documento}
+% ============================================================================
+
+\subsection*{La domanda a cui tutto risponde}
+
+Quasi tutti gli accordi commerciali firmati negli ultimi vent'anni contengono clausole
+ambientali: impegni a proteggere le foreste, a cooperare sul clima, talvolta ad abbassare
+i dazi sui prodotti ``verdi''. La domanda \`e semplice da enunciare e difficile da
+rispondere: \textbf{queste clausole cambiano davvero il commercio?} Nello specifico:
+quando la Cina firma un accordo con contenuto ambientale, cambia la \emph{composizione}
+di ci\`o che esporta verso quel paese --- pi\`u prodotti verdi, meno prodotti inquinanti?
+
+\subsection*{I dati}
+
+L'universo delle transazioni doganali cinesi in esportazione dal 2000 al 2015: circa
+49,2 milioni di righe, ciascuna corrispondente a una combinazione impresa--prodotto--desti\-nazione--anno,
+per circa 462.000 imprese esportatrici, 5.000 prodotti e 236 destinazioni. A questi si
+aggiungono due codifiche indipendenti del contenuto ambientale degli accordi (Banca Mondiale
+e database accademico TREND), una lista OCSE di 246 prodotti ambientali e una classificazione
+dei settori inquinanti.
+
+\subsection*{Le tre parole che ricorrono in ogni tabella}
+
+\begin{itemize}
+\item \textbf{Verde}: il prodotto appartiene alla lista OCSE dei beni ambientali
+      (pannelli solari, turbine, filtri, apparecchi di misurazione ambientale).
+\item \textbf{Sporco}: il prodotto appartiene a un settore tradizionalmente
+      inquinante (carta, chimica di base, raffinazione, siderurgia, metalli non ferrosi).
+\item \textbf{Neutro}: tutto il resto. \`E il termine di paragone di ogni confronto.
+\end{itemize}
+
+\subsection*{Che cosa significano i coefficienti}
+
+Quasi tutte le stime hanno come variabile dipendente il \textbf{logaritmo del valore
+esportato}. Un coefficiente di $-0.005$ su ``Profondit\`a EP $\times$ Sporco'' si legge
+cos\`i: \emph{per ogni disposizione ambientale in pi\`u contenuta nell'accordo, le
+esportazioni di prodotti sporchi verso quella destinazione risultano inferiori di circa
+lo 0,5\% rispetto a quelle dei prodotti neutri}. Il confronto \`e sempre relativo ai
+prodotti neutri, mai assoluto.
+
+\subsection*{Le quattro colonne che troverete quasi ovunque}
+
+Ogni stima principale \`e stata rifatta quattro volte, incrociando due scelte che
+potevano influenzare il risultato. Il quadro completo \`e questo:
+
+\begin{center}
+\small
+\begin{tabular}{lll}
+\toprule
+Colonna & Campione & Controllo per la profondit\`a dell'accordo \\
+\midrule
+(1) & Senza Hong Kong e Macao & TotalDepth (Banca Mondiale) \\
+(2) & Con Hong Kong e Macao & TotalDepth (Banca Mondiale) \\
+(3) & Senza Hong Kong e Macao & DESTA (fonte esterna) \\
+(4) & Con Hong Kong e Macao & DESTA (fonte esterna) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Perch\'e il primo asse.} Hong Kong e Macao sono economie di transito: le merci vi
+transitano per essere rivendute altrove. Met\`a del valore esportato verso destinazioni
+con accordo passa da l\`i. Includerle o no cambia la natura del campione, quindi si fa
+in entrambi i modi.
+
+\textbf{Perch\'e il secondo asse.} Gli accordi ricchi di clausole ambientali sono spesso
+accordi profondi \emph{in tutto}. Se non si tiene conto della profondit\`a complessiva,
+si rischia di attribuire al contenuto ambientale un merito che appartiene all'accordo nel
+suo insieme. Si usano quindi due misure alternative della profondit\`a complessiva: quella
+della Banca Mondiale e quella del database DESTA, costruita da un gruppo di ricerca
+indipendente. Le due hanno una correlazione diversa con la profondit\`a ambientale (0,86 la
+prima, 0,69 la seconda) e questo, come si vedr\`a, non \`e un dettaglio.
+
+\subsection*{Convenzioni tipografiche}
+
+Nelle tabelle: il coefficiente \`e il primo numero, l'\textbf{errore standard} \`e fra
+parentesi tonde, il \textbf{$p$-value} fra parentesi quadre. Gli asterischi segnalano la
+significativit\`a statistica: $^{*}$ per $p<0.10$, $^{**}$ per $p<0.05$, $^{***}$ per
+$p<0.01$. Un $p$-value basso significa che sarebbe improbabile osservare un numero cos\`i
+distante da zero se l'effetto vero fosse nullo.
+
+\newpage
+% ============================================================================
+\section{Il filo conduttore}
+% ============================================================================
+
+Prima delle tabelle conviene avere in mente il percorso, perch\'e ogni stima risponde a
+un'obiezione specifica e l'ordine non \`e casuale.
+
+\textbf{1. Si parte da una domanda che i dati non possono soddisfare.} La domanda naturale
+sarebbe: \emph{gli accordi con clausole ambientali fanno aumentare le esportazioni?}
+Purtroppo le clausole entrano in vigore insieme all'accordo e poi non cambiano quasi mai,
+e gli accordi realmente distinti sono circa quattordici. ``Effetto delle clausole
+ambientali'' ed ``effetto dell'accordo'' sono quindi indistinguibili. La
+Tabella~\ref{tab:ladder} lo mostra con i dati anzich\'e con un ragionamento.
+
+\textbf{2. Si riformula la domanda in una a cui si pu\`o rispondere.} Non ``quanto''
+esporta la Cina, ma ``\emph{che cosa}'': la composizione. Il confronto avviene fra prodotti
+diversi \emph{dentro la stessa impresa, la stessa destinazione e lo stesso anno}. L'accordo
+commerciale colpisce tutti i prodotti di quella cella allo stesso modo e quindi si
+cancella; ci\`o che resta \`e il trattamento differenziale dei prodotti verdi e sporchi
+rispetto ai neutri. Sono le Tabelle~\ref{tab:main-full} e~\ref{tab:main-coll}.
+
+\textbf{3. Si prende sul serio il problema dei pochi accordi.} Con circa quattordici
+accordi, i $p$-value ordinari sono troppo generosi. Ogni risultato viene quindi sottoposto
+a due prove pi\`u severe: il \emph{wild cluster bootstrap} (Tabella~\ref{tab:wcb}) e il
+test di permutazione (Tabella~\ref{tab:perm}). La Tabella~\ref{tab:matrice} riassume tutto
+con lo stesso metro.
+
+\textbf{4. Si verifica che il confronto sia legittimo.} Se prodotti verdi e neutri
+divergevano gi\`a prima dell'accordo, il confronto non vale. Lo si controlla anno per anno
+(Tabelle~\ref{tab:eventstudy} e~\ref{tab:sunab}) e con un test formale
+(Tabella~\ref{tab:trends}).
+
+\textbf{5. Si cambia il termine di paragone in ogni modo ragionevole.} Gruppi di controllo
+alternativi (Tabella~\ref{tab:stability}), varianti di campione
+(Tabella~\ref{tab:robust-full}), modi diversi di controllare la profondit\`a
+(Tabella~\ref{tab:depthctrl}), una definizione alternativa di ``bene verde''
+(Tabella~\ref{tab:apec}).
+
+\textbf{6. Si cerca il meccanismo.} Se un effetto esistesse, dovrebbe concentrarsi nelle
+clausole dotate di un vero meccanismo commerciale (Tabella~\ref{tab:subindices}).
+
+\textbf{7. Si guardano i margini che le stime principali non vedono.} La nascita di nuovi
+flussi (Tabella~\ref{tab:ppml}) e una misura continua di inquinamento
+(Tabella~\ref{tab:co2}).
+
+\textbf{8. Si mette alla prova la fragilit\`a.} Il risultato dipende da un singolo paese?
+(Tabella~\ref{tab:loo}).
+
+\textbf{9. Si dichiara che cosa si pu\`o davvero escludere.} Un risultato nullo non
+significa ``effetto assente'': significa ``effetto pi\`u piccolo di una certa soglia''.
+La Tabella~\ref{tab:mde} quantifica quella soglia.
+
+\newpage
+% ============================================================================
+\section{Il contesto: chi sono i partner trattati}
+% ============================================================================
+
+La Tabella~\ref{tab:trattamento} elenca le 25 destinazioni con cui la Cina ha un accordo
+in vigore nel periodo, l'anno di entrata in vigore e quante disposizioni ambientali
+contiene l'accordo secondo le due codifiche.
+
+Tre fatti di questa tabella condizionano tutto il resto del lavoro. Primo: le undici
+destinazioni ASEAN condividono un unico accordo del 2005 e hanno quindi valori identici;
+gli accordi realmente distinti sono circa quattordici, non venticinque. Secondo: il
+contenuto ambientale \`e fissato alla firma e cambia in seguito solo per tre destinazioni.
+Terzo: Hong Kong e Macao pesano per met\`a del valore esportato verso destinazioni
+trattate, il che giustifica l'esistenza del primo asse delle varianti.
+
+\input{tab_01_trattamento}
+
+\clearpage
+% ============================================================================
+\section{Perch\'e la domanda \`e stata riformulata}
+% ============================================================================
+
+\subsection{La scala di saturazione}
+
+\textbf{La domanda.} Prima di rinunciare all'effetto ``di livello'' --- cio\`e all'idea di
+misurare quanto le clausole ambientali facciano crescere le esportazioni in generale ---
+serve una prova che quella strada sia davvero chiusa.
+
+\textbf{Il modello.} Si regredisce il logaritmo delle esportazioni sulla profondit\`a
+ambientale, aggiungendo via via effetti fissi pi\`u stringenti. Ogni riga della
+Tabella~\ref{tab:ladder} elimina una classe di confronti poco credibili: si parte da un
+modello che confronta anche imprese e mercati molto diversi fra loro, si arriva a modelli
+che confrontano solo osservazioni molto simili.
+
+\textbf{Che cosa dicono i numeri.} Il coefficiente \`e piccolo in tutte le righe e la
+significativit\`a compare soltanto nella specificazione intermedia, per poi scomparire
+quando si satura. Questo andamento --- significativo solo quando i controlli sono deboli
+--- \`e la firma tipica della \textbf{selezione}: la Cina firma accordi con i partner verso
+cui gi\`a esporta molto e che gi\`a stavano crescendo. Non \`e la firma di un effetto
+causale, che al contrario dovrebbe resistere man mano che si eliminano le spiegazioni
+alternative.
+
+\textbf{La conseguenza.} Da qui la scelta di abbandonare la domanda sul livello e passare
+alla domanda sulla composizione, che i dati possono invece identificare.
+
+\input{tab_02_ladder}
+
+\clearpage
+% ============================================================================
+\section{La specificazione principale}
+% ============================================================================
+
+\subsection{L'idea in una frase}
+
+Si confrontano prodotti verdi, sporchi e neutri \emph{all'interno della stessa cella
+impresa--destinazione--anno}. Tutto ci\`o che riguarda quell'impresa su quel mercato in
+quell'anno --- l'accordo commerciale, i tagli tariffari, la burocrazia doganale, uno shock
+di domanda --- colpisce i suoi prodotti allo stesso modo e viene quindi eliminato dal
+confronto. Ci\`o che resta \`e il trattamento \emph{differenziale} dei prodotti verdi e
+sporchi. Se le clausole ambientali fanno qualcosa, deve vedersi qui.
+
+\subsection{L'equazione}
+
+\begin{equation*}
+\ln x_{fpdt} = \beta_1 \, EP_{dt}\times g_p + \beta_2 \, EP_{dt}\times b_p
+             + \gamma_1 \, TD_{dt}\times g_p + \gamma_2 \, TD_{dt}\times b_p
+             + \theta_{fpd} + \theta_{fdt} + \theta_{pt} + \varepsilon_{fpdt}
+\end{equation*}
+
+dove $f$ \`e l'impresa, $p$ il prodotto, $d$ la destinazione, $t$ l'anno; $g_p$ e $b_p$
+indicano prodotto verde e prodotto sporco; $EP_{dt}$ \`e la profondit\`a ambientale
+dell'accordo e $TD_{dt}$ la profondit\`a complessiva. I tre termini $\theta$ sono gli
+effetti fissi. \textbf{I coefficienti di interesse sono $\beta_1$ e $\beta_2$}: gli altri
+servono a impedire che il contenuto ambientale prenda il merito della profondit\`a
+generale dell'accordo.
+
+\subsection{Prima versione: i dati alla massima risoluzione}
+
+\textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:main-full}). Sul \textbf{margine verde}
+il coefficiente \`e praticamente nullo in tutte e quattro le colonne, fra $-0.0009$ e
+$-0.0023$, e non \`e mai lontanamente significativo ($p$ fra 0,57 e 0,80). Sul
+\textbf{margine sporco} il coefficiente \`e sistematicamente negativo, fra $-0.0041$ e
+$-0.0057$, con $p$-value fra 0,034 e 0,094: sarebbe una riduzione di circa mezzo punto
+percentuale delle esportazioni sporche per ogni disposizione ambientale in pi\`u.
+Il modello spiega circa l'87\% della variabilit\`a ($R^2$), valore alto dovuto quasi
+interamente agli effetti fissi.
+
+Un avvertimento importante sulla lettura: le righe della \emph{profondit\`a accordo} non
+sono confrontabili fra le colonne (1)--(2) e (3)--(4), perch\'e le due misure sono su
+scale diverse. Le righe della profondit\`a \emph{ambientale}, che sono quelle che
+interessano, usano invece la stessa misura ovunque.
+
+\input{tab_03_main_full}
+
+\clearpage
+\subsection{Seconda versione: gli stessi dati, aggregati}
+
+\textbf{Perch\'e rifare tutto su dati aggregati.} Due ragioni. La prima \`e di verifica:
+se il risultato dipendesse dal livello di dettaglio, sarebbe un campanello d'allarme. La
+seconda \`e pratica: molte procedure --- il bootstrap, le mille ripetizioni del test di
+permutazione --- sono impossibili su 21 milioni di osservazioni e diventano fattibili su
+3,7 milioni di celle.
+
+\textbf{Che cosa cambia.} L'unit\`a di osservazione diventa la cella
+prodotto--destinazione--anno, e ogni cella viene pesata per il numero di osservazioni
+d'impresa che contiene. Gli effetti fissi si adattano di conseguenza.
+
+\textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:main-coll}). Il margine verde resta
+nullo, come nel \emph{full panel}. Il margine sporco ha coefficienti pi\`u grandi in valore
+assoluto, fra $-0.0082$ e $-0.0189$, con $p$-value ordinari molto bassi. \textbf{Ma questi
+$p$-value ordinari sono proprio quelli di cui non ci si pu\`o fidare con cos\`i pochi
+accordi}: la sezione successiva li sottopone a prove pi\`u severe, e il quadro cambia
+parecchio.
+
+\textbf{Una differenza da tenere a mente.} Nel \emph{full panel} ogni osservazione pesa
+uno; qui le celle grandi pesano di pi\`u. Poich\'e Hong Kong e Macao sono mercati ad
+altissimo volume, nella colonna (4) la ponderazione d\`a loro un peso considerevole. \`E
+l'ipotesi pi\`u probabile per spiegare perch\'e proprio quella colonna si comporti
+diversamente dalle altre --- un'ipotesi coerente con i dati che resta per\`o da verificare
+con una stima senza pesi, non ancora effettuata.
+
+\input{tab_04_main_collapsed}
+
+\clearpage
+% ============================================================================
+\section{L'inferenza: quanto possiamo fidarci dei \texorpdfstring{$p$}{p}-value}
+% ============================================================================
+
+\subsection{Il problema}
+
+I $p$-value ordinari si basano su un'approssimazione che funziona quando i gruppi entro
+cui si raggruppano gli errori sono numerosi. Qui i gruppi trattati sono venticinque e gli
+accordi realmente distinti circa quattordici. In questa situazione l'approssimazione
+dichiara significativo ci\`o che non lo \`e, e lo fa in modo tanto pi\`u marcato quanto
+pi\`u i gruppi sono diversi fra loro per dimensione --- cosa che qui accade in misura
+notevole. Per questo ogni risultato viene sottoposto a due prove aggiuntive.
+
+\subsection{Prima prova: il wild cluster bootstrap}
+
+\textbf{Come funziona, in parole semplici.} Invece di fidarsi di una formula, si ricostruisce
+la distribuzione del coefficiente per forza bruta: si rimescolano i dati 9.999 volte
+secondo uno schema che rispetta la struttura a gruppi, si ristima ogni volta, e si guarda
+dove cade il coefficiente vero rispetto a quella distribuzione.
+
+\textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:wcb}). Sul margine verde nulla cambia:
+i $p$-value restano altissimi ovunque. Sul margine sporco il quadro si articola. Sul
+\emph{full panel} il $p$-value bootstrap \`e 0,185 e 0,176 nelle colonne con il controllo
+della Banca Mondiale, ma scende a 0,049 e 0,035 nelle colonne con il controllo DESTA. Sul
+pannello collassato si va da 0,005 a 0,198 a seconda della variante.
+
+\textbf{Il confronto che vale la pena fare.} Nel pannello collassato baseline il $p$-value
+ordinario del margine sporco \`e inferiore a 0,001, quello bootstrap \`e 0,070. Non \`e un
+dettaglio tecnico: \`e la differenza fra ``fortemente significativo'' e ``appena al di
+sopra della soglia convenzionale''.
+
+\input{tab_05_wcb}
+
+\clearpage
+\subsection{Seconda prova: il test di permutazione}
+
+\textbf{Come funziona.} \`E la prova pi\`u intuitiva e la pi\`u severa. Si prende il
+profilo di contenuto ambientale di ciascun accordo --- quanto \`e profondo, in quali anni
+--- e lo si riassegna a caso fra le destinazioni che hanno gi\`a un accordo. Poi si
+ristima. Mille volte. Se il coefficiente vero non spicca fra i mille coefficienti finti,
+significa che qualunque etichettatura casuale di quei paesi avrebbe prodotto lo stesso
+numero, e quindi che il risultato non dipende dal contenuto ambientale.
+
+\textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:perm}). Sul margine verde i $p$-value
+vanno da 0,148 a 0,773: il coefficiente osservato \`e del tutto ordinario fra i mille
+finti. Sul margine sporco si ottiene 0,023 nella variante baseline, 0,003 e 0,036 in due
+delle altre, ma 0,489 nella quarta. Quest'ultima \`e la stessa colonna che si comporta in
+modo anomalo anche nelle altre prove.
+
+\input{tab_06_permutation}
+
+\clearpage
+\subsection{Il quadro completo, con lo stesso metro}
+
+La Tabella~\ref{tab:matrice} raccoglie in un'unica vista il coefficiente sui prodotti
+sporchi nelle quattro varianti e nelle due unit\`a di analisi, \textbf{usando ovunque il
+$p$-value bootstrap}. \`E una precisazione necessaria: presentare per alcune colonne il
+$p$-value ordinario e per altre quello bootstrap darebbe un'impressione distorta, perch\'e
+i due possono differire di ordini di grandezza.
+
+\textbf{Che cosa emerge.} Sul \emph{full panel} --- l'unit\`a su cui poggiano le stime
+principali --- il risultato dipende in modo netto da quale controllo di profondit\`a si
+adotta: con il controllo della Banca Mondiale il $p$-value resta sopra 0,17, con il
+controllo DESTA scende sotto 0,05. La spiegazione pi\`u naturale \`e meccanica: il primo
+controllo ha correlazione 0,86 con la profondit\`a ambientale, il secondo 0,69. Pi\`u un
+controllo \`e sovrapposto alla variabile di interesse, meno variazione indipendente resta
+per identificarne l'effetto e pi\`u grande diventa l'errore standard.
+
+\textbf{Come questo va detto nel lavoro.} Con onest\`a: il margine sporco \`e
+\emph{sistematicamente negativo} in tutte e otto le celle, ma la sua significativit\`a
+statistica dipende dalla scelta del controllo. Poich\'e la specificazione di riferimento
+adotta il controllo della Banca Mondiale, la formulazione difendibile \`e che l'evidenza
+sul margine sporco \`e \emph{suggestiva ma non conclusiva}, e che diventa significativa
+solo adottando la misura di profondit\`a alternativa --- scelta che va motivata in
+anticipo e non a posteriori.
+
+\input{tab_07_matrice}
+
+\clearpage
+% ============================================================================
+\section{Il confronto \`e legittimo? Le verifiche dinamiche}
+% ============================================================================
+
+\subsection{Studio dell'evento}
+
+\textbf{L'assunzione da verificare.} Tutto il disegno poggia su un'ipotesi: che, in assenza
+di clausole ambientali, prodotti verdi e neutri avrebbero continuato ad andare allo stesso
+modo. Non \`e dimostrabile --- riguarda un mondo che non osserviamo --- ma \`e falsificabile:
+se i due gruppi divergevano gi\`a \emph{prima} dell'accordo, l'ipotesi \`e insostenibile.
+
+\textbf{Il modello.} Si sostituisce la variabile di trattamento con una serie di indicatori
+``anni dall'entrata in vigore'', ciascuno interagito con verde e sporco. L'anno $-1$ fa da
+riferimento: tutti gli altri coefficienti misurano la distanza da quell'anno.
+
+\textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:eventstudy}). Nei periodi precedenti
+l'entrata i coefficienti sono vicini a zero e non significativi, sia per i verdi sia per
+gli sporchi: la verifica \`e superata. All'anno zero e successivi non compare alcun salto.
+Per i verdi si intravede una deriva negativa negli anni pi\`u lontani, ma quei coefficienti
+sono stimati su pochi accordi ed hanno errori standard ampi.
+
+\input{tab_08_eventstudy}
+
+\clearpage
+\subsection{La correzione per l'entrata scaglionata}
+
+\textbf{Il problema tecnico.} Quando gli accordi entrano in vigore in anni diversi --- qui
+dal 2002 al 2015 --- lo stimatore tradizionale finisce per usare come termine di paragone
+anche unit\`a gi\`a trattate, e questo pu\`o distorcere il risultato. Sun e Abraham (2021)
+hanno proposto una correzione che calcola l'effetto separatamente per ciascun gruppo di
+ingresso e poi lo aggrega correttamente.
+
+\textbf{L'adattamento necessario.} Il metodo si applica a un confronto scaglionato
+ordinario, non a una tripla differenza. Si costruisce quindi una variabile dipendente che
+\`e gi\`a un \emph{divario}: media dei prodotti verdi meno media dei neutri nella stessa
+destinazione e anno. A quel punto il metodo si applica direttamente.
+
+\textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:sunab}). Nessun salto sistematico
+attorno all'entrata in vigore. Alcuni coefficienti nei periodi molto anteriori risultano
+significativi: sono stimati su poche coorti con pochi anni di storia precedente e vanno
+segnalati apertamente quando si presenta questa analisi, non nascosti.
+
+\input{tab_09_sunab}
+
+\clearpage
+% ============================================================================
+\section{Robustezza: cambiare il termine di paragone}
+% ============================================================================
+
+\subsection{Gruppi di controllo alternativi}
+
+\textbf{L'obiezione.} Nella specificazione principale i prodotti verdi sono confrontati con
+tutti gli altri, compresi prodotti che con i verdi non hanno nulla in comune. Se il
+risultato dipendesse da questa scelta, non sarebbe affidabile.
+
+\textbf{Le tre restrizioni} (Tabella~\ref{tab:stability}). Si tengono solo i non-verdi della
+stessa famiglia merceologica; oppure solo i partner che hanno gi\`a un accordo, confrontando
+quelli con contenuto ambientale sopra e sotto la mediana --- cos\`i sparisce del tutto il
+confronto fra chi ha un accordo e chi non ce l'ha, e con esso il sospetto che la Cina scelga
+i partner per motivi non osservati; oppure solo destinazioni appaiate per reddito, crescita
+e dazi.
+
+\textbf{Che cosa dicono i numeri.} Il coefficiente sul margine verde resta piccolo e non
+significativo in tutte e tre le restrizioni. \`E il punto: un artefatto del termine di
+paragone si muoverebbe quando il termine di paragone si muove.
+
+\input{tab_10_stability}
+
+\clearpage
+\subsection{Varianti di campione, controlli e variabile dipendente}
+
+La Tabella~\ref{tab:robust-full} raccoglie le variazioni sul \emph{full panel}. Meritano un
+commento due righe in particolare.
+
+\textbf{Le righe ``supporto comune''} tengono solo i prodotti esportati sia verso
+destinazioni con accordo sia verso destinazioni senza. Per tutti gli altri non esiste un
+termine di paragone osservato, e confrontarli significherebbe estrapolare oltre i dati.
+
+\textbf{Le righe ``quota verde nel paniere''} cambiano proprio la domanda. Qui la variabile
+dipendente non \`e l'export ma la frazione di fatturato che l'impresa realizza in prodotti
+verdi verso quella destinazione. \`E il margine che i dati aggregati non possono vedere:
+l'impresa \emph{ricompone} il proprio paniere quando il partner firma clausole ambientali?
+I coefficienti sono minuscoli e uno solo raggiunge la significativit\`a convenzionale, con
+segno negativo: la riallocazione interna alle imprese non si osserva.
+
+\input{tab_11_robustness_full}
+
+\clearpage
+\subsection{Andamenti specifici per destinazione e pre-trend}
+
+\textbf{L'obiezione pi\`u seria a tutto il disegno.} Gli effetti fissi assorbono moltissimo,
+ma non catturano una cosa: uno shock che riguardi \emph{i prodotti verdi in una specifica
+destinazione} e che cresca nel tempo. \`E lo scenario in cui un paese firma clausole
+ambientali proprio mentre la sua domanda di beni verdi sta salendo per ragioni sue. In quel
+caso il coefficiente misurerebbe la domanda, non l'effetto delle clausole.
+
+\textbf{La risposta} (Tabella~\ref{tab:trends}, pannello A). Si aggiunge un andamento
+lineare per ogni combinazione destinazione--tipo di prodotto, che assorbe esattamente quella
+dinamica. \`E un controllo esigente, perch\'e consuma molta della variazione disponibile.
+
+\textbf{Il pannello B} testa formalmente la pendenza del divario di composizione nel periodo
+precedente l'accordo, riportando il $p$-value bootstrap.
+
+\textbf{Una nota di direzione.} Vale la pena osservare che questo tipo di distorsione, se
+presente, spingerebbe il coefficiente sul margine verde verso l'alto: il risultato nullo
+osservato sarebbe quindi, semmai, un limite superiore. \`E un argomento a favore della
+robustezza della conclusione, e conviene esplicitarlo.
+
+\input{tab_12_desttrends}
+
+\clearpage
+\subsection{Il modo in cui si controlla la profondit\`a dell'accordo}
+
+Questa tabella merita attenzione perch\'e mostra il punto pi\`u delicato di tutto il
+lavoro. Il controllo per la profondit\`a complessiva \`e necessario --- senza, il contenuto
+ambientale si prenderebbe il merito dell'accordo intero --- ma \`e anche fortemente
+correlato con la variabile di interesse, e quindi ne assorbe parte della variazione.
+
+La Tabella~\ref{tab:depthctrl} mostra quattro modi di affrontare il problema: il controllo
+standard, nessun controllo, un controllo ristretto alle sole aree dell'accordo che
+potrebbero plausibilmente interagire con la composizione, e infine un cambio di impostazione
+--- la \emph{quota} ambientale sul totale, stimata solo fra i partner che hanno gi\`a un
+accordo. Quest'ultima riga \`e su una scala diversa e non va confrontata in valore assoluto
+con le altre.
+
+\input{tab_17_depthcontrols}
+
+\clearpage
+\subsection{Una definizione alternativa di ``bene verde''}
+
+Non esiste una definizione univoca di bene ambientale. Il lavoro usa la lista OCSE, la pi\`u
+ampia e curata; la Tabella~\ref{tab:apec} la sostituisce con la lista APEC, molto pi\`u
+ristretta e frutto di un accordo politico del 2012. Se il risultato dipendesse da quali
+prodotti decidiamo di chiamare verdi, le due colonne divergerebbero.
+
+\input{tab_18_apec}
+
+\clearpage
+% ============================================================================
+\section{Il meccanismo: quali clausole potrebbero mordere}
+% ============================================================================
+
+\textbf{L'obiezione, che \`e sensata.} Un indice che somma tutte le disposizioni mette
+insieme cose molto diverse: clausole che abbassano i dazi sui beni verdi o impongono
+standard vincolanti, e dichiarazioni di intenti senza alcun meccanismo. Se un effetto
+esiste, dovrebbe concentrarsi nelle prime. Sommando tutto si diluirebbe fino a sparire.
+
+\textbf{La verifica} (Tabella~\ref{tab:subindices}). Si rifa la stima principale sostituendo
+l'indice complessivo con un sotto-indice alla volta.
+
+\textbf{Il risultato, che \`e esso stesso una scoperta.} Negli accordi cinesi del periodo le
+disposizioni dotate di un meccanismo commerciale sono rarissime. I due sotto-indici della
+Banca Mondiale che ne hanno uno risultano diversi da zero in soli tre anni-paese e sono
+perfettamente sovrapposti fra loro: non \`e possibile distinguerne gli effetti. Non per un
+difetto del metodo, ma perch\'e quel contenuto negli accordi \emph{quasi non c'\`e}.
+
+\textbf{Perch\'e questo cambia la conclusione del lavoro.} Non si sta dimostrando che le
+clausole ambientali non funzionano mai. Si sta dimostrando che gli accordi cinesi del
+2000--2015 contenevano quasi esclusivamente linguaggio di cooperazione, e che quel tipo di
+linguaggio non sposta il commercio. \`E un'affermazione pi\`u circoscritta ma pi\`u utile,
+e soprattutto \`e quella che i dati sostengono davvero.
+
+Le righe ``sola cooperazione'' e ``spazio regolatorio'' funzionano da controllo negativo:
+sono clausole prive di meccanismo commerciale, e l\`i non dovrebbe emergere nulla.
+
+\input{tab_13_subindices}
+
+\clearpage
+% ============================================================================
+\section{I margini che le stime principali non vedono}
+% ============================================================================
+
+\subsection{Nascono flussi nuovi?}
+
+\textbf{Il limite delle stime in logaritmo.} Il logaritmo di zero non esiste: le stime
+precedenti usano solo i flussi commerciali gi\`a esistenti. Se una clausola ambientale
+facesse \emph{nascere} esportazioni verdi verso un mercato dove prima non ce n'erano, quelle
+stime non lo vedrebbero.
+
+\textbf{La soluzione} (Tabella~\ref{tab:ppml}). Si costruisce una griglia completa
+prodotto--destinazione--anno, si riempiono con zeri le combinazioni senza scambi, e si stima
+con il metodo di Poisson pseudo-massima verosimiglianza, che tratta gli zeri correttamente.
+
+\textbf{Che cosa dicono i numeri.} Nessuna creazione di commercio verde: i coefficienti sul
+margine verde sono minuscoli e non significativi in tutte le varianti.
+
+\input{tab_14_ppml}
+
+\clearpage
+\subsection{Una misura continua di inquinamento}
+
+\textbf{L'obiezione.} Classificare un prodotto come sporco s\`i o no \`e grossolano:
+l'acciaio e la carta non inquinano allo stesso modo. Una classificazione binaria introduce
+inoltre errore di misura, che tende a schiacciare i coefficienti verso zero.
+
+\textbf{La verifica} (Tabella~\ref{tab:co2}). Si sostituisce la variabile binaria con una
+misura continua di intensit\`a di emissioni per settore, cos\`i i prodotti si ordinano lungo
+una scala invece che in due caselle.
+
+\input{tab_15_co2}
+
+\clearpage
+% ============================================================================
+\section{Il risultato dipende da un solo paese?}
+% ============================================================================
+
+\textbf{Il rischio.} Con circa quattordici accordi, un singolo partner molto grande pu\`o
+generare da solo tutto il risultato. Sarebbe una conclusione fragile, e soprattutto una
+conclusione su quel paese e non sul fenomeno.
+
+\textbf{La prova} (Tabella~\ref{tab:loo}). Si ristima la specificazione escludendo ogni volta
+una destinazione trattata, e si guarda che cosa resta del coefficiente.
+
+\textbf{Come si legge.} Le righe che perdono gli asterischi segnalano i paesi da cui il
+risultato dipende maggiormente. Le colonne (2) e (4) hanno due righe in pi\`u perch\'e
+includono Hong Kong e Macao.
+
+\textbf{Una lacuna dichiarata.} I file esportati per questa prova contengono soltanto
+coefficiente e $p$-value: mancano errori standard e numerosit\`a. Non \`e un dato perduto ---
+si rigenera rilanciando lo script --- ma finch\'e non lo si fa, la tabella non pu\`o essere
+pi\`u completa di cos\`i.
+
+\input{tab_16_leaveoneout}
+
+\clearpage
+% ============================================================================
+\section{Che cosa possiamo davvero escludere}
+% ============================================================================
+
+\textbf{Perch\'e questa \`e la tabella pi\`u importante di tutte.} Un risultato nullo pu\`o
+significare due cose molto diverse: che l'effetto non esiste, oppure che esiste ma \`e
+troppo piccolo perch\'e questi dati riescano a distinguerlo dal rumore. Senza rispondere a
+questa domanda, un ``non abbiamo trovato nulla'' non \`e informativo.
+
+\textbf{Che cosa \`e stato calcolato} (Tabella~\ref{tab:mde}). L'\emph{effetto minimo
+rilevabile}: la dimensione al di sotto della quale il disegno non \`e in grado di dire
+nulla. Viene riportato sia nella versione basata sulla formula asintotica sia in quella
+basata sull'intervallo bootstrap, che \`e la pi\`u onesta perch\'e corrisponde
+all'inferenza effettivamente usata.
+
+\textbf{Che cosa dicono i numeri.} Sul margine verde l'intervallo bootstrap esclude effetti
+superiori a circa il 3\% per disposizione. Al di sopra di quella soglia si pu\`o affermare
+che l'effetto non c'\`e; al di sotto, il disegno semplicemente non discrimina.
+
+\textbf{La riformulazione che ne discende.} Nel testo del lavoro conviene sostituire
+ovunque ``non troviamo alcun effetto'' con ``possiamo escludere effetti superiori a questa
+soglia''. \`E pi\`u preciso, pi\`u difendibile e, paradossalmente, pi\`u forte.
+
+\input{tab_19_mde}
+
+\clearpage
+% ============================================================================
+\section{Che cosa dicono tutte insieme}
+% ============================================================================
+
+\textbf{Sul margine verde la risposta \`e netta.} Le clausole ambientali degli accordi
+cinesi non hanno aumentato le esportazioni di beni ambientali rispetto ai prodotti neutri.
+Il coefficiente \`e prossimo a zero in tutte e quattro le varianti, in entrambe le unit\`a
+di analisi, con tutti e tre i metodi di inferenza, con tre gruppi di controllo alternativi,
+con una definizione alternativa di bene verde, sul margine estensivo e sulla ricomposizione
+interna alle imprese. \`E il risultato pi\`u solido del lavoro, e la
+Tabella~\ref{tab:mde} permette di enunciarlo nella forma corretta: sono esclusi effetti
+superiori a circa il 3\% per disposizione.
+
+\textbf{Sul margine sporco la risposta \`e pi\`u sfumata, e va detta come tale.} Il
+coefficiente \`e sistematicamente negativo in tutte le specificazioni --- il che di per s\'e
+\`e notevole --- ma la sua significativit\`a statistica dipende da due scelte:
+l'unit\`a di analisi e, soprattutto, quale misura si usa per controllare la profondit\`a
+complessiva dell'accordo. Con il controllo della Banca Mondiale, che \`e quello della
+specificazione di riferimento, il $p$-value bootstrap sul \emph{full panel} resta sopra
+0,17. Con il controllo DESTA scende sotto 0,05. Presentare solo la seconda cifra sarebbe
+scorretto; presentare solo la prima trascurerebbe un'informazione reale.
+
+\textbf{La spiegazione pi\`u probabile del perch\'e le clausole non mordano} viene dalla
+Tabella~\ref{tab:subindices}: negli accordi cinesi del periodo il contenuto ambientale \`e
+quasi interamente linguaggio di cooperazione, privo di meccanismi commerciali. Le poche
+disposizioni che un meccanismo ce l'hanno compaiono in due soli accordi. La conclusione
+difendibile non \`e quindi ``le clausole ambientali non servono'', ma: \emph{i capitoli
+ambientali basati sulla cooperazione --- che sono il contenuto tipico di questi e di molti
+altri accordi --- non modificano la composizione del commercio}. Per il dibattito su come
+rendere pi\`u verdi gli accordi commerciali, la distinzione conta parecchio: ci\`o che pu\`o
+spostare i flussi \`e il contenuto delle clausole, non la presenza di un capitolo
+ambientale.
+
+\vspace{1em}
+\hrule
+\vspace{0.6em}
+
+\small
+\textbf{Nota sulla riproducibilit\`a.} Tutte le tabelle di questo documento sono generate
+automaticamente dai file di risultato tramite lo script \texttt{New/Code/44\_make\_tables\_tex.R}.
+Nessun numero \`e stato trascritto a mano. Due informazioni non sono per\`o contenute nei
+file di risultato e sono state riportate a mano nelle note: la struttura degli effetti fissi
+e il livello di raggruppamento degli errori. Entrambe provengono dagli script di stima; se
+uno script cambia, va aggiornata la costante corrispondente nel generatore.
+
+\end{document}

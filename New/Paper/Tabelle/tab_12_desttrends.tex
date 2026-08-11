@@ -1,0 +1,39 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Andamenti specifici per destinazione e verifica dei pre-trend}
+\label{tab:trends}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Pannello A --- stima con andamenti lineari destinazione$\times$tipo di prodotto (indice WB)}} \\
+\addlinespace
+Profondit\`a EP $\times$ Verde & -0.00510 & -0.00200 & 0.00084 & -0.00006 \\
+ & (0.00387) & (0.00469) & (0.00467) & (0.00474) \\
+ & [0.189] & [0.671] & [0.857] & [0.990] \\
+\addlinespace
+Profondit\`a EP $\times$ Sporco & -0.00825$^{*}$ & -0.00927$^{**}$ & -0.01030$^{***}$ & -0.00930$^{***}$ \\
+ & (0.00455) & (0.00445) & (0.00257) & (0.00220) \\
+ & [0.071] & [0.038] & [$<$0.001] & [$<$0.001] \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Pannello B --- test formale sui pre-trend (indice WB)}} \\
+\addlinespace
+Pendenza pre-accordo, Verde & 0.01732 & 0.00402 & 0.01719$^{*}$ & 0.02218 \\
+ & (0.01307) & (0.01694) & (0.01006) & (0.01359) \\
+\quad $p$-value bootstrap & 0.670 & 0.706 & 0.535 & 0.480 \\
+\addlinespace
+Pendenza pre-accordo, Sporco & 0.06292 & 0.06237 & 0.07109$^{**}$ & 0.07056$^{**}$ \\
+ & (0.04435) & (0.04021) & (0.03191) & (0.03189) \\
+\quad $p$-value bootstrap & 0.618 & 0.511 & 0.414 & 0.418 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item \textbf{Pannello A --- a quale obiezione risponde.} Gli effetti fissi del disegno principale non catturano una cosa: uno shock che riguardi \emph{i prodotti verdi in una specifica destinazione} e che cresca nel tempo. \`E il caso in cui un paese firma clausole ambientali proprio mentre la sua domanda di beni verdi sta salendo. Qui si aggiunge un andamento lineare per ogni destinazione e per ogni tipo di prodotto, che assorbe esattamente quella dinamica.
+\item \textbf{Pannello B --- come si legge.} Si stima la pendenza del divario di composizione nel periodo \emph{precedente} all'accordo. Se fosse diversa da zero, verdi e neutri divergevano gi\`a prima e il confronto sarebbe viziato. I $p$-value riportati sono quelli bootstrap, i pi\`u prudenti.
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

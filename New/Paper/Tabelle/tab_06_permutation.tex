@@ -1,0 +1,40 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Test di permutazione: 1.000 riassegnazioni casuali del contenuto ambientale}
+\label{tab:perm}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Pannello A --- indice WB}} \\
+\addlinespace
+Profondit\`a EP $\times$ Verde: coefficiente osservato & -0.00457 & 0.00173 & -0.00433 & -0.00675 \\
+\quad $p$-value di permutazione & 0.741 & 0.718 & 0.773 & 0.148 \\
+\quad permutazioni valide & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+Profondit\`a EP $\times$ Sporco: coefficiente osservato & -0.01187 & -0.01887 & -0.01134 & -0.00820 \\
+\quad $p$-value di permutazione & 0.023 & 0.003 & 0.036 & 0.489 \\
+\quad permutazioni valide & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Pannello B --- indice TREND}} \\
+\addlinespace
+Profondit\`a EP $\times$ Verde: coefficiente osservato & 0.00181 & 0.00178 & 0.00161 & 0.00017 \\
+\quad $p$-value di permutazione & 0.176 & 0.129 & 0.279 & 0.906 \\
+\quad permutazioni valide & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+Profondit\`a EP $\times$ Sporco: coefficiente osservato & 0.00035 & -0.00001 & -0.00025 & 0.00084 \\
+\quad $p$-value di permutazione & 0.855 & 0.999 & 0.923 & 0.698 \\
+\quad permutazioni valide & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item \textbf{Come funziona.} Si prende il profilo di contenuto ambientale di ciascun accordo (quanto \`e profondo e in quali anni) e lo si riassegna a caso fra le destinazioni gi\`a trattate, 1.000 volte. Ogni volta si ristima il modello. Il $p$-value \`e la quota di riassegnazioni casuali che produce un coefficiente pi\`u grande in valore assoluto di quello vero.
+\item \textbf{Come si legge.} Un $p$-value alto significa: ``lo stesso numero si sarebbe ottenuto etichettando a caso questi paesi'', cio\`e il risultato non dipende dal contenuto ambientale. Un $p$-value basso significa che il numero osservato spicca fra i mille finti.
+\item \`E il test pi\`u severo dei tre usati nel lavoro, perch\'e non assume nulla sulla distribuzione degli errori.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

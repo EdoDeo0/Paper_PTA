@@ -1,0 +1,31 @@
+\contentsline {section}{\numberline {1}Come leggere questo documento}{3}{section.1}%
+\contentsline {section}{\numberline {2}Il filo conduttore}{5}{section.2}%
+\contentsline {section}{\numberline {3}Il contesto: chi sono i partner trattati}{6}{section.3}%
+\contentsline {section}{\numberline {4}Perch\'e la domanda \`e stata riformulata}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}La scala di saturazione}{7}{subsection.4.1}%
+\contentsline {section}{\numberline {5}La specificazione principale}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}L'idea in una frase}{8}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}L'equazione}{8}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Prima versione: i dati alla massima risoluzione}{8}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Seconda versione: gli stessi dati, aggregati}{10}{subsection.5.4}%
+\contentsline {section}{\numberline {6}L'inferenza: quanto possiamo fidarci dei $p$-value}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Il problema}{12}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Prima prova: il wild cluster bootstrap}{12}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Seconda prova: il test di permutazione}{14}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Il quadro completo, con lo stesso metro}{15}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Il confronto \`e legittimo? Le verifiche dinamiche}{16}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Studio dell'evento}{16}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}La correzione per l'entrata scaglionata}{17}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Robustezza: cambiare il termine di paragone}{18}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Gruppi di controllo alternativi}{18}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Varianti di campione, controlli e variabile dipendente}{19}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Andamenti specifici per destinazione e pre-trend}{20}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Il modo in cui si controlla la profondit\`a dell'accordo}{21}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Una definizione alternativa di ``bene verde''}{22}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Il meccanismo: quali clausole potrebbero mordere}{23}{section.9}%
+\contentsline {section}{\numberline {10}I margini che le stime principali non vedono}{25}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Nascono flussi nuovi?}{25}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Una misura continua di inquinamento}{26}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Il risultato dipende da un solo paese?}{27}{section.11}%
+\contentsline {section}{\numberline {12}Che cosa possiamo davvero escludere}{29}{section.12}%
+\contentsline {section}{\numberline {13}Che cosa dicono tutte insieme}{30}{section.13}%
