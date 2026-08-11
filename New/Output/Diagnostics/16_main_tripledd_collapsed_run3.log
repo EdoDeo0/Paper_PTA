@@ -1,0 +1,73 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Panel collassato: 3,773,498 celle
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+green: 8.4% celle | dirty: 14.0% celle
+Stima: WB ...
+*** recursive gc invocation
+
+*** recursive gc invocation
+
+[CRASH tentativo 1 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+
+*** recursive gc invocation
+
+[CRASH tentativo 2 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+
+*** recursive gc invocation
+
+[CRASH tentativo 3 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+
+*** recursive gc invocation
+
+[CRASH tentativo 4 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+
+*** recursive gc invocation
+
+[CRASH tentativo 5 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+
+    treat                       term         coef          se         pval
+   <char>                     <char>        <num>       <num>        <num>
+1:     WB       WB_EP_Depth:env_good -0.004331561 0.004349006 3.203162e-01
+2:     WB        WB_EP_Depth:dirty_p -0.011342052 0.002231510 7.773819e-07
+3:     WB env_good:DESTA_depth_index -0.003361224 0.008634549 6.974368e-01
+4:     WB  dirty_p:DESTA_depth_index  0.019267385 0.005414668 4.543030e-04
+      nobs
+     <int>
+1: 3677333
+2: 3677333
+3: 3677333
+4: 3677333
+Stima: TREND ...
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+
+    treat                       term          coef          se      pval
+   <char>                     <char>         <num>       <num>     <num>
+1:  TREND    TREND_EP_Count:env_good  1.611756e-03 0.002029089 0.4278358
+2:  TREND     TREND_EP_Count:dirty_p -2.472926e-04 0.001383635 0.8583117
+3:  TREND env_good:DESTA_depth_index -2.302958e-02 0.014368559 0.1103746
+4:  TREND  dirty_p:DESTA_depth_index -6.031566e-05 0.012914923 0.9962778
+      nobs
+     <int>
+1: 3677333
+2: 3677333
+3: 3677333
+4: 3677333
+[OK] tripledd_collapsed.csv
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+
+[OK] eventstudy_collapsed.png - controllare pre-trend differenziali
+
+=== DONE 12 (triple-diff collassata) ===

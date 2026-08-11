@@ -46,8 +46,8 @@ if c(os) == "Unix" {
 *  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
 *  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 *  ##########################################################################
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+global PTA_SAMPLE "incl"
+global PTA_DEPTH  "desta"
 
 * Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {

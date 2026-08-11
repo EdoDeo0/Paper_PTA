@@ -1,0 +1,18 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+         used (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells 440895 23.6     899402   48.1    701697   37.5
+Vcells 754893  5.8  286032368 2182.3 345481228 2635.9
+Country-year trattati in-sample (HK+MO inclusi): 236
+
+# 10 - Collinearita' EP vs TotalDepth (destinazione-anno, 236 trattati in-sample)
+
+|                         | WB_EP_Depth | TREND_EP_Count |
+|-------------------------|------------:|---------------:|
+| corr grezza con TD      | 0.687        | 0.721           |
+| corr within (FE c+t)    | 0.876        | 0.777           |
+| VIF (da regressione su TD) | 1.89     | 2.08           |
+
+Nota: la corr within approssima la variazione residua sotto FE paese+anno
+(demeaning alternato, 10 iterazioni). Il triple-diff usa questa variazione
+interagita con green/dirty.
+[OK] 14_descriptives_collinearity.md

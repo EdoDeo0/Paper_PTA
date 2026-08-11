@@ -1,0 +1,50 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+
+=== Gruppo: prodHS4 ===
+[depth] DESTA_depth_index: 2229 righe trattate senza copertura escluse (0.023%)
+
+[prodHS4] righe: 9,513,298 | green: 55.5% | dirty: 1.1%
+
+NOTES: 9 observations removed because of NA values (LHS: 9, Fixed-effects: 9, vcov: 9).
+
+       3,445,144/3,340,842/423 fixed-effect singletons were removed (5,740,968 observations).
+
+NOTES: 9 observations removed because of NA values (LHS: 9, Fixed-effects: 9, vcov: 9).
+
+       3,445,144/3,340,842/423 fixed-effect singletons were removed (5,740,968 observations).
+
+
+=== Gruppo: deepshallow ===
+[depth] DESTA_depth_index: 8884 righe trattate senza copertura escluse (0.075%)
+
+[deepshallow] righe: 11,760,101 | green: 12.5% | dirty: 8.7%
+
+NOTES: 5 observations removed because of NA values (LHS: 5).
+
+       4,546,699/2,663,639/8,813 fixed-effect singletons were removed (6,499,645 observations).
+
+*** recursive gc invocation
+
+NOTES: 5 observations removed because of NA values (LHS: 5).
+
+       4,546,661/2,663,642/8,855 fixed-effect singletons were removed (6,499,696 observations).
+
+
+=== Gruppo: cem_v1 ===
+[depth] DESTA_depth_index: 0 righe trattate senza copertura escluse (0.000%)
+
+[cem_v1] righe: 27,752,774 | green: 11.4% | dirty: 7.0%
+
+*** recursive gc invocation
+
+[FALLITO] cem_v1 : ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+
+[OK] tripledd_stability.csv - confrontare EP:env_good (e :dirty_p) tra i gruppi.

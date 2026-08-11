@@ -1,0 +1,33 @@
+﻿[RUN4 START] incl + desta  2026-08-11 15:47:04
+[START] 14_descriptives_collinearity.R (cap 10min)  15:47:04
+[DONE ] 14_descriptives_collinearity.R  15:47:36
+[START] 16_main_tripledd_collapsed.R (cap 20min)  15:47:36
+[DONE ] 16_main_tripledd_collapsed.R  15:49:38
+[START] 20_wcb_collapsed.R (cap 20min)  15:49:38
+[DONE ] 20_wcb_collapsed.R  15:50:40
+[START] 22_permutation_inference.R (cap 180min)  15:50:40
+[DONE ] 22_permutation_inference.R  17:48:14
+[START] 23_eventstudy_sunab.R (cap 20min)  17:48:14
+[DONE ] 23_eventstudy_sunab.R  17:48:46
+[START] 24_stability_controlgroups.R (cap 60min)  17:48:46
+[DONE ] 24_stability_controlgroups.R  18:15:48
+[START] 25_heterogeneity_subindices.R (cap 30min)  18:15:48
+[RETRY 1] 25_heterogeneity_subindices.R exit=-1073741819 killed=False durata=1min
+[RETRY 2] 25_heterogeneity_subindices.R exit=-1073741819 killed=False durata=1min
+[DONE ] 25_heterogeneity_subindices.R  18:17:54
+[START] 26_robustness_desttrends.R (cap 20min)  18:17:54
+[DONE ] 26_robustness_desttrends.R  18:20:26
+[START] 27_robustness_desttrends_wcb.R (cap 20min)  18:20:26
+[DONE ] 27_robustness_desttrends_wcb.R  18:23:28
+[START] 28_robustness_desttrends_pre.R (cap 20min)  18:23:28
+[DONE ] 28_robustness_desttrends_pre.R  18:24:30
+[START] 29_robustness_co2intensity.R (cap 20min)  18:24:30
+[DONE ] 29_robustness_co2intensity.R  18:25:32
+[START] 30_robustness_extensive_ppml.R (cap 30min)  18:25:32
+[DONE ] 30_robustness_extensive_ppml.R  18:32:04
+[START] 31_robustness_leaveoneout.R (cap 40min)  18:32:04
+[RETRY 1] 31_robustness_leaveoneout.R exit=-1073741819 killed=False durata=1min
+[RETRY 2] 31_robustness_leaveoneout.R exit=-1073741819 killed=False durata=1min
+[RETRY 3] 31_robustness_leaveoneout.R exit=-1073741819 killed=False durata=1min
+[RETRY 4] 31_robustness_leaveoneout.R exit=-1073741819 killed=False durata=1min
+[ABORT] 31_robustness_leaveoneout.R  18:35:43

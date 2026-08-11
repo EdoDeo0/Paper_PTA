@@ -50,7 +50,7 @@ stima_ppml <- function(ppml_file, green_file, dirty_file, depth_file, tr, hkmo_d
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   d[dirty, on = "hs6", dirty_p := i.dirty_p]
   d[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = as.numeric(get(depth_var)))]
   d[, country_code := as.integer(country_code)]
   d[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
   if (depth_drop_unmeasured) {
@@ -81,7 +81,7 @@ for (tr in c("WB_EP_Depth", "TREND_EP_Count")) {
       ppml_file = PPML_FILE, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
       depth_file = DEPTH_FILE, tr = tr, hkmo_drop = HKMO_DROP,
       depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
-    )), error = function(e) { cat("[FALLITO]", tr_name, "\n"); NULL })
+    )), error = function(e) { cat("[FALLITO]", tr_name, "-", conditionMessage(e), "\n"); NULL })
     if (!is.null(r)) saveRDS(r, rds)
   }
   if (!is.null(r)) {

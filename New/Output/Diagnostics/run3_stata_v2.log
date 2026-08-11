@@ -1,0 +1,8 @@
+﻿[RUN3 STATA] excl + desta  2026-08-11 11:59:57
+[START] 17_main_tripledd_fullpanel  11:59:57
+[EXIT ] 17_main_tripledd_fullpanel  exit=0  durata=25min  12:25:00
+[START] 18_robustness_fullpanel  12:25:00
+[EXIT ] 18_robustness_fullpanel  exit=0  durata=54min  13:19:04
+[START] 17b_wcb_fullpanel  13:19:04
+[EXIT ] 17b_wcb_fullpanel  exit=0  durata=82min  14:41:08
+[RUN3 STATA DONE] 2026-08-11 14:41:08

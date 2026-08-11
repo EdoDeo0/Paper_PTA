@@ -25,7 +25,6 @@
 
 ## --- Setup ---------------------------------------------------------------
 rm(list = ls())
-library(callr)
 library(here)
 library(data.table)
 library(fst)
@@ -41,7 +40,8 @@ stima_una <- function(cache_fst, green_file, dirty_file, depth_file, drop_cc, di
   library(fixest)
   library(data.table)
   threads_fst(1)
-  setFixest_nthreads(4)
+  ## 2 thread come 20/29 (stabili): a 4 l'allocatore crasha quasi a ogni spec
+  setFixest_nthreads(2)
 
   cell <- as.data.table(read_fst(cache_fst))
   green <- fread(green_file, colClasses = list(character = "hs6_final"))
@@ -50,7 +50,7 @@ stima_una <- function(cache_fst, green_file, dirty_file, depth_file, drop_cc, di
   cell[dirty, on = "hs6", `:=`(dirty_p = i.dirty_p, dirty_ext = i.dirty_ext)]
   cell[is.na(dirty_p), dirty_p := 0L]
   cell[is.na(dirty_ext), dirty_ext := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = as.numeric(get(depth_var)))]
   cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
   if (depth_drop_unmeasured) {
     n0 <- nrow(cell)
@@ -63,11 +63,20 @@ stima_una <- function(cache_fst, green_file, dirty_file, depth_file, drop_cc, di
   cell[, pd := .GRP, by = .(hs6, country_code)]
   cell[, dt := .GRP, by = .(country_code, year)]
   cell[, pt := .GRP, by = .(hs6, year)]
-  f <- sprintf("y ~ WB_EP_Depth:env_good + WB_EP_Depth:%s + %s:env_good + %s:%s | pd + dt + pt",
-               dirty_var, depth_var, depth_var, dirty_var)
-  m <- feols(as.formula(f), data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
-  key <- sprintf("WB_EP_Depth:%s", dirty_var)
-  list(coef = coef(m)[[key]], pval = pvalue(m)[[key]])
+  ## Interazioni esplicite + solo le colonne che servono a feols. Sul campione
+  ## intero incl le colonne inutili portano l'allocatore oltre la soglia e la
+  ## stima segfaulta sempre; potandole gira in ~6s (vedi memoria di progetto).
+  ## Il prodotto esplicito e' identico alla sintassi `a:b` di fixest: verificato
+  ## contro il baseline di Run 1 (scarto 3.6e-17) e contro l'output di 16.
+  cell[, `:=`(ep_green = WB_EP_Depth    * env_good,
+              ep_dirty = WB_EP_Depth    * get(dirty_var),
+              td_green = get(depth_var) * env_good,
+              td_dirty = get(depth_var) * get(dirty_var))]
+  cell <- cell[, .(y, n, country_code, pd, dt, pt, ep_green, ep_dirty, td_green, td_dirty)]
+  gc()
+  m <- feols(y ~ ep_green + ep_dirty + td_green + td_dirty | pd + dt + pt,
+             data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
+  list(coef = coef(m)[["ep_dirty"]], pval = pvalue(m)[["ep_dirty"]])
 }
 
 ## --- Lista dei paesi trattati (lettura leggera, senza fixest) --------------
@@ -97,18 +106,18 @@ if (file.exists(OUT_FILE)) {
 for (i in seq_len(nrow(piano))) {
   p <- piano[i]
   if (!is.null(rows[[p$label]])) { cat("[cache]", p$label, "\n"); next }
-  r <- NULL
-  for (tent in 1:4) {
-    r <- tryCatch(
-      callr::r(stima_una, args = list(
-        cache_fst = CACHE_FST, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
-        depth_file = DEPTH_FILE, drop_cc = p$drop_cc, dirty_var = p$dirty_var,
-        depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
-      )),
-      error = function(e) { cat("[CRASH tentativo", tent, "]", p$label, "\n"); NULL })
-    if (!is.null(r)) break
-  }
-  if (is.null(r)) cat("[FALLITO dopo 4 tentativi]", p$label, "\n")
+  ## In-process: dentro callr::r() l'allocatore crasha molto piu' spesso (il 29
+  ## crashava 4 volte su 4, in-process gira in 54s). Qui il crash resta possibile
+  ## ma e' intermittente (~1 su 4) e uccide il processo, quindi non e'
+  ## catturabile da tryCatch: la protezione e' il salvataggio incrementale del
+  ## CSV + il riavvio esterno, che riprende dalle righe gia' scritte.
+  r <- tryCatch(
+    stima_una(
+      cache_fst = CACHE_FST, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
+      depth_file = DEPTH_FILE, drop_cc = p$drop_cc, dirty_var = p$dirty_var,
+      depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
+    ),
+    error = function(e) { cat("[CRASH]", p$label, ":", conditionMessage(e), "\n"); NULL })
   if (!is.null(r)) {
     cat(sprintf("%-14s: %+.5f (p=%.4f)\n", p$label, r$coef, r$pval))
     rows[[p$label]] <- data.table(spec = p$label, dropped_country = p$drop_cc,
@@ -120,6 +129,13 @@ for (i in seq_len(nrow(piano))) {
 }
 loo <- rbindlist(rows)
 fwrite(loo, OUT_FILE)
+
+## Un leave-one-out incompleto non deve passare in silenzio: senza questo
+## controllo lo script esce con successo anche se meta' delle stime e' fallita.
+mancanti <- setdiff(piano$label, loo$spec)
+if (length(mancanti))
+  stop(sprintf("leave-one-out incompleto: %d spec mancanti (%s)",
+               length(mancanti), paste(mancanti, collapse = ", ")))
 
 ## --- Verdetto automatico (rispetto alla baseline core) ---------------------
 b0 <- loo[spec == "baseline", coef]

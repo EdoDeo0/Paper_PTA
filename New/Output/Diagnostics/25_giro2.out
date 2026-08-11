@@ -1,0 +1,5 @@
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+=== WB_GreenLiberalization ===
+  WB_GreenLiberalization x env_good  : -0.01802 (p=0.8377)
+  WB_GreenLiberalization x dirty_p   : -0.09056 (p=0.0642)
+=== TREND_GreenMarketAccess ===

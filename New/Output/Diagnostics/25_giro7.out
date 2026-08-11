@@ -1,0 +1,24 @@
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+=== WB_GreenLiberalization ===
+  WB_GreenLiberalization x env_good  : -0.01802 (p=0.8377)
+  WB_GreenLiberalization x dirty_p   : -0.09056 (p=0.0642)
+=== TREND_GreenMarketAccess ===
+  TREND_GreenMarketAccess x env_good  : -0.03046 (p=0.3129)
+  TREND_GreenMarketAccess x dirty_p   : -0.05054 (p=0.0410)
+=== WB_EnforcementDSM ===
+  WB_EnforcementDSM x env_good  : -0.04511 (p=0.2326)
+  WB_EnforcementDSM x dirty_p   : +0.05454 (p=0.4390)
+=== TREND_EnforcementDSM ===
+  TREND_EnforcementDSM x env_good  : +0.00129 (p=0.9289)
+  TREND_EnforcementDSM x dirty_p   : -0.00572 (p=0.6874)
+=== TREND_Hard ===
+  TREND_Hard x env_good  : +0.00198 (p=0.6763)
+  TREND_Hard x dirty_p   : -0.00189 (p=0.5953)
+=== TREND_Soft ===
+  TREND_Soft x env_good  : +0.01045 (p=0.3835)
+  TREND_Soft x dirty_p   : +0.00310 (p=0.7738)
+=== TREND_RegulatorySpace ===
+  TREND_RegulatorySpace x env_good  : +0.03240 (p=0.0030)
+  TREND_RegulatorySpace x dirty_p   : +0.00376 (p=0.7885)
+
+[OK] subindices_collapsed.csv

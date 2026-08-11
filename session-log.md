@@ -1,5 +1,170 @@
 # Session Log — Paper_PTA
 
+## 2026-08-11 (sera) — ✅ MATRICE 2×2 COMPLETA: tutte e 4 le run chiuse (R + Stata)
+
+Run 4 (incl+desta) completa: 13 script R + Stata 17 (27min), 18 (59min), 17b (89min).
+**Le 4 run sono tutte chiuse, nessun buco nella matrice.** Nessun commit: tutto nel working tree.
+Da qui il lavoro è di SCRITTURA (tabelle LaTeX dai CSV, testo), non più di calcolo.
+
+**RISULTATO — `WB × dirty`, full panel** (dove poggiano le stime principali):
+excl+DESTA −0.0056 (WCB 0.049) | incl+DESTA −0.0057 (WCB **0.035**) → **regge ovunque**.
+
+**L'UNICA cella fragile: incl+DESTA sul COLLASSATO** → −0.0082, asy 0.055, WCB 0.198,
+perm **0.489**, leave-one-out 4/25 perdite (vs 1/23 in Run 3). MA la stessa spec sul full panel
+tiene (0.035). Ipotesi coerente coi dati (NON dimostrata): è la **ponderazione** — il collassato
+pesa le celle per n. transazioni e HK+Macao, entrepot ad altissimo volume, dominano; sul full
+panel ogni osservazione conta 1 e l'effetto si diluisce. Da verificare, non da assumere.
+**Sui green: nulla in tutte e 4 le run, con ogni metodo.** È il risultato più solido.
+
+**Strumenti sistemati oggi** (dopo lo spreco di 8 ore della notte):
+- `$p.Handle` obbligatorio dopo Start-Process: senza, `$p.ExitCode` resta $null anche dopo
+  WaitForExit() → il successo non viene mai riconosciuto e ogni script gira N volte a vuoto.
+  **Verificato con un test (exit 0 e exit 3) PRIMA di lanciare 3h di catena.**
+- Sorveglianza sempre sulla **crescita di un file** (CSV/log/.rds), mai sull'uscita del processo.
+- Cap di tempo per script (~3x l'atteso) nella catena Run 4: nessuno è mai scattato.
+
+**Nota macchina**: 22 usa 2 thread su 24 core (~8% di carico) ma il PC arriva a ~90°. L'utente
+conferma che vede quelle temperature anche con altri carichi single-core pesanti, quindi non è
+anomalo di per sé. Resta ignota la causa dei crash dell'allocatore (7 bug in 2 giorni, tutti
+"exit 0 su lavoro incompleto"): **memtest + controllo temperature a freddo** restano da fare.
+
+➡️ **Dettagli in `./New/ROADMAP.md` §11** (nuova): tabella completa delle 8 celle (§11.1), la
+cella fragile con **il test che la deciderebbe — ristimare il collassato SENZA pesi** (§11.2),
+la lista di cosa resta da fare, tutta scrittura (§11.3), e il debito tecnico sui crash (§11.4).
+
+## 2026-08-11 — RUN 3 CHIUSA + tre punti aperti risolti; resta solo Run 4
+
+Run 3 completa: 12 script R + Stata 17 (25min), 18 (54min), 17b (82min), **più 23 e 25 recuperati
+nel pomeriggio**. Nessun punto aperto: **manca solo Run 4 (incl+desta)**.
+**Nessun commit: tutto nel working tree.**
+
+Risultati Run 3 — la storia non cambia con la misura di depth indipendente:
+- Collassato: WB dirty −0.01134, tre inferenze concordi (asy 7.8e-07, WCB 0.047, perm 0.036)
+- Full panel: WB dirty −0.00559 (WCB 0.0485); **TREND dirty non regge il bootstrap** (0.048→0.069)
+- Leave-one-out 25/25: 0 cambi di segno, 1 perdita di significatività (paese 133)
+- Margine estensivo (PPML) e gradiente CO2: nulla, come nelle run precedenti
+- nclust 225 (non 227): DESTA non copre 2 paesi → coerente con lo 0,107% di celle escluse
+
+**Bug 6 — script 25 incompleto in TUTTE le run.** Stima 4 sotto-indici su 7, con exit 0. I falliti
+sono diversi a ogni run (Run1: 5/7, Run2: 4/7, Run3: 4/7 con ENTRAMBE le spec WB cadute).
+Causa: `error = function(e) {cat("[FALLITO]"); NULL}` scartava il messaggio. Ora stampa
+`conditionMessage(e)` (stesso fix su script 30). **Diagnosi completata nel pomeriggio: vedi sotto.**
+
+**Bug 7 — DESTA è integer, TotalDepth è double.** Gli script che PRE-CALCOLANO le interazioni in
+data.table (29, 31) passavano a `feols` una colonna `integer` → crash deterministico con 432 MB
+occupati su 61 GB (quindi NON memoria). Gli script che usano la sintassi di formula (16) non lo
+vedono perché è fixest a convertire. Fix: `as.numeric()` al merge, 9 script. Non cambia i numeri
+(interi piccoli), quindi 22/24/26/27/28 NON vanno rifatti.
+
+**Errore di processo (mio) — 8 ore di CPU sprecate.** Il ciclo di protezione dello script 31
+controllava l'exit code; un processo APPESO non esce mai, quindi non è mai intervenuto: 8 ore a
+2 core, 1 sola riga prodotta, CPU a 85°. Rifatto sorvegliando **la crescita del file** invece
+dell'uscita del processo → le 8 spec mancanti chiuse in 90 secondi. Avevo già visto lo stesso
+blocco su script 29 il giorno prima e non ho trasferito la lezione. Stesso schema applicato a
+Stata (stall-timeout 45min sul log).
+
+**Tre punti aperti — TUTTI CHIUSI il pomeriggio dell'11 (15:00-15:30):**
+- **25**: causa accertata leggendo l'errore vero → `callr subprocess ... has crashed or was killed`,
+  cioè il solito allocatore, NON un problema statistico (`TREND_RegulatorySpace`, fallito in tutte
+  e 3 le run, è poi riuscito). Convertito **in-process** + `stop()` sull'incompletezza. Loop di
+  rilancio (la cache .rds conserva i riusciti) → **7/7 in tutte e tre le run**.
+- **23**: aggiunto il messaggio d'errore sulle coorti e una riga `[loo] coorti stimate: n/N`
+  (niente `stop()`: una coorte può legittimamente non essere stimabile). Eseguito per Run 3 →
+  `sunab_gap_desta.csv`, loo 9/9.
+- **22**: aggiunte colonne `n_used_green`/`n_used_dirty` + avviso se < n_perm. Rigenerato per tutte
+  e 3 le run: **1000/1000 ovunque**, p-value invariati.
+- **BONUS**: aggiunta la cache mancante alla **Sezione A del 22** (le 2000 permutazioni grezze si
+  rifacevano a ogni rilancio: stanotte 22 sec, oggi 23 min e impiantata → uccisa). Ora `[cache]` e
+  il rilancio dura secondi. Cancellare `permutation_collapsed*.csv` per forzare il ricalcolo.
+
+**Stato config a fine sessione**: `SAMPLE="excl"`, `DEPTH="desta"` (= Run 3, l'ultima completata).
+Per Run 4 basta portare SAMPLE a "incl" e copiare il pannello `_inclHKMO.fst` su `_inclHKMO_desta.fst`.
+
+## 2026-08-10/11 — PIANO_RIPRESA: Run 1 e Run 2 CHIUSE, cinque bug isolati (Sonnet 4.6 + Opus 5)
+
+Sessione lunga (dal pomeriggio del 10 alle 00:20 dell'11). Sonnet ha eseguito il piano e si è
+impantanato su script 29 (7 ore senza output); su richiesta utente Opus ha verificato la diagnosi
+e l'ha trovata sbagliata su tutti i punti. **Run 1 COMPLETA** (17b incluso). **Run 2 COMPLETA**:
+R (29,30,31) + Stata 17, 18 e 17b. Restano Run 3 (excl+desta) e Run 4 (incl+desta).
+**Nessun commit fatto: tutte le modifiche sono nel working tree, pronte per la review.**
+
+Cinque bug distinti trovati e corretti, tutti su `New/`:
+1. Stata 17b — `boottest` non regge >1 set di FE assorbite → riscritto con FWL esplicito
+2. Script 29 — `rm(df)` rompeva `boottest` (il simbolo risolveva a `stats::df`)
+3. Script 29 — `callr::r()` causava i crash dell'allocatore invece di proteggere
+4. Script 31 — incompletezza silenziosa (10 stime su 25 mancanti, exit 0) + soglia di memoria
+5. Stata 18 — `: dir` restituisce nomi minuscoli, match case-sensitive → export vuoto
+
+**Lezione trasversale della giornata**: tre bug diversi (script 29, 31, Stata 18) avevano tutti la
+stessa forma — **fallimento silenzioso con exit code 0**. Non fidarsi mai dell'exit code su questa
+pipeline: verificare sempre gli artefatti su disco (righe attese, suffisso giusto, numeri diversi
+dalla run precedente) e leggere la coda dei log.
+
+- **Stata 17b (Run 1) RISOLTO** — `boottest` non funziona dopo `reghdfe` con >1 set di FE assorbite
+  ("Doesn't work after reghdfe with more than one set of absorbed fixed effects"): usciva un CSV con
+  `p_wcb` vuoti. Riscritto con **FWL esplicito** (residualizza ogni variabile con `reghdfe ...,
+  residuals()`, poi `regress` senza FE + `boottest`). Checkpoint §5 passato: p_wcb full-panel
+  (0.686/0.185/0.931/0.177) coerenti in storia col collassato — green null, dirty borderline.
+- **Bug `rm(df)` in script 29 (introdotto dal "fix OOM" del 09/08) — RIMOSSO.** `boottest` cerca
+  `country_code` (non è nella formula) valutando `m_lm$call$data`; dopo `rm(df)` il simbolo risolve
+  a **`stats::df`, la funzione** → rompe il bootstrap. Riprodotto su dati sintetici.
+- **`callr::r()` è la CAUSA dei crash, non la protezione.** Script 29 dentro callr: `*** recursive
+  gc invocation` 4 volte su 4. Stesso codice in-process: **54 secondi**, come Run 1. Convertito
+  in-process come `20_wcb_collapsed.R`. NB: contraddice la memoria "una stima per sottoprocesso".
+- **Diagnosi di Sonnet smentita coi dati**: non era OOM (0,95 GB usati su 61,6, 51 GB liberi); non
+  era "normale che sia lungo" (in Run 1 il 29 girava in 54s, log 15:14:24→15:15:18); la sua proposta
+  di togliere il Frisch-Waugh avrebbe reintrodotto il bug appena risolto in Stata.
+- **Script 31: incompletezza silenziosa.** Produceva un CSV che sembrava valido ma con **10 stime su
+  25 mancanti**: `[FALLITO]` era solo un `cat()`, exit code 0. Aggiunto `stop()` che blocca se manca
+  una spec. **Run 1 verificata: completa (23/23), non toccata.**
+- **Causa vera del crash su 31 = soglia di memoria**, risolta scartando le colonne non usate da
+  `feols` prima della stima (`cell[, .(y,n,country_code,pd,dt,pt,ep_*,td_*)]`) + interazioni
+  esplicite invece della sintassi `a:b`. `baseline` e `lista_estesa`, che segfaultavano sempre, ora
+  girano in **5,6s e 6,5s**. Equivalenza verificata: precalcolate == `a:b` sul baseline di Run 1
+  (scarto 3.6e-17) e baseline incl == output di 16 a 16 cifre (-0.018871283368101).
+  **Fix applicato e 31 RIGIRATO da zero: 27/27, exit 0, il `stop()` non è scattato.**
+  Verdetto Run 2: **cambi di segno 0/25, p>0.10 0/25**; coef da -0.0245 (senza 601) a -0.0129
+  (senza Hong Kong) contro baseline -0.0189 — l'escursione massima verso zero è proprio HK,
+  coerente col suo ruolo di entrepôt che motiva l'esclusione nella spec principale.
+- **Stata Run 2 (incl+totaldepth) FATTI: 17 e 18.** 17 in 25 min (2 modelli, ~12 min l'uno);
+  18 in 60 min (7 modelli: A, B, D×2, E, G×2). Checkpoint §5 ok: N 23.560.110 vs 21.519.511 di
+  Run 1 (+9,5% = HK+Macao), coefficienti diversi, storia invariata (green nullo, dirty borderline);
+  `wb_dirty` di Run 1 in 17 coincide col valore prodotto da 17b (coerenza incrociata).
+- **BUG `: dir` case-sensitive in 18 — CORRETTO, era pericoloso.** Il 18 ha calcolato tutti e 7 i
+  modelli ma è morto sull'export finale (`too few variables specified`, `r(102)`) **riportando
+  exit=0**. Causa: su Windows `local all : dir ... files "_rob_*.dta"` restituisce i nomi in
+  **MINUSCOLO** (`_rob_a_wb_controls_inclhkmo.dta`) mentre il match cercava `_inclHKMO.dta`,
+  case-sensitive → lista vuota. **Colpiva entrambi i rami**: per la run principale (`OUTSFX` vuoto)
+  il test è "escludi i file `_inclHKMO`/`_desta`" e non escludeva **nulla** → *un rerun di Run 1
+  oggi avrebbe prodotto una tabella di robustezza inquinata coi numeri incl, senza alcun errore*.
+  Fix: `lower()` su entrambi i lati del confronto.
+- **Orfano rimosso**: col match funzionante veniva pescato `_rob_C_WB_inclHKMO.dta` del **23/07**,
+  residuo del vecchio blocco C hardcoded che l'audit aveva fatto rimuovere. Spostato (non cancellato)
+  in `./New/_legacy/output_orfani/`. Il CSV finale ora ha esattamente i 7 modelli del codice attuale.
+- **Trappola da ricordare**: R bufferizza stdout verso la pipe e **al segfault il buffer va perso** →
+  il log sembra vuoto mentre lo script sta lavorando. Il CSV incrementale è l'unica fonte affidabile.
+- **Errore di processo mio**: lanciati job PowerShell sovrapposti che si sono calpestati sullo stesso
+  log; uno è sopravvissuto a un `Stop-Process` e ha continuato a girare. Lanciare UNA catena per volta
+  e verificare i PID prima di ripartire.
+- **Sessione chiusa su richiesta utente: CPU a 90°C, tutti i processi fermati** (0 R, 0 Stata, 0 PS).
+- **Lacune degli export annotate in `./New/ROADMAP.md` §10 (nuovo) — nessuna azione presa,
+  su decisione utente si finiscono prima tutte le run.** In sintesi: i CSV bastano per
+  ricostruire la tabella principale, ma (a) `wcb_collapsed.csv` non esporta `nobs`/`nclust`
+  (i "236 clusters" citati nel paper vivono solo nel log); (b) `dirty_leaveoneout*.csv` ha solo
+  coef e pval; (c) nessun CSV registra quali FE sono state assorbite; (d) il test F congiunto
+  del paper non ha script generatore (già noto dall'audit). Inoltre il paper ha **32 tabelle e
+  zero `\input{}`**: tutti i numeri sono battuti a mano — verificato che quelli attuali sono
+  corretti (= Run 1), ma con 4 run la trascrizione manuale diventa il rischio principale.
+  Infine il WCB full-panel di 17b non ha ancora un posto nel paper.
+- **17b Run 2 COMPLETO** (22:53:56 → 00:20:25, 86 min). Tutti e 4 i p_wcb popolati — il fix FWL
+  regge anche su incl: WB green 0.833, WB dirty 0.176, TREND green 0.919, TREND dirty 0.142
+  (Run 1: 0.686/0.185/0.931/0.177 → stessa storia). Verifiche incrociate ok: `nobs` 23.560.110
+  identico a quello di 17, coefficienti identici a 17 fino all'ultima cifra, `nclust` 227 = 225
+  di Run 1 + HK + Macao.
+- **Prossimi passi**: (1) Run 3 (excl+desta) e Run 4 (incl+desta) come da
+  `./New/PIANO_RIPRESA_2026-08-09.md` — in Run 3/4 copiare il `.fst` collassato sul nome
+  `_desta` invece di ricostruirlo (il panel non dipende da depth); (3) poi ROADMAP §10.
+
 ## 2026-08-09 (notte, 2) — Piano di ripresa stime per handoff a Sonnet (Opus 4.8)
 
 - Scritto `./New/PIANO_RIPRESA_2026-08-09.md`: handoff self-contained per completare le 4 run

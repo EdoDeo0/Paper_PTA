@@ -1,4 +1,24 @@
-[WAIT] Aspetto [DONE ALL] in run2_chain.log...
-[ABORT] Run 2 abortita. Fermo.
-RUN3-ORCH v4 Avviato
-RUN3-ORCH v5 Avviato 22:20:20
+﻿[RUN3 START] excl + desta  2026-08-11 00:30:54
+[START] 14_descriptives_collinearity.R  00:30:54
+[DONE ] 14_descriptives_collinearity.R  00:30:56
+[START] 16_main_tripledd_collapsed.R  00:30:56
+[DONE ] 16_main_tripledd_collapsed.R  00:32:52
+[START] 20_wcb_collapsed.R  00:32:52
+[DONE ] 20_wcb_collapsed.R  00:33:30
+[START] 22_permutation_inference.R  00:33:30
+[DONE ] 22_permutation_inference.R  02:22:48
+[START] 24_stability_controlgroups.R  02:22:48
+[DONE ] 24_stability_controlgroups.R  02:42:51
+[START] 25_heterogeneity_subindices.R  02:42:51
+[DONE ] 25_heterogeneity_subindices.R  02:43:24
+[START] 26_robustness_desttrends.R  02:43:24
+[DONE ] 26_robustness_desttrends.R  02:45:40
+[START] 27_robustness_desttrends_wcb.R  02:45:40
+[DONE ] 27_robustness_desttrends_wcb.R  02:48:07
+[START] 28_robustness_desttrends_pre.R  02:48:07
+[DONE ] 28_robustness_desttrends_pre.R  02:48:59
+[START] 29_robustness_co2intensity.R  02:48:59
+[RETRY 1] 29_robustness_co2intensity.R exit=-1073741819  02:49:05
+[RETRY 2] 29_robustness_co2intensity.R exit=-1073741819  02:49:10
+[RETRY 3] 29_robustness_co2intensity.R exit=-1073741819  02:49:16
+[ABORT] 29_robustness_co2intensity.R  02:49:16

@@ -1,0 +1,53 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+Panel collassato: 3,862,038 celle
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+green: 8.4% celle | dirty: 14.0% celle
+Stima: WB ...
+*** recursive gc invocation
+*** recursive gc invocation
+[CRASH tentativo 1 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+[CRASH tentativo 2 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+*** recursive gc invocation
+[CRASH tentativo 3 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+*** recursive gc invocation
+[CRASH tentativo 4 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+NOTE: 89,665/83/3,559 fixed-effect singletons were removed (92,547 observations).
+    treat                       term         coef          se       pval
+   <char>                     <char>        <num>       <num>      <num>
+1:     WB       WB_EP_Depth:env_good -0.006748063 0.004754654 0.15718461
+2:     WB        WB_EP_Depth:dirty_p -0.008198361 0.004252429 0.05510125
+3:     WB env_good:DESTA_depth_index  0.005265504 0.009751193 0.58973170
+4:     WB  dirty_p:DESTA_depth_index  0.008860248 0.011127572 0.42671565
+      nobs
+     <int>
+1: 3759733
+2: 3759733
+3: 3759733
+4: 3759733
+Stima: TREND ...
+*** recursive gc invocation
+*** recursive gc invocation
+[CRASH tentativo 1 ] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+*** recursive gc invocation
+*** recursive gc invocation
+NOTE: 89,665/83/3,559 fixed-effect singletons were removed (92,547 observations).
+    treat                       term          coef          se      pval
+   <char>                     <char>         <num>       <num>     <num>
+1:  TREND    TREND_EP_Count:env_good  0.0001718769 0.001989028 0.9312140
+2:  TREND     TREND_EP_Count:dirty_p  0.0008386584 0.001493198 0.5749021
+3:  TREND env_good:DESTA_depth_index -0.0077134308 0.015558771 0.6205385
+4:  TREND  dirty_p:DESTA_depth_index -0.0119762191 0.014077052 0.3957903
+      nobs
+     <int>
+1: 3759733
+2: 3759733
+3: 3759733
+4: 3759733
+[OK] tripledd_collapsed.csv
+NOTE: 89,665/83/3,559 fixed-effect singletons were removed (92,547 observations).
+[OK] eventstudy_collapsed.png - controllare pre-trend differenziali
+
+=== DONE 12 (triple-diff collassata) ===

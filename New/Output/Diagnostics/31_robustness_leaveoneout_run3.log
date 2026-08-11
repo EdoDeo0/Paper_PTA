@@ -1,0 +1,186 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_resume.ps1:13 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+*** recursive gc invocation
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_resume.ps1:13 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+baseline      : -0.01134 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+lista_estesa  : -0.01073 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,716/83/3,853 fixed-effect singletons were removed (91,752 observations).
+senza_103     : -0.01135 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,523/83/3,855 fixed-effect singletons were removed (91,558 observations).
+senza_105     : -0.01135 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+NOTE: 88,620/83/3,867 fixed-effect singletons were removed (91,666 observations).
+senza_106     : -0.01119 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,580/83/3,864 fixed-effect singletons were removed (91,622 observations).
+senza_107     : -0.01121 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_resume.ps1:13 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 6 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+NOTE: 88,846/83/3,895 fixed-effect singletons were removed (91,920 observations).
+senza_111     : -0.01145 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,844/83/3,912 fixed-effect singletons were removed (91,927 observations).
+senza_112     : -0.01195 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,518/83/3,853 fixed-effect singletons were removed (91,556 observations).
+senza_119     : -0.01134 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,840/83/3,940 fixed-effect singletons were removed (91,947 observations).
+senza_122     : -0.01096 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,750/83/3,863 fixed-effect singletons were removed (91,793 observations).
+senza_127     : -0.01063 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,771/83/3,883 fixed-effect singletons were removed (91,838 observations).
+senza_129     : -0.01151 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,823/83/3,904 fixed-effect singletons were removed (91,898 observations).
+senza_132     : -0.01282 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,914/83/4,006 fixed-effect singletons were removed (92,051 observations).
+senza_133     : -0.01040 (p=0.1412)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 88,705/83/3,852 fixed-effect singletons were removed (91,737 observations).
+senza_134     : -0.01139 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+*** recursive gc invocation
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_finish.ps1:14 car:5
++     & $rbin --vanilla "$wd\New\Code\31_robustness_leaveoneout.R" *>&1 ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 15 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+NOTE: 88,795/83/3,879 fixed-effect singletons were removed (91,855 observations).
+senza_136     : -0.01148 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_finish.ps1:14 car:5
++     & $rbin --vanilla "$wd\New\Code\31_robustness_leaveoneout.R" *>&1 ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 16 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+*** recursive gc invocation
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_finish.ps1:14 car:5
++     & $rbin --vanilla "$wd\New\Code\31_robustness_leaveoneout.R" *>&1 ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 16 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+NOTE: 88,844/83/3,929 fixed-effect singletons were removed (91,942 observations).
+senza_141     : -0.01122 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+NOTE: 89,000/83/3,855 fixed-effect singletons were removed (92,034 observations).

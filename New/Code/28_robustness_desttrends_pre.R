@@ -51,7 +51,7 @@ run_all <- function(cache_fst, green_file, dirty_file, depth_file, depth_var, de
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   cell[dirty, on = "hs6", dirty_p := i.dirty_p]
   cell[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = as.numeric(get(depth_var)))]
   cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
   if (depth_drop_unmeasured) {
     n0 <- nrow(cell)

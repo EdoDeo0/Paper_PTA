@@ -88,9 +88,9 @@ Notes:
 . 
 . *-- Variante di campione e depth (identica a 17: tenere allineati i due file)
 >  --
-. global PTA_SAMPLE "excl"
+. global PTA_SAMPLE "incl"
 
-. global PTA_DEPTH  "totaldepth"
+. global PTA_DEPTH  "desta"
 
 . global BREPS      9999
 
@@ -112,7 +112,7 @@ Notes:
 . }
 
 . di "[campione] $PTA_SAMPLE"
-[campione] excl
+[campione] incl
 
 . 
 . * Asse 2 — depth control
@@ -140,7 +140,7 @@ Notes:
 . global OUTSFX "$SFX$DEPTHSFX"
 
 . di "[depth] $PTA_DEPTH ($DEPTHVAR) | suffisso output: '$OUTSFX'"
-[depth] totaldepth (totaldepth_nonenv) | suffisso output: ''
+[depth] desta (desta_depth_index) | suffisso output: '_inclHKMO_desta'
 
 . 
 . * --- Cache: salta tutto se il CSV finale esiste gia' -----------------------
@@ -173,9 +173,6 @@ Notes:
 . cap which boottest
 
 . if _rc ssc install boottest
-checking boottest consistency and verifying not already installed...
-installing into C:\Users\edodr\ado\plus\...
-installation complete.
 
 . 
 . *── 1. Liste ausiliarie (identiche a 17) ────────────────────────────────────
@@ -199,7 +196,7 @@ Duplicates in terms of hs6
 . tempfile green
 
 . save `green'
-file C:\Users\edodr\AppData\Local\Temp\ST_4e34_000001.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_6b9c_000001.tmp saved as .dta
     format
 
 . 
@@ -214,20 +211,20 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4e34_000001.tmp saved as .dta
 . tempfile dirty
 
 . save `dirty'
-file C:\Users\edodr\AppData\Local\Temp\ST_4e34_000002.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_6b9c_000002.tmp saved as .dta
     format
 
 . 
 . import delimited "$DEPTHFILE", clear
 (encoding automatically selected: ISO-8859-1)
-(5 vars, 249 obs)
+(5 vars, 239 obs)
 
 . keep country_code year $DEPTHVAR
 
 . tempfile depth
 
 . save `depth'
-file C:\Users\edodr\AppData\Local\Temp\ST_4e34_000003.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_6b9c_000003.tmp saved as .dta
     format
 
 . 
@@ -239,61 +236,62 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4e34_000003.tmp saved as .dta
 . gen byte hkmo = inlist(country_code, 110, 121)
 
 . keep if $HKMOEXPR
-(3,464,093 observations deleted)
+(0 observations deleted)
 
 . 
 . merge m:1 hs6 using `green', keep(master match) nogen
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    40,499,383
-        from master                40,499,383  
+    Not matched                    43,652,802
+        from master                43,652,802  
         from using                          0  
 
-    Matched                         5,281,828  
+    Matched                         5,592,502  
     -----------------------------------------
 
 . replace env_good_new = 0 if missing(env_good_new)
-(40,499,383 real changes made)
+(43,652,802 real changes made)
 
 . merge m:1 hs6 using `dirty', keep(master match) nogen
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    42,166,299
-        from master                42,166,299  
+    Not matched                    45,404,042
+        from master                45,404,042  
         from using                          0  
 
-    Matched                         3,614,912  
+    Matched                         3,841,262  
     -----------------------------------------
 
 . replace dirty_p = 0 if missing(dirty_p)
-(42,166,299 real changes made)
+(45,404,042 real changes made)
 
 . merge m:1 country_code year using `depth', keep(master match) nogen
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    36,496,372
-        from master                36,496,372  
+    Not matched                    37,162,246
+        from master                37,162,246  
         from using                          0  
 
-    Matched                         9,284,839  
+    Matched                        12,083,058  
     -----------------------------------------
 
 . if $DROP_UNMEASURED {
 .     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+(229,436 observations deleted)
 . }
 
 . replace $DEPTHVAR = 0 if missing($DEPTHVAR)
-(36,496,372 real changes made)
+(36,932,810 real changes made)
 
 . 
 . count
-  45,781,211
+  49,015,868
 
 . di "Righe: " r(N)
-Righe: 45781211
+Righe: 49015868
 
 . 
 . * interazioni esplicite (identiche a 17)
@@ -320,50 +318,49 @@ Righe: 45781211
 >     double nobs double nclust double breps using "$ROOT/New/Output/OLS$OUTSFX
 > /Bootstrap/_wcb_fullpanel_tmp$OUTSFX.dta", replace
 (file
-    C:\Work\projects\Paper_PTA/New/Output/OLS/Bootstrap/_wcb_fullpanel_tmp.dt
-    > a not found)
+    C:\Work\projects\Paper_PTA/New/Output/OLS_inclHKMO_desta/Bootstrap/_wcb_f
+    > ullpanel_tmp_inclHKMO_desta.dta not found)
 
 . 
-. * helper: dopo un boottest, salva la riga. Chiamare con il nome del parametro
+. * boottest non funziona dopo reghdfe con piu' di un set di FE assorbite.
+. * Soluzione FWL: residualizzare ogni variabile su (fpd fdt pt) con reghdfe,
+. * poi regress senza FE + boottest. I coefficienti sono identici (teorema FWL)
 > .
-. * (boottest lascia r(p) e r(CI); il coef viene da _b[] della reghdfe corrente
-> )
 . 
-. *── 3a. WB: reghdfe (NO compact) + boottest su green e dirty ────────────────
-> ─
-. * NB: niente `compact` - boottest richiede il campione di stima intatto.
+. *── 3a. WB ──────────────────────────────────────────────────────────────────
+. * Point estimates (usati nel CSV; anche come check che il FWL concordi)
 . reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
 >     absorb(fpd fdt pt) vce(cluster country_code)
-(dropped 2.43e+07 singleton observations)
+(dropped 2.56e+07 singleton observations)
 (MWFE estimator converged in 89 iterations)
 
-HDFE Linear regression                            Number of obs   = 21,519,511
-Absorbing 3 HDFE groups                           F(   4,    224) =       1.20
-Statistics robust to heteroskedasticity           Prob > F        =     0.3108
-                                                  R-squared       =     0.8734
-                                                  Adj R-squared   =     0.7440
+HDFE Linear regression                            Number of obs   = 23,381,204
+Absorbing 3 HDFE groups                           F(   4,    226) =       1.54
+Statistics robust to heteroskedasticity           Prob > F        =     0.1912
+                                                  R-squared       =     0.8710
+                                                  Adj R-squared   =     0.7426
                                                   Within R-sq.    =     0.0000
-Number of clusters (country_code) =        225    Root MSE        =     1.3334
+Number of clusters (country_code) =        227    Root MSE        =     1.3443
 
-                         (Std. err. adjusted for 225 clusters in country_code)
+                         (Std. err. adjusted for 227 clusters in country_code)
 ------------------------------------------------------------------------------
              |               Robust
    ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-    wb_green |  -.0022564   .0039258    -0.57   0.566    -.0099927    .0054799
-    wb_dirty |  -.0043521   .0022268    -1.95   0.052    -.0087403    .0000361
-    td_green |   .0000608    .000104     0.58   0.560    -.0001441    .0002657
-    td_dirty |   .0001875   .0000963     1.95   0.053    -2.21e-06    .0003772
-       _cons |   9.573249   .0003564  2.7e+04   0.000     9.572547    9.573951
+    wb_green |  -.0019641   .0034726    -0.57   0.572    -.0088068    .0048787
+    wb_dirty |  -.0057352   .0026862    -2.14   0.034    -.0110284   -.0004419
+    td_green |   .0032119   .0056981     0.56   0.574    -.0080163      .01444
+    td_dirty |   .0149807   .0072458     2.07   0.040     .0007027    .0292587
+       _cons |   9.570924   .0004489  2.1e+04   0.000      9.57004    9.571809
 ------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
 -----------------------------------------------------+
  Absorbed FE | Categories  - Redundant  = Num. Coefs |
 -------------+---------------------------------------|
-         fpd |   6181372     6181372           0    *|
-         fdt |   4631458     4631458           0    *|
-          pt |     64508           1       64507     |
+         fpd |   6700274     6700274           0    *|
+         fdt |   4898166     4898166           0    *|
+          pt |     65919           1       65918     |
 -----------------------------------------------------+
 * = FE nested within cluster; treated as redundant for DoF computation
 
@@ -376,9 +373,52 @@ Absorbed degrees of freedom:
 . local b_wbd = _b[wb_dirty]
 
 . 
-. boottest wb_green, reps($BREPS) cluster(country_code) seed(42) nograph
-Doesn't work after reghdfe with more than one set of absorbed fixed effects or 
-> with absorbed interaction terms
+. * FWL: residualizza ogni variabile sulle FE
+. tempvar ey ewbg ewbd etdg etdd
+
+. quietly reghdfe ln_export,  absorb(fpd fdt pt) residuals(`ey')
+
+. quietly reghdfe wb_green,   absorb(fpd fdt pt) residuals(`ewbg')
+
+. quietly reghdfe wb_dirty,   absorb(fpd fdt pt) residuals(`ewbd')
+
+. quietly reghdfe td_green,   absorb(fpd fdt pt) residuals(`etdg')
+
+. quietly reghdfe td_dirty,   absorb(fpd fdt pt) residuals(`etdd')
+
+. 
+. regress `ey' `ewbg' `ewbd' `etdg' `etdd', nocons vce(cluster country_code)
+
+Linear regression                               Number of obs     =   23381204
+                                                F(4, 226)         =       1.55
+                                                Prob > F          =     0.1901
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .95161
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+    __000001 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    __000002 |  -.0019641   .0034677    -0.57   0.572    -.0087972    .0048691
+    __000003 |  -.0057352   .0026824    -2.14   0.034     -.011021   -.0004494
+    __000004 |   .0032119   .0056901     0.56   0.573    -.0080005    .0144242
+    __000005 |   .0149807   .0072359     2.07   0.040     .0007222    .0292391
+------------------------------------------------------------------------------
+
+. 
+. boottest `ewbg', reps($BREPS) cluster(country_code) seed(42) nograph
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  __000002
+
+                          t(226) =    -0.5664
+                        Prob>|t| =     0.6115
+
+95% confidence set for null hypothesis expression: [−.02995, .02442]
 
 . matrix CI = r(CI)
 
@@ -386,9 +426,18 @@ Doesn't work after reghdfe with more than one set of absorbed fixed effects or
 > $BREPS)
 
 . 
-. boottest wb_dirty, reps($BREPS) cluster(country_code) seed(42) nograph
-Doesn't work after reghdfe with more than one set of absorbed fixed effects or 
-> with absorbed interaction terms
+. boottest `ewbd', reps($BREPS) cluster(country_code) seed(42) nograph
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  __000003
+
+                          t(226) =    -2.1380
+                        Prob>|t| =     0.0348
+
+95% confidence set for null hypothesis expression: [−.02644, −.0008063]
 
 . matrix CI = r(CI)
 
@@ -396,8 +445,146 @@ Doesn't work after reghdfe with more than one set of absorbed fixed effects or
 > $BREPS)
 
 . 
-. *── 3b. TREND: reghdfe (NO compact) + boottest su green e dirty ─────────────
+. drop `ey' `ewbg' `ewbd' `etdg' `etdd'
+
+. 
+. *── 3b. TREND ───────────────────────────────────────────────────────────────
 > ─
 . cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
 >     absorb(fpd fdt pt) vce(cluster country_code)
-(dropped 2.43e+07 singleton observations)
+(dropped 2.56e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 23,381,204
+Absorbing 3 HDFE groups                           F(   4,    226) =       1.12
+Statistics robust to heteroskedasticity           Prob > F        =     0.3465
+                                                  R-squared       =     0.8710
+                                                  Adj R-squared   =     0.7426
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     1.3443
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0003919   .0009322    -0.42   0.675    -.0022289     .001445
+    tr_dirty |  -.0014042   .0007189    -1.95   0.052    -.0028207    .0000123
+    td_green |   .0027081   .0075771     0.36   0.721    -.0122226    .0176388
+    td_dirty |   .0151892   .0077985     1.95   0.053    -.0001778    .0305562
+       _cons |   9.570504   .0006215  1.5e+04   0.000      9.56928    9.571729
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6700274     6700274           0    *|
+         fdt |   4898166     4898166           0    *|
+          pt |     65919           1       65918     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. if !_rc {
+.     local Ntr   = e(N)
+.     local Gtr   = e(N_clust)
+.     local b_trg = _b[tr_green]
+.     local b_trd = _b[tr_dirty]
+. 
+.     tempvar ey2 etrg etrd etdg2 etdd2
+.     quietly reghdfe ln_export,  absorb(fpd fdt pt) residuals(`ey2')
+.     quietly reghdfe tr_green,   absorb(fpd fdt pt) residuals(`etrg')
+.     quietly reghdfe tr_dirty,   absorb(fpd fdt pt) residuals(`etrd')
+.     quietly reghdfe td_green,   absorb(fpd fdt pt) residuals(`etdg2')
+.     quietly reghdfe td_dirty,   absorb(fpd fdt pt) residuals(`etdd2')
+. 
+.     regress `ey2' `etrg' `etrd' `etdg2' `etdd2', nocons vce(cluster country_c
+> ode)
+
+Linear regression                               Number of obs     =   23381204
+                                                F(4, 226)         =       1.13
+                                                Prob > F          =     0.3451
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .95161
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+    __000006 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    __000007 |  -.0003919   .0009309    -0.42   0.674    -.0022263    .0014424
+    __000008 |  -.0014042   .0007179    -1.96   0.052    -.0028188    .0000104
+    __000009 |   .0027081   .0075664     0.36   0.721    -.0122016    .0176178
+    __00000A |   .0151892    .007788     1.95   0.052    -.0001572    .0305356
+------------------------------------------------------------------------------
+. 
+.     boottest `etrg', reps($BREPS) cluster(country_code) seed(42) nograph
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  __000007
+
+                          t(226) =    -0.4210
+                        Prob>|t| =     0.7027
+
+95% confidence set for null hypothesis expression: [−.004497, .001661]
+.     matrix CI = r(CI)
+.     post `pf' ("TREND_green") (`b_trg') (r(p)) (CI[1,1]) (CI[1,2]) (`Ntr') (`
+> Gtr') ($BREPS)
+. 
+.     boottest `etrd', reps($BREPS) cluster(country_code) seed(42) nograph
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  __000008
+
+                          t(226) =    -1.9561
+                        Prob>|t| =     0.0819
+
+95% confidence set for null hypothesis expression: [−.00457, .0007063]
+.     matrix CI = r(CI)
+.     post `pf' ("TREND_dirty") (`b_trd') (r(p)) (CI[1,1]) (CI[1,2]) (`Ntr') (`
+> Gtr') ($BREPS)
+. }
+
+. else di as error "[WARN] reghdfe TREND fallita (rc=`_rc') - salvo solo WB"
+
+. 
+. postclose `pf'
+
+. 
+. *── 4. Esporta CSV ──────────────────────────────────────────────────────────
+. use "$ROOT/New/Output/OLS$OUTSFX/Bootstrap/_wcb_fullpanel_tmp$OUTSFX.dta", cl
+> ear
+
+. list, clean noobs
+
+           spec         coef       p_wcb       ci_low      ci_high       nobs  
+>  nclust   breps  
+       WB_green   -.00196408   .61146115   -.02994843    .02442139   23381204  
+>     227    9999  
+       WB_dirty   -.00573519   .03480348   -.02643659   -.00080628   23381204  
+>     227    9999  
+    TREND_green   -.00039194   .70267027    -.0044972    .00166069   23381204  
+>     227    9999  
+    TREND_dirty   -.00140422   .08190819   -.00457003    .00070632   23381204  
+>     227    9999  
+
+. export delimited "$OUTCSV", replace
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS_inclHKMO_desta/Bootstrap/wcb_fu
+    > llpanel_inclHKMO_desta.csv not found)
+file C:\Work\projects\Paper_PTA/New/Output/OLS_inclHKMO_desta/Bootstrap/wcb_ful
+> lpanel_inclHKMO_desta.csv saved
+
+. erase "$ROOT/New/Output/OLS$OUTSFX/Bootstrap/_wcb_fullpanel_tmp$OUTSFX.dta"
+
+. di "[OK] wcb_fullpanel$OUTSFX.csv"
+[OK] wcb_fullpanel_inclHKMO_desta.csv
+
+. 
+end of do-file

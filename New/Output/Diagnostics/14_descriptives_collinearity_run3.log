@@ -1,0 +1,26 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+         used (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells 440948 23.6     899580   48.1    701697   37.5
+Vcells 755012  5.8  286032496 2182.3 345481362 2635.9
+Country-year trattati in-sample (HK+MO esclusi): 212
+
+# 10 - Collinearita' EP vs TotalDepth (destinazione-anno, 212 trattati in-sample)
+
+|                         | WB_EP_Depth | TREND_EP_Count |
+|-------------------------|------------:|---------------:|
+| corr grezza con TD      | 0.691        | 0.733           |
+| corr within (FE c+t)    | 0.891        | 0.789           |
+| VIF (da regressione su TD) | 1.92     | 2.16           |
+
+Nota: la corr within approssima la variazione residua sotto FE paese+anno
+(demeaning alternato, 10 iterazioni). Il triple-diff usa questa variazione
+interagita con green/dirty.
+[OK] 14_descriptives_collinearity.md

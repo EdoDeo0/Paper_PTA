@@ -45,8 +45,8 @@ if c(os) == "Unix" {
 }
 
 *-- Variante di campione e depth (identica a 17: tenere allineati i due file) --
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+global PTA_SAMPLE "incl"
+global PTA_DEPTH  "desta"
 global BREPS      9999
 
 * Asse 1 — campione HK/Macao
@@ -155,11 +155,12 @@ tempname pf
 postfile `pf' str16 spec double coef double p_wcb double ci_low double ci_high ///
     double nobs double nclust double breps using "$ROOT/New/Output/OLS$OUTSFX/Bootstrap/_wcb_fullpanel_tmp$OUTSFX.dta", replace
 
-* helper: dopo un boottest, salva la riga. Chiamare con il nome del parametro.
-* (boottest lascia r(p) e r(CI); il coef viene da _b[] della reghdfe corrente)
+* boottest non funziona dopo reghdfe con piu' di un set di FE assorbite.
+* Soluzione FWL: residualizzare ogni variabile su (fpd fdt pt) con reghdfe,
+* poi regress senza FE + boottest. I coefficienti sono identici (teorema FWL).
 
-*── 3a. WB: reghdfe (NO compact) + boottest su green e dirty ─────────────────
-* NB: niente `compact` - boottest richiede il campione di stima intatto.
+*── 3a. WB ──────────────────────────────────────────────────────────────────
+* Point estimates (usati nel CSV; anche come check che il FWL concordi)
 reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
     absorb(fpd fdt pt) vce(cluster country_code)
 local Nwb   = e(N)
@@ -167,15 +168,27 @@ local Gwb   = e(N_clust)
 local b_wbg = _b[wb_green]
 local b_wbd = _b[wb_dirty]
 
-boottest wb_green, reps($BREPS) cluster(country_code) seed(42) nograph
+* FWL: residualizza ogni variabile sulle FE
+tempvar ey ewbg ewbd etdg etdd
+quietly reghdfe ln_export,  absorb(fpd fdt pt) residuals(`ey')
+quietly reghdfe wb_green,   absorb(fpd fdt pt) residuals(`ewbg')
+quietly reghdfe wb_dirty,   absorb(fpd fdt pt) residuals(`ewbd')
+quietly reghdfe td_green,   absorb(fpd fdt pt) residuals(`etdg')
+quietly reghdfe td_dirty,   absorb(fpd fdt pt) residuals(`etdd')
+
+regress `ey' `ewbg' `ewbd' `etdg' `etdd', nocons vce(cluster country_code)
+
+boottest `ewbg', reps($BREPS) cluster(country_code) seed(42) nograph
 matrix CI = r(CI)
 post `pf' ("WB_green") (`b_wbg') (r(p)) (CI[1,1]) (CI[1,2]) (`Nwb') (`Gwb') ($BREPS)
 
-boottest wb_dirty, reps($BREPS) cluster(country_code) seed(42) nograph
+boottest `ewbd', reps($BREPS) cluster(country_code) seed(42) nograph
 matrix CI = r(CI)
 post `pf' ("WB_dirty") (`b_wbd') (r(p)) (CI[1,1]) (CI[1,2]) (`Nwb') (`Gwb') ($BREPS)
 
-*── 3b. TREND: reghdfe (NO compact) + boottest su green e dirty ──────────────
+drop `ey' `ewbg' `ewbd' `etdg' `etdd'
+
+*── 3b. TREND ────────────────────────────────────────────────────────────────
 cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
     absorb(fpd fdt pt) vce(cluster country_code)
 if !_rc {
@@ -184,11 +197,20 @@ if !_rc {
     local b_trg = _b[tr_green]
     local b_trd = _b[tr_dirty]
 
-    boottest tr_green, reps($BREPS) cluster(country_code) seed(42) nograph
+    tempvar ey2 etrg etrd etdg2 etdd2
+    quietly reghdfe ln_export,  absorb(fpd fdt pt) residuals(`ey2')
+    quietly reghdfe tr_green,   absorb(fpd fdt pt) residuals(`etrg')
+    quietly reghdfe tr_dirty,   absorb(fpd fdt pt) residuals(`etrd')
+    quietly reghdfe td_green,   absorb(fpd fdt pt) residuals(`etdg2')
+    quietly reghdfe td_dirty,   absorb(fpd fdt pt) residuals(`etdd2')
+
+    regress `ey2' `etrg' `etrd' `etdg2' `etdd2', nocons vce(cluster country_code)
+
+    boottest `etrg', reps($BREPS) cluster(country_code) seed(42) nograph
     matrix CI = r(CI)
     post `pf' ("TREND_green") (`b_trg') (r(p)) (CI[1,1]) (CI[1,2]) (`Ntr') (`Gtr') ($BREPS)
 
-    boottest tr_dirty, reps($BREPS) cluster(country_code) seed(42) nograph
+    boottest `etrd', reps($BREPS) cluster(country_code) seed(42) nograph
     matrix CI = r(CI)
     post `pf' ("TREND_dirty") (`b_trd') (r(p)) (CI[1,1]) (CI[1,2]) (`Ntr') (`Gtr') ($BREPS)
 }

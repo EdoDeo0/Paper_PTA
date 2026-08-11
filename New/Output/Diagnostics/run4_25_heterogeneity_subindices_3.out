@@ -1,0 +1,31 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+=== WB_GreenLiberalization ===
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+  WB_GreenLiberalization x env_good  : -0.05290 (p=0.5562)
+  WB_GreenLiberalization x dirty_p   : -0.05957 (p=0.2219)
+=== TREND_GreenMarketAccess ===
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+  TREND_GreenMarketAccess x env_good  : -0.04832 (p=0.1027)
+  TREND_GreenMarketAccess x dirty_p   : -0.03372 (p=0.1525)
+=== WB_EnforcementDSM ===
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+  WB_EnforcementDSM x env_good  : -0.06090 (p=0.0542)
+  WB_EnforcementDSM x dirty_p   : +0.04301 (p=0.3630)
+=== TREND_EnforcementDSM ===
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+  TREND_EnforcementDSM x env_good  : -0.00792 (p=0.6212)
+  TREND_EnforcementDSM x dirty_p   : +0.00075 (p=0.9539)
+=== TREND_Hard ===
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+  TREND_Hard x env_good  : -0.00129 (p=0.7740)
+  TREND_Hard x dirty_p   : +0.00018 (p=0.9573)
+=== TREND_Soft ===
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+  TREND_Soft x env_good  : +0.00263 (p=0.8537)
+  TREND_Soft x dirty_p   : +0.00869 (p=0.4732)
+=== TREND_RegulatorySpace ===
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+  TREND_RegulatorySpace x env_good  : +0.00918 (p=0.3996)
+  TREND_RegulatorySpace x dirty_p   : +0.01307 (p=0.0622)
+
+[OK] subindices_collapsed.csv

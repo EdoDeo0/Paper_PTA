@@ -1,0 +1,22 @@
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 18 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+[cache] senza_144 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)

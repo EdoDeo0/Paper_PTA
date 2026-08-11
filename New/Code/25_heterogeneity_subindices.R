@@ -65,7 +65,7 @@ stima_sub <- function(cache_fst, green_file, dirty_file, depth_file, idx_file, s
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   cell[dirty, on = "hs6", dirty_p := i.dirty_p]
   cell[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = as.numeric(get(depth_var)))]
   cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
   if (depth_drop_unmeasured) {
     n0 <- nrow(cell)
@@ -96,11 +96,16 @@ for (s in SUBS) {
   if (file.exists(rds)) {
     r <- readRDS(rds)
   } else {
-    r <- tryCatch(callr::r(stima_sub, args = list(
+    ## In-process, come 20 e 29: dentro callr::r() l'allocatore crasha in modo
+    ## casuale ("callr subprocess ... has crashed or was killed") e ogni run
+    ## perdeva 2-3 sotto-indici DIVERSI, uscendo comunque con exit 0. La
+    ## protezione e' la cache .rds per modello + il controllo di completezza
+    ## in fondo, non l'isolamento del sottoprocesso.
+    r <- tryCatch(stima_sub(
       cache_fst = CACHE_FST, green_file = GREEN_FILE, dirty_file = DIRTY_FILE,
       depth_file = DEPTH_FILE, idx_file = IDX_FILE, sub_var = s,
       depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
-    )), error = function(e) { cat("[FALLITO]", s, "\n"); NULL })
+    ), error = function(e) { cat("[FALLITO]", s, "-", conditionMessage(e), "\n"); NULL })
     if (!is.null(r)) saveRDS(r, rds)
   }
   if (!is.null(r)) {
@@ -112,6 +117,13 @@ for (s in SUBS) {
                             se = r$se, pval = r$pval, nobs = r$nobs)
   }
 }
+## Fallire rumorosamente: senza questo controllo il CSV usciva parziale con
+## exit 0, e ogni run perdeva sotto-indici diversi senza che si notasse.
+mancanti <- setdiff(SUBS, names(rows))
+if (length(mancanti))
+  stop(sprintf("sotto-indici incompleti: %d mancanti (%s) - rilanciare, la cache .rds conserva i riusciti",
+               length(mancanti), paste(mancanti, collapse = ", ")))
+
 out <- rbindlist(rows)
 fwrite(out, out_path(here("New/Output/TripleDiff/Tables/subindices_collapsed.csv")))
 cat("\n[OK] subindices_collapsed.csv\n")

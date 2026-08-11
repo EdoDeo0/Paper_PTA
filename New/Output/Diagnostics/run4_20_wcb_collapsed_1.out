@@ -1,0 +1,19 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+Panel: 3,852,280 celle | 238 cluster (paesi)
+
+[WB] coef lm demeanato: ep_green -0.006748 | ep_dirty -0.008198 (attesi = 12)
+  boottest: ep_green ... p_wcb = 0.4879
+  boottest: ep_dirty ... p_wcb = 0.1977
+
+[TREND] coef lm demeanato: ep_green +0.000172 | ep_dirty +0.000839 (attesi = 12)
+  boottest: ep_green ... p_wcb = 0.9447
+  boottest: ep_dirty ... p_wcb = 0.6236
+
+[OK] wcb_collapsed.csv
+    treat     term          coef     p_wcb     conf_low   conf_high     B
+   <char>   <char>         <num>     <num>        <num>       <num> <int>
+1:     WB ep_green -0.0067480630 0.4879488 -0.016970496 0.016217166  9999
+2:     WB ep_dirty -0.0081983608 0.1977198 -0.018582451 0.025143919  9999
+3:  TREND ep_green  0.0001718769 0.9446945 -0.003487385 0.007781235  9999
+4:  TREND ep_dirty  0.0008386584 0.6235624 -0.002216571 0.006982177  9999

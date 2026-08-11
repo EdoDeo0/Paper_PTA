@@ -1,0 +1,29 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+=== WB_GreenLiberalization ===
+[FALLITO] WB_GreenLiberalization 
+=== TREND_GreenMarketAccess ===
+  TREND_GreenMarketAccess x env_good  : -0.02896 (p=0.3163)
+  TREND_GreenMarketAccess x dirty_p   : -0.05430 (p=0.0040)
+=== WB_EnforcementDSM ===
+[FALLITO] WB_EnforcementDSM 
+=== TREND_EnforcementDSM ===
+  TREND_EnforcementDSM x env_good  : +0.00316 (p=0.8438)
+  TREND_EnforcementDSM x dirty_p   : -0.00864 (p=0.4538)
+=== TREND_Hard ===
+  TREND_Hard x env_good  : +0.00170 (p=0.7189)
+  TREND_Hard x dirty_p   : -0.00234 (p=0.4235)
+=== TREND_Soft ===
+  TREND_Soft x env_good  : +0.01322 (p=0.3136)
+  TREND_Soft x dirty_p   : -0.00155 (p=0.8790)
+=== TREND_RegulatorySpace ===
+[FALLITO] TREND_RegulatorySpace 
+
+[OK] subindices_collapsed.csv

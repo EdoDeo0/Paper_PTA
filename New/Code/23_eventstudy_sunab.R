@@ -165,7 +165,7 @@ for (cy in coorti$entry_year) {
   dat <- gap[entry_year != cy]
   m <- tryCatch(feols(gap_dirty ~ sunab(entry_year, year) | country_code + year,
                       data = dat, weights = ~n_tot, cluster = ~country_code),
-                error = function(e) NULL)
+                error = function(e) { cat("[FALLITO] coorte", cy, "-", conditionMessage(e), "\n"); NULL })
   if (is.null(m)) next
   cf <- coef(m); nm <- grep("year::-6$", names(cf), value = TRUE)
   if (length(nm) == 1) {
@@ -174,6 +174,12 @@ for (cy in coorti$entry_year) {
                                           se = se(m)[[nm]], pval = pvalue(m)[[nm]])
   }
 }
+## Non blocca (una coorte puo' legittimamente non essere stimabile), ma la
+## mancanza deve essere VISIBILE: prima usciva un loo piu' corto in silenzio.
+cat(sprintf("[loo] coorti stimate: %d/%d\n", length(loo), nrow(coorti)))
+if (length(loo) < nrow(coorti))
+  cat("[ATTENZIONE] leave-one-cohort-out incompleto:",
+      paste(setdiff(as.character(coorti$entry_year), names(loo)), collapse = ", "), "\n")
 diag_rows$loo <- rbindlist(loo)
 
 diag_out <- rbindlist(diag_rows, use.names = TRUE)

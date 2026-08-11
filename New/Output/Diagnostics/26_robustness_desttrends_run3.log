@@ -1,0 +1,40 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Stima WB_EP_Depth (tentativo 1)...
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+
+NOTE: 89,080/83/3,855/4 fixed-effect singletons were removed (92,114 observations).
+
+Stima TREND_EP_Count (tentativo 1)...
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+
+NOTE: 89,080/83/3,855/4 fixed-effect singletons were removed (92,114 observations).
+
+            treat                       term          coef           se
+           <char>                     <char>         <num>        <num>
+1:    WB_EP_Depth       WB_EP_Depth:env_good  0.0008432598 0.0046663099
+2:    WB_EP_Depth        WB_EP_Depth:dirty_p -0.0102961921 0.0025734552
+3:    WB_EP_Depth env_good:DESTA_depth_index -0.0061446775 0.0085304511
+4:    WB_EP_Depth  dirty_p:DESTA_depth_index  0.0251866147 0.0047448970
+5: TREND_EP_Count    TREND_EP_Count:env_good -0.0011137021 0.0005719965
+6: TREND_EP_Count     TREND_EP_Count:dirty_p -0.0023118545 0.0007078975
+7: TREND_EP_Count env_good:DESTA_depth_index  0.0039942086 0.0073807603
+8: TREND_EP_Count  dirty_p:DESTA_depth_index  0.0232575338 0.0088406496
+           pval    nobs
+          <num>   <int>
+1: 8.567546e-01 3677333
+2: 8.542181e-05 3677333
+3: 4.720674e-01 3677333
+4: 2.632233e-07 3677333
+5: 5.276298e-02 3677333
+6: 1.260386e-03 3677333
+7: 5.889246e-01 3677333
+8: 9.103162e-03 3677333
+[OK] r79_desttrends.csv

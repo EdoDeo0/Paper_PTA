@@ -1,0 +1,40 @@
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Paesi trattati: 23 
+Righe gia' presenti da un run precedente: 18 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+[cache] senza_144 
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+senza_322     : -0.01122 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+senza_331     : -0.01145 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+senza_412     : -0.01037 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+senza_415     : -0.01088 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+senza_434     : -0.01215 (p=0.0000)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+senza_601     : -0.01100 (p=0.0011)
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+senza_609     : -0.01126 (p=0.0000)
+
+=== VERDETTO leave-one-out ===
+Cambi di segno: 0/23 | p>0.10: 1/23
+Significativita' persa togliendo: 133 
+[OK] dirty_leaveoneout.csv

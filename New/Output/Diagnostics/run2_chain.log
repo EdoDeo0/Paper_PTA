@@ -4229,3 +4229,1224 @@ Esecuzione interrotta
 [ABORT] 29_robustness_co2intensity.R exit=1
 RESUME Run2 da 29 (22:19:40)
 [START] 29_robustness_co2intensity.R
+=== Run 2 resume 2026-08-10 10:25:18 ===
+[START t1] 29_robustness_co2intensity.R 10:25:18
+here() starts at C:/Work/projects/Paper_PTA
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Stima CO2 continuo (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+
+[WB] asintotico: ep_co2 -0.00485 (p=0.453) | ep_green +0.00044 (p=0.956)
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+[CRASH] ! in callr subprocess.
+Caused by error in `model.frame.default(y ~ 0 + ep_green + ep_co2 + td_green + td_co2 + …`:
+! 'data' dev'essere un data.frame, un ambiente o una lista 
+Stima CO2 continuo (tentativo 2)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 3)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 4)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[CRASH ec=-1] 29_robustness_co2intensity.R
+[START t2] 29_robustness_co2intensity.R 17:30:45
+here() starts at C:/Work/projects/Paper_PTA
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Stima CO2 continuo (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 2)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 3)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 4)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Errore: Fallito dopo 4 tentativi
+Esecuzione interrotta
+[CRASH ec=1] 29_robustness_co2intensity.R
+[START t3] 29_robustness_co2intensity.R 17:31:00
+=== Run 2 rilancio (fix rm/df) 2026-08-10 17:31:31 ===
+[START t1] 29_robustness_co2intensity.R 17:31:31
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:16 car:9
++         & $rscript --vanilla $f.FullName 2>&1 | Out-File -Append -Enc ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Stima CO2 continuo (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 2)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 3)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 4)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Errore: Fallito dopo 4 tentativi
+Esecuzione interrotta
+[CRASH ec=1] 29_robustness_co2intensity.R
+[START t2] 29_robustness_co2intensity.R 17:31:50
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:16 car:9
++         & $rscript --vanilla $f.FullName 2>&1 | Out-File -Append -Enc ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Stima CO2 continuo (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+*** recursive gc invocation
+
+[CRASH] ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+Stima CO2 continuo (tentativo 2)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+
+[WB] asintotico: ep_co2 -0.00485 (p=0.453) | ep_green +0.00044 (p=0.956)
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+  [WB] ep_green: p_wcb = 0.9607
+
+  [WB] ep_co2: p_wcb = 0.5308
+
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+
+[CRASH ec=-1] 29_robustness_co2intensity.R
+[START t3] 29_robustness_co2intensity.R 17:32:24
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:16 car:9
++         & $rscript --vanilla $f.FullName 2>&1 | Out-File -Append -Enc ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Stima CO2 continuo (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+
+[WB] asintotico: ep_co2 -0.00485 (p=0.453) | ep_green +0.00044 (p=0.956)
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+  [WB] ep_green: p_wcb = 0.9607
+
+  [WB] ep_co2: p_wcb = 0.5227
+
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+
+[TREND] asintotico: ep_co2 -0.00136 (p=0.013) | ep_green +0.00086 (p=0.620)
+
+  [TREND] ep_green: p_wcb = 0.6971
+
+  [TREND] ep_co2: p_wcb = 0.0563
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+    treat     term          coef       se_asy      p_asy      p_wcb
+   <char>   <char>         <num>        <num>      <num>      <num>
+1:     WB ep_green  0.0004448978 0.0081118191 0.95630927 0.96069607
+2:     WB   ep_co2 -0.0048512898 0.0064493380 0.45269416 0.52265227
+3:  TREND ep_green  0.0008613834 0.0017341951 0.61987358 0.69706971
+4:  TREND   ep_co2 -0.0013550792 0.0005423836 0.01317888 0.05630563
+       conf_low    conf_high    nobs     B
+          <num>        <num>   <int> <int>
+1: -0.018426823 3.962941e-02 3769187  9999
+2: -0.046252968 7.613964e-03 3769187  9999
+3: -0.002671828 5.938666e-03 3769187  9999
+4: -0.002776468 5.054377e-05 3769187  9999
+[OK] r711_shapiro_intensity.csv
+[EXIT] 29_robustness_co2intensity.R 17:33:18
+[START t1] 30_robustness_extensive_ppml.R 17:33:18
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:16 car:9
++         & $rscript --vanilla $f.FullName 2>&1 | Out-File -Append -Enc ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+=== PPML WB ===
+[CRASH ec=-1] 30_robustness_extensive_ppml.R
+[START t2] 30_robustness_extensive_ppml.R 17:37:00
+=== RUN2-FINALE 2026-08-10 17:39:29 ===
+[START t1] 29_robustness_co2intensity.R 17:39:29
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:11 car:9
++         & $rscript --vanilla $f.FullName 2>&1 | Out-File -Append -Enc ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Stima CO2 continuo...
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+*** recursive gc invocation
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+[WB] asintotico: ep_co2 -0.00485 (p=0.453) | ep_green +0.00044 (p=0.956)
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+  [WB] ep_green: p_wcb = 0.9613
+  [WB] ep_co2: p_wcb = 0.5357
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+[TREND] asintotico: ep_co2 -0.00136 (p=0.013) | ep_green +0.00086 (p=0.620)
+  [TREND] ep_green: p_wcb = 0.6888
+  [TREND] ep_co2: p_wcb = 0.0590
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+    treat     term          coef       se_asy      p_asy     p_wcb     conf_low
+   <char>   <char>         <num>        <num>      <num>     <num>        <num>
+1:     WB ep_green  0.0004448978 0.0081118191 0.95630927 0.9612961 -0.018389339
+2:     WB   ep_co2 -0.0048512898 0.0064493380 0.45269416 0.5356536 -0.047624976
+3:  TREND ep_green  0.0008613834 0.0017341951 0.61987358 0.6887689 -0.002605660
+4:  TREND   ep_co2 -0.0013550792 0.0005423836 0.01317888 0.0590059 -0.002784568
+      conf_high    nobs     B
+          <num>   <int> <int>
+1: 3.949365e-02 3769187  9999
+2: 7.652958e-03 3769187  9999
+3: 5.898253e-03 3769187  9999
+4: 6.796945e-05 3769187  9999
+[OK] r711_shapiro_intensity.csv
+[EXIT] 29_robustness_co2intensity.R 17:40:23
+[START t1] 30_robustness_extensive_ppml.R 17:40:23
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:11 car:9
++         & $rscript --vanilla $f.FullName 2>&1 | Out-File -Append -Enc ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+=== PPML WB ===
+                               coef    pval
+WB_EP_Depth:env_good        0.00294 0.63130
+WB_EP_Depth:dirty_p        -0.02675 0.13467
+env_good:TotalDepth_nonEnv  0.00001 0.97512
+dirty_p:TotalDepth_nonEnv   0.00069 0.42484
+=== PPML TREND ===
+                               coef    pval
+TREND_EP_Count:env_good    -0.00007 0.97169
+TREND_EP_Count:dirty_p      0.00484 0.33694
+env_good:TotalDepth_nonEnv  0.00016 0.73422
+dirty_p:TotalDepth_nonEnv  -0.00126 0.25644
+[OK] ppml_extensive.csv
+[EXIT] 30_robustness_extensive_ppml.R 17:47:23
+[START t1] 31_robustness_leaveoneout.R 17:47:23
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:11 car:9
++         & $rscript --vanilla $f.FullName 2>&1 | Out-File -Append -Enc ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+[CRASH tentativo 1 ] baseline 
+[CRASH tentativo 2 ] baseline 
+baseline      : -0.01887 (p=0.0022)
+[CRASH tentativo 1 ] lista_estesa 
+[CRASH tentativo 2 ] lista_estesa 
+lista_estesa  : -0.01914 (p=0.0055)
+[CRASH tentativo 1 ] senza_103 
+[CRASH tentativo 2 ] senza_103 
+senza_103     : -0.01884 (p=0.0023)
+[CRASH tentativo 1 ] senza_105 
+[CRASH tentativo 2 ] senza_105 
+[CRASH tentativo 3 ] senza_105 
+senza_105     : -0.01887 (p=0.0022)
+[CRASH tentativo 1 ] senza_106 
+[CRASH tentativo 2 ] senza_106 
+[CRASH tentativo 3 ] senza_106 
+[CRASH tentativo 4 ] senza_106 
+[FALLITO dopo 4 tentativi] senza_106 
+[CRASH tentativo 1 ] senza_107 
+[CRASH tentativo 2 ] senza_107 
+senza_107     : -0.01886 (p=0.0021)
+[CRASH tentativo 1 ] senza_110 
+[CRASH tentativo 2 ] senza_110 
+[CRASH tentativo 3 ] senza_110 
+[CRASH tentativo 4 ] senza_110 
+[FALLITO dopo 4 tentativi] senza_110 
+[CRASH tentativo 1 ] senza_111 
+senza_111     : -0.01899 (p=0.0018)
+[CRASH tentativo 1 ] senza_112 
+[CRASH tentativo 2 ] senza_112 
+[CRASH tentativo 3 ] senza_112 
+senza_112     : -0.01900 (p=0.0023)
+[CRASH tentativo 1 ] senza_119 
+[CRASH tentativo 2 ] senza_119 
+[CRASH tentativo 3 ] senza_119 
+[CRASH tentativo 4 ] senza_119 
+[FALLITO dopo 4 tentativi] senza_119 
+senza_121     : -0.01833 (p=0.0034)
+[CRASH tentativo 1 ] senza_122 
+[CRASH tentativo 2 ] senza_122 
+[CRASH tentativo 3 ] senza_122 
+[CRASH tentativo 4 ] senza_122 
+[FALLITO dopo 4 tentativi] senza_122 
+senza_127     : -0.01828 (p=0.0023)
+[CRASH tentativo 1 ] senza_129 
+[CRASH tentativo 2 ] senza_129 
+[CRASH tentativo 3 ] senza_129 
+[CRASH tentativo 4 ] senza_129 
+[FALLITO dopo 4 tentativi] senza_129 
+[CRASH tentativo 1 ] senza_132 
+[CRASH tentativo 2 ] senza_132 
+[CRASH tentativo 3 ] senza_132 
+[CRASH tentativo 4 ] senza_132 
+[FALLITO dopo 4 tentativi] senza_132 
+[CRASH tentativo 1 ] senza_133 
+[CRASH tentativo 2 ] senza_133 
+[CRASH tentativo 3 ] senza_133 
+[CRASH tentativo 4 ] senza_133 
+[FALLITO dopo 4 tentativi] senza_133 
+[CRASH tentativo 1 ] senza_134 
+[CRASH tentativo 2 ] senza_134 
+senza_134     : -0.01893 (p=0.0023)
+[CRASH tentativo 1 ] senza_136 
+[CRASH tentativo 2 ] senza_136 
+[CRASH tentativo 3 ] senza_136 
+[CRASH tentativo 4 ] senza_136 
+[FALLITO dopo 4 tentativi] senza_136 
+senza_141     : -0.01916 (p=0.0024)
+[CRASH tentativo 1 ] senza_144 
+[CRASH tentativo 2 ] senza_144 
+[CRASH tentativo 3 ] senza_144 
+[CRASH tentativo 4 ] senza_144 
+[FALLITO dopo 4 tentativi] senza_144 
+[CRASH tentativo 1 ] senza_322 
+[CRASH tentativo 2 ] senza_322 
+[CRASH tentativo 3 ] senza_322 
+[CRASH tentativo 4 ] senza_322 
+[FALLITO dopo 4 tentativi] senza_322 
+[CRASH tentativo 1 ] senza_331 
+[CRASH tentativo 2 ] senza_331 
+senza_331     : -0.02086 (p=0.0023)
+[CRASH tentativo 1 ] senza_412 
+senza_412     : -0.01905 (p=0.0021)
+[CRASH tentativo 1 ] senza_415 
+senza_415     : -0.01850 (p=0.0026)
+[CRASH tentativo 1 ] senza_434 
+[CRASH tentativo 2 ] senza_434 
+senza_434     : -0.02037 (p=0.0016)
+senza_601     : -0.02454 (p=0.0401)
+senza_609     : -0.01904 (p=0.0028)
+
+=== VERDETTO leave-one-out ===
+Cambi di segno: 0/15 | p>0.10: 0/15
+[OK] dirty_leaveoneout.csv
+[EXIT] 31_robustness_leaveoneout.R 17:51:59
+[DONE-FINALE] Run 2 completata 17:51:59
+=== RUN2-31-RIFATTO 17:54:00 ===
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:7 car:1
++ & $rscript --vanilla "$repo\New\Code\31_robustness_leaveoneout.R" 2>& ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+*** recursive gc invocation
+*** recursive gc invocation
+[ESITO-31] exit=-1073741819 17:54:04
+=== RUN2-31-v3 (callr + 2 thread + 10 retry) 17:54:44 ===
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In riga:7 car:5
++     & $rscript --vanilla "$repo\New\Code\31_robustness_leaveoneout.R" ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+[CRASH tentativo 1 ] baseline 
+[CRASH tentativo 2 ] baseline 
+[CRASH tentativo 3 ] baseline 
+[CRASH tentativo 4 ] baseline 
+[CRASH tentativo 5 ] baseline 
+[CRASH tentativo 6 ] baseline 
+[CRASH tentativo 7 ] baseline 
+[CRASH tentativo 8 ] baseline 
+[CRASH tentativo 9 ] baseline 
+[CRASH tentativo 10 ] baseline 
+[FALLITO dopo 4 tentativi] baseline 
+[CRASH tentativo 1 ] lista_estesa 
+[CRASH tentativo 2 ] lista_estesa 
+[CRASH tentativo 3 ] lista_estesa 
+[CRASH tentativo 4 ] lista_estesa 
+[CRASH tentativo 5 ] lista_estesa 
+[CRASH tentativo 6 ] lista_estesa 
+[CRASH tentativo 7 ] lista_estesa 
+[CRASH tentativo 8 ] lista_estesa 
+[CRASH tentativo 9 ] lista_estesa 
+[CRASH tentativo 10 ] lista_estesa 
+[FALLITO dopo 4 tentativi] lista_estesa 
+[CRASH tentativo 1 ] senza_103 
+senza_103     : -0.01884 (p=0.0023)
+senza_105     : -0.01887 (p=0.0022)
+[CRASH tentativo 1 ] senza_106 
+[CRASH tentativo 2 ] senza_106 
+senza_106     : -0.01880 (p=0.0022)
+senza_107     : -0.01886 (p=0.0021)
+[CRASH tentativo 1 ] senza_110 
+[CRASH tentativo 2 ] senza_110 
+[CRASH tentativo 3 ] senza_110 
+[CRASH tentativo 4 ] senza_110 
+[retry-esterno 1] exit=-1
+=== RUN2-31-v4 (in-process + riavvio esterno + resume) 20:45:22 ===
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+*** recursive gc invocation
+[giro 1] exit=-1073741819 | spec completate: 12/27 | 20:45:27
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 12 
+*** recursive gc invocation
+[giro 2] exit=-1073741819 | spec completate: 12/27 | 20:45:32
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 12 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 3] exit=-1073741819 | spec completate: 13/27 | 20:45:38
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 13 
+*** recursive gc invocation
+[giro 4] exit=-1073741819 | spec completate: 13/27 | 20:45:43
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 13 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 5] exit=-1073741819 | spec completate: 14/27 | 20:45:48
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 14 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 6] exit=-1073741819 | spec completate: 14/27 | 20:45:54
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 14 
+*** recursive gc invocation
+[giro 7] exit=-1073741819 | spec completate: 15/27 | 20:45:58
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 15 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 8] exit=-1073741819 | spec completate: 16/27 | 20:46:04
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 9] exit=-1073741819 | spec completate: 16/27 | 20:46:09
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 10] exit=-1073741819 | spec completate: 16/27 | 20:46:13
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 11] exit=-1073741819 | spec completate: 16/27 | 20:46:18
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 12] exit=-1073741819 | spec completate: 16/27 | 20:46:23
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 13] exit=-1073741819 | spec completate: 16/27 | 20:46:27
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 14] exit=-1073741819 | spec completate: 16/27 | 20:46:32
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 15] exit=-1073741819 | spec completate: 16/27 | 20:46:36
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 16] exit=-1073741819 | spec completate: 16/27 | 20:46:41
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 17] exit=-1073741819 | spec completate: 16/27 | 20:46:45
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 18] exit=-1073741819 | spec completate: 16/27 | 20:46:50
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 19] exit=-1073741819 | spec completate: 16/27 | 20:46:54
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 20] exit=-1073741819 | spec completate: 16/27 | 20:46:59
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 21] exit=-1073741819 | spec completate: 16/27 | 20:47:03
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 22] exit=-1073741819 | spec completate: 16/27 | 20:47:08
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 23] exit=-1073741819 | spec completate: 16/27 | 20:47:12
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 24] exit=-1073741819 | spec completate: 16/27 | 20:47:16
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+*** recursive gc invocation
+[giro 25] exit=-1073741819 | spec completate: 16/27 | 20:47:20
+[ESITO-31-v4] completato=False 20:47:20
+=== RUN2-31-v4 (in-process + riavvio esterno + resume) 20:55:33 ===
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+*** recursive gc invocation
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+baseline      : -0.01887 (p=0.0022)
+NOTE: 89,998/83/3,516 fixed-effect singletons were removed (92,851 observations).
+lista_estesa  : -0.01914 (p=0.0055)
+NOTE: 89,631/83/3,520 fixed-effect singletons were removed (92,489 observations).
+senza_103     : -0.01884 (p=0.0023)
+*** recursive gc invocation
+NOTE: 89,441/83/3,514 fixed-effect singletons were removed (92,294 observations).
+senza_105     : -0.01887 (p=0.0022)
+NOTE: 89,542/83/3,549 fixed-effect singletons were removed (92,431 observations).
+senza_106     : -0.01880 (p=0.0022)
+NOTE: 89,498/83/3,520 fixed-effect singletons were removed (92,354 observations).
+senza_107     : -0.01886 (p=0.0021)
+*** recursive gc invocation
+NOTE: 89,904/83/3,882 fixed-effect singletons were removed (92,992 observations).
+senza_110     : -0.01286 (p=0.0000)
+NOTE: 89,766/83/3,558 fixed-effect singletons were removed (92,660 observations).
+senza_111     : -0.01899 (p=0.0018)
+NOTE: 89,769/83/3,576 fixed-effect singletons were removed (92,673 observations).
+senza_112     : -0.01900 (p=0.0023)
+NOTE: 89,438/83/3,522 fixed-effect singletons were removed (92,298 observations).
+senza_119     : -0.01887 (p=0.0022)
+NOTE: 89,522/83/3,627 fixed-effect singletons were removed (92,480 observations).
+senza_121     : -0.01833 (p=0.0034)
+NOTE: 89,757/83/3,574 fixed-effect singletons were removed (92,664 observations).
+senza_122     : -0.01954 (p=0.0028)
+NOTE: 89,667/83/3,516 fixed-effect singletons were removed (92,521 observations).
+senza_127     : -0.01828 (p=0.0023)
+NOTE: 89,687/83/3,531 fixed-effect singletons were removed (92,556 observations).
+senza_129     : -0.01891 (p=0.0025)
+NOTE: 89,750/83/3,580 fixed-effect singletons were removed (92,657 observations).
+senza_132     : -0.01659 (p=0.0024)
+NOTE: 89,823/83/3,640 fixed-effect singletons were removed (92,773 observations).
+senza_133     : -0.02247 (p=0.0467)
+[giro 1] exit=-1073741819 | spec completate: 16/27 | 20:57:32
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 16 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_110 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_121 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+NOTE: 89,623/83/3,513 fixed-effect singletons were removed (92,475 observations).
+senza_134     : -0.01893 (p=0.0023)
+NOTE: 89,716/83/3,544 fixed-effect singletons were removed (92,600 observations).
+senza_136     : -0.01891 (p=0.0021)
+NOTE: 89,759/83/3,581 fixed-effect singletons were removed (92,673 observations).
+senza_141     : -0.01916 (p=0.0024)
+[giro 2] exit=-1073741819 | spec completate: 19/27 | 20:57:57
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 19 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_110 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_121 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+NOTE: 89,559/83/3,516 fixed-effect singletons were removed (92,412 observations).
+senza_144     : -0.01887 (p=0.0022)
+[giro 3] exit=-1073741819 | spec completate: 20/27 | 20:58:09
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 20 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_110 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_121 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+[cache] senza_144 
+NOTE: 89,605/83/3,517 fixed-effect singletons were removed (92,458 observations).
+senza_322     : -0.01886 (p=0.0022)
+NOTE: 89,543/83/3,539 fixed-effect singletons were removed (92,417 observations).
+senza_331     : -0.02086 (p=0.0023)
+*** recursive gc invocation
+NOTE: 89,693/83/3,519 fixed-effect singletons were removed (92,550 observations).
+senza_412     : -0.01905 (p=0.0021)
+NOTE: 89,589/83/3,515 fixed-effect singletons were removed (92,442 observations).
+senza_415     : -0.01850 (p=0.0026)
+NOTE: 89,629/83/3,519 fixed-effect singletons were removed (92,485 observations).
+senza_434     : -0.02037 (p=0.0016)
+[giro 4] exit=-1073741819 | spec completate: 25/27 | 20:58:49
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31.ps1:13 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 25 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_110 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_121 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+[cache] senza_144 
+[cache] senza_322 
+[cache] senza_331 
+[cache] senza_412 
+[cache] senza_415 
+[cache] senza_434 
+NOTE: 89,755/83/3,563 fixed-effect singletons were removed (92,648 observations).
+senza_601     : -0.02454 (p=0.0401)
+*** recursive gc invocation
+*** recursive gc invocation
+[giro 5] exit=-1073741819 | spec completate: 26/27 | 20:59:01
+[ESITO-31-v4] completato=False 20:59:01
+=== RUN2-31-FINISH (resume, nessuna cancellazione) 20:59:49 ===
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run31_finish.ps1:11 car:5
++     & $rscript --vanilla $script 2>&1 | Out-File -Append -Encoding ut ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+Paesi trattati: 25 
+Righe gia' presenti da un run precedente: 26 
+[cache] baseline 
+[cache] lista_estesa 
+[cache] senza_103 
+[cache] senza_105 
+[cache] senza_106 
+[cache] senza_107 
+[cache] senza_110 
+[cache] senza_111 
+[cache] senza_112 
+[cache] senza_119 
+[cache] senza_121 
+[cache] senza_122 
+[cache] senza_127 
+[cache] senza_129 
+[cache] senza_132 
+[cache] senza_133 
+[cache] senza_134 
+[cache] senza_136 
+[cache] senza_141 
+[cache] senza_144 
+[cache] senza_322 
+[cache] senza_331 
+[cache] senza_412 
+[cache] senza_415 
+[cache] senza_434 
+[cache] senza_601 
+NOTE: 89,612/83/3,523 fixed-effect singletons were removed (92,473 observations).
+senza_609     : -0.01904 (p=0.0028)
+
+=== VERDETTO leave-one-out ===
+Cambi di segno: 0/25 | p>0.10: 0/25
+[OK] dirty_leaveoneout.csv
+[finish 1] exit=0 | spec: 27/27 | 20:59:57
+[ESITO-31-FINISH] completato=True 20:59:57

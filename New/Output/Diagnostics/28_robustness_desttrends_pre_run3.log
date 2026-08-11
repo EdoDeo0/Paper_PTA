@@ -1,0 +1,85 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Variante pre-period trends (tentativo 1)...
+
+
+Please cite as: 
+
+
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+
+ Bootstrap Inference for Linear Regression Models.
+
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+
+Slope pre-periodo stimate per 236 destinazioni (0 imposto alle altre)
+
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+
+[WB] asintotico: ep_green +0.01719 (p=0.089) | ep_dirty +0.07109 (p=0.027)
+
+Too guarantee reproducibility, don't forget to set a global random seed
+
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+
+This message is displayed once every 8 hours.
+
+  [WB] ep_green: p_wcb = 0.5355
+
+  [WB] ep_dirty: p_wcb = 0.4143
+
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+
+[TREND] asintotico: ep_green +0.00775 (p=0.074) | ep_dirty +0.01839 (p=0.003)
+
+  [TREND] ep_green: p_wcb = 0.1745
+
+  [TREND] ep_dirty: p_wcb = 0.1684
+
+Messaggio di avvertimento:
+
+Please note that the seeding behavior for random number generation for
+
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+
+
+It will no longer be possible to exactly reproduce results produced by versions
+
+lower than 0.13.
+
+
+
+If your prior results were produced under sufficiently many bootstrap
+
+iterations, none of your conclusions will change. For more details about this
+
+change, please read the notes in
+
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+
+This warning is displayed once per session. 
+
+    treat     term        coef      se_asy       p_asy     p_wcb     conf_low
+   <char>   <char>       <num>       <num>       <num>     <num>        <num>
+1:     WB ep_green 0.017185881 0.010062221 0.089010647 0.5354535 -0.039409234
+2:     WB ep_dirty 0.071092143 0.031912816 0.026881718 0.4143414 -0.121048426
+3:  TREND ep_green 0.007745836 0.004318959 0.074232067 0.1745175 -0.005315011
+4:  TREND ep_dirty 0.018387463 0.006020376 0.002526153 0.1684168 -0.004819642
+    conf_high    nobs     B
+        <num>   <int> <int>
+1: 0.09117165 3677333  9999
+2: 0.29453834 3677333  9999
+3: 0.02156150 3677333  9999
+4: 0.02914955 3677333  9999
+[OK] r79c_pretrends.csv

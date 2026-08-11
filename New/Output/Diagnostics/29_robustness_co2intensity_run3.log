@@ -1,0 +1,110 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Stima CO2 continuo...
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Stima CO2 continuo...
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+*** recursive gc invocation
+*** recursive gc invocation
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_chain.ps1:30 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Stima CO2 continuo...
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_resume.ps1:13 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+Stima CO2 continuo...
+
+Please cite as: 
+
+ Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.
+ Bootstrap Inference for Linear Regression Models.
+ Available from https://cran.r-project.org/package=fwildclusterboot/.
+[depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%)
+*** recursive gc invocation
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+[WB] asintotico: ep_co2 +0.00128 (p=0.682) | ep_green -0.00248 (p=0.616)
+Too guarantee reproducibility, don't forget to set a global random seed
+**both** via `set.seed()` and `dqrng::dqset.seed()`.
+This message is displayed once every 8 hours.
+  [WB] ep_green: p_wcb = 0.7987
+  [WB] ep_co2: p_wcb = 0.7658
+NOTE: 89,080/83/3,855 fixed-effect singletons were removed (92,114 observations).
+[TREND] asintotico: ep_co2 -0.00083 (p=0.033) | ep_green +0.00106 (p=0.550)
+  [TREND] ep_green: p_wcb = 0.6601
+  [TREND] ep_co2: p_wcb = 0.0802
+Messaggio di avvertimento:
+Please note that the seeding behavior for random number generation for
+`boottest()` has changed with `fwildclusterboot` version 0.13.
+
+It will no longer be possible to exactly reproduce results produced by versions
+lower than 0.13.
+
+If your prior results were produced under sufficiently many bootstrap
+iterations, none of your conclusions will change. For more details about this
+change, please read the notes in
+[news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+This warning is displayed once per session. 
+    treat     term          coef       se_asy     p_asy      p_wcb     conf_low
+   <char>   <char>         <num>        <num>     <num>      <num>        <num>
+1:     WB ep_green -0.0024783284 0.0049379160 0.6162260 0.79867987 -0.010737927
+2:     WB   ep_co2  0.0012768857 0.0031115551 0.6819224 0.76577658 -0.007423433
+3:  TREND ep_green  0.0010641133 0.0017758980 0.5496389 0.66006601 -0.002073987
+4:  TREND   ep_co2 -0.0008277034 0.0003864133 0.0332570 0.08020802 -0.001983008
+      conf_high    nobs     B
+          <num>   <int> <int>
+1: 0.0318445606 3677333  9999
+2: 0.0194014847 3677333  9999
+3: 0.0076706475 3677333  9999
+4: 0.0002367691 3677333  9999
+[OK] r711_shapiro_intensity.csv

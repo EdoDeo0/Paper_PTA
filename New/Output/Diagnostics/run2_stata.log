@@ -1,0 +1,10 @@
+﻿=== RUN2 STATA (incl + totaldepth) avvio 2026-08-10 21:12:33 ===
+[START] 17_main_tripledd_fullpanel  21:12:33
+[STOP-DOPO-17] wrapper chiuso su richiesta utente, 18 NON verra' lanciato 21:18:29
+[START] 18_robustness_fullpanel  21:41:24
+[EXIT ] 18_robustness_fullpanel  exit=0  22:41:21
+[RESTART-18 solo assemblaggio CSV] 22:46:18
+[EXIT ] 18 (rerun) exit=0 22:47:43
+[EXIT ] 18 (assemblaggio pulito) exit=0 22:49:52
+[START] 17b_wcb_fullpanel (incl)  22:53:56
+[EXIT ] 17b_wcb_fullpanel  exit=0  00:20:25

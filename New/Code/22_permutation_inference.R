@@ -68,6 +68,14 @@ cell[dirty, on = "hs6", dirty_p := i.dirty_p]
 cell[is.na(dirty_p), dirty_p := 0L]
 
 run_coarse_permutation <- function(cell, group_var, term_label, out_file) {
+  ## Cache come nella Sezione B: 1000 permutazioni con seed fisso danno sempre
+  ## lo stesso risultato, quindi rifarle a ogni rilancio e' solo tempo perso
+  ## (e su questa macchina l'allocatore ci si impianta). Cancellare il file
+  ## per forzare il ricalcolo.
+  if (file.exists(out_file)) {
+    cat(sprintf("[cache] %s - %s\n", term_label, basename(out_file)))
+    return(invisible(NULL))
+  }
   # collasso a dest x anno x (green o dirty)
   cg <- cell[, c(list(y = weighted.mean(y, n), n = sum(n), EP = first(WB_EP_Depth))),
              by = c("country_code", "year", group_var)]
@@ -131,7 +139,7 @@ run_exact_batch <- function(data_file, green_file, dirty_file, depth_file, tripl
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   cell[dirty, on = "hs6", dirty_p := i.dirty_p]
   cell[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = as.numeric(get(depth_var)))]
   cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
   if (depth_drop_unmeasured) {
     n0 <- nrow(cell)
@@ -228,8 +236,15 @@ for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
   bg <- obs[treat == tr_key & grepl(":env_good$", term), coef]
   bb <- obs[treat == tr_key & grepl(":dirty_p$", term), coef]
   dd <- draws[treat == tv]
+  ## n_perm deve essere il numero di estrazioni EFFETTIVAMENTE usate: i p-value
+  ## usano na.rm=TRUE, quindi con qualche permutazione fallita il CSV
+  ## dichiarerebbe 1000 estrazioni ma ne userebbe meno, senza segnalarlo.
+  n_g <- sum(!is.na(dd$b_green)); n_d <- sum(!is.na(dd$b_dirty))
+  if (n_g < nrow(dd) || n_d < nrow(dd))
+    cat(sprintf("[ATTENZIONE] %s: permutazioni fallite - green %d/%d, dirty %d/%d\n",
+                tv, n_g, nrow(dd), n_d, nrow(dd)))
   summ[[tv]] <- data.table(
-    treat = tr_key, n_perm = nrow(dd),
+    treat = tr_key, n_perm = nrow(dd), n_used_green = n_g, n_used_dirty = n_d,
     b_obs_green = bg, p_perm_green = mean(abs(dd$b_green) >= abs(bg), na.rm = TRUE),
     b_obs_dirty = bb, p_perm_dirty = mean(abs(dd$b_dirty) >= abs(bb), na.rm = TRUE))
 }

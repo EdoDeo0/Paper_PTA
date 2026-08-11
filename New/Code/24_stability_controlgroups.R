@@ -75,7 +75,7 @@ estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_di
   dirty <- fread(dirty_file)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
   d[dirty, on = "hs6", dirty_p := i.dirty_p]
   d[is.na(dirty_p), dirty_p := 0L]
-  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = as.numeric(get(depth_var)))]
   d[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
   if (depth_drop_unmeasured) {
     n0 <- nrow(d)

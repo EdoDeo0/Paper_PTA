@@ -1,0 +1,10 @@
+﻿[RUN3 RESUME] da 29, dopo fix as.numeric(depth)  2026-08-11 02:52:43
+[START] 29_robustness_co2intensity.R  02:52:43
+[DONE ] 29_robustness_co2intensity.R  02:53:35
+[START] 30_robustness_extensive_ppml.R  02:53:35
+[DONE ] 30_robustness_extensive_ppml.R  03:00:19
+[START] 31_robustness_leaveoneout.R  03:00:19
+[RETRY 1] 31_robustness_leaveoneout.R exit=-1073741819  03:00:24
+[RETRY 2] 31_robustness_leaveoneout.R exit=-1073741819  03:01:12
+[RETRY 3] 31_robustness_leaveoneout.R exit=-1073741819  03:02:19
+[ABORT] 31_robustness_leaveoneout.R  03:02:19

@@ -472,7 +472,11 @@ Costo quasi zero: i dati e i sotto-indici sono **già pronti**.
 - **Goal-driven**: spuntare i checkpoint di ogni fase prima di passare alla successiva.
 - **Solo dentro `New/`**: originali intoccabili.
 
-## 6. PRIMO PASSO CONSIGLIATO per la sessione futura
+## 6. ~~PRIMO PASSO CONSIGLIATO~~ (SUPERATO — vedi §11.3)
+
+> **STATO AL 2026-08-11**: questa sezione è di giugno e il suo "primo passo" (clustering a
+> `country_code` + wild bootstrap) è stato fatto da tempo. **Per sapere da dove ripartire oggi
+> andare a §11.3.** Testo originale conservato sotto per memoria.
 
 Eseguire il **setup di §0**, poi partire dalla **Fase 1, punto 1** (clustering a `country_code`
 + wild bootstrap su `fpt+fpd`): è l'intervento singolo che decide se il paper è "null" o "con
@@ -1498,7 +1502,15 @@ esiste perché la lista a 247 codici include prodotti borderline". Risposta: non
 
 ---
 
-## 9. ⚠️ RERUN DOVUTO — lista green goods corretta (2026-08-04)
+## 9. ~~⚠️ RERUN DOVUTO~~ ✅ FATTO — lista green goods corretta (2026-08-04)
+
+> **STATO AL 2026-08-11: CHIUSO.** `green_codes_hs1996.csv` è stato rigenerato il 2026-08-07
+> (contiene 871411 e 871419, il fantasma 871410 non c'è più) e **tutte e quattro le run della
+> matrice 2×2 usano la lista corretta** — ogni script punta a
+> `New/Data/Classifications/green_codes_hs1996.csv`. Il testo sotto è la diagnosi originale,
+> conservata per memoria: **ignorare le sue istruzioni "da fare", sono già state eseguite.**
+> Resta aperto solo il punto 4 (aggiornare il conteggio green in `draft_paper.tex`), che è
+> lavoro di scrittura ed è ripreso in §11.3.
 
 **Cosa è cambiato**: `Data/Env_Codes_HS.dta` (fonte dei prodotti "verdi", creata a mano
 tempo fa) aveva 247 codici invece dei 248 del CLEG originale (Sauvage 2014, Table A.1).
@@ -1532,3 +1544,106 @@ CLEG nello script 05 (`origin = "HS4"`, cioè HS2012) è **sbagliata** — il pa
 HS2007 (`origin` dovrebbe essere `"HS3"`) — ma sui 247 codici originali questo non
 cambiava nulla a parte il codice 871410 stesso (245 distinti in entrambi i casi). Non
 richiede azione separata, il fix sopra la assorbe.
+
+---
+
+## 10. LACUNE DEGLI EXPORT — informazioni non ricostruibili dai CSV (2026-08-11)
+
+Rilevate mentre si chiudeva Run 2, verificando se i CSV bastino a ricostruire le tabelle del
+paper in un secondo momento. **Nessuna azione presa: si è deciso di finire prima tutte le run.**
+
+> **STATO AL 2026-08-11**: le 4 run sono chiuse, quindi la condizione che rinviava questi fix
+> è caduta — **le 4 lacune qui sotto sono ora lavorate**, e sono riprese in §11.3 punto 4.
+> Attenzione al vincolo di coerenza già segnalato al punto 1: aggiungere colonne a un export
+> significa **rilanciare quello script per tutte e 4 le varianti**, non solo per l'ultima.
+
+Risposta breve: **sì, in larga parte**. Per la tabella principale (coefficiente, SE, p
+asintotico, p bootstrap, p permutazione, N) i CSV bastano — `tripledd_full_reghdfe*`,
+`tripledd_collapsed*`, `tripledd_robustness_reghdfe*`, `wcb_fullpanel*`,
+`r711_shapiro_intensity*`, `ppml_extensive*`, `r710_permutation_summary*` hanno tutti
+coef/se/pval/N. Le lacune sono quattro, precise:
+
+1. **`wcb_collapsed.csv` non esporta `nobs` né `nclust`** (schema: treat, term, coef, p_wcb,
+   conf_low, conf_high, B). La nota della tabella principale cita "236 clusters" per il
+   collassato: quel numero oggi vive solo nel log. Fix: due colonne in più nell'export di
+   `20_wcb_collapsed.R`. Attenzione alla coerenza: se si aggiunge ora, Run 3/4 lo avranno e
+   Run 1/2 no → va rilanciato anche il 20 per le prime due (è veloce, non è 17b).
+2. **`dirty_leaveoneout*.csv` ha solo `coef` e `pval`**, niente SE né N. Sufficiente per
+   l'affermazione che il paper fa davvero (stabilità del coefficiente), insufficiente per una
+   tabella completa dei 25 leave-one-out in appendice.
+3. **La specificazione delle FE non è registrata in nessun CSV** (`pd+dt+pt` vs `fpd+fdt+pt`):
+   è implicita nello script. In tabella si scrive a mano, ma il CSV da solo non è
+   auto-descrittivo a distanza di mesi.
+4. **Test F congiunto (`p=0.31` WB, `p=0.71` TREND)**: già segnalato dall'audit, **non ha
+   alcuno script che lo generi** — esiste solo nel `.tex`. Non è una lacuna di export ma di
+   riproducibilità: va aggiunto `test wb_green wb_dirty td_green td_dirty` dopo la `reghdfe`
+   in 17, con export.
+
+**Contesto più ampio (deciso: rimandato a run completate).** Il paper ha **32 tabelle e zero
+`\input{}`**: tutti i numeri sono battuti a mano nel `.tex`, i CSV non li legge nessuno.
+Verificato che i numeri attuali sono corretti (tabella principale = Run 1: -0.0022/-0.0044,
+21.519.511 obs, WCB collassato 0.65/0.07 — tutti coincidono). Con 4 run × ~10 output ciascuna,
+la trascrizione manuale diventa però il punto di rischio principale, e nessun controllo
+automatico intercetterebbe un refuso. Precedente utile nel progetto: `make_table()` in
+`Code/Analysis/pta_functions.R` (vecchia pipeline) generava frammenti LaTeX dai risultati.
+Limite onesto: i numeri compaiono anche nella **prosa** ($p=0.07$, $\approx -0.012$), e quelli
+nessun generatore li sistema.
+
+**Lacuna paper-facing collegata**: il WCB **full-panel** prodotto da 17b (Run 1: p=0.686 green,
+0.185 dirty) **non ha ancora un posto nel paper** — nella tabella principale la riga "wild
+cluster bootstrap p" esiste solo per il collassato, la riga "Full panel" si ferma al p
+asintotico. È un risultato nuovo da collocare.
+
+---
+
+## 11. MATRICE 2×2 COMPLETA — esito e cosa resta (2026-08-11, sera)
+
+Tutte e quattro le run sono chiuse su R e Stata. Nessun buco: 13 script R + 3 Stata per
+variante, sotto-indici 7/7 ovunque, event study in tutte e 4, leave-one-out completo.
+`_sample_config.R` va lasciato sulla variante che si intende rieseguire (asse 1 SAMPLE,
+asse 2 DEPTH); le tre `.do` hanno le globals gemelle `PTA_SAMPLE` / `PTA_DEPTH`.
+
+### 11.1 Esito — `WB × dirty` (l'unico coefficiente che si muove)
+
+| unità | excl+TD | incl+TD | excl+DESTA | incl+DESTA |
+|---|---|---|---|---|
+| collassato | −0.0119 (0.0001) | −0.0189 (0.0022) | −0.0113 (WCB 0.047, perm 0.036) | **−0.0082 (WCB 0.198, perm 0.489)** |
+| full panel | ✓ | ✓ | −0.0056 (WCB 0.049) | −0.0057 (WCB **0.035**) |
+
+**Sui green: nulla, in tutte e 4 le run, con ogni metodo di inferenza.** Risultato più solido.
+
+### 11.2 L'unica cella fragile, e cosa farne
+
+`incl+DESTA` sul **collassato** è l'unica combinazione che non regge: il coefficiente si dimezza
+e svanisce man mano che l'inferenza diventa conservativa (asy 0.055 → WCB 0.198 → perm 0.489),
+e il leave-one-out perde significatività togliendo 4 paesi su 25 (127, 133, 412, 601) contro
+1 su 23 in Run 3.
+
+**Ma la stessa specifica sul full panel tiene** (−0.0057, WCB 0.035), e coincide con quella di
+Run 3 (−0.0056). Quindi la fragilità è **specifica dell'unità collassata**, non generale.
+
+**Ipotesi coerente coi dati, DA VERIFICARE e non da assumere**: è un effetto di **ponderazione**.
+Il collassato pesa le celle per numero di transazioni; HK e Macao sono entrepot ad altissimo
+volume e lì pesano moltissimo, mentre sul full panel ogni osservazione conta 1.
+**Test decisivo (non ancora fatto)**: ristimare il collassato **senza pesi** (o con pesi
+alternativi) su incl+DESTA. Se il coefficiente torna in linea con il full panel, l'ipotesi è
+confermata; altrimenti va cercata un'altra spiegazione prima di scriverla nel paper.
+
+### 11.3 Cosa resta (scrittura, non calcolo)
+
+1. Generare le tabelle LaTeX dai CSV — oggi ci sono ~32 tabelle e zero `\input{}` nel .tex.
+2. Collocare nel paper il WCB **full panel** di 17b (vedi §10, lacuna paper-facing).
+3. Scrivere §11.2 come robustezza, **dopo** aver fatto il test sui pesi.
+4. Le 4 lacune degli export di §10 (nobs/nclust nel 20, SE/N nel leave-one-out, spec FE, test F).
+5. Punti paper-facing già noti: `33_mde_equivalence.R` (C3), framing Sun-Abraham, riferimento
+   Callaway–Goodman-Bacon–Sant'Anna mancante, citazione Abman non verbatim.
+
+### 11.4 Debito tecnico — la causa dei crash resta ignota
+
+Sette bug in due giorni, **tutti con la stessa firma: exit code 0 su lavoro incompleto o mancato.**
+Le mitigazioni funzionano (cache per unità di lavoro, `stop()` sull'incompletezza, sorveglianza
+sulla CRESCITA DI UN FILE e mai sull'uscita del processo, `$p.Handle` per leggere l'ExitCode),
+ma sono rimedi, non diagnosi. `*** recursive gc invocation` si presenta con 432 MB occupati su
+61 GB, quindi **non è memoria**. Da fare, in ordine: (a) temperature a freddo — il PC arriva a
+~90° anche con 2 thread su 24 core; (b) memtest; (c) test controllato 1/2/4/8 thread sugli
+stessi batch del 22, che direbbe anche quanto si guadagna davvero parallelizzando.

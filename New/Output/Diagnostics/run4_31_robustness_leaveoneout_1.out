@@ -1,0 +1,11 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+Paesi trattati: 25 
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+baseline      : -0.00820 (p=0.0551)
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+lista_estesa  : -0.00710 (p=0.1057)
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+senza_103     : -0.00819 (p=0.0561)
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+senza_105     : -0.00822 (p=0.0545)
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)

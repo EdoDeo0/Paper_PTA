@@ -1,0 +1,8 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+Destinazioni: 238 | trattate: 25 
+gap_green - ATT Sun-Abraham: +0.0210 (p=0.518)
+gap_dirty - ATT Sun-Abraham: +0.0183 (p=0.751)
+[OK] sunab_gap.csv + eventstudy_sunab.png
+[loo] coorti stimate: 10/10
+[OK] r71_sunab_diag.csv + r71_sunab_diag.md
+[OK] eventstudy_collapsed_v2.png

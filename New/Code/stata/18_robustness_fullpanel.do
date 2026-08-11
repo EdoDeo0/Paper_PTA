@@ -44,8 +44,8 @@ if c(os) == "Unix" {
 *  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
 *  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 *  ##########################################################################
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+global PTA_SAMPLE "incl"
+global PTA_DEPTH  "desta"
 
 * Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {
@@ -242,12 +242,16 @@ clear
 local all : dir "$TAB" files "_rob_*.dta"
 local files ""
 foreach f of local all {
+    * NB: su Windows `: dir` restituisce i nomi in MINUSCOLO, mentre i file sul
+    * disco sono _rob_A_WB_controls_inclHKMO.dta: senza lower() su entrambi i
+    * lati il confronto non matcha mai -> lista vuota (r(102) su export) per le
+    * run suffissate, e nessuna esclusione per la run principale.
     local match 0
     if "$OUTSFX" != "" {
-        if strpos("`f'", "$OUTSFX.dta") > 0 local match 1
+        if strpos(lower("`f'"), lower("$OUTSFX.dta")) > 0 local match 1
     }
     else {
-        if !strpos("`f'", "_inclHKMO") & !strpos("`f'", "_desta") local match 1
+        if !strpos(lower("`f'"), "_inclhkmo") & !strpos(lower("`f'"), "_desta") local match 1
     }
     if `match' local files `"`files' "`f'""'
 }

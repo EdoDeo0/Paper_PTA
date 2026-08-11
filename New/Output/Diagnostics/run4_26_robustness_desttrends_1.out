@@ -1,0 +1,28 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+Stima WB_EP_Depth (tentativo 1)...
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+NOTE: 89,665/83/3,559/4 fixed-effect singletons were removed (92,547 observations).
+Stima TREND_EP_Count (tentativo 1)...
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+NOTE: 89,665/83/3,559/4 fixed-effect singletons were removed (92,547 observations).
+            treat                       term          coef           se
+           <char>                     <char>         <num>        <num>
+1:    WB_EP_Depth       WB_EP_Depth:env_good -6.084566e-05 0.0047353301
+2:    WB_EP_Depth        WB_EP_Depth:dirty_p -9.299630e-03 0.0021953069
+3:    WB_EP_Depth env_good:DESTA_depth_index -1.382942e-03 0.0080487753
+4:    WB_EP_Depth  dirty_p:DESTA_depth_index  2.086851e-02 0.0036089459
+5: TREND_EP_Count    TREND_EP_Count:env_good -1.532800e-03 0.0005236657
+6: TREND_EP_Count     TREND_EP_Count:dirty_p -1.638841e-03 0.0006893178
+7: TREND_EP_Count env_good:DESTA_depth_index  9.462863e-03 0.0068561996
+8: TREND_EP_Count  dirty_p:DESTA_depth_index  1.514509e-02 0.0087915473
+           pval    nobs
+          <num>   <int>
+1: 9.897592e-01 3759733
+2: 3.295917e-05 3759733
+3: 8.637306e-01 3759733
+4: 2.397562e-08 3759733
+5: 3.766692e-03 3759733
+6: 1.825366e-02 3759733
+7: 1.688738e-01 3759733
+8: 8.629508e-02 3759733
+[OK] r79_desttrends.csv

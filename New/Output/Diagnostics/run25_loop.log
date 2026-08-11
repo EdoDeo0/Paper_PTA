@@ -1,0 +1,42 @@
+﻿[START] 25 loop suffisso='_desta'  2026-08-11 14:46:37
+[giro 1] exit= killed=False  rds=5/7  14:46:59
+[giro 2] exit= killed=False  rds=5/7  14:47:21
+[giro 3] exit= killed=False  rds=5/7  14:47:43
+[giro 4] exit= killed=False  rds=5/7  14:48:05
+[giro 5] exit= killed=False  rds=7/7  14:48:27
+[giro 6] exit= killed=False  rds=7/7  14:48:49
+[giro 7] exit= killed=False  rds=7/7  14:49:12
+[giro 8] exit= killed=False  rds=7/7  14:49:34
+[giro 9] exit= killed=False  rds=7/7  14:49:56
+[giro 10] exit= killed=False  rds=7/7  14:50:18
+[giro 11] exit= killed=False  rds=7/7  14:50:40
+[giro 12] exit= killed=False  rds=7/7  14:51:02
+[ABORT] 25 non completato in 12 giri
+[START] 25 loop suffisso=''  2026-08-11 14:51:58
+[giro 1] exit= killed=False  rds=18/7  14:52:18
+[giro 2] exit= killed=False  rds=18/7  14:52:38
+[giro 3] exit= killed=False  rds=18/7  14:52:58
+[giro 4] exit= killed=False  rds=18/7  14:53:18
+[giro 5] exit= killed=False  rds=18/7  14:53:38
+[giro 6] exit= killed=False  rds=18/7  14:53:58
+[giro 7] exit= killed=False  rds=18/7  14:54:18
+[giro 8] exit= killed=False  rds=18/7  14:54:38
+[giro 9] exit= killed=False  rds=18/7  14:54:58
+[giro 10] exit= killed=False  rds=18/7  14:55:18
+[giro 11] exit= killed=False  rds=18/7  14:55:38
+[giro 12] exit= killed=False  rds=18/7  14:55:58
+[ABORT] 25 non completato in 12 giri
+[START] 25 loop suffisso='_inclHKMO'  2026-08-11 14:56:29
+[giro 1] exit= killed=False  rds=4/7  14:56:49
+[giro 2] exit= killed=False  rds=5/7  14:57:09
+[giro 3] exit= killed=False  rds=7/7  14:57:29
+[giro 4] exit= killed=False  rds=7/7  14:57:49
+[giro 5] exit= killed=False  rds=7/7  14:58:09
+[giro 6] exit= killed=False  rds=7/7  14:58:29
+[giro 7] exit= killed=False  rds=7/7  14:58:49
+[giro 8] exit= killed=False  rds=7/7  14:59:10
+[giro 9] exit= killed=False  rds=7/7  14:59:30
+[giro 10] exit= killed=False  rds=7/7  14:59:50
+[giro 11] exit= killed=False  rds=7/7  15:00:10
+[giro 12] exit= killed=False  rds=7/7  15:00:30
+[ABORT] 25 non completato in 12 giri

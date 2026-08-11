@@ -1,0 +1,22 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+Stima CO2 continuo...
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+[WB] asintotico: ep_co2 +0.00280 (p=0.378) | ep_green -0.00414 (p=0.459)
+  [WB] ep_green: p_wcb = 0.7959
+  [WB] ep_co2: p_wcb = 0.3897
+[TREND] asintotico: ep_co2 -0.00018 (p=0.781) | ep_green -0.00002 (p=0.990)
+  [TREND] ep_green: p_wcb = 0.9933
+  [TREND] ep_co2: p_wcb = 0.8254
+    treat     term          coef       se_asy     p_asy     p_wcb     conf_low
+   <char>   <char>         <num>        <num>     <num>     <num>        <num>
+1:     WB ep_green -4.140071e-03 0.0055790041 0.4587989 0.7958796 -0.016351465
+2:     WB   ep_co2  2.803491e-03 0.0031707760 0.3775342 0.3897390 -0.008341568
+3:  TREND ep_green -2.196014e-05 0.0017129703 0.9897826 0.9932993           NA
+4:  TREND   ep_co2 -1.808775e-04 0.0006490005 0.7807253 0.8253825 -0.002053836
+    conf_high    nobs     B
+        <num>   <int> <int>
+1: 0.02632135 3759733  9999
+2: 0.02144189 3759733  9999
+3:         NA 3759733  9999
+4: 0.00254045 3759733  9999
+[OK] r711_shapiro_intensity.csv

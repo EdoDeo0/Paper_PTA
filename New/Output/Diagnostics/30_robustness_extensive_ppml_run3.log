@@ -1,0 +1,22 @@
+﻿Rscript.exe : here() starts at C:/Work/projects/Paper_PTA
+In C:\Users\edodr\AppData\Local\Temp\claude\C--Work-projects-Paper-PTA\2ceee4cf-c370-44ea-815a-2155bfdf9efe\scratchpad\
+run3_resume.ps1:13 car:5
++     & $rbin --vanilla "$wd\New\Code\$sc" *>&1 | Out-File -Append -Enc ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (here() starts a...jects/Paper_PTA:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[config] campione: excl (HK+MO esclusi) | depth: DESTA_depth_index | suffisso: _desta
+=== PPML WB ===
+                               coef    pval
+WB_EP_Depth:env_good        0.00531 0.23426
+WB_EP_Depth:dirty_p        -0.01862 0.27251
+env_good:DESTA_depth_index -0.01350 0.22557
+dirty_p:DESTA_depth_index   0.01748 0.73763
+=== PPML TREND ===
+                               coef    pval
+TREND_EP_Count:env_good     0.00102 0.44439
+TREND_EP_Count:dirty_p      0.00268 0.61384
+env_good:DESTA_depth_index -0.01115 0.51541
+dirty_p:DESTA_depth_index  -0.05142 0.44392
+[OK] ppml_extensive.csv

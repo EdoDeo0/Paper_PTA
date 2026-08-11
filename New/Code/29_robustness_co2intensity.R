@@ -22,7 +22,6 @@
 
 ## --- Setup ---------------------------------------------------------------
 rm(list = ls())
-library(callr)
 library(here)
 library(data.table)
 source(here("New/Code/_sample_config.R"))
@@ -30,7 +29,7 @@ source(here("New/Code/_sample_config.R"))
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 CO2_FILE   <- here("New/Data/Classifications/co2_intensity_hs6.csv")
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
-## --- Funzione: tutto in un sottoprocesso ------------------------------------
+## --- Funzione: stima completa -----------------------------------------------
 run_estimate <- function(cache_fst, co2_file, green_file, depth_file, depth_var, depth_drop_unmeasured) {
   library(fst)
   library(fixest)
@@ -53,7 +52,7 @@ run_estimate <- function(cache_fst, co2_file, green_file, depth_file, depth_var,
 
   green <- fread(green_file, colClasses = list(character = "hs6_final"))
   cell[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% unique(green$hs6_final))]
-  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = get(depth_var))]
+  dep <- fread(depth_file)[, .(country_code, year, dep_val__ = as.numeric(get(depth_var)))]
   cell[dep, on = c("country_code", "year"), (depth_var) := i.dep_val__]
   if (depth_drop_unmeasured) {
     n0 <- nrow(cell)
@@ -86,7 +85,6 @@ run_estimate <- function(cache_fst, co2_file, green_file, depth_file, depth_var,
       stop("FW non riproduce feols")
     rm(X, sw); gc()
     m_lm <- lm(y ~ 0 + ep_green + ep_co2 + td_green + td_co2, data = df, weights = n_w)
-    rm(df); gc()
 
     for (param in c("ep_green", "ep_co2")) {
       set.seed(42)
@@ -102,17 +100,16 @@ run_estimate <- function(cache_fst, co2_file, green_file, depth_file, depth_var,
   rbindlist(out)
 }
 
-## --- Esecuzione con retry -----------------------------------------------
-res <- NULL
-for (tent in 1:4) {
-  cat(sprintf("Stima CO2 continuo (tentativo %d)...\n", tent))
-  res <- tryCatch(callr::r(run_estimate, args = list(
-    cache_fst = CACHE_FST, co2_file = CO2_FILE, green_file = GREEN_FILE, depth_file = DEPTH_FILE,
-    depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
-  ), show = TRUE), error = function(e) { cat("[CRASH]", conditionMessage(e), "\n"); NULL })
-  if (!is.null(res)) break
-}
-if (is.null(res)) stop("Fallito dopo 4 tentativi")
+## --- Esecuzione ------------------------------------------------------------
+## In-process, come 20_wcb_collapsed.R: dentro callr::r() il boottest a B=9999
+## su questo pannello fa crashare l'allocatore (*** recursive gc invocation),
+## mentre nel processo principale gira in ~1 min. Il retry esterno e' nella
+## catena PowerShell.
+cat("Stima CO2 continuo...\n")
+res <- run_estimate(
+  cache_fst = CACHE_FST, co2_file = CO2_FILE, green_file = GREEN_FILE, depth_file = DEPTH_FILE,
+  depth_var = DEPTH_VAR, depth_drop_unmeasured = DEPTH_DROP_UNMEASURED
+)
 print(res)
 fwrite(res, out_path(here("New/Output/TripleDiff/Tables/r711_shapiro_intensity.csv")))
 cat("[OK] r711_shapiro_intensity.csv\n")

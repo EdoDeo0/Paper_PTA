@@ -1,0 +1,30 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+
+=== Gruppo: prodHS4 ===
+[depth] DESTA_depth_index: 32168 righe trattate senza copertura escluse (0.319%)
+[prodHS4] righe: 10,057,736 | green: 55.4% | dirty: 1.1%
+NOTES: 9 observations removed because of NA values (LHS: 9, Fixed-effects: 9, vcov: 9).
+       3,638,233/3,462,043/393 fixed-effect singletons were removed (6,024,623 observations).
+*** recursive gc invocation
+*** recursive gc invocation
+NOTES: 9 observations removed because of NA values (LHS: 9, Fixed-effects: 9, vcov: 9).
+       3,638,233/3,462,043/393 fixed-effect singletons were removed (6,024,623 observations).
+
+=== Gruppo: deepshallow ===
+[depth] DESTA_depth_index: 229436 righe trattate senza copertura escluse (1.506%)
+[deepshallow] righe: 15,003,642 | green: 11.8% | dirty: 8.1%
+NOTES: 6 observations removed because of NA values (LHS: 6).
+       5,670,533/2,999,840/7,648 fixed-effect singletons were removed (7,878,970 observations).
+*** recursive gc invocation
+*** recursive gc invocation
+NOTES: 6 observations removed because of NA values (LHS: 6).
+       5,670,517/2,999,955/7,867 fixed-effect singletons were removed (7,879,846 observations).
+
+=== Gruppo: cem_v1 ===
+[depth] DESTA_depth_index: 220552 righe trattate senza copertura escluse (0.707%)
+[cem_v1] righe: 30,996,315 | green: 11.2% | dirty: 6.9%
+*** recursive gc invocation
+*** recursive gc invocation
+[FALLITO] cem_v1 : ! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed 
+
+[OK] tripledd_stability.csv - confrontare EP:env_good (e :dirty_p) tra i gruppi.

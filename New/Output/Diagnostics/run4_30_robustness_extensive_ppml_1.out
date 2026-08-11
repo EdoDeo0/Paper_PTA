@@ -1,0 +1,14 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+=== PPML WB ===
+                               coef    pval
+WB_EP_Depth:env_good        0.00636 0.20702
+WB_EP_Depth:dirty_p        -0.01083 0.58630
+env_good:DESTA_depth_index -0.00915 0.39948
+dirty_p:DESTA_depth_index  -0.00278 0.96321
+=== PPML TREND ===
+                               coef    pval
+TREND_EP_Count:env_good     0.00083 0.56723
+TREND_EP_Count:dirty_p      0.00457 0.36026
+env_good:DESTA_depth_index -0.00249 0.88255
+dirty_p:DESTA_depth_index  -0.06956 0.26927
+[OK] ppml_extensive.csv

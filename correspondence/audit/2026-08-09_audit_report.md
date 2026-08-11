@@ -396,3 +396,60 @@ Due osservazioni:
   Run 1 e Run 2 (che ho verificato coincidere con quanto riportato nel paper); tutti e tre
   invalidano ciò che sta per essere prodotto, o distruggono ciò che è già stato prodotto.
   Il #1 e il #2 vanno risolti prima di far girare qualunque altra cosa.
+
+---
+
+# Audit mirato — `New/Code/stata/17b_wcb_fullpanel.do` (2026-08-09, sera)
+
+**Nota di indipendenza:** questo script è stato scritto in questa stessa sessione (l'auditor
+è anche l'autore dell'impianto). Il blocco di residualizzazione FWL è stato modificato dopo
+la stesura (utente/linter) e non è dell'auditor. Audit svolto su richiesta esplicita; per
+piena indipendenza servirebbe una sessione terza. Nessuna modifica applicata al file.
+
+**Scope:** solo `17b_wcb_fullpanel.do`. Cross-language replication: **non fattibile** (vedi sotto).
+
+## Cosa esegue ora il codice
+FWL esplicito: `reghdfe var, absorb(fpd fdt pt) residuals()` su ognuna delle 5 variabili, poi
+`regress ... , nocons vce(cluster country_code)` + `boottest` sul regressore residualizzato.
+I coefficienti coincidono col point-estimate `reghdfe` per il teorema FWL.
+
+### [WARNING] A1 — L'header descrive un metodo diverso da quello eseguito (claim di rigore falso)
+Header righe 15-21: «native boottest… più rigoroso del collassato perché non finge che `pt`
+sia nested nel cluster». Il codice fa invece FWL residualize-once → **esattamente** quella
+approssimazione, identica a `20_wcb_collapsed.R`. Il valore residuo di 17b è reale ma diverso
+(WCB sul campione **pieno**, within-firm/`fdt`, non sul collassato), NON un maggior rigore su
+pt-nesting. Correggere l'header e non rivendicare quel rigore nel paper. La riga 158 afferma
+che `boottest` nativo «non funziona dopo reghdfe con più FE assorbite»: non verificabile senza
+Stata — **se il nativo funziona in questa versione, usarlo** (dà davvero la versione rigorosa
+e più leggera in RAM); altrimenti l'header va riscritto per descrivere onestamente l'approssimazione.
+
+### [WARNING] A2 — Guard di equivalenza dichiarato ma non implementato
+Riga 163 dice che la reghdfe di point-estimate serve «come check che il FWL concordi», ma
+nessuna riga confronta i due. Nel CSV `coef = b_wbg` (reghdfe) mentre `p_wcb`/CI vengono dal
+`regress` FWL: se le 5 residualizzazioni e la reghdfe scartano singleton in modo diverso, si
+accoppia un coef di un campione con un p-value di un altro, senza errore. Aggiungere dopo il
+`regress`: `assert reldif(_b[\`ewbg'], \`b_wbg') < 1e-6` (stop altrimenti), come i guard FW in R 16/22.
+
+### [NOTE] A3 — Memoria
+5 variabili residualizzate `double` su 21,5M righe (~0,9 GB) + overhead reghdfe, su macchina
+con instabilità note dell'allocatore. Il nativo (se funziona) sarebbe più leggero.
+
+### [NOTE] A4 — IC potenzialmente disgiunto
+`r(CI)` può avere >1 riga (WCB con intervalli disgiunti); il codice prende solo il primo intervallo.
+
+### [NOTE] A5 — Seed condiviso
+green e dirty usano entrambi `seed(42)`: riproducibile ma non sono draw indipendenti. Innocuo.
+
+### [OK] Coerenza
+Cluster `country_code`, FE `fpd fdt pt`, filtri HK/MO e depth-drop rispecchiano lo script 17.
+Suffissi `$OUTSFX` e cache corretti.
+
+## Cross-language replication — non fattibile
+R crasha su `fpd+fdt+pt` full panel (motivo per cui 17b è in Stata): replica R a piena scala
+infattibile; su sotto-campione verificherebbe solo il point-estimate, non il WCB. Python
+(`pyfixest`+`wildboottest`) urterebbe lo stesso muro di RAM, non verificato qui. Saltata.
+
+## Verdetto 17b
+**CONDITIONAL PASS** — nessun errore che produce numeri sbagliati *di per sé*; lo script gira e
+dà un WCB full-panel valido sotto l'approssimazione demean-once. Ma prima che i numeri entrino
+nel paper: (A1) correggere l'header / provare il nativo, (A2) aggiungere il guard di equivalenza.
