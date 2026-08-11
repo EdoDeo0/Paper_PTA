@@ -1,5 +1,29 @@
 # Session Log — Paper_PTA
 
+## 2026-08-11 (notte) — ⚠️ WCB baseline non versionato + Todoist ricostruito (Opus 5, su Mac)
+
+**➡️ DA CONTROLLARE SU WINDOWS, PRIMA COSA: esiste ancora
+`New/Output/OLS/Bootstrap/wcb_fullpanel.csv`?**
+Trovato che 17b scrive in `New/Output/OLS$OUTSFX/Bootstrap/`: con `OUTSFX` vuoto (run BASELINE)
+il percorso è `New/Output/OLS/Bootstrap/`, **escluso dalla riga 10 del `.gitignore`** — regola di
+giugno, scritta quando lì stavano i `.rds` della vecchia pipeline. Le altre 3 varianti
+(`OLS_desta`, `OLS_inclHKMO`, `OLS_inclHKMO_desta`) non sono matchate e sono regolarmente
+committate. **Il repo ha quindi 3 bootstrap full-panel su 4 e manca proprio quello della spec
+principale**; sul Mac il file non c'è. Fix previsto: restringere la regola (es.
+`New/Output/OLS/Bootstrap/*.rds`) e committare il CSV. Se su Windows non c'è più, va rifatto 17b
+per la run baseline. Registrato in `./New/ROADMAP.md` §11.3 punto 6.
+
+**Todoist ricostruito sullo stato vero.** Eliminato il progetto di luglio (27 task, **nessuna mai
+spuntata**, tutte superate dalla riesecuzione; il piano resta agli atti in ROADMAP §7-R7). Nuovo
+progetto **"Paper PTA — Dalle stime al paper"**: 21 task in 5 sezioni — (1) l'unico calcolo
+rimasto = test dei pesi su incl+DESTA, (2) le 4 lacune export di §10 + il fix `.gitignore`,
+(3) CSV→LaTeX, (4) scrittura, (5) debito tecnico. Memtest messo a priorità alta: se fosse RAM
+difettosa il rischio non è il crash ma la **corruzione silenziosa** di stime lunghe ore.
+
+Verificati sui file reali (non a memoria): `wcb_collapsed.csv` senza `nobs`/`nclust`,
+`dirty_leaveoneout.csv` senza SE/N, **zero `\input{}`** nel `.tex`, 65 CSV in `TripleDiff/Tables/`.
+Working tree pulito (commit `e4a6022`): il pending "nessun commit" dei log precedenti è chiuso.
+
 ## 2026-08-11 (sera) — ✅ MATRICE 2×2 COMPLETA: tutte e 4 le run chiuse (R + Stata)
 
 Run 4 (incl+desta) completa: 13 script R + Stata 17 (27min), 18 (59min), 17b (89min).
