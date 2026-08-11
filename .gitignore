@@ -7,7 +7,7 @@ New/Data/
 # Output binari R
 *.rds
 New/Output/OLS/Models_Output/
-New/Output/OLS/Bootstrap/
+New/Output/OLS/Bootstrap/*.rds
 
 # Log di esecuzione
 New/*.log

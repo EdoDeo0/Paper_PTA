@@ -1,5 +1,16 @@
 # Session Log — Paper_PTA
 
+## 2026-08-11 — ✅ Verificato su Windows: WCB baseline c'era, era solo un buco nel `.gitignore`
+
+Controllo richiesto dalla voce precedente (notte, dal Mac): `New/Output/OLS/Bootstrap/wcb_fullpanel.csv`
+**esiste** su Windows (10/08 01:12, coerente con 17b di Run 4) — nessun dato perso. Il problema
+era solo la riga 10 del `.gitignore` (`New/Output/OLS/Bootstrap/`, regola di giugno) che escludeva
+l'intera cartella della run baseline mentre le 3 varianti suffissate (`OLS_desta`, `OLS_inclHKMO`,
+`OLS_inclHKMO_desta`) non erano matchate ed erano regolarmente committate. Fix: regola ristretta a
+`New/Output/OLS/Bootstrap/*.rds`. Ora `wcb_fullpanel.csv` e `bootstrap_summary.csv` sono visibili
+a git ma **non committati** (restano nel working tree, come da vincolo di sessione). Dettagli in
+`./New/ROADMAP.md` §11.3 punto 6 (chiuso).
+
 ## 2026-08-11 (notte) — ⚠️ WCB baseline non versionato + Todoist ricostruito (Opus 5, su Mac)
 
 **➡️ DA CONTROLLARE SU WINDOWS, PRIMA COSA: esiste ancora

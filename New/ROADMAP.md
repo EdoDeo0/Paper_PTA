@@ -1637,14 +1637,13 @@ confermata; altrimenti va cercata un'altra spiegazione prima di scriverla nel pa
 4. Le 4 lacune degli export di §10 (nobs/nclust nel 20, SE/N nel leave-one-out, spec FE, test F).
 5. Punti paper-facing già noti: `33_mde_equivalence.R` (C3), framing Sun-Abraham, riferimento
    Callaway–Goodman-Bacon–Sant'Anna mancante, citazione Abman non verbatim.
-6. **`.gitignore`: il WCB full-panel della run BASELINE non è versionato** (trovato il 12/08).
-   17b scrive in `New/Output/OLS$OUTSFX/Bootstrap/`; con `OUTSFX` vuoto il percorso è
-   `New/Output/OLS/Bootstrap/`, **escluso dalla riga 10 del `.gitignore`** (regola di giugno,
-   quando lì stavano i `.rds` della vecchia pipeline). Le altre tre varianti — `OLS_desta`,
-   `OLS_inclHKMO`, `OLS_inclHKMO_desta` — non sono matchate e infatti sono committate.
-   Il repo ha quindi 3 bootstrap full-panel su 4 e manca **proprio quello della spec
-   principale**. Sul Mac il file non esiste: verificare se è ancora su Windows. Fix:
-   restringere la regola (es. `New/Output/OLS/Bootstrap/*.rds`) e committare il CSV.
+6. ~~`.gitignore`: il WCB full-panel della run BASELINE non è versionato~~ ✅ **FATTO (11/08,
+   Windows)**. Il file `New/Output/OLS/Bootstrap/wcb_fullpanel.csv` **esiste** su Windows
+   (10/08 01:12, coerente con la run 17b di Run 4) — non era mai andato perso, solo escluso
+   dalla riga 10 del `.gitignore` (regola di giugno, quando lì stavano i `.rds` della vecchia
+   pipeline). Regola ristretta a `New/Output/OLS/Bootstrap/*.rds`; sia `wcb_fullpanel.csv` che
+   `bootstrap_summary.csv` sono ora visibili a git (non ancora committati — restano nel working
+   tree per review, come da vincolo di sessione).
 
 ### 11.4 Debito tecnico — la causa dei crash resta ignota
 
