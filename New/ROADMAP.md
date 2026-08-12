@@ -1622,12 +1622,31 @@ e il leave-one-out perde significatività togliendo 4 paesi su 25 (127, 133, 412
 **Ma la stessa specifica sul full panel tiene** (−0.0057, WCB 0.035), e coincide con quella di
 Run 3 (−0.0056). Quindi la fragilità è **specifica dell'unità collassata**, non generale.
 
-**Ipotesi coerente coi dati, DA VERIFICARE e non da assumere**: è un effetto di **ponderazione**.
-Il collassato pesa le celle per numero di transazioni; HK e Macao sono entrepot ad altissimo
-volume e lì pesano moltissimo, mentre sul full panel ogni osservazione conta 1.
-**Test decisivo (non ancora fatto)**: ristimare il collassato **senza pesi** (o con pesi
-alternativi) su incl+DESTA. Se il coefficiente torna in linea con il full panel, l'ipotesi è
-confermata; altrimenti va cercata un'altra spiegazione prima di scriverla nel paper.
+~~**Ipotesi coerente coi dati, DA VERIFICARE**: è un effetto di **ponderazione**. Il collassato
+pesa le celle per numero di transazioni; HK e Macao sono entrepot ad altissimo volume e lì
+pesano moltissimo, mentre sul full panel ogni osservazione conta 1. Test decisivo: ristimare il
+collassato senza pesi su incl+DESTA.~~
+
+**⛔ IPOTESI SMENTITA (audit 2026-08-12, verificato sui dati reali).** La WLS collassata con
+pesi `n` è algebricamente identica alla regressione micro con gli stessi FE (`pd+dt+pt`):
+coefficienti coincidenti a 7e-16. HK e Macao pesano identico nei due pannelli — la ponderazione
+`n` *riproduce* «ogni osservazione conta uno», non lo contraddisce. Il test senza pesi avrebbe
+spostato il coefficiente (raddoppio nel campione di verifica) ma per una ragione sbagliata:
+cambia l'estimando, non la ponderazione di HK/MO.
+
+**La vera spiegazione**: il divario collassato/full panel viene tutto dalla struttura degli
+effetti fissi. Con `pd+dt+pt` si confrontano prodotti verdi vs sporchi *mediando su tutte le
+imprese* nella stessa destinazione-anno. Con `fpd+fdt+pt` si confronta *dentro* la stessa
+impresa-destinazione-anno. Quando si aggiungono HK/MO (variante *incl*), la composizione delle
+imprese che esportano là è diversa dalla media — e senza FE d'impresa quella composizione entra
+nel coefficiente come selezione, non come risposta al PTA.
+
+**Test corretto (non ancora fatto)**: `reghdfe` in `17_main_tripledd_fullpanel.do` con
+`absorb(pd dt pt)` invece di `absorb(fpd fdt pt)`. Deve riprodurre il coefficiente collassato
+entro la tolleranza dei singleton. Confronto `pd+dt+pt` ↔ `fpd+fdt+pt` sullo stesso campione
+isola esattamente il contributo delle FE d'impresa — ed è quello il punto da scrivere nel paper:
+parte del segnale sporco riflette selezione di quali imprese esportano verso quei mercati, non
+riallocazione within-firm.
 
 ### 11.3 Cosa resta (scrittura, non calcolo)
 
@@ -1645,12 +1664,31 @@ confermata; altrimenti va cercata un'altra spiegazione prima di scriverla nel pa
    `bootstrap_summary.csv` sono ora visibili a git (non ancora committati — restano nel working
    tree per review, come da vincolo di sessione).
 
-### 11.4 Debito tecnico — la causa dei crash resta ignota
+### 11.4 Debito tecnico — thread limits da rialzare
 
-Sette bug in due giorni, **tutti con la stessa firma: exit code 0 su lavoro incompleto o mancato.**
-Le mitigazioni funzionano (cache per unità di lavoro, `stop()` sull'incompletezza, sorveglianza
-sulla CRESCITA DI UN FILE e mai sull'uscita del processo, `$p.Handle` per leggere l'ExitCode),
-ma sono rimedi, non diagnosi. `*** recursive gc invocation` si presenta con 432 MB occupati su
-61 GB, quindi **non è memoria**. Da fare, in ordine: (a) temperature a freddo — il PC arriva a
-~90° anche con 2 thread su 24 core; (b) memtest; (c) test controllato 1/2/4/8 thread sugli
-stessi batch del 22, che direbbe anche quanto si guadagna davvero parallelizzando.
+**Background.** I limiti `setFixest_nthreads(1–2)` su 26/27/28/31 e `setFixest_nthreads(2)` su
+22/23 furono abbassati empiricamente *durante* il debugging dei crash, come workaround. Il vero
+colpevole era **Bug 7** (colonna `integer` passata a `feols` dove si aspettava `double` → stato
+inconsistente dell'allocatore, 432 MB occupati su 61 GB — non era memoria). Una volta applicato
+il fix (`as.numeric()` al merge), quei limiti bassi sono diventati un relitto.
+
+**Script interessati** (tutti usano meno thread di quanto la macchina permetta):
+
+| Script | Thread attuali | Nota |
+|---|---|---|
+| 22 permutazione | 2 | **priorità massima**: 40 batch × 1000 draw, gira ore |
+| 23 event study | 1–2 | |
+| 26/27/28 trends | 1 | |
+| 31 leave-one-out | 2 | 25 stime, ora veloci (5s l'una) |
+
+`threads_fst(1)` è corretto ovunque — la lettura è rapida e non vale farla competere con fixest.
+
+**Da provare**: portare `setFixest_nthreads` a 8–12 sugli script sopra e rilanciare un batch di
+prova (es. le 4 varianti di 31, che girano in ~2 min totali). Se non crash, applicare a tutti.
+Il guadagno più grande è su 22: con 8 thread invece di 2 il tempo stimato scende da ~1h40m a
+~25–30 min per variante.
+
+**Precedente.** I crash dei giorni 09–11/08 avevano anche una componente termica (PC a ~90 °C
+con 2 thread su 24 core). Fare questo test *dopo* aver controllato le temperature a freddo e,
+se possibile, dopo un memtest — perché un crash a 8 thread con il bug già fixato sarebbe un
+segnale hardware, non di codice.

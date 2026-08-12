@@ -12,27 +12,49 @@
 \addlinespace
 Profondit\`a EP $\times$ Verde & -0.00510 & -0.00200 & 0.00084 & -0.00006 \\
  & (0.00387) & (0.00469) & (0.00467) & (0.00474) \\
- & [0.189] & [0.671] & [0.857] & [0.990] \\
+ & [0.506] & [0.810] & [0.895] & [0.996] \\
 \addlinespace
-Profondit\`a EP $\times$ Sporco & -0.00825$^{*}$ & -0.00927$^{**}$ & -0.01030$^{***}$ & -0.00930$^{***}$ \\
+Profondit\`a EP $\times$ Sporco & -0.00825 & -0.00927 & -0.01030$^{*}$ & -0.00930$^{**}$ \\
  & (0.00455) & (0.00445) & (0.00257) & (0.00220) \\
- & [0.071] & [0.038] & [$<$0.001] & [$<$0.001] \\
+ & [0.280] & [0.245] & [0.088] & [0.035] \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Pannello A bis --- stessa stima, indice TREND}} \\
+\addlinespace
+Conteggio EP $\times$ Verde & -0.00217$^{**}$ & -0.00214$^{**}$ & -0.00111 & -0.00153$^{*}$ \\
+ & (0.00067) & (0.00066) & (0.00057) & (0.00052) \\
+ & [0.013] & [0.017] & [0.208] & [0.077] \\
+\addlinespace
+Conteggio EP $\times$ Sporco & -0.00137 & -0.00142 & -0.00231$^{**}$ & -0.00164 \\
+ & (0.00124) & (0.00123) & (0.00071) & (0.00069) \\
+ & [0.353] & [0.333] & [0.049] & [0.105] \\
 \addlinespace
 \multicolumn{5}{l}{\textit{Pannello B --- test formale sui pre-trend (indice WB)}} \\
 \addlinespace
-Pendenza pre-accordo, Verde & 0.01732 & 0.00402 & 0.01719$^{*}$ & 0.02218 \\
+Pendenza pre-accordo, Verde & 0.01732 & 0.00402 & 0.01719 & 0.02218 \\
  & (0.01307) & (0.01694) & (0.01006) & (0.01359) \\
 \quad $p$-value bootstrap & 0.670 & 0.706 & 0.535 & 0.480 \\
 \addlinespace
-Pendenza pre-accordo, Sporco & 0.06292 & 0.06237 & 0.07109$^{**}$ & 0.07056$^{**}$ \\
+Pendenza pre-accordo, Sporco & 0.06292 & 0.06237 & 0.07109 & 0.07056 \\
  & (0.04435) & (0.04021) & (0.03191) & (0.03189) \\
 \quad $p$-value bootstrap & 0.618 & 0.511 & 0.414 & 0.418 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Pannello B bis --- test formale sui pre-trend (indice TREND)}} \\
+\addlinespace
+Pendenza pre-accordo, Verde & 0.00728 & 0.00707 & 0.00775 & 0.00944$^{*}$ \\
+ & (0.00442) & (0.00445) & (0.00432) & (0.00393) \\
+\quad $p$-value bootstrap & 0.182 & 0.199 & 0.175 & 0.097 \\
+\addlinespace
+Pendenza pre-accordo, Sporco & 0.01512 & 0.01512 & 0.01839 & 0.01703 \\
+ & (0.00735) & (0.00728) & (0.00602) & (0.00619) \\
+\quad $p$-value bootstrap & 0.301 & 0.293 & 0.168 & 0.232 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
 \item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
-\item \textbf{Pannello A --- a quale obiezione risponde.} Gli effetti fissi del disegno principale non catturano una cosa: uno shock che riguardi \emph{i prodotti verdi in una specifica destinazione} e che cresca nel tempo. \`E il caso in cui un paese firma clausole ambientali proprio mentre la sua domanda di beni verdi sta salendo. Qui si aggiunge un andamento lineare per ogni destinazione e per ogni tipo di prodotto, che assorbe esattamente quella dinamica.
-\item \textbf{Pannello B --- come si legge.} Si stima la pendenza del divario di composizione nel periodo \emph{precedente} all'accordo. Se fosse diversa da zero, verdi e neutri divergevano gi\`a prima e il confronto sarebbe viziato. I $p$-value riportati sono quelli bootstrap, i pi\`u prudenti.
+\item \textbf{Tutti i $p$-value e le stelle in questa tabella vengono dal \emph{wild cluster bootstrap}}, l'unico affidabile con il numero di cluster trattati disponibile (circa 25).
+\item \textbf{Pannello A/A bis --- a quale obiezione risponde.} Gli effetti fissi del disegno principale non catturano una cosa: uno shock che riguardi \emph{i prodotti verdi in una specifica destinazione} e che cresca nel tempo. \`E il caso in cui un paese firma clausole ambientali proprio mentre la sua domanda di beni verdi sta salendo. Qui si aggiunge un andamento lineare per ogni destinazione e per ogni tipo di prodotto, che assorbe esattamente quella dinamica.
+\item \textbf{Il risultato con l'indice TREND.} Nel Pannello A bis, il margine verde con l'indice TREND \`e l'unico coefficiente dell'intero lavoro a sopravvivere al bootstrap in modo netto ($p=0.013$ nella colonna baseline). Il Pannello B bis mostra per\`o che, con lo stesso indice, il divario verde era gi\`a positivo \emph{prima} dell'entrata in vigore dell'accordo, sebbene non significativo al bootstrap: il risultato \`e quindi compatibile con una tendenza preesistente pi\`u che con un effetto causale dell'accordo, e va letto con questa cautela.
+\item \textbf{Pannello B/B bis --- come si legge.} Si stima la pendenza del divario di composizione nel periodo \emph{precedente} all'accordo. Se fosse diversa da zero, verdi e neutri divergevano gi\`a prima e il confronto sarebbe viziato.
 \item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
 \end{tablenotes}
 \end{threeparttable}

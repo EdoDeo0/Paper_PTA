@@ -117,8 +117,9 @@ accordi profondi \emph{in tutto}. Se non si tiene conto della profondit\`a compl
 si rischia di attribuire al contenuto ambientale un merito che appartiene all'accordo nel
 suo insieme. Si usano quindi due misure alternative della profondit\`a complessiva: quella
 della Banca Mondiale e quella del database DESTA, costruita da un gruppo di ricerca
-indipendente. Le due hanno una correlazione diversa con la profondit\`a ambientale (0,86 la
-prima, 0,69 la seconda) e questo, come si vedr\`a, non \`e un dettaglio.
+indipendente (Dur, Baccini \& Elsig 2014, sette aree tematiche). Le due hanno una correlazione
+diversa con la profondit\`a ambientale al netto degli effetti fissi (0,959 la prima, 0,891 la
+seconda) e questo, come si vedr\`a, non \`e un dettaglio.
 
 \subsection*{Convenzioni tipografiche}
 
@@ -297,11 +298,13 @@ accordi}: la sezione successiva li sottopone a prove pi\`u severe, e il quadro c
 parecchio.
 
 \textbf{Una differenza da tenere a mente.} Nel \emph{full panel} ogni osservazione pesa
-uno; qui le celle grandi pesano di pi\`u. Poich\'e Hong Kong e Macao sono mercati ad
-altissimo volume, nella colonna (4) la ponderazione d\`a loro un peso considerevole. \`E
-l'ipotesi pi\`u probabile per spiegare perch\'e proprio quella colonna si comporti
-diversamente dalle altre --- un'ipotesi coerente con i dati che resta per\`o da verificare
-con una stima senza pesi, non ancora effettuata.
+uno; qui le celle grandi pesano di pi\`u. Verificato algebraicamente sui dati reali: i minimi
+quadrati pesati con $n_i$ come pesi producono coefficienti identici al micro (differenza massima
+$7\times 10^{-16}$). La divergenza fra pannello collassato e \emph{full panel} non viene quindi
+dalla ponderazione ma dalla struttura degli effetti fissi: il collassato usa $pd{+}dt{+}pt$,
+il \emph{full panel} $fpd{+}fdt{+}pt$. La colonna (4) differisce dalle altre perch\'e con
+Hong Kong e Macao inclusi gli effetti fissi $fdt$ catturano dinamiche impresa-specifiche molto
+diverse da quelle del gruppo di controllo.
 
 \input{tab_04_main_collapsed}
 
@@ -325,6 +328,14 @@ notevole. Per questo ogni risultato viene sottoposto a due prove aggiuntive.
 la distribuzione del coefficiente per forza bruta: si rimescolano i dati 9.999 volte
 secondo uno schema che rispetta la struttura a gruppi, si ristima ogni volta, e si guarda
 dove cade il coefficiente vero rispetto a quella distribuzione.
+
+\textbf{Nota metodologica.} Il \emph{bootstrap} viene applicato al pannello collassato
+(celle $pdt$), non al \emph{full panel}. La validit\`a dell'inferenza collassata rispetto
+al micro \`e garantita dal teorema di Frisch-Waugh: i coefficienti sul pannello collassato
+con pesi $n_i$ coincidono algebraicamente con quelli del micro a parit\`a di struttura degli
+effetti fissi. Un elemento tecnico rilevante: l'effetto fisso $pt$ non \`e annidato nel
+cluster destinazione, quindi il \emph{demeaning} avviene prima del \emph{bootstrap} ---
+comportamento standard di \texttt{feols} in questo contesto.
 
 \textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:wcb}). Sul margine verde nulla cambia:
 i $p$-value restano altissimi ovunque. Sul margine sporco il quadro si articola. Sul
@@ -369,18 +380,24 @@ i due possono differire di ordini di grandezza.
 \textbf{Che cosa emerge.} Sul \emph{full panel} --- l'unit\`a su cui poggiano le stime
 principali --- il risultato dipende in modo netto da quale controllo di profondit\`a si
 adotta: con il controllo della Banca Mondiale il $p$-value resta sopra 0,17, con il
-controllo DESTA scende sotto 0,05. La spiegazione pi\`u naturale \`e meccanica: il primo
-controllo ha correlazione 0,86 con la profondit\`a ambientale, il secondo 0,69. Pi\`u un
-controllo \`e sovrapposto alla variabile di interesse, meno variazione indipendente resta
-per identificarne l'effetto e pi\`u grande diventa l'errore standard.
+controllo DESTA scende sotto 0,05. La spiegazione pi\`u immediata \`e meccanica: i due
+controlli hanno correlazione diversa con la profondit\`a ambientale al netto degli effetti
+fissi (0,959 TotalDepth, 0,891 DESTA), quindi con il primo resta meno variazione indipendente
+e l'errore standard \`e pi\`u grande. \`E per\`o una lettura incompleta. DESTA copre solo
+sette aree tematiche contro diciassette di TotalDepth: un controllo pi\`u grossolano \`e
+meno collineare anche perch\'e misura il confondente in modo meno preciso, e un confondente
+misurato male lascia parte di s\'e nel coefficiente EP. In quel caso la significativit\`a che
+compare nelle colonne (3)--(4) pu\`o essere confondimento residuo, non precisione recuperata.
+\textbf{Entrambe le letture sono plausibili} e questo \`e il bivio da dichiarare, non da
+nascondere: la specificazione di riferimento adotta TotalDepth per ragioni di completezza, ma
+chi sceglie DESTA ottiene un risultato pi\`u ``robusto'' la cui origine non \`e accertata.
 
-\textbf{Come questo va detto nel lavoro.} Con onest\`a: il margine sporco \`e
-\emph{sistematicamente negativo} in tutte e otto le celle, ma la sua significativit\`a
-statistica dipende dalla scelta del controllo. Poich\'e la specificazione di riferimento
-adotta il controllo della Banca Mondiale, la formulazione difendibile \`e che l'evidenza
-sul margine sporco \`e \emph{suggestiva ma non conclusiva}, e che diventa significativa
-solo adottando la misura di profondit\`a alternativa --- scelta che va motivata in
-anticipo e non a posteriori.
+\textbf{Come questo va detto nel lavoro.} Il margine sporco \`e negativo nella grande
+maggioranza delle specificazioni, ma \emph{non in tutte}: sotto il gruppo di controllo pi\`u
+stretto (prodotti della stessa famiglia merceologica, prima riga di Tabella~\ref{tab:stability})
+il segno si inverte. La formulazione difendibile non \`e ``sistematicamente negativo'', ma:
+l'evidenza \`e \emph{suggestiva e coerente in quasi tutte le varianti}, con significativit\`a
+statistica che dipende dal controllo adottato --- scelta che va motivata in anticipo.
 
 \input{tab_07_matrice}
 
@@ -449,7 +466,18 @@ e dazi.
 
 \textbf{Che cosa dicono i numeri.} Il coefficiente sul margine verde resta piccolo e non
 significativo in tutte e tre le restrizioni. \`E il punto: un artefatto del termine di
-paragone si muoverebbe quando il termine di paragone si muove.
+paragone si muoverebbe quando il termine di paragone si muove. I $p$-value di questa tabella
+sono asintotici; il \emph{bootstrap} di Tabella~\ref{tab:wcb} \`e il riferimento per l'inferenza.
+
+\textbf{Tre caveat dichiarati.} (i)~\emph{Profondi vs superficiali}: il gruppo
+``superficiali'' comprende circa 8 cluster trattati, rendendo il \emph{wild cluster bootstrap}
+ancora meno affidabile di quanto non sia gi\`a nel campione completo. (ii)~\emph{Destinazioni
+appaiate (CEM)}: il bilanciamento ottenuto \`e debole --- l'$L_1$ migliora da 0,788 a 0,652 ma
+\texttt{log\_gdppc\_2000} peggiora oltre soglia (SMD $-0{,}108$); va interpretata come analisi
+esplorativa, non come identificazione pulita. (iii)~\emph{Stessa famiglia merceologica}: con
+prodotti della stessa HS4 come controllo, il coefficiente sporco si inverte di segno; come
+documentato da Eckel et al.\ (2023), la restrizione HS4 pu\`o catturare spillover
+intrafamiglia, per cui questa variante non \`e interpretabile da sola.
 
 \input{tab_10_stability}
 
@@ -547,8 +575,23 @@ clausole ambientali non funzionano mai. Si sta dimostrando che gli accordi cines
 linguaggio non sposta il commercio. \`E un'affermazione pi\`u circoscritta ma pi\`u utile,
 e soprattutto \`e quella che i dati sostengono davvero.
 
-Le righe ``sola cooperazione'' e ``spazio regolatorio'' funzionano da controllo negativo:
-sono clausole prive di meccanismo commerciale, e l\`i non dovrebbe emergere nulla.
+Le righe ``sola cooperazione'' e ``spazio regolatorio'' (indice TREND) funzionano da
+controllo negativo: sono clausole prive di meccanismo commerciale. \textbf{Un'anomalia da
+dichiarare.} La riga ``spazio regolatorio'' risulta significativa su entrambi i margini
+($p < 0{,}05$ su verde e sporco) con coefficienti positivi, il segno opposto alle attese.
+Questo risultato --- che emerge da $p$-value asintotici su circa venticinque cluster trattati
+--- va preso con grande cautela, ma non va nascosto: se confermato anche sotto il
+\emph{wild cluster bootstrap} (non ancora calcolato per questa tabella), implicherebbe
+variazione confondente residua a livello destinazione$\times$anno$\times$tipo, cio\`e uno
+shock che gli effetti fissi non assorbono. La verifica \`e necessaria prima di presentare
+questa analisi.
+
+\textbf{Due avvertenze sulle stelle di questa tabella.} (i)~I $p$-value sono asintotici
+e su questo numero di cluster sono inaffidabili per le stesse ragioni illustrate in
+Tabella~\ref{tab:loo}. (ii)~La riga \texttt{WB\_GreenLiberalization} \`e una variabile
+binaria non nulla in soli tre anni-paese: il coefficiente ($-0{,}088^{*}$) non \`e un effetto
+marginale per clausola ma un confronto fra i tre anni con l'accordo e tutti gli altri; la
+colonna \`e su scala incomparabile con le righe degli indici continui.
 
 \input{tab_13_subindices}
 
@@ -598,9 +641,25 @@ conclusione su quel paese e non sul fenomeno.
 \textbf{La prova} (Tabella~\ref{tab:loo}). Si ristima la specificazione escludendo ogni volta
 una destinazione trattata, e si guarda che cosa resta del coefficiente.
 
-\textbf{Come si legge.} Le righe che perdono gli asterischi segnalano i paesi da cui il
-risultato dipende maggiormente. Le colonne (2) e (4) hanno due righe in pi\`u perch\'e
-includono Hong Kong e Macao.
+\textbf{Come si legge.} Questa tabella misura la \emph{stabilit\`a del coefficiente}, non la
+sua significativit\`a: la domanda \`e di quanto si sposta il numero quando si toglie un paese,
+non quante stelle porta. Nella colonna (1) il coefficiente oscilla fra $-0{,}0097$ e
+$-0{,}0133$ senza mai cambiare segno: nessun singolo partner genera il risultato. I paesi che
+pesano di pi\`u sono Corea e Australia nella colonna (1), e Hong Kong nella colonna (2). Le
+colonne (2) e (4) hanno due righe in pi\`u perch\'e includono Hong Kong e Macao.
+
+\textbf{La colonna (4) merita attenzione a parte.} \`E la pi\`u instabile: togliere
+l'Australia sposta il coefficiente da $-0{,}0082$ a $-0{,}0048$ ($-41\%$); togliere
+il Pakistan lo porta a $-0{,}0056$. Chi usa questa colonna per argomentare dovrebbe
+documentarlo esplicitamente.
+
+\textbf{Perch\'e qui \`e quasi tutto stellato.} Gli asterischi di questa tabella vengono dai
+$p$-value asintotici prodotti dallo stimatore, non dal \emph{wild cluster bootstrap} usato in
+tutto il resto del documento. Con circa venticinque destinazioni trattate quei $p$-value sono
+enormemente sottostimati: la riga di riferimento della colonna (1) ha $p$ asintotico inferiore
+a $0{,}001$, ma il \emph{bootstrap} sullo stesso identico coefficiente d\`a $0{,}070$
+(Tabella~\ref{tab:wcb}). Le stelle vanno quindi ignorate: sono un artefatto dello stesso
+problema di pochi cluster trattati che il resto del lavoro \`e costruito per gestire.
 
 \textbf{Una lacuna dichiarata.} I file esportati per questa prova contengono soltanto
 coefficiente e $p$-value: mancano errori standard e numerosit\`a. Non \`e un dato perduto ---
@@ -625,9 +684,12 @@ nulla. Viene riportato sia nella versione basata sulla formula asintotica sia in
 basata sull'intervallo bootstrap, che \`e la pi\`u onesta perch\'e corrisponde
 all'inferenza effettivamente usata.
 
-\textbf{Che cosa dicono i numeri.} Sul margine verde l'intervallo bootstrap esclude effetti
-superiori a circa il 3\% per disposizione. Al di sopra di quella soglia si pu\`o affermare
-che l'effetto non c'\`e; al di sotto, il disegno semplicemente non discrimina.
+\textbf{Che cosa dicono i numeri.} L'intervallo bootstrap sul margine verde \`e
+$[-1{,}8\%,\ +3{,}2\%]$ per disposizione. Al di sopra di $+3{,}2\%$ (effetto positivo) o
+al di sotto di $-1{,}8\%$ (effetto negativo) si pu\`o escludere l'effetto al 95\% di
+confidenza; in quel range il disegno non discrimina. La soglia di esclusione \`e quindi
+\emph{asimmetrica}: il disegno \`e pi\`u potente nell'escludere grandi effetti positivi
+che grandi effetti negativi.
 
 \textbf{La riformulazione che ne discende.} Nel testo del lavoro conviene sostituire
 ovunque ``non troviamo alcun effetto'' con ``possiamo escludere effetti superiori a questa
@@ -650,8 +712,10 @@ Tabella~\ref{tab:mde} permette di enunciarlo nella forma corretta: sono esclusi 
 superiori a circa il 3\% per disposizione.
 
 \textbf{Sul margine sporco la risposta \`e pi\`u sfumata, e va detta come tale.} Il
-coefficiente \`e sistematicamente negativo in tutte le specificazioni --- il che di per s\'e
-\`e notevole --- ma la sua significativit\`a statistica dipende da due scelte:
+coefficiente \`e negativo nella grande maggioranza delle specificazioni, ma non in tutte:
+sotto il gruppo di controllo pi\`u stretto (prodotti della stessa famiglia HS4, prima riga
+di Tabella~\ref{tab:stability}) il segno si inverte. La sua significativit\`a statistica
+dipende inoltre da due scelte:
 l'unit\`a di analisi e, soprattutto, quale misura si usa per controllare la profondit\`a
 complessiva dell'accordo. Con il controllo della Banca Mondiale, che \`e quello della
 specificazione di riferimento, il $p$-value bootstrap sul \emph{full panel} resta sopra

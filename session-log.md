@@ -1,5 +1,151 @@
 # Session Log — Paper_PTA
 
+## 2026-08-12 — Sessione completa: fix audit C1–C9 + W1–W13 (Mac) (Sonnet 4.6/5)
+
+**Chiusi tutti i fix Mac dall'audit 2026-08-12.** In ordine:
+1. **C3+C4+W1** (`44_make_tables_tex.R`): correlazioni hardcoded corrette (0,959/0,891),
+   `tab_12` ora legge WCB p-value, aggiunti Pannelli A bis e B bis (TREND×verde, p=0.013).
+2. **C8+C9** (`33_mde_equivalence.R`): `out_path()` su tutti i path, colonna MDE WCB
+   rinominata `semiamp_wcb` (semi-ampiezza ≠ MDE a 80% potenza).
+3. **C1,C2,C6-testo,W2,W6,W7,W11,W12,W13** (`Tabelle_Stime.tex`): passata completa di
+   scrittura — placebo fallito dichiarato, «sistematicamente negativo» qualificato,
+   ponderazione corretta (FE non pesi), DESTA con lettura alternativa, 3 caveat tab_10,
+   avvertenze tab_13, −0.0097, bound bilaterali MDE, nota WCB Frisch-Waugh.
+**PDF compilato pulito: 31 pagine, 0 errori.**
+**Aperti su Windows**: C7 (permutazione anti-conservativa, ore di calcolo),
+C6-Stata (`absorb(pd dt pt)`, 1 riga + 25 min). Tutto il resto è chiuso.
+
+---
+
+## 2026-08-12 (4) — Passata di scrittura su `Tabelle_Stime.tex` (Sonnet 4.6, Mac)
+
+Implementati tutti i fix di scrittura dall'audit (C1, C2, W2, W6, W7, W11, W12, W13) e la
+correzione testo di C6 (ponderazione), interamente in `New/Paper/Tabelle/Tabelle_Stime.tex`:
+
+- **C1** (§Meccanismo): dichiarato che `TREND_RegulatorySpace` è significativo su entrambi
+  i margini — placebo fallito, richiede WCB prima di presentare la tabella.
+- **C2** (§Matrice e §Conclusioni): sostituito «sistematicamente negativo in tutte» con
+  «negativo nella grande maggioranza, ma non sotto il controllo HS4 più stretto».
+- **C6-testo** (§Seconda versione): corretto il paragrafo sulla ponderazione — verificato
+  algebraicamente che WLS collassato ≡ micro (diff max 7×10⁻¹⁶); la divergenza è dalla
+  struttura FE, non dai pesi.
+- **W2** (§Matrice): aggiunta la lettura alternativa DESTA = controllo incompleto (7 vs 17
+  aree) → possibile confondimento residuo, non solo precisione recuperata. Corrette le
+  correlazioni 0,86/0,69 → 0,959/0,891 (within-FE). Aggiunta fonte DESTA (Dur, Baccini &
+  Elsig 2014) anche nell'introduzione.
+- **W6** (§Gruppi di controllo): aggiunti i tre caveat già documentati in ROADMAP (8 cluster
+  nel confronto deep/shallow, CEM debole, spillover Eckel et al. 2023 nel controllo HS4).
+- **W7** (§Meccanismo): aggiunta nota su stelle asintotiche in tab_13 e sul fatto che
+  `WB_GreenLiberalization` è una dummy a 3 country-year (coefficiente non interpretabile
+  per clausola).
+- **W11** (§Leave-one-out): −0.0098 → −0.0097; aggiunta lettura della colonna (4) fragile
+  (Australia −41%, Pakistan).
+- **W12** (§MDE): sostituito «superiori a circa il 3%» con i bound bilaterali [−1,8%, +3,2%]
+  con nota sulla asimmetria.
+- **W13** (§Bootstrap): aggiunta nota metodologica WCB Frisch-Waugh (validità collassato ≡
+  micro, FE $pt$ non annidato nel cluster).
+
+Compilazione: 31 pagine, 0 errori, 1 overfull preesistente (4,5pt, non introdotto da noi).
+
+**Aperti su Windows**: C7 (permutazione anti-conservativa), C6-Stata (riga `absorb(pd dt pt)`).
+
+---
+
+## 2026-08-12 (3) — Fix C8+C9 (`33_mde_equivalence.R`) (Sonnet 4.6, Mac)
+
+**C8** — tre righe in `New/Code/33_mde_equivalence.R` (righe 25–27): `TRIPLEDD`, `WCB` e
+`OUT_MD` usavano `here()` anziché `out_path()`. Con `_sample_config.R` su una variante
+non-baseline (attualmente "incl"/"desta"), lo script leggeva SD dal pannello suffissato
+ma SE/IC dal baseline, in silenzio. Fix: `out_path()` su tutte e tre. Verificato: con la
+config attuale lo script ora fallisce esplicitamente (file della variante non presente su Mac),
+il che è il comportamento corretto.
+
+**C9** — `mde_wcb <- function(row) (row$conf_high - row$conf_low) / 2` calcolava la
+semi-ampiezza dell'IC al 95% (≈ 1,96 SE), non l'MDE a potenza 80% (2,80 SE = 1,43× più
+grande). Con IC asimmetrico (WB verde: [−1,77%, +3,19%]) moltiplicare per 1,43 non ha
+senso. Fix scelto: rinominare `mde_wcb_*` → `semiamp_wcb_*` ovunque nello script e nel
+`.md`. La nota di `tab_19_mde.tex` spiega esplicitamente la differenza (column 5 = semi-
+ampiezza, non MDE; il bound informativo è conf_high). PDF compilato, 0 errori (1 overfull
+preesistente non toccato).
+
+**Su Windows ancora necessario**: rigenerare il `.md` per la variante baseline con la
+config corretta (`SAMPLE="excl"`, `DEPTH="totaldepth"`) dopo aver confermato che la
+pipeline completa gira senza errori.
+
+---
+
+## 2026-08-12 (2) — Fix C3+C4+W1 dall'audit (Sonnet 5, Mac)
+
+**Implementati i tre fix di priorità 1 dell'audit precedente**, tutti in
+`New/Code/44_make_tables_tex.R`:
+
+- **W1**: correlazioni hardcoded errate ("0.86"/"0.69") sostituite con i valori veri da
+  `New/Output/Diagnostics/32_desta_check.md` (0.959 within TotalDepth, 0.891 within DESTA).
+  Due punti: nota di `tab_07_matrice.tex` e `tab_17_depthcontrols.tex`.
+- **C3**: `tab_12_desttrends.tex` Panel A ora legge i $p$-value da `r79b_wcb_trends*.csv`
+  (bootstrap) invece di `r79_desttrends*.csv` (asintotico). Coefficienti/SE restano dal file
+  con gli andamenti (non presenti nel file WCB). Risultato: quasi tutte le stelle spariscono
+  (baseline: $p=0.071$ asintotico → $p=0.280$ bootstrap).
+- **C4**: aggiunto un Pannello A bis (stessa stima, indice TREND) e un Pannello B bis
+  (pre-trend, indice TREND) a `tab_12_desttrends.tex`. Ora TREND×verde ($p_{wcb}=0.013$,
+  l'unico coefficiente del progetto che sopravvive al bootstrap) compare nel documento,
+  accompagnato dalla nota che il Pannello B bis mostra lo stesso segno già presente
+  pre-accordo (non significativo, ma coerente con un pre-trend più che con un effetto causale).
+
+**Verifica**: script rigenerato senza errori, `pdflatex` compila pulito (31 pagine, 0 errori,
+0 riferimenti irrisolti dopo il secondo run). Numeri in `tab_12_desttrends.tex` controllati a
+mano contro i CSV sorgente — coincidono.
+
+**Pendenti dalla stessa lista** (non toccati in questa sessione): C7 (permutazione
+anti-conservativa, richiede ore di calcolo Windows), C6 (riga Stata `absorb`), C8+C9 (MDE),
+resto della passata di scrittura (C1,C2,C5,W2,W6,W7,W11-13).
+
+---
+
+## 2026-08-12 — AUDIT completo `New/` (Sonnet 4.6, Mac)
+
+**Audit richiesto**: codice, decisioni econometriche, disegno e interpretazione, incluso
+`Tabelle_Stime.tex`. Report completo in `correspondence/audit/2026-08-12_audit_report.md`.
+
+**Verdetto**: CONDITIONAL PASS sul codice, FAIL sul documento nella forma attuale.
+
+**9 critical, 14 warning, 7 note.** I tre problemi che contano davvero:
+
+1. **L'ipotesi della ponderazione (ROADMAP §11.2) è falsa.** Verificato sui dati reali: WLS
+   collassata con pesi `n` ≡ micro a 7e-16. HK/MO pesano identico nei due pannelli. Il divario
+   collassato/full panel viene tutto dalla struttura FE (`pd+dt+pt` vs `fpd+fdt+pt`). Il test
+   pianificato (ristimare senza pesi) avrebbe dato una falsa conferma. Fix: una riga Stata,
+   `absorb(pd dt pt)` nel 17, per isolare il contributo delle FE d'impresa.
+
+2. **Il test di permutazione è anti-conservativo.** `22_permutation_inference.R` permuta EP ma
+   lascia fermo TD. Nei dati EP e TD hanno correlazione within 0.96; sotto permutazione la
+   collinearità sparisce → distribuzione nulla troppo stretta → p-value sul margine sporco
+   (0.023/0.036) sono sistematicamente troppo bassi. Fix: permutare EP e TD insieme (~5 righe).
+
+3. **Il documento non mostra l'inferenza che ha già su disco.** `tab_12` Panel A mostra p
+   asintotici (*** p<0.001) mentre `r79b_wcb_trends*.csv` dà WCB=0.280 per la colonna baseline.
+   Inoltre `tab_12` omette TREND×verde, l'unico coefficiente del progetto significativo sotto WCB
+   (p=0.013). Un placebo fallisce in `tab_13` e non è dichiarato.
+
+**Chiarimento econometrico importante (discusso in sessione)**: il pannello collassato esiste
+per ragioni computazionali (WCB su 49M righe va fuori memoria), non per produrre stime diverse.
+Le stime sono identiche al micro con gli stessi FE. La differenza collassato/full panel è tutta
+nelle FE d'impresa, non nell'aggregazione né nei pesi. Il WCB collassato è valido come inferenza
+sulla specifica collassata; confrontarlo col full panel è un sanity check sulla concordanza, non
+un confronto diretto.
+
+**Script creato**: `correspondence/audit/2026-08-12_check_collapse_identity.R` — verifica
+l'identità Frisch-Waugh sui dati reali, gira in ~3 min, non richiede `New/Data/`.
+
+**Priorità di attacco** (da audit report §6):
+1. C3+C4+W1 — generatore, mezza giornata, sblocca la scrittura
+2. C7 — permutazione, unica correzione che può cambiare un risultato
+3. C6 — riga Stata `absorb(pd dt pt)`, chiude §11.2
+4. C8+C9 — MDE, fix rapidi
+5. C1+C2+C5+W2+W6+W7 — passata di scrittura sul documento
+
+---
+
 ## 2026-08-11 (notte, 2) — 📊 TABELLE: generatore CSV→LaTeX + documento commentato (Opus 5, Mac)
 
 **Fatto il salto da "calcolo" a "scrittura".** Nuovo `./New/Code/44_make_tables_tex.R`: legge i

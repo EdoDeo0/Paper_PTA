@@ -13,10 +13,10 @@ SD pesata per `n` (osservazioni impresa per cella), incluse le destinazioni mai-
 ## Minimum Detectable Effect (MDE)
 
 MDE asintotico = 2.8 x SE (potenza 80%, test bilaterale al 5%).
-MDE da wild cluster bootstrap (WCB) = meta' ampiezza dell'IC bootstrap — piu' onesto
-perche' e' l'inferenza che il paper dichiara di usare (§7-strategy).
+La colonna 'Semi-amp. IC/1SD' e' la meta' dell'ampiezza dell'IC WCB al 95% x SD del regressore:
+NON e' un MDE a potenza 80%. Con IC asimmetrico, il bound informativo e' conf_high (Lettura).
 
-| Indice | Margine | SE asint. | MDE asint./unita | MDE WCB/unita | SD regressore | MDE asint./1SD | MDE WCB/1SD | IC WCB (%, per unita) |
+| Indice | Margine | SE asint. | MDE asint./unita | Semi-amp. IC/unita | SD regressore | MDE asint./1SD | Semi-amp. IC/1SD | IC WCB (%, per unita) |
 |---|---|---:|---:|---:|---:|---:|---:|---|
 | WB | green | 0.0070 | 0.0195 | 0.0248 | 2.383 | 4.64% | 5.90% | [-1.77%, 3.19%] |
 | WB | dirty | 0.0030 | 0.0083 | 0.0101 | 2.383 | 1.97% | 2.40% | [-1.84%, 0.18%] |

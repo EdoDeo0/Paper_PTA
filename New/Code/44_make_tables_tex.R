@@ -530,7 +530,7 @@ get_coll <- function(sfx, tr) {
     paste0("\\item Colonne: (1) ", VAR[[1]]$desc, "; (2) ", VAR[[2]]$desc, "; (3) ", VAR[[3]]$desc, "; (4) ", VAR[[4]]$desc, "."),
     "\\item Coefficiente dell'interazione fra profondit\\`a ambientale (indice WB) e prodotti sporchi. \\`E l'unico coefficiente del lavoro che si muove: quello sui prodotti verdi \\`e nullo ovunque.",
     "\\item \\textbf{Tutti i $p$-value in questa tabella vengono dal \\emph{wild cluster bootstrap}}, cos\\`i le otto celle sono confrontabili fra loro. \\`E una precisazione necessaria: altrove nel progetto le colonne (1) e (2) erano state riassunte con il $p$-value ordinario, che \\`e molto pi\\`u basso e non \\`e paragonabile.",
-    "\\item \\textbf{Come si legge.} Sul \\emph{full panel} il risultato dipende da quale controllo di profondit\\`a si usa: con il controllo della Banca Mondiale il $p$-value resta sopra 0.17, con il controllo DESTA scende sotto 0.05. I due controlli hanno correlazione diversa con la profondit\\`a ambientale (0.86 il primo, 0.69 il secondo): pi\\`u un controllo \\`e sovrapposto alla variabile di interesse, meno variazione indipendente resta e pi\\`u grande diventa l'errore standard.",
+    "\\item \\textbf{Come si legge.} Sul \\emph{full panel} il risultato dipende da quale controllo di profondit\\`a si usa: con il controllo della Banca Mondiale il $p$-value resta sopra 0.17, con il controllo DESTA scende sotto 0.05. I due controlli hanno correlazione diversa con la profondit\\`a ambientale al netto degli effetti fissi (0.959 il primo, 0.891 il secondo): pi\\`u un controllo \\`e sovrapposto alla variabile di interesse, meno variazione indipendente resta e pi\\`u grande diventa l'errore standard.",
     "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
   wr(L, "tab_07_matrice.tex")
 }
@@ -715,45 +715,104 @@ get_coll <- function(sfx, tr) {
     key <- if (tr == "WB") "WB_EP_Depth" else "TREND_EP_Count"
     s <- d[d$treat == key, , drop = FALSE]; if (!nrow(s)) NULL else s
   }
+  gwcb <- function(sfx, tr) {
+    d <- rd(file.path(DIR_T, paste0("r79b_wcb_trends", sfx, ".csv")))
+    if (is.null(d)) return(NULL)
+    s <- d[d$treat == tr, , drop = FALSE]; if (!nrow(s)) NULL else s
+  }
   gpre <- function(sfx, tr) {
     d <- rd(file.path(DIR_T, paste0("r79c_pretrends", sfx, ".csv")))
     if (is.null(d)) return(NULL)
     s <- d[d$treat == tr, , drop = FALSE]; if (!nrow(s)) NULL else s
   }
-  rl <- function(fun, tr, term, field) {
-    paste(sapply(VAR, function(v) {
-      s <- fun(v$sfx, tr); if (is.null(s)) return("")
-      r <- s[s$term == term, , drop = FALSE]; if (!nrow(r)) return("")
-      switch(field, b = cst(r$coef[1], if ("pval" %in% names(r)) r$pval[1] else r$p_asy[1]),
-             se = paste0("(", fmt(if ("se" %in% names(r)) r$se[1] else r$se_asy[1]), ")"),
-             p  = paste0("[", fmt_p(if ("pval" %in% names(r)) r$pval[1] else r$p_asy[1]), "]"),
-             pw = fmt_p(r$p_wcb[1]))
+  ## Pannello A/A bis: coefficiente e SE dal file con gli andamenti; stelle e p-value dal wild cluster bootstrap
+  rowA <- function(tr, term_tr, term_wcb) {
+    b <- paste(sapply(VAR, function(v) {
+      s <- gtr(v$sfx, tr); w <- gwcb(v$sfx, tr)
+      if (is.null(s) || is.null(w)) return("")
+      r <- s[s$term == term_tr, , drop = FALSE]; rw <- w[w$term == term_wcb, , drop = FALSE]
+      if (!nrow(r) || !nrow(rw)) return("")
+      cst(r$coef[1], rw$p_wcb[1])
     }), collapse = " & ")
+    se <- paste(sapply(VAR, function(v) {
+      s <- gtr(v$sfx, tr); if (is.null(s)) return("")
+      r <- s[s$term == term_tr, , drop = FALSE]; if (!nrow(r)) return("")
+      paste0("(", fmt(r$se[1]), ")")
+    }), collapse = " & ")
+    p <- paste(sapply(VAR, function(v) {
+      w <- gwcb(v$sfx, tr); if (is.null(w)) return("")
+      rw <- w[w$term == term_wcb, , drop = FALSE]; if (!nrow(rw)) return("")
+      paste0("[", fmt_p(rw$p_wcb[1]), "]")
+    }), collapse = " & ")
+    list(b = b, se = se, p = p)
   }
+  ## Pannello B/B bis: pendenza pre-accordo, stelle e p-value dal bootstrap
+  rowB <- function(tr, term) {
+    b <- paste(sapply(VAR, function(v) {
+      s <- gpre(v$sfx, tr); if (is.null(s)) return("")
+      r <- s[s$term == term, , drop = FALSE]; if (!nrow(r)) return("")
+      cst(r$coef[1], r$p_wcb[1])
+    }), collapse = " & ")
+    se <- paste(sapply(VAR, function(v) {
+      s <- gpre(v$sfx, tr); if (is.null(s)) return("")
+      r <- s[s$term == term, , drop = FALSE]; if (!nrow(r)) return("")
+      paste0("(", fmt(r$se_asy[1]), ")")
+    }), collapse = " & ")
+    pw <- paste(sapply(VAR, function(v) {
+      s <- gpre(v$sfx, tr); if (is.null(s)) return("")
+      r <- s[s$term == term, , drop = FALSE]; if (!nrow(r)) return("")
+      fmt_p(r$p_wcb[1])
+    }), collapse = " & ")
+    list(b = b, se = se, pw = pw)
+  }
+  a_wb_g <- rowA("WB", "WB_EP_Depth:env_good", "ep_green")
+  a_wb_b <- rowA("WB", "WB_EP_Depth:dirty_p", "ep_dirty")
+  a_tr_g <- rowA("TREND", "TREND_EP_Count:env_good", "ep_green")
+  a_tr_b <- rowA("TREND", "TREND_EP_Count:dirty_p", "ep_dirty")
+  b_wb_g <- rowB("WB", "ep_green")
+  b_wb_b <- rowB("WB", "ep_dirty")
+  b_tr_g <- rowB("TREND", "ep_green")
+  b_tr_b <- rowB("TREND", "ep_dirty")
   L <- c("\\begin{table}[htbp]", "\\centering", "\\footnotesize",
     "\\caption{Andamenti specifici per destinazione e verifica dei pre-trend}",
     "\\label{tab:trends}", "\\begin{threeparttable}",
     paste0("\\begin{tabular}{l", strrep("c", NVAR), "}"), "\\toprule",
     paste0(" & ", paste(sapply(VAR, function(v) v$lab), collapse = " & "), " \\\\"), "\\midrule",
     paste0("\\multicolumn{", NVAR+1, "}{l}{\\textit{Pannello A --- stima con andamenti lineari destinazione$\\times$tipo di prodotto (indice WB)}} \\\\"), "\\addlinespace",
-    paste0("Profondit\\`a EP $\\times$ Verde & ", rl(gtr, "WB", "WB_EP_Depth:env_good", "b"), " \\\\"),
-    paste0(" & ", rl(gtr, "WB", "WB_EP_Depth:env_good", "se"), " \\\\"),
-    paste0(" & ", rl(gtr, "WB", "WB_EP_Depth:env_good", "p"), " \\\\"), "\\addlinespace",
-    paste0("Profondit\\`a EP $\\times$ Sporco & ", rl(gtr, "WB", "WB_EP_Depth:dirty_p", "b"), " \\\\"),
-    paste0(" & ", rl(gtr, "WB", "WB_EP_Depth:dirty_p", "se"), " \\\\"),
-    paste0(" & ", rl(gtr, "WB", "WB_EP_Depth:dirty_p", "p"), " \\\\"), "\\addlinespace",
+    paste0("Profondit\\`a EP $\\times$ Verde & ", a_wb_g$b, " \\\\"),
+    paste0(" & ", a_wb_g$se, " \\\\"),
+    paste0(" & ", a_wb_g$p, " \\\\"), "\\addlinespace",
+    paste0("Profondit\\`a EP $\\times$ Sporco & ", a_wb_b$b, " \\\\"),
+    paste0(" & ", a_wb_b$se, " \\\\"),
+    paste0(" & ", a_wb_b$p, " \\\\"), "\\addlinespace",
+    paste0("\\multicolumn{", NVAR+1, "}{l}{\\textit{Pannello A bis --- stessa stima, indice TREND}} \\\\"), "\\addlinespace",
+    paste0("Conteggio EP $\\times$ Verde & ", a_tr_g$b, " \\\\"),
+    paste0(" & ", a_tr_g$se, " \\\\"),
+    paste0(" & ", a_tr_g$p, " \\\\"), "\\addlinespace",
+    paste0("Conteggio EP $\\times$ Sporco & ", a_tr_b$b, " \\\\"),
+    paste0(" & ", a_tr_b$se, " \\\\"),
+    paste0(" & ", a_tr_b$p, " \\\\"), "\\addlinespace",
     paste0("\\multicolumn{", NVAR+1, "}{l}{\\textit{Pannello B --- test formale sui pre-trend (indice WB)}} \\\\"), "\\addlinespace",
-    paste0("Pendenza pre-accordo, Verde & ", rl(gpre, "WB", "ep_green", "b"), " \\\\"),
-    paste0(" & ", rl(gpre, "WB", "ep_green", "se"), " \\\\"),
-    paste0("\\quad $p$-value bootstrap & ", rl(gpre, "WB", "ep_green", "pw"), " \\\\"), "\\addlinespace",
-    paste0("Pendenza pre-accordo, Sporco & ", rl(gpre, "WB", "ep_dirty", "b"), " \\\\"),
-    paste0(" & ", rl(gpre, "WB", "ep_dirty", "se"), " \\\\"),
-    paste0("\\quad $p$-value bootstrap & ", rl(gpre, "WB", "ep_dirty", "pw"), " \\\\"),
+    paste0("Pendenza pre-accordo, Verde & ", b_wb_g$b, " \\\\"),
+    paste0(" & ", b_wb_g$se, " \\\\"),
+    paste0("\\quad $p$-value bootstrap & ", b_wb_g$pw, " \\\\"), "\\addlinespace",
+    paste0("Pendenza pre-accordo, Sporco & ", b_wb_b$b, " \\\\"),
+    paste0(" & ", b_wb_b$se, " \\\\"),
+    paste0("\\quad $p$-value bootstrap & ", b_wb_b$pw, " \\\\"), "\\addlinespace",
+    paste0("\\multicolumn{", NVAR+1, "}{l}{\\textit{Pannello B bis --- test formale sui pre-trend (indice TREND)}} \\\\"), "\\addlinespace",
+    paste0("Pendenza pre-accordo, Verde & ", b_tr_g$b, " \\\\"),
+    paste0(" & ", b_tr_g$se, " \\\\"),
+    paste0("\\quad $p$-value bootstrap & ", b_tr_g$pw, " \\\\"), "\\addlinespace",
+    paste0("Pendenza pre-accordo, Sporco & ", b_tr_b$b, " \\\\"),
+    paste0(" & ", b_tr_b$se, " \\\\"),
+    paste0("\\quad $p$-value bootstrap & ", b_tr_b$pw, " \\\\"),
     "\\bottomrule", "\\end{tabular}",
     "\\begin{tablenotes}[flushleft]\\footnotesize",
     paste0("\\item Colonne: (1) ", VAR[[1]]$desc, "; (2) ", VAR[[2]]$desc, "; (3) ", VAR[[3]]$desc, "; (4) ", VAR[[4]]$desc, "."),
-    "\\item \\textbf{Pannello A --- a quale obiezione risponde.} Gli effetti fissi del disegno principale non catturano una cosa: uno shock che riguardi \\emph{i prodotti verdi in una specifica destinazione} e che cresca nel tempo. \\`E il caso in cui un paese firma clausole ambientali proprio mentre la sua domanda di beni verdi sta salendo. Qui si aggiunge un andamento lineare per ogni destinazione e per ogni tipo di prodotto, che assorbe esattamente quella dinamica.",
-    "\\item \\textbf{Pannello B --- come si legge.} Si stima la pendenza del divario di composizione nel periodo \\emph{precedente} all'accordo. Se fosse diversa da zero, verdi e neutri divergevano gi\\`a prima e il confronto sarebbe viziato. I $p$-value riportati sono quelli bootstrap, i pi\\`u prudenti.",
+    "\\item \\textbf{Tutti i $p$-value e le stelle in questa tabella vengono dal \\emph{wild cluster bootstrap}}, l'unico affidabile con il numero di cluster trattati disponibile (circa 25).",
+    "\\item \\textbf{Pannello A/A bis --- a quale obiezione risponde.} Gli effetti fissi del disegno principale non catturano una cosa: uno shock che riguardi \\emph{i prodotti verdi in una specifica destinazione} e che cresca nel tempo. \\`E il caso in cui un paese firma clausole ambientali proprio mentre la sua domanda di beni verdi sta salendo. Qui si aggiunge un andamento lineare per ogni destinazione e per ogni tipo di prodotto, che assorbe esattamente quella dinamica.",
+    "\\item \\textbf{Il risultato con l'indice TREND.} Nel Pannello A bis, il margine verde con l'indice TREND \\`e l'unico coefficiente dell'intero lavoro a sopravvivere al bootstrap in modo netto ($p=0.013$ nella colonna baseline). Il Pannello B bis mostra per\\`o che, con lo stesso indice, il divario verde era gi\\`a positivo \\emph{prima} dell'entrata in vigore dell'accordo, sebbene non significativo al bootstrap: il risultato \\`e quindi compatibile con una tendenza preesistente pi\\`u che con un effetto causale dell'accordo, e va letto con questa cautela.",
+    "\\item \\textbf{Pannello B/B bis --- come si legge.} Si stima la pendenza del divario di composizione nel periodo \\emph{precedente} all'accordo. Se fosse diversa da zero, verdi e neutri divergevano gi\\`a prima e il confronto sarebbe viziato.",
     paste0("\\item ", NOTE_SE, " ", NOTE_STARS),
     "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
   wr(L, "tab_12_desttrends.tex")
@@ -931,7 +990,8 @@ get_coll <- function(sfx, tr) {
         cst(r$coef[1], r$pval[1], 4)
       }), collapse = " & ")
     }
-    L <- c(L, paste0("\\textit{Nessuno (riferimento)} & ", rowfor("lista_estesa"), " \\\\"), "\\midrule")
+    L <- c(L, paste0("\\textit{Nessuno (riferimento)} & ", rowfor("baseline"), " \\\\"),
+                paste0("\\textit{Nessuno, lista sporchi estesa} & ", rowfor("lista_estesa"), " \\\\"), "\\midrule")
     for (sp in specs) {
       cc <- sub("^senza_", "", sp)
       nmx <- if (!is.null(cname) && cc %in% names(cname)) cname[[cc]] else cc
@@ -942,7 +1002,8 @@ get_coll <- function(sfx, tr) {
       paste0("\\item Colonne: (1) ", VAR[[1]]$desc, "; (2) ", VAR[[2]]$desc, "; (3) ", VAR[[3]]$desc, "; (4) ", VAR[[4]]$desc, "."),
       "\\item Coefficiente dell'interazione fra profondit\\`a ambientale (WB) e prodotti sporchi, pannello collassato, ristimato escludendo ogni volta una destinazione trattata.",
       "\\item \\textbf{A cosa serve.} Con pochi accordi, un singolo partner molto grande pu\\`o generare da solo tutto il risultato. Se il coefficiente crolla togliendo un paese, la conclusione poggia su quel paese e non sul fenomeno generale.",
-      "\\item \\textbf{Come si legge.} Le stelle indicano la significativit\\`a in ciascuna riga: righe che perdono le stelle segnalano i paesi da cui il risultato dipende di pi\\`u.",
+      "\\item \\textbf{Come si legge.} Questa \\`e una prova di \\emph{stabilit\\`a del coefficiente}, non di significativit\\`a: si guarda di quanto si sposta il numero, non quante stelle ha. Righe in cui il coefficiente si dimezza o cambia segno segnalano i paesi da cui il risultato dipende di pi\\`u.",
+      "\\item \\textbf{Avvertenza sulle stelle.} Gli asterischi derivano dai $p$-value asintotici con cluster per destinazione prodotti dallo stimatore, non dal \\emph{wild cluster bootstrap} usato altrove. Con circa 25 destinazioni trattate quei $p$-value sono fortemente sottostimati: lo stesso coefficiente di riferimento della colonna (1) ha $p$ asintotico $<$0.001 ma $p$ bootstrap 0.070 (Tabella~\\ref{tab:wcb}). Le stelle di questa tabella non sono quindi confrontabili con quelle del resto del documento e non vanno lette come evidenza di significativit\\`a.",
       "\\item Le righe di Hong Kong e Macao sono vuote nelle colonne (1) e (3) perch\\'e in quelle varianti i due territori sono gi\\`a esclusi dal campione: non si possono togliere due volte.",
       "\\item Gli errori standard e il numero di osservazioni non sono presenti nei file esportati per questa prova: \\`e una lacuna nota degli export, non un dato mancante.",
       paste0("\\item ", NOTE_STARS),
@@ -989,7 +1050,7 @@ get_coll <- function(sfx, tr) {
     "\\bottomrule", "\\end{tabular}",
     "\\begin{tablenotes}[flushleft]\\footnotesize",
     "\\item Indice WB, variante baseline, pannello collassato.",
-    "\\item \\textbf{Il problema.} Gli accordi con molte clausole ambientali sono spesso accordi profondi \\emph{in tutto}. Se non si tiene conto della profondit\\`a complessiva, si rischia di attribuire al contenuto ambientale un effetto che appartiene all'accordo nel suo insieme. Ma il controllo \\`e a sua volta molto correlato con la variabile di interesse (0.86), quindi ne assorbe parte della variazione.",
+    "\\item \\textbf{Il problema.} Gli accordi con molte clausole ambientali sono spesso accordi profondi \\emph{in tutto}. Se non si tiene conto della profondit\\`a complessiva, si rischia di attribuire al contenuto ambientale un effetto che appartiene all'accordo nel suo insieme. Ma il controllo \\`e a sua volta molto correlato con la variabile di interesse (0.959 al netto degli effetti fissi), quindi ne assorbe parte della variazione.",
     "\\item Le righe mostrano quanto il risultato dipenda da questa scelta: (b) toglie del tutto il controllo, (c) lo restringe alle sole aree dell'accordo che potrebbero plausibilmente interagire con la composizione, (d) cambia impostazione e misura la \\emph{quota} ambientale sul totale, stimata solo fra i partner che hanno gi\\`a un accordo.",
     "\\item In (d) i coefficienti sono su una scala diversa (la quota varia fra 0 e 1) e non sono confrontabili in valore assoluto con le altre righe.",
     paste0("\\item ", NOTE_SE, " ", NOTE_STARS),
@@ -1045,8 +1106,8 @@ get_coll <- function(sfx, tr) {
       "\\caption{Quanto dovrebbe essere grande un effetto perch\\'e questo disegno riuscisse a vederlo}",
       "\\label{tab:mde}", "\\begin{threeparttable}",
       "\\begin{tabular}{llcccc}", "\\toprule",
-      "Indice & Margine & Errore std. & Effetto minimo & Effetto minimo & Intervallo di confidenza \\\\",
-      " & & asintotico & rilevabile (1 dev.\\ std.) & rilevabile, bootstrap & bootstrap (per unit\\`a) \\\\", "\\midrule")
+      "Indice & Margine & Errore std. & Effetto minimo & Semi-ampiezza & Intervallo di confidenza \\\\",
+      " & & asintotico & rilevabile (1 dev.\\ std.) & IC bootstrap (1 dev.\\ std.) & bootstrap (per unit\\`a) \\\\", "\\midrule")
     for (r in rows) {
       p <- trimws(strsplit(r, "|", fixed = TRUE)[[1]])
       p <- p[nzchar(p)]
@@ -1061,7 +1122,7 @@ get_coll <- function(sfx, tr) {
       "\\begin{tablenotes}[flushleft]\\footnotesize",
       "\\item Campione di stima: pannello collassato, variante escl.\\ HK/Macao. Deviazione standard dei regressori calcolata sul campione effettivo e pesata.",
       "\\item \\textbf{Perch\\'e questa tabella \\`e importante.} Un risultato nullo pu\\`o significare due cose molto diverse: che l'effetto non c'\\`e, oppure che c'\\`e ma \\`e troppo piccolo perch\\'e i dati lo distinguano dal rumore. Questa tabella dice quale delle due.",
-      "\\item \\textbf{Come si legge.} L'\\emph{effetto minimo rilevabile} \\`e la dimensione al di sotto della quale il disegno non \\`e in grado di dire nulla. Sul margine verde, l'intervallo bootstrap esclude effetti superiori a circa il 3\\% per disposizione: sopra quella soglia possiamo dire che l'effetto non c'\\`e; sotto, il disegno semplicemente non discrimina.",
+      "\\item \\textbf{Come si legge.} L'\\emph{effetto minimo rilevabile} (quarta colonna) \\`e la dimensione al di sotto della quale il disegno non \\`e in grado di dire nulla, calcolato sul metodo asintotico (2{,}8 $\\times$ errore standard). La quinta colonna riporta la semi-ampiezza dell'intervallo di confidenza \\emph{wild cluster bootstrap}: non \\`e un MDE a potenza 80\\% (sarebbe $1{,}43\\times$ pi\\`u grande), ma il margine d'errore bootstrap. Il bound informativo per la stima di precisione \\`e la colonna $[$IC WCB$]$: sul margine verde, esclude effetti superiori a circa il 3\\% per disposizione al 95\\% di confidenza.",
       "\\item Ne discende una formulazione pi\\`u corretta del risultato: non ``non troviamo alcun effetto'', ma ``possiamo escludere effetti superiori a questa soglia''.",
       "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
     wr(L, "tab_19_mde.tex")

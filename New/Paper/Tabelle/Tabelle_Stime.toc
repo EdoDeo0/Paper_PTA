@@ -20,12 +20,12 @@
 \contentsline {subsection}{\numberline {8.1}Gruppi di controllo alternativi}{18}{subsection.8.1}%
 \contentsline {subsection}{\numberline {8.2}Varianti di campione, controlli e variabile dipendente}{19}{subsection.8.2}%
 \contentsline {subsection}{\numberline {8.3}Andamenti specifici per destinazione e pre-trend}{20}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Il modo in cui si controlla la profondit\`a dell'accordo}{21}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Una definizione alternativa di ``bene verde''}{22}{subsection.8.5}%
-\contentsline {section}{\numberline {9}Il meccanismo: quali clausole potrebbero mordere}{23}{section.9}%
-\contentsline {section}{\numberline {10}I margini che le stime principali non vedono}{25}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Nascono flussi nuovi?}{25}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Una misura continua di inquinamento}{26}{subsection.10.2}%
-\contentsline {section}{\numberline {11}Il risultato dipende da un solo paese?}{27}{section.11}%
-\contentsline {section}{\numberline {12}Che cosa possiamo davvero escludere}{29}{section.12}%
-\contentsline {section}{\numberline {13}Che cosa dicono tutte insieme}{30}{section.13}%
+\contentsline {subsection}{\numberline {8.4}Il modo in cui si controlla la profondit\`a dell'accordo}{22}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Una definizione alternativa di ``bene verde''}{23}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Il meccanismo: quali clausole potrebbero mordere}{24}{section.9}%
+\contentsline {section}{\numberline {10}I margini che le stime principali non vedono}{26}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Nascono flussi nuovi?}{26}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Una misura continua di inquinamento}{27}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Il risultato dipende da un solo paese?}{28}{section.11}%
+\contentsline {section}{\numberline {12}Che cosa possiamo davvero escludere}{30}{section.12}%
+\contentsline {section}{\numberline {13}Che cosa dicono tutte insieme}{31}{section.13}%

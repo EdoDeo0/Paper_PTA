@@ -22,9 +22,9 @@ source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 
 CACHE_FST <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
-TRIPLEDD  <- here("New/Output/TripleDiff/Tables/tripledd_collapsed.csv")
-WCB       <- here("New/Output/TripleDiff/Tables/wcb_collapsed.csv")
-OUT_MD    <- here("New/Output/Diagnostics/33_mde_equivalence.md")
+TRIPLEDD  <- out_path(here("New/Output/TripleDiff/Tables/tripledd_collapsed.csv"))
+WCB       <- out_path(here("New/Output/TripleDiff/Tables/wcb_collapsed.csv"))
+OUT_MD    <- out_path(here("New/Output/Diagnostics/33_mde_equivalence.md"))
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 
 stopifnot(file.exists(CACHE_FST), file.exists(TRIPLEDD), file.exists(WCB))
@@ -67,25 +67,25 @@ wcb_trend_dirty <- wcb[treat == "TREND" & term == "ep_dirty"]
 MDE_MULT <- 2.8
 mde_asym <- function(se) MDE_MULT * se
 
-## MDE "onesto" da WCB: meta' ampiezza dell'IC bootstrap (piu' conservativo
-## dell'asintotico quando l'IC WCB e' piu' ampio, come atteso con pochi cluster
-## trattati)
-mde_wcb <- function(row) (row$conf_high - row$conf_low) / 2
+## Semi-ampiezza dell'IC bootstrap al 95%: NON e' un MDE a potenza 80% (quello
+## e' 2.80 x SE), e' il margine d'errore (circa 1.96 x SE efficace). Riportata
+## cosi' com'e' — con IC asimmetrico il bound informativo e' conf_high.
+semiamp_wcb <- function(row) (row$conf_high - row$conf_low) / 2
 
 tab <- data.table(
   indice = c("WB", "WB", "TREND", "TREND"),
   margine = c("green", "dirty", "green", "dirty"),
   se_asintotico = c(se_wb_green, se_wb_dirty, se_trend_green, se_trend_dirty),
   mde_asintotico_per_unita = mde_asym(c(se_wb_green, se_wb_dirty, se_trend_green, se_trend_dirty)),
-  mde_wcb_per_unita = c(mde_wcb(wcb_wb_green), mde_wcb(wcb_wb_dirty),
-                        mde_wcb(wcb_trend_green), mde_wcb(wcb_trend_dirty)),
+  semiamp_wcb_per_unita = c(semiamp_wcb(wcb_wb_green), semiamp_wcb(wcb_wb_dirty),
+                             semiamp_wcb(wcb_trend_green), semiamp_wcb(wcb_trend_dirty)),
   sd_regressore = c(sd_wb, sd_wb, sd_trend, sd_trend)
 )
 tab[, mde_asintotico_per_1sd := mde_asintotico_per_unita * sd_regressore]
-tab[, mde_wcb_per_1sd := mde_wcb_per_unita * sd_regressore]
+tab[, semiamp_wcb_per_1sd := semiamp_wcb_per_unita * sd_regressore]
 tab[, wcb_upper_pct := c(wcb_wb_green$conf_high, wcb_wb_dirty$conf_high,
                          wcb_trend_green$conf_high, wcb_trend_dirty$conf_high) * 100]
-tab[, wcb_lower_pct := c(wcb_wb_green$conf_low, wcb_wb_dirty$conf_low,
+tab[, wcb_lower_pct := c(wcb_wb_green$conf_low,  wcb_wb_dirty$conf_low,
                          wcb_trend_green$conf_low, wcb_trend_dirty$conf_low) * 100]
 
 print(tab)
@@ -95,7 +95,7 @@ mde_jump <- data.table(
   paese = c("Laos (1->6)", "Corea (1->17)"),
   salto_unita = c(jump_wb_laos, jump_wb_korea),
   mde_asintotico_green = tab[indice == "WB" & margine == "green", mde_asintotico_per_unita] * c(jump_wb_laos, jump_wb_korea),
-  mde_wcb_green = tab[indice == "WB" & margine == "green", mde_wcb_per_unita] * c(jump_wb_laos, jump_wb_korea)
+  semiamp_wcb_green = tab[indice == "WB" & margine == "green", semiamp_wcb_per_unita] * c(jump_wb_laos, jump_wb_korea)
 )
 print(mde_jump)
 
@@ -117,15 +117,15 @@ sprintf("| TREND_EP_Count | %.4f |", sd_trend),
 "## Minimum Detectable Effect (MDE)",
 "",
 "MDE asintotico = 2.8 x SE (potenza 80%, test bilaterale al 5%).",
-"MDE da wild cluster bootstrap (WCB) = meta' ampiezza dell'IC bootstrap — piu' onesto",
-"perche' e' l'inferenza che il paper dichiara di usare (§7-strategy).",
+"La colonna 'Semi-amp. IC/1SD' e' la meta' dell'ampiezza dell'IC WCB al 95% x SD del regressore:",
+"NON e' un MDE a potenza 80%. Con IC asimmetrico, il bound informativo e' conf_high (Lettura).",
 "",
-"| Indice | Margine | SE asint. | MDE asint./unita | MDE WCB/unita | SD regressore | MDE asint./1SD | MDE WCB/1SD | IC WCB (%, per unita) |",
+"| Indice | Margine | SE asint. | MDE asint./unita | Semi-amp. IC/unita | SD regressore | MDE asint./1SD | Semi-amp. IC/1SD | IC WCB (%, per unita) |",
 "|---|---|---:|---:|---:|---:|---:|---:|---|",
 sprintf("| %s | %s | %.4f | %.4f | %.4f | %.3f | %.2f%% | %.2f%% | [%.2f%%, %.2f%%] |",
         tab$indice, tab$margine, tab$se_asintotico, tab$mde_asintotico_per_unita,
-        tab$mde_wcb_per_unita, tab$sd_regressore,
-        tab$mde_asintotico_per_1sd * 100, tab$mde_wcb_per_1sd * 100,
+        tab$semiamp_wcb_per_unita, tab$sd_regressore,
+        tab$mde_asintotico_per_1sd * 100, tab$semiamp_wcb_per_1sd * 100,
         tab$wcb_lower_pct, tab$wcb_upper_pct),
 "",
 "## MDE per il salto tipico osservato (WB, margine green)",
@@ -133,15 +133,15 @@ sprintf("| %s | %s | %.4f | %.4f | %.4f | %.3f | %.2f%% | %.2f%% | [%.2f%%, %.2f
 "| Paese | Salto EP | MDE asintotico | MDE WCB |",
 "|---|---:|---:|---:|",
 sprintf("| %s | %d | %.2f%% | %.2f%% |", mde_jump$paese, mde_jump$salto_unita,
-        mde_jump$mde_asintotico_green * 100, mde_jump$mde_wcb_green * 100),
+        mde_jump$mde_asintotico_green * 100, mde_jump$semiamp_wcb_green * 100),
 "",
 "## Confronto WB vs TREND in unita' comparabili",
 "",
-sprintf("Sul margine green: WB MDE/1SD = %.2f%% (asint.) / %.2f%% (WCB); TREND MDE/1SD = %.2f%% (asint.) / %.2f%% (WCB).",
+sprintf("Sul margine green: WB MDE/1SD = %.2f%% (asint.); TREND MDE/1SD = %.2f%% (asint.). Semi-amp. IC WCB: WB = %.2f%%, TREND = %.2f%%.",
         tab[indice == "WB" & margine == "green", mde_asintotico_per_1sd] * 100,
-        tab[indice == "WB" & margine == "green", mde_wcb_per_1sd] * 100,
         tab[indice == "TREND" & margine == "green", mde_asintotico_per_1sd] * 100,
-        tab[indice == "TREND" & margine == "green", mde_wcb_per_1sd] * 100),
+        tab[indice == "WB" & margine == "green", semiamp_wcb_per_1sd] * 100,
+        tab[indice == "TREND" & margine == "green", semiamp_wcb_per_1sd] * 100),
 if (tab[indice == "TREND" & margine == "green", mde_asintotico_per_1sd] >
     tab[indice == "WB" & margine == "green", mde_asintotico_per_1sd])
   "**Confermato**: TREND non e' meglio di WB in unita' comparabili — anzi leggermente peggio, coerente col finding preliminare del cappello §8."
