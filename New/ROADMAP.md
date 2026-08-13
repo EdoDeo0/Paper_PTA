@@ -1641,21 +1641,56 @@ impresa-destinazione-anno. Quando si aggiungono HK/MO (variante *incl*), la comp
 imprese che esportano là è diversa dalla media — e senza FE d'impresa quella composizione entra
 nel coefficiente come selezione, non come risposta al PTA.
 
-**Test corretto (non ancora fatto)**: `reghdfe` in `17_main_tripledd_fullpanel.do` con
-`absorb(pd dt pt)` invece di `absorb(fpd fdt pt)`. Deve riprodurre il coefficiente collassato
-entro la tolleranza dei singleton. Confronto `pd+dt+pt` ↔ `fpd+fdt+pt` sullo stesso campione
-isola esattamente il contributo delle FE d'impresa — ed è quello il punto da scrivere nel paper:
-parte del segnale sporco riflette selezione di quali imprese esportano verso quei mercati, non
-riallocazione within-firm.
+~~**Test corretto (non ancora fatto)**~~ ✅ **FATTO (13/08, Windows)**. `reghdfe` con
+`absorb(pd_diag dt_diag pt)` in `17_main_tripledd_fullpanel.do` riproduce esattamente il
+coefficiente collassato: `wb_green` −0.0045685 (collassato: −0.00456850), `wb_dirty` −0.011873
+(collassato: −0.011873) — differenza < 1e-7, entro la tolleranza dei singleton. Output:
+`New/Output/TripleDiff/Tables/tripledd_full_pddt.csv`. **Conclusione**: il divario
+collassato/full panel è tutto nella struttura FE (pd+dt+pt vs fpd+fdt+pt), non nella
+ponderazione né nei dati. §11.2 si scrive ora.
 
 ### 11.3 Cosa resta (scrittura, non calcolo)
 
 1. Generare le tabelle LaTeX dai CSV — oggi ci sono ~32 tabelle e zero `\input{}` nel .tex.
 2. Collocare nel paper il WCB **full panel** di 17b (vedi §10, lacuna paper-facing).
-3. Scrivere §11.2 come robustezza, **dopo** aver fatto il test sui pesi.
+3. Scrivere §11.2 come robustezza, **dopo** aver fatto il test C6 (absorb pd dt pt).
 4. Le 4 lacune degli export di §10 (nobs/nclust nel 20, SE/N nel leave-one-out, spec FE, test F).
 5. Punti paper-facing già noti: `33_mde_equivalence.R` (C3), framing Sun-Abraham, riferimento
    Callaway–Goodman-Bacon–Sant'Anna mancante, citazione Abman non verbatim.
+7. ~~C7 — permutazione anti-conservativa~~ ✅ **CHIUSO (13/08, Windows)**.
+   Fix in `New/Code/22_permutation_inference.R`: (a) profili EP e TD permutati insieme per
+   preservare la collinearità within 0.96 — TD incluso in `prof` e passato a `stima_perm`;
+   demean di TD spostato dentro ogni draw anziché una volta sola; (b) p-value con correzione di
+   continuità `(1+k)/(1+B)` in sezioni A e B. Rerun baseline (excl+totaldepth, 1000 perm.)
+   completato in ~1h45m. **Nuovi p-value** (corretti):
+   - WB green: p=0.608 | WB dirty: **p=0.235** (era 0.023, sbagliato per ~10×)
+   - TREND green: p=0.177 | TREND dirty: p=0.845
+   Nessun coefficiente supera la soglia sotto permutazione corretta. Il dirty margin WB,
+   già fragile sotto WCB (p=0.185), non sopravvive nemmeno alla permutazione.
+
+   **Tutte e 4 le varianti completate (13/08)**, 1000 draws ciascuna, 40 batch × 4:
+
+   | Variante | WB green | WB dirty | TREND green | TREND dirty |
+   |---|---|---|---|---|
+   | excl+totaldepth (baseline) | 0.608 | 0.235 | 0.177 | 0.845 |
+   | excl+desta | 0.481 | 0.140 | 0.324 | 0.902 |
+   | inclHKMO+totaldepth | 0.898 | 0.137 | 0.481 | 0.997 |
+   | inclHKMO+desta | 0.457 | 0.384 | 0.935 | 0.791 |
+
+   Nessun coefficiente significativo in nessuna variante. Verifiche: script modificato
+   alle 00:53, batch più vecchio 00:58 → nessun batch pre-fix; identità Frisch-Waugh
+   superata (con `stop()` di guardia, `.err` puliti); p-value tutti esattamente `(1+k)/1001`;
+   draws 1000+1000 senza NA. Cache pre-fix conservate in `Models/r710_batches*_pre_C7fix/`.
+
+   **Paper aggiornato (13/08)** — `New/Paper/draft_paper.tex`, 8 punti:
+   riga permutation di `tab:main` (0.61/0.23/0.18/0.85, era 0.74/0.02/0.17/0.85);
+   §4.1 p=0.74→0.61 sul green; nota tabella (i due test ora concordano, non "disagree");
+   titolo §sec:dirty da "a fragile, not a false, positive" a "anatomy of a false positive";
+   corpo §sec:dirty riscritto (2.3%→23.5% dei draws, "tre di quattro check"→tutti);
+   abstract e introduzione; nota `tab:robust` e conclusione. Il dirty margin è ora
+   classificato come **falso positivo / pattern descrittivo**, non effetto identificato.
+   Non verificata la compilazione LaTeX (pdflatex assente su questa macchina); controlli
+   statici fatti: parità `$`, conteggio colonne della tabella, nessun residuo stantio.
 6. ~~`.gitignore`: il WCB full-panel della run BASELINE non è versionato~~ ✅ **FATTO (11/08,
    Windows)**. Il file `New/Output/OLS/Bootstrap/wcb_fullpanel.csv` **esiste** su Windows
    (10/08 01:12, coerente con la run 17b di Run 4) — non era mai andato perso, solo escluso

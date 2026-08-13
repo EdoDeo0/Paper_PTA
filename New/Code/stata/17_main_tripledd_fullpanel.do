@@ -46,8 +46,8 @@ if c(os) == "Unix" {
 *  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
 *  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 *  ##########################################################################
-global PTA_SAMPLE "incl"
-global PTA_DEPTH  "desta"
+global PTA_SAMPLE "excl"
+global PTA_DEPTH  "totaldepth"
 
 * Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {
@@ -145,6 +145,9 @@ gen double tr_green = TREND_EP_Count * env_good_new
 gen double tr_dirty = TREND_EP_Count * dirty_p
 gen double td_green = $DEPTHVAR * env_good_new
 gen double td_dirty = $DEPTHVAR * dirty_p
+* ID senza firma per diagnostica C6 (devono essere creati prima del drop hs6)
+egen long pd_diag = group(hs6 country_code)
+egen long dt_diag = group(country_code year)
 drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
 
 *── 3. Stime (compact = risparmia RAM; cache: salta se gia' fatto) ─────────────
@@ -169,8 +172,28 @@ if _rc {
         tstat pval ci replace addlabel(treat, TREND)
 }
 
+*── DIAGNOSTICA C6: WB con absorb(pd dt pt), senza FE d'impresa ───────────────
+* Deve riprodurre wb_green/wb_dirty di tripledd_collapsed.csv entro la tolleranza
+* dei singleton (ROADMAP §11.2). Confronto con blocco WB sopra (fpd fdt pt)
+* isola il contributo delle FE d'impresa.
+cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta"
+if _rc {
+    reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
+        absorb(pd_diag dt_diag pt) vce(cluster country_code) compact
+    regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta", ///
+        tstat pval ci replace addlabel(treat, WB_pddt)
+}
+
 *── 4. Esporta CSV riassuntivo ─────────────────────────────────────────────────
 use "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", clear
 cap append using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta"
 export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_reghdfe$OUTSFX.csv", replace
 di "[OK] tripledd_full_reghdfe$OUTSFX.csv"
+
+* Diagnostica C6
+cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta"
+if !_rc {
+    use "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta", clear
+    export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_pddt$OUTSFX.csv", replace
+    di "[C6] tripledd_full_pddt$OUTSFX.csv"
+}

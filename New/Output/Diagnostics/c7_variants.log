@@ -1,0 +1,154 @@
+﻿[START] 2026-08-13 10:31:56
+[RUN] excl_desta  10:31:56
+[1min] excl_desta |   [WB_EP_Depth batch 1] 10/50 | 
+[2min] excl_desta |   [WB_EP_Depth batch 1] 20/50 | 
+[3min] excl_desta |   [WB_EP_Depth batch 1] 30/50 | 
+[4min] excl_desta |   [WB_EP_Depth batch 1] 40/50 | 
+[5min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[6min] excl_desta |   [WB_EP_Depth batch 2] 10/50 | 
+[7min] excl_desta |   [WB_EP_Depth batch 2] 20/50 | 
+[8min] excl_desta |   [WB_EP_Depth batch 2] 30/50 | 
+[9min] excl_desta |   [WB_EP_Depth batch 2] 40/50 | 
+[10min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[11min] excl_desta |   [WB_EP_Depth batch 3] 10/50 | 
+[12min] excl_desta |   [WB_EP_Depth batch 3] 20/50 | 
+[13min] excl_desta |   [WB_EP_Depth batch 3] 30/50 | 
+[14min] excl_desta |   [WB_EP_Depth batch 3] 40/50 | 
+[15min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[16min] excl_desta |   [WB_EP_Depth batch 4] 10/50 | 
+[17min] excl_desta |   [WB_EP_Depth batch 4] 20/50 | 
+[18min] excl_desta |   [WB_EP_Depth batch 4] 30/50 | 
+[19min] excl_desta |   [WB_EP_Depth batch 4] 40/50 | 
+[20min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[21min] excl_desta |   [WB_EP_Depth batch 5] 10/50 | 
+[22min] excl_desta |   [WB_EP_Depth batch 5] 20/50 | 
+[23min] excl_desta |   [WB_EP_Depth batch 5] 30/50 | 
+[24min] excl_desta |   [WB_EP_Depth batch 5] 40/50 | 
+[25min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[26min] excl_desta |   [WB_EP_Depth batch 6] 10/50 | 
+[27min] excl_desta |   [WB_EP_Depth batch 6] 30/50 | 
+[28min] excl_desta |   [WB_EP_Depth batch 6] 40/50 | 
+[29min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[30min] excl_desta |   [WB_EP_Depth batch 7] 10/50 | 
+[31min] excl_desta |   [WB_EP_Depth batch 7] 20/50 | 
+[32min] excl_desta |   [WB_EP_Depth batch 7] 30/50 | 
+[33min] excl_desta |   [WB_EP_Depth batch 7] 40/50 | 
+[34min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[35min] excl_desta |   [WB_EP_Depth batch 8] 10/50 | 
+[36min] excl_desta |   [WB_EP_Depth batch 8] 20/50 | 
+[37min] excl_desta |   [WB_EP_Depth batch 8] 30/50 | 
+[38min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[39min] excl_desta |   [WB_EP_Depth batch 9] 10/50 | 
+[40min] excl_desta |   [WB_EP_Depth batch 9] 20/50 | 
+[41min] excl_desta |   [WB_EP_Depth batch 9] 30/50 | 
+[42min] excl_desta |   [WB_EP_Depth batch 9] 40/50 | 
+[43min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[44min] excl_desta |   [WB_EP_Depth batch 10] 10/50 | 
+[45min] excl_desta |   [WB_EP_Depth batch 10] 20/50 | 
+[46min] excl_desta |   [WB_EP_Depth batch 10] 30/50 | 
+[47min] excl_desta |   [WB_EP_Depth batch 10] 40/50 | 
+[48min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[49min] excl_desta |   [WB_EP_Depth batch 11] 10/50 | 
+[50min] excl_desta |   [WB_EP_Depth batch 11] 20/50 | 
+[51min] excl_desta |   [WB_EP_Depth batch 11] 30/50 | 
+[52min] excl_desta |   [WB_EP_Depth batch 11] 40/50 | 
+[53min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[54min] excl_desta |   [WB_EP_Depth batch 12] 10/50 | 
+[55min] excl_desta |   [WB_EP_Depth batch 12] 20/50 | 
+[56min] excl_desta |   [WB_EP_Depth batch 12] 30/50 | 
+[57min] excl_desta |   [WB_EP_Depth batch 12] 40/50 | 
+[58min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[59min] excl_desta |   [WB_EP_Depth batch 13] 10/50 | 
+[60min] excl_desta |   [WB_EP_Depth batch 13] 20/50 | 
+[61min] excl_desta |   [WB_EP_Depth batch 13] 30/50 | 
+[62min] excl_desta |   [WB_EP_Depth batch 13] 40/50 | 
+[63min] excl_desta |   [WB_EP_Depth batch 14] 10/50 | 
+[64min] excl_desta |   [WB_EP_Depth batch 14] 20/50 | 
+[65min] excl_desta |   [WB_EP_Depth batch 14] 30/50 | 
+[66min] excl_desta |   [WB_EP_Depth batch 14] 40/50 | 
+[67min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[68min] excl_desta |   [WB_EP_Depth batch 15] 10/50 | 
+[69min] excl_desta |   [WB_EP_Depth batch 15] 20/50 | 
+[70min] excl_desta |   [WB_EP_Depth batch 15] 30/50 | 
+[71min] excl_desta |   [WB_EP_Depth batch 15] 40/50 | 
+[72min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[73min] excl_desta |   [WB_EP_Depth batch 16] 10/50 | 
+[74min] excl_desta |   [WB_EP_Depth batch 16] 20/50 | 
+[75min] excl_desta |   [WB_EP_Depth batch 16] 30/50 | 
+[76min] excl_desta |   [WB_EP_Depth batch 16] 40/50 | 
+[77min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[78min] excl_desta |   [WB_EP_Depth batch 17] 10/50 | 
+[79min] excl_desta |   [WB_EP_Depth batch 17] 20/50 | 
+[80min] excl_desta |   [WB_EP_Depth batch 17] 30/50 | 
+[81min] excl_desta |   [WB_EP_Depth batch 17] 40/50 | 
+[82min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[83min] excl_desta |   [WB_EP_Depth batch 18] 10/50 | 
+[84min] excl_desta |   [WB_EP_Depth batch 18] 20/50 | 
+[85min] excl_desta |   [WB_EP_Depth batch 18] 30/50 | 
+[86min] excl_desta |   [WB_EP_Depth batch 18] 40/50 | 
+[87min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[88min] excl_desta |   [WB_EP_Depth batch 19] 10/50 | 
+[89min] excl_desta |   [WB_EP_Depth batch 19] 20/50 | 
+[90min] excl_desta |   [WB_EP_Depth batch 19] 30/50 | 
+[91min] excl_desta |   [WB_EP_Depth batch 19] 40/50 | 
+[92min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[93min] excl_desta |   [WB_EP_Depth batch 20] 10/50 | 
+[94min] excl_desta |   [WB_EP_Depth batch 20] 20/50 | 
+[95min] excl_desta |   [WB_EP_Depth batch 20] 30/50 | 
+[96min] excl_desta |   [WB_EP_Depth batch 20] 40/50 | 
+[97min] excl_desta | [check TREND] FW identita': green +0.001612 (12: +0.001612) | dirty -0.000247 (12: -0.000247) | 
+[98min] excl_desta |   [TREND_EP_Count batch 1] 10/50 | 
+[99min] excl_desta |   [TREND_EP_Count batch 1] 20/50 | 
+[100min] excl_desta |   [TREND_EP_Count batch 1] 30/50 | 
+[101min] excl_desta |   [TREND_EP_Count batch 1] 40/50 | 
+[102min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[103min] excl_desta |   [TREND_EP_Count batch 2] 10/50 | 
+[104min] excl_desta |   [TREND_EP_Count batch 2] 20/50 | 
+[105min] excl_desta |   [TREND_EP_Count batch 2] 30/50 | 
+[106min] excl_desta |   [TREND_EP_Count batch 2] 40/50 | 
+[107min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[108min] excl_desta |   [TREND_EP_Count batch 3] 10/50 | 
+[109min] excl_desta |   [TREND_EP_Count batch 3] 20/50 | 
+[110min] excl_desta |   [TREND_EP_Count batch 3] 30/50 | 
+[111min] excl_desta |   [TREND_EP_Count batch 3] 40/50 | 
+[112min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[113min] excl_desta |   [TREND_EP_Count batch 4] 10/50 | 
+[114min] excl_desta |   [TREND_EP_Count batch 4] 20/50 | 
+[115min] excl_desta |   [TREND_EP_Count batch 4] 30/50 | 
+[116min] excl_desta |   [TREND_EP_Count batch 4] 40/50 | 
+[117min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[118min] excl_desta |   [TREND_EP_Count batch 5] 10/50 | 
+[119min] excl_desta |   [TREND_EP_Count batch 5] 20/50 | 
+[120min] excl_desta |   [TREND_EP_Count batch 5] 30/50 | 
+[121min] excl_desta |   [TREND_EP_Count batch 5] 40/50 | 
+[122min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[123min] excl_desta |   [TREND_EP_Count batch 6] 10/50 | 
+[124min] excl_desta |   [TREND_EP_Count batch 6] 20/50 | 
+[125min] excl_desta |   [TREND_EP_Count batch 6] 30/50 | 
+[126min] excl_desta |   [TREND_EP_Count batch 6] 40/50 | 
+[127min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[128min] excl_desta |   [TREND_EP_Count batch 7] 10/50 | 
+[129min] excl_desta |   [TREND_EP_Count batch 7] 20/50 | 
+[130min] excl_desta |   [TREND_EP_Count batch 7] 30/50 | 
+[131min] excl_desta |   [TREND_EP_Count batch 7] 40/50 | 
+[132min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[133min] excl_desta |   [TREND_EP_Count batch 8] 10/50 | 
+[134min] excl_desta |   [TREND_EP_Count batch 8] 20/50 | 
+[135min] excl_desta |   [TREND_EP_Count batch 8] 30/50 | 
+[136min] excl_desta |   [TREND_EP_Count batch 8] 40/50 | 
+[137min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[138min] excl_desta |   [TREND_EP_Count batch 9] 10/50 | 
+[139min] excl_desta |   [TREND_EP_Count batch 9] 20/50 | 
+[140min] excl_desta |   [TREND_EP_Count batch 9] 30/50 | 
+[141min] excl_desta |   [TREND_EP_Count batch 9] 40/50 | 
+[142min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[143min] excl_desta |   [TREND_EP_Count batch 10] 10/50 | 
+[144min] excl_desta |   [TREND_EP_Count batch 10] 20/50 | 
+[145min] excl_desta |   [TREND_EP_Count batch 10] 30/50 | 
+[146min] excl_desta |   [TREND_EP_Count batch 10] 40/50 | 
+[147min] excl_desta | [depth] DESTA_depth_index: 4051 celle trattate senza copertura escluse (0.107%) | 
+[148min] excl_desta |   [TREND_EP_Count batch 11] 10/50 | 
+[149min] excl_desta |   [TREND_EP_Count batch 11] 20/50 | 
+[TIMEOUT] excl_desta dopo 150min -> kill
+[ABORT] excl_desta exit=-1 killed=True durata=150min
+[RUN] inclHKMO  13:01:57

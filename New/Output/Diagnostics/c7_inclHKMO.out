@@ -1,0 +1,147 @@
+[config] campione: incl (HK+MO inclusi) | depth: TotalDepth_nonEnv | suffisso: _inclHKMO
+=== Sezione A: permutazione grezza GREEN (WB) ===
+[cache] GREEN - permutation_collapsed_inclHKMO.csv
+
+=== Sezione A: permutazione grezza DIRTY (WB) ===
+[cache] DIRTY - permutation_collapsed_dirty_inclHKMO.csv
+
+=== Sezione B: permutazione sulla spec esatta ===
+[cache] perm_WB_EP_Depth_b01.rds 
+[cache] perm_WB_EP_Depth_b02.rds 
+[cache] perm_WB_EP_Depth_b03.rds 
+[cache] perm_WB_EP_Depth_b04.rds 
+[cache] perm_WB_EP_Depth_b05.rds 
+[cache] perm_WB_EP_Depth_b06.rds 
+[cache] perm_WB_EP_Depth_b07.rds 
+[cache] perm_WB_EP_Depth_b08.rds 
+[cache] perm_WB_EP_Depth_b09.rds 
+[cache] perm_WB_EP_Depth_b10.rds 
+[cache] perm_WB_EP_Depth_b11.rds 
+[cache] perm_WB_EP_Depth_b12.rds 
+[cache] perm_WB_EP_Depth_b13.rds 
+[cache] perm_WB_EP_Depth_b14.rds 
+[cache] perm_WB_EP_Depth_b15.rds 
+[cache] perm_WB_EP_Depth_b16.rds 
+[cache] perm_WB_EP_Depth_b17.rds 
+[cache] perm_WB_EP_Depth_b18.rds 
+[cache] perm_WB_EP_Depth_b19.rds 
+[cache] perm_WB_EP_Depth_b20.rds 
+[cache] perm_TREND_EP_Count_b01.rds 
+[cache] perm_TREND_EP_Count_b02.rds 
+== TREND_EP_Count batch 3/20 (tentativo 1) - 16:14:28
+  [TREND_EP_Count batch 3] 10/50
+  [TREND_EP_Count batch 3] 20/50
+  [TREND_EP_Count batch 3] 30/50
+  [TREND_EP_Count batch 3] 40/50
+  [TREND_EP_Count batch 3] 50/50
+== TREND_EP_Count batch 4/20 (tentativo 1) - 16:19:45
+  [TREND_EP_Count batch 4] 10/50
+  [TREND_EP_Count batch 4] 20/50
+  [TREND_EP_Count batch 4] 30/50
+  [TREND_EP_Count batch 4] 40/50
+  [TREND_EP_Count batch 4] 50/50
+== TREND_EP_Count batch 5/20 (tentativo 1) - 16:25:24
+  [TREND_EP_Count batch 5] 10/50
+  [TREND_EP_Count batch 5] 20/50
+  [TREND_EP_Count batch 5] 30/50
+  [TREND_EP_Count batch 5] 40/50
+  [TREND_EP_Count batch 5] 50/50
+== TREND_EP_Count batch 6/20 (tentativo 1) - 16:31:08
+  [TREND_EP_Count batch 6] 10/50
+  [TREND_EP_Count batch 6] 20/50
+  [TREND_EP_Count batch 6] 30/50
+  [TREND_EP_Count batch 6] 40/50
+  [TREND_EP_Count batch 6] 50/50
+== TREND_EP_Count batch 7/20 (tentativo 1) - 16:36:50
+  [TREND_EP_Count batch 7] 10/50
+  [TREND_EP_Count batch 7] 20/50
+  [TREND_EP_Count batch 7] 30/50
+  [TREND_EP_Count batch 7] 40/50
+  [TREND_EP_Count batch 7] 50/50
+== TREND_EP_Count batch 8/20 (tentativo 1) - 16:42:27
+  [TREND_EP_Count batch 8] 10/50
+  [TREND_EP_Count batch 8] 20/50
+  [TREND_EP_Count batch 8] 30/50
+  [TREND_EP_Count batch 8] 40/50
+  [TREND_EP_Count batch 8] 50/50
+== TREND_EP_Count batch 9/20 (tentativo 1) - 16:48:07
+  [TREND_EP_Count batch 9] 10/50
+  [TREND_EP_Count batch 9] 20/50
+  [TREND_EP_Count batch 9] 30/50
+  [TREND_EP_Count batch 9] 40/50
+  [TREND_EP_Count batch 9] 50/50
+== TREND_EP_Count batch 10/20 (tentativo 1) - 16:53:50
+  [TREND_EP_Count batch 10] 10/50
+  [TREND_EP_Count batch 10] 20/50
+  [TREND_EP_Count batch 10] 30/50
+  [TREND_EP_Count batch 10] 40/50
+  [TREND_EP_Count batch 10] 50/50
+== TREND_EP_Count batch 11/20 (tentativo 1) - 16:59:34
+  [TREND_EP_Count batch 11] 10/50
+  [TREND_EP_Count batch 11] 20/50
+  [TREND_EP_Count batch 11] 30/50
+  [TREND_EP_Count batch 11] 40/50
+  [TREND_EP_Count batch 11] 50/50
+== TREND_EP_Count batch 12/20 (tentativo 1) - 17:05:21
+  [TREND_EP_Count batch 12] 10/50
+  [TREND_EP_Count batch 12] 20/50
+  [TREND_EP_Count batch 12] 30/50
+  [TREND_EP_Count batch 12] 40/50
+  [TREND_EP_Count batch 12] 50/50
+== TREND_EP_Count batch 13/20 (tentativo 1) - 17:11:05
+  [TREND_EP_Count batch 13] 10/50
+  [TREND_EP_Count batch 13] 20/50
+  [TREND_EP_Count batch 13] 30/50
+  [TREND_EP_Count batch 13] 40/50
+  [TREND_EP_Count batch 13] 50/50
+== TREND_EP_Count batch 14/20 (tentativo 1) - 17:16:48
+  [TREND_EP_Count batch 14] 10/50
+  [TREND_EP_Count batch 14] 20/50
+  [TREND_EP_Count batch 14] 30/50
+  [TREND_EP_Count batch 14] 40/50
+  [TREND_EP_Count batch 14] 50/50
+== TREND_EP_Count batch 15/20 (tentativo 1) - 17:22:32
+  [TREND_EP_Count batch 15] 10/50
+  [TREND_EP_Count batch 15] 20/50
+  [TREND_EP_Count batch 15] 30/50
+  [TREND_EP_Count batch 15] 40/50
+  [TREND_EP_Count batch 15] 50/50
+== TREND_EP_Count batch 16/20 (tentativo 1) - 17:28:15
+  [TREND_EP_Count batch 16] 10/50
+  [TREND_EP_Count batch 16] 20/50
+  [TREND_EP_Count batch 16] 30/50
+  [TREND_EP_Count batch 16] 40/50
+  [TREND_EP_Count batch 16] 50/50
+== TREND_EP_Count batch 17/20 (tentativo 1) - 17:33:58
+  [TREND_EP_Count batch 17] 10/50
+  [TREND_EP_Count batch 17] 20/50
+  [TREND_EP_Count batch 17] 30/50
+  [TREND_EP_Count batch 17] 40/50
+  [TREND_EP_Count batch 17] 50/50
+== TREND_EP_Count batch 18/20 (tentativo 1) - 17:39:40
+  [TREND_EP_Count batch 18] 10/50
+  [TREND_EP_Count batch 18] 20/50
+  [TREND_EP_Count batch 18] 30/50
+  [TREND_EP_Count batch 18] 40/50
+  [TREND_EP_Count batch 18] 50/50
+== TREND_EP_Count batch 19/20 (tentativo 1) - 17:45:25
+  [TREND_EP_Count batch 19] 10/50
+  [TREND_EP_Count batch 19] 20/50
+  [TREND_EP_Count batch 19] 30/50
+  [TREND_EP_Count batch 19] 40/50
+  [TREND_EP_Count batch 19] 50/50
+== TREND_EP_Count batch 20/20 (tentativo 1) - 17:51:03
+  [TREND_EP_Count batch 20] 10/50
+  [TREND_EP_Count batch 20] 20/50
+  [TREND_EP_Count batch 20] 30/50
+  [TREND_EP_Count batch 20] 40/50
+  [TREND_EP_Count batch 20] 50/50
+    treat n_perm n_used_green n_used_dirty b_obs_green p_perm_green
+   <char>  <int>        <int>        <int>       <num>        <num>
+1:     WB   1000         1000         1000 0.001733852    0.8981019
+2:  TREND   1000         1000         1000 0.001778575    0.4805195
+     b_obs_dirty p_perm_dirty
+           <num>        <num>
+1: -1.887128e-02    0.1368631
+2: -9.933709e-06    0.9970030
+[OK] r710_permutation_summary_inclHKMO.csv - 2026-08-13 17:56:41

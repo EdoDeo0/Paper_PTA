@@ -86,9 +86,9 @@ Notes:
 . *  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
 . *  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 . *  ##########################################################################
-. global PTA_SAMPLE "incl"
+. global PTA_SAMPLE "excl"
 
-. global PTA_DEPTH  "desta"
+. global PTA_DEPTH  "totaldepth"
 
 . 
 . * Asse 1 — campione HK/Macao
@@ -108,7 +108,7 @@ Notes:
 . }
 
 . di "[campione] $PTA_SAMPLE"
-[campione] incl
+[campione] excl
 
 . 
 . * Asse 2 — depth control
@@ -136,7 +136,7 @@ Notes:
 . global OUTSFX "$SFX$DEPTHSFX"
 
 . di "[depth] $PTA_DEPTH ($DEPTHVAR) | suffisso output: '$OUTSFX'"
-[depth] desta (desta_depth_index) | suffisso output: '_inclHKMO_desta'
+[depth] totaldepth (totaldepth_nonenv) | suffisso output: ''
 
 . 
 . * dipendenze
@@ -176,7 +176,8 @@ Duplicates in terms of hs6
 . tempfile green
 
 . save `green'
-file C:\Users\edodr\AppData\Local\Temp\ST_e6c_000001.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_169c_000001.tmp saved as .dta
+    format
 
 . 
 . * dirty (core Mani-Wheeler; capitoli >= 23: import numerico sicuro)
@@ -191,20 +192,22 @@ file C:\Users\edodr\AppData\Local\Temp\ST_e6c_000001.tmp saved as .dta format
 . tempfile dirty
 
 . save `dirty'
-file C:\Users\edodr\AppData\Local\Temp\ST_e6c_000002.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_169c_000002.tmp saved as .dta
+    format
 
 . 
 . * Depth control (country_code x year)
 . import delimited "$DEPTHFILE", clear
 (encoding automatically selected: ISO-8859-1)
-(5 vars, 239 obs)
+(5 vars, 249 obs)
 
 . keep country_code year $DEPTHVAR
 
 . tempfile depth
 
 . save `depth'
-file C:\Users\edodr\AppData\Local\Temp\ST_e6c_000003.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_169c_000003.tmp saved as .dta
+    format
 
 . 
 . *── 2. Panel: solo le variabili necessarie ──────────────────────────────────
@@ -217,72 +220,71 @@ file C:\Users\edodr\AppData\Local\Temp\ST_e6c_000003.tmp saved as .dta format
 > ot)
 
 . keep if $HKMOEXPR
-(0 observations deleted)
+(3,464,093 observations deleted)
 
 . 
 . merge m:1 hs6 using `green', keep(master match) nogen
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    43,652,802
-        from master                43,652,802  
+    Not matched                    40,499,383
+        from master                40,499,383  
         from using                          0  
 
-    Matched                         5,592,502  
+    Matched                         5,281,828  
     -----------------------------------------
 
 . replace env_good_new = 0 if missing(env_good_new)
-(43,652,802 real changes made)
+(40,499,383 real changes made)
 
 . merge m:1 hs6 using `dirty', keep(master match) nogen
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    45,404,042
-        from master                45,404,042  
+    Not matched                    42,166,299
+        from master                42,166,299  
         from using                          0  
 
-    Matched                         3,841,262  
+    Matched                         3,614,912  
     -----------------------------------------
 
 . replace dirty_p = 0 if missing(dirty_p)
-(45,404,042 real changes made)
+(42,166,299 real changes made)
 
 . merge m:1 country_code year using `depth', keep(master match) nogen
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    37,162,246
-        from master                37,162,246  
+    Not matched                    36,496,372
+        from master                36,496,372  
         from using                          0  
 
-    Matched                        12,083,058  
+    Matched                         9,284,839  
     -----------------------------------------
 
 . if $DROP_UNMEASURED {
 .     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
-(229,436 observations deleted)
 . }
 
 . replace $DEPTHVAR = 0 if missing($DEPTHVAR)
-(36,932,810 real changes made)
+(36,496,372 real changes made)
 
 . 
 . count
-  49,015,868
+  45,781,211
 
 . di "Righe: " r(N)
-Righe: 49015868
+Righe: 45781211
 
 . qui sum env_good_new
 
 . di "green: " %4.1f 100*r(mean) "%"
-green: 11.4%
+green: 11.5%
 
 . qui sum dirty_p
 
 . di "dirty: " %4.1f 100*r(mean) "%"
-dirty:  6.9%
+dirty:  7.0%
 
 . 
 . * interazioni esplicite (piu' leggere di c.X#i.Y dentro reghdfe)
@@ -297,6 +299,13 @@ dirty:  6.9%
 . gen double td_green = $DEPTHVAR * env_good_new
 
 . gen double td_dirty = $DEPTHVAR * dirty_p
+
+. * ID senza firma per diagnostica C6 (devono essere creati prima del drop hs6)
+. egen long pd_diag = group(hs6 country_code)
+(9 missing values generated)
+
+. egen long dt_diag = group(country_code year)
+(9 missing values generated)
 
 . drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
 
@@ -314,47 +323,9 @@ dirty:  6.9%
 . if _rc {
 .     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
 >         absorb(fpd fdt pt) vce(cluster country_code) compact
-(dropped 2.56e+07 singleton observations)
-(MWFE estimator converged in 89 iterations)
-
-HDFE Linear regression                            Number of obs   = 23,381,204
-Absorbing 3 HDFE groups                           F(   4,    226) =       1.54
-Statistics robust to heteroskedasticity           Prob > F        =     0.1912
-                                                  R-squared       =     0.8710
-                                                  Adj R-squared   =     0.7426
-                                                  Within R-sq.    =     0.0000
-Number of clusters (country_code) =        227    Root MSE        =     1.3443
-
-                         (Std. err. adjusted for 227 clusters in country_code)
-------------------------------------------------------------------------------
-             |               Robust
-   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    wb_green |  -.0019641   .0034726    -0.57   0.572    -.0088068    .0048787
-    wb_dirty |  -.0057352   .0026862    -2.14   0.034    -.0110284   -.0004419
-    td_green |   .0032119   .0056981     0.56   0.574    -.0080163      .01444
-    td_dirty |   .0149807   .0072458     2.07   0.040     .0007027    .0292587
-       _cons |   9.570924   .0004489  2.1e+04   0.000      9.57004    9.571809
-------------------------------------------------------------------------------
-
-Absorbed degrees of freedom:
------------------------------------------------------+
- Absorbed FE | Categories  - Redundant  = Num. Coefs |
--------------+---------------------------------------|
-         fpd |   6700274     6700274           0    *|
-         fdt |   4898166     4898166           0    *|
-          pt |     65919           1       65918     |
------------------------------------------------------+
-* = FE nested within cluster; treated as redundant for DoF computation
 .     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", /
 > //
 >         tstat pval ci replace addlabel(treat, WB)
-(file
-    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_WB_inclHKMO
-    > _desta.dta not found)
-file
-    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_WB_inclHKMO
-    > _desta.dta saved
 . }
 
 . 
@@ -364,47 +335,65 @@ file
 . if _rc {
 .     cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
 >         absorb(fpd fdt pt) vce(cluster country_code) compact
-(dropped 2.56e+07 singleton observations)
-(MWFE estimator converged in 89 iterations)
+.     if !_rc regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUT
+> SFX.dta", ///
+>         tstat pval ci replace addlabel(treat, TREND)
+. }
 
-HDFE Linear regression                            Number of obs   = 23,381,204
-Absorbing 3 HDFE groups                           F(   4,    226) =       1.12
-Statistics robust to heteroskedasticity           Prob > F        =     0.3465
-                                                  R-squared       =     0.8710
-                                                  Adj R-squared   =     0.7426
+. 
+. *── DIAGNOSTICA C6: WB con absorb(pd dt pt), senza FE d'impresa ─────────────
+> ──
+. * Deve riprodurre wb_green/wb_dirty di tripledd_collapsed.csv entro la toller
+> anza
+. * dei singleton (ROADMAP §11.2). Confronto con blocco WB sopra (fpd fdt pt)
+. * isola il contributo delle FE d'impresa.
+. cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta
+> "
+
+. if _rc {
+.     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
+>         absorb(pd_diag dt_diag pt) vce(cluster country_code) compact
+(dropped 85266 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   = 45,695,915
+Absorbing 3 HDFE groups                           F(   4,    228) =       9.75
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.2404
+                                                  Adj R-squared   =     0.2320
                                                   Within R-sq.    =     0.0000
-Number of clusters (country_code) =        227    Root MSE        =     1.3443
+Number of clusters (country_code) =        229    Root MSE        =     2.2310
 
-                         (Std. err. adjusted for 227 clusters in country_code)
+                         (Std. err. adjusted for 229 clusters in country_code)
 ------------------------------------------------------------------------------
              |               Robust
    ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-    tr_green |  -.0003919   .0009322    -0.42   0.675    -.0022289     .001445
-    tr_dirty |  -.0014042   .0007189    -1.95   0.052    -.0028207    .0000123
-    td_green |   .0027081   .0075771     0.36   0.721    -.0122226    .0176388
-    td_dirty |   .0151892   .0077985     1.95   0.053    -.0001778    .0305562
-       _cons |   9.570504   .0006215  1.5e+04   0.000      9.56928    9.571729
+    wb_green |  -.0045685   .0068976    -0.66   0.508    -.0181598    .0090228
+    wb_dirty |  -.0118734   .0029247    -4.06   0.000    -.0176364   -.0061104
+    td_green |  -.0000508   .0002376    -0.21   0.831    -.0005191    .0004174
+    td_dirty |   .0003663   .0001752     2.09   0.038     .0000211    .0007114
+       _cons |   9.266721    .000621  1.5e+04   0.000     9.265497    9.267944
 ------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
 -----------------------------------------------------+
  Absorbed FE | Categories  - Redundant  = Num. Coefs |
 -------------+---------------------------------------|
-         fpd |   6700274     6700274           0    *|
-         fdt |   4898166     4898166           0    *|
-          pt |     65919           1       65918     |
+     pd_diag |    428297      428297           0    *|
+     dt_diag |      3509        3509           0    *|
+          pt |     69254           1       69253     |
 -----------------------------------------------------+
 * = FE nested within cluster; treated as redundant for DoF computation
-.     if !_rc regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUT
-> SFX.dta", ///
->         tstat pval ci replace addlabel(treat, TREND)
+.     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dt
+> a", ///
+>         tstat pval ci replace addlabel(treat, WB_pddt)
 (file
-    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_TREND_inclH
-    > KMO_desta.dta not found)
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_WB_pddt.dta
+    not found)
 file
-    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_TREND_inclH
-    > KMO_desta.dta saved
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_WB_pddt.dta
+    saved
 . }
 
 . 
@@ -416,14 +405,29 @@ file
 
 . export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_reghdfe$OU
 > TSFX.csv", replace
-(file
-    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_reg
-    > hdfe_inclHKMO_desta.csv not found)
 file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_regh
-> dfe_inclHKMO_desta.csv saved
+> dfe.csv saved
 
 . di "[OK] tripledd_full_reghdfe$OUTSFX.csv"
-[OK] tripledd_full_reghdfe_inclHKMO_desta.csv
+[OK] tripledd_full_reghdfe.csv
+
+. 
+. * Diagnostica C6
+. cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta
+> "
+
+. if !_rc {
+.     use "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta", clear
+.     export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_pddt$O
+> UTSFX.csv", replace
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_pdd
+    > t.csv not found)
+file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_pddt
+> .csv saved
+.     di "[C6] tripledd_full_pddt$OUTSFX.csv"
+[C6] tripledd_full_pddt.csv
+. }
 
 . 
 end of do-file

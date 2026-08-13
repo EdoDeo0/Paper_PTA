@@ -1,5 +1,5 @@
 ########################################################
-###### _sample_config — campione e controllo depth      ###
+###### _sample_config â€” campione e controllo depth      ###
 ########################################################
 ## Author: Edoardo Vitella
 ##
@@ -15,16 +15,16 @@
 ## ##       "desta"      -> DESTA_depth_index, fonte indipendente (rob.)     ##
 ## ############################################################################
 
-SAMPLE <- "incl"
-DEPTH  <- "desta"
+SAMPLE <- "excl"
+DEPTH  <- "totaldepth"
 
 ## ############################################################################
 ##
-## Asse 1 — HK/Macao: entrepot di riesportazione, il flusso verso di loro
+## Asse 1 â€” HK/Macao: entrepot di riesportazione, il flusso verso di loro
 ## non e' domanda finale. Sono 3.463.793 obs, il 7,0% del campione.
 ## La spec principale li esclude, la robustezza li include.
 ##
-## Asse 2 — Depth control: TotalDepth e' costruito dalla stessa fonte di EP
+## Asse 2 â€” Depth control: TotalDepth e' costruito dalla stessa fonte di EP
 ## (WB) e ha una correlazione within 0,96 (VIF 5,71). DESTA e' una misura
 ## indipendente (Dur, Baccini & Elsig 2014) che riduce il VIF a 1,92 e dimezza
 ## gli errori standard. Timor Est (country_code=144) ha un PTA cinese ma non

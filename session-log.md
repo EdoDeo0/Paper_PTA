@@ -1,5 +1,48 @@
 # Session Log — Paper_PTA
 
+## 2026-08-13 (sera) — C7: 4 varianti complete + paper corretto (Windows, Opus 5)
+
+**4 varianti C7 completate** (1000 draws ciascuna), p-value green/dirty per WB e TREND:
+baseline 0.608/0.235/0.177/0.845 · desta 0.481/0.140/0.324/0.902 · inclHKMO 0.898/0.137/0.481/0.997
+· inclHKMO+desta 0.457/0.384/0.935/0.791. **Nessun coefficiente significativo in nessuna variante.**
+Run frammentati su più stop/restart (i batch `.rds` li rendono ripartibili senza perdita).
+La catena `c7_variants.ps1` si è rivelata inaffidabile (kill del PID sbagliato, timeout a
+150min che ha troncato un run): meglio lanciare gli script singolarmente.
+
+**Integrità verificata**: script modificato 00:53 < batch più vecchio 00:58 → nessun batch
+pre-fix; 160/160 batch contigui; p-value esattamente `(1+k)/1001`; identità FW ok; `.err` puliti.
+
+**Errore trovato e corretto nel paper**: `./New/Paper/draft_paper.tex` aveva ancora i p-value
+pre-fix — `tab:main` diceva 0.02 per WB dirty (corretto: 0.23) e **tre passaggi narrativi erano
+falsi**, perché la permutazione esatta era l'unico test che teneva in vita il dirty margin.
+Aggiornati 8 punti (tabella, §4.1, nota tabella, titolo+corpo `sec:dirty`, abstract, intro,
+nota `tab:robust`, conclusione); il dirty margin è ora un falso positivo / pattern descrittivo.
+⚠️ **LaTeX non compilato** (pdflatex assente qui): solo controlli statici, da verificare.
+
+**Aperti**: compilare il paper; `Tabelle_Stime.tex` con i nuovi p-value; §11.2; pulire gli
+smoke test in `./New/Output/Diagnostics/` e le 4 dir `*_pre_C7fix`.
+
+---
+
+## 2026-08-13 — C6 + C7 chiusi (Windows, Sonnet 4.6)
+
+**C6 — Stata diagnostica `absorb(pd dt pt)`**: aggiunto blocco in `./New/Code/stata/17_main_tripledd_fullpanel.do`
+che riesegue WB con FE senza firma (pd_diag, dt_diag, pt). Risultato: wb_green −0.004569 ≡ collassato −0.004569
+(diff < 1e-7). Confermato empiricamente che il gap collassato/full panel è tutto nelle FE d'impresa.
+ROADMAP §11.2 aggiornata. Output: `./New/Output/TripleDiff/Tables/tripledd_full_pddt.csv`.
+
+**C7 — Permutazione corretta**: fix in `./New/Code/22_permutation_inference.R`:
+(a) profili EP e TD permutati insieme (preserva collinearità within 0.96);
+(b) p-value con correzione `(1+k)/(1+B)`. Cache pre-fix rinominate `*_pre_C7fix`.
+Smoke test ok (FW identità confermata). Run baseline (excl+totaldepth, 1000 perm.) completato ~1h45m.
+**Nuovi p-value corretti**: WB dirty 0.235 (era 0.023 — anti-conservativo), WB green 0.608,
+TREND green 0.177, TREND dirty 0.845. Nessun coefficiente significativo sotto permutazione.
+
+**Aperti**: rerun C7 per le 3 varianti rimanenti (desta, inclHKMO, inclHKMO+desta);
+aggiornare `Tabelle_Stime.tex` con nuovi p-value permutazione; scrivere §11.2.
+
+---
+
 ## 2026-08-12 — Sessione completa: fix audit C1–C9 + W1–W13 (Mac) (Sonnet 4.6/5)
 
 **Chiusi tutti i fix Mac dall'audit 2026-08-12.** In ordine:

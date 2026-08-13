@@ -1,0 +1,23 @@
+[config] campione: incl (HK+MO inclusi) | depth: DESTA_depth_index | suffisso: _inclHKMO_desta
+=== Sezione A: permutazione grezza GREEN (WB) ===
+[cache] GREEN - permutation_collapsed_inclHKMO_desta.csv
+
+=== Sezione A: permutazione grezza DIRTY (WB) ===
+[cache] DIRTY - permutation_collapsed_dirty_inclHKMO_desta.csv
+
+=== Sezione B: permutazione sulla spec esatta ===
+== WB_EP_Depth batch 1/1 (tentativo 1) - 00:52:17
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+[check WB] FW identita': green -0.006748 (12: -0.006748) | dirty -0.008198 (12: -0.008198)
+== TREND_EP_Count batch 1/1 (tentativo 1) - 00:52:39
+[depth] DESTA_depth_index: 9758 celle trattate senza copertura escluse (0.253%)
+[check TREND] FW identita': green +0.000172 (12: +0.000172) | dirty +0.000839 (12: +0.000839)
+    treat n_perm n_used_green n_used_dirty   b_obs_green p_perm_green
+   <char>  <int>        <int>        <int>         <num>        <num>
+1:     WB      3            3            3 -0.0067480630         0.75
+2:  TREND      3            3            3  0.0001718769         1.00
+     b_obs_dirty p_perm_dirty
+           <num>        <num>
+1: -0.0081983608         0.25
+2:  0.0008386584         1.00
+[OK] r710_permutation_summary_smoke_inclHKMO_desta.csv - 2026-08-13 00:53:02

@@ -40,12 +40,12 @@ firm--destination--year, I compare green and dirty products to neutral ones as E
 varies across destinations and over time, absorbing the confounding effect of the agreement
 itself through firm--destination--year fixed effects. I find a precisely estimated null on the green margin, stable across six estimation
 designs (full panel, collapsed panel, and four control-group subsamples), surviving wild
-cluster bootstrap and permutation inference. The dirty margin is a more mixed picture: a
-negative effect on dirty exports survives a wild cluster bootstrap ($p=0.07$) but the
-finer-grained permutation test still finds it unusual ($p=0.02$), while a coarser
-aggregation of the same test reverses its sign; a leave-one-out exercise shows it is
-carried by a single destination (Australia), with South Korea, previously the pivotal
-case, now only borderline (removing it leaves $p=0.09$). The central reading is not that environmental provisions are
+cluster bootstrap and permutation inference. The dirty margin is a textbook false
+positive: a negative effect on dirty exports that is overwhelming asymptotically
+($p<0.001$) survives neither the wild cluster bootstrap ($p=0.07$) nor permutation
+inference ($p=0.23$), a coarser aggregation of the same test reverses its sign, and a
+leave-one-out exercise shows it is carried by a single destination (Australia); it is
+best read as a descriptive pattern, not an identified effect. The central reading is not that environmental provisions are
 inert, but that Chinese agreements bundle provisions so tightly that the two World Bank
 sub-indices with a direct trade mechanism (green-goods liberalization, binding standards)
 are perfectly collinear in-sample and non-zero in only three treated country--years:
@@ -121,13 +121,13 @@ asymptotics, wild cluster bootstrap \citep{cameron2008}, and permutation tests t
 reshuffle entire EP profiles across treated destinations \citep{fisher1935,bertrand2004}
 --- because only 23 destinations (and effectively 14 agreements) are treated. A
 negative coefficient on EP$\times$dirty (asymptotic $p<0.001$ in the collapsed
-panel) illustrates exactly why this discipline matters, though here the picture is more
-mixed than on the green margin: its wild-bootstrap p-value is 0.07, permutation
-inference on the exact estimating equation still finds it unusual ($p=0.02$), a coarser
+panel) illustrates exactly why this discipline matters: its wild-bootstrap p-value is
+0.07, permutation inference on the exact estimating equation gives $p=0.23$, a coarser
 aggregate version of the same permutation flips its sign ($p=0.49$), the TREND index never
 confirms it, and a leave-one-out exercise shows it is carried by a single destination
 (Australia, $p=0.24$ once excluded); South Korea, the destination whose removal
-previously killed the result, now leaves it only borderline ($p=0.09$). The joint
+previously killed the result, now leaves it borderline ($p=0.09$). No form of robust
+inference sustains it. The joint
 F-test on all four composition interactions in the full firm-level panel is $p=0.31$ (WB
 index) and $p=0.71$ (TREND index).
 
@@ -545,7 +545,7 @@ EP$\times$green coefficient is $-0.0022$ (s.e.\ 0.0039) with the WB index and $-
 $p=0.31$ and $p=0.71$ respectively. The collapsed panel returns $-0.0046$ (WB): the wild
 cluster bootstrap p-value is 0.65, and permutation inference on the exact estimating
 equation --- 1{,}000 reassignments of entire EP profiles across treated destinations
---- gives $p=0.74$: the observed coefficient is well within the bulk of the placebo
+--- gives $p=0.61$: the observed coefficient is well within the bulk of the placebo
 distribution.
 
 To gauge magnitudes, it helps to benchmark the confidence intervals against the
@@ -588,7 +588,7 @@ exports by at most $-2.7\%$ to $+1.5\%$ at the 95\% bounds.
  & (0.0070) & (0.0030) & (0.0018) & (0.0016) \\
 \quad asymptotic $p$ & 0.51 & $<0.001$ & 0.32 & 0.83 \\
 \quad wild cluster bootstrap $p$ & 0.65 & 0.07 & 0.38 & 0.86 \\
-\quad permutation $p$ & 0.74 & 0.02 & 0.17 & 0.85 \\
+\quad permutation $p$ & 0.61 & 0.23 & 0.18 & 0.85 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
@@ -600,10 +600,11 @@ cluster bootstrap: B=9{,}999 \citep{cameron2008}. Permutation: 1{,}000 reassignm
 entire EP profiles across treated destinations, re-estimated on the exact collapsed
 specification of this table; p-values are the share of placebo assignments producing a
 larger absolute coefficient. A coarser variant on a destination--year--product-type
-aggregate gives $p=0.40$ for green and reverses the dirty sign ($+0.005$, $p=0.49$); see
-Section~\ref{sec:dirty} for why the exact and coarse permutation tests disagree on the
-dirty margin. \sym{*} $p<0.05$, \sym{**} $p<0.01$, \sym{***} $p<0.001$ (asymptotic only;
-does not survive wild cluster bootstrap --- see text).
+aggregate gives $p=0.40$ for green and reverses the dirty sign ($+0.005$, $p=0.49$): both
+versions leave the dirty coefficient indistinguishable from its placebo distribution;
+Section~\ref{sec:dirty} discusses the sign reversal under aggregation. \sym{*} $p<0.05$,
+\sym{**} $p<0.01$, \sym{***} $p<0.001$ (asymptotic only; does not survive wild cluster
+bootstrap or permutation inference --- see text).
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -683,41 +684,38 @@ force. Collapsed panel; FE $pd+dt+pt$; destination-clustered 90\% (dark) and 95\
 \label{fig:es}
 \end{figure}
 
-\subsection{The dirty margin: a fragile, not a false, positive}\label{sec:dirty}
+\subsection{The dirty margin: anatomy of a false positive}\label{sec:dirty}
 
 The strongly significant WB$\times$dirty coefficient in the collapsed panel
 ($-0.0119$, asymptotic $p<0.001$) deserves its own subsection, because it is a
-textbook illustration of why few-cluster inference matters --- though here, unlike the
-result the paper's earlier draft reported on this margin, the robustness battery does
-not cleanly dismantle it. The wild cluster bootstrap raises its p-value to 0.07, just
-above the conventional 5\% threshold. Permutation inference on the exact estimating
-equation is more skeptical of the null than the bootstrap: reshuffling entire EP
-profiles across treated destinations, only 2.3\% of placebo draws produce a coefficient
-as large in absolute value ($p=0.02$). A coarser permutation on a
-destination--year--product-type aggregate, by contrast, reverses the sign entirely
-(+0.005, $p=0.49$): aggregating to one observation per destination--year--product-type
-collapses the within-cell heterogeneity across firms and product varieties that the
-disaggregated coefficient exploits, so the two permutation tests are not answering the
-same question --- the exact-specification version is the one that matches the estimating
-equation actually reported in Table~\ref{tab:main}, but the coarse version's instability
-to the level of aggregation is itself evidence of fragility. A leave-one-out exercise
-across the 23 treated destinations resolves the tension only partially: the coefficient
-is stable ($\approx -0.012$) except when Australia is dropped, in which case it falls to
+textbook illustration of why few-cluster inference matters: every robust check the
+coefficient is put through returns it to the null. The wild cluster bootstrap raises its
+p-value to 0.07, just above the conventional 5\% threshold. Permutation inference on the
+exact estimating equation agrees: reshuffling entire EP profiles across treated
+destinations, 23.5\% of placebo draws produce a coefficient as large in absolute value
+($p=0.23$), placing the observed estimate squarely inside the placebo distribution. A
+coarser permutation on a destination--year--product-type aggregate reverses the sign
+entirely (+0.005, $p=0.49$): aggregating to one observation per
+destination--year--product-type collapses the within-cell heterogeneity across firms and
+product varieties that the disaggregated coefficient exploits, so the two permutation
+tests are not answering quite the same question --- but they reach the same verdict, and
+the sign instability under aggregation is further evidence of fragility. A leave-one-out
+exercise across the 23 treated destinations points the same way: the coefficient is
+stable ($\approx -0.012$) except when Australia is dropped, in which case it falls to
 $-0.0103$ with $p=0.24$. South Korea, the destination that drove the equivalent result in
 an earlier version of this analysis, is no longer pivotal on its own: dropping it leaves
-the coefficient at $-0.0097$ with $p=0.09$, borderline but not decisive. The TREND index
+the coefficient at $-0.0097$ with $p=0.09$. The TREND index
 never shows the effect (bootstrap $p=0.86$). In
 the full firm-level panel the coefficient is $-0.0044$ with an asymptotic $p$ of 0.052
 --- just above conventional significance, the same order of magnitude as in the CEM
-subsample, and consistent with a marginal signal that inference discipline narrows but,
-on this margin, does not fully erase. The honest reading is that the dirty margin is
-\emph{fragile} rather than a clean false positive: three of four robust-inference checks
-(wild bootstrap, coarse permutation, and near-borderline leave-one-out on Korea) point
-toward a null, while the exact-specification permutation and the destination
-sensitivity to Australia keep it from being dismissed outright. Section~\ref{sec:robust}
-shows this fragility is compounded by the near-total absence of trade-restrictive
-content in Chinese agreements' dirty-relevant chapters, the same structural limitation
-that governs the green margin.
+subsample, and consistent with a marginal signal that inference discipline erases
+entirely. The honest reading is that the dirty margin is a false positive of exactly the
+kind few-cluster designs manufacture: a coefficient that is overwhelming under asymptotic
+standard errors ($p<0.001$) and that no form of robust inference sustains. It belongs in
+the paper as a descriptive pattern and a methodological warning, not as an identified
+effect. Section~\ref{sec:robust} shows this is compounded by the near-total absence of
+trade-restrictive content in Chinese agreements' dirty-relevant chapters, the same
+structural limitation that governs the green margin.
 
 % ============================================================================
 \section{Robustness and extensions}\label{sec:robust}
@@ -756,7 +754,8 @@ mechanism-bearing sub-indices, it is unbounded). What can be said: the
 mechanism-bearing bundle shows the same pattern as the aggregate index --- green never
 responds (green-liberalization $\times$ green: $p=0.90$; TREND green-market-access
 $\times$ green: $p=0.38$), while the dirty interaction is marginally negative on
-asymptotic p-values ($p=0.04$--$0.07$), the same fragile signal as the aggregate. The
+asymptotic p-values ($p=0.04$--$0.07$), the same asymptotics-only signal as the
+aggregate --- which Section~\ref{sec:dirty} shows does not survive robust inference. The
 placebo components with no trade mechanism (TREND soft provisions, regulatory-space
 clauses) show nothing on either margin ($p \geq 0.27$), which is reassuring: a selection
 story would light up precisely there. Enforcement provisions --- dispute-settlement
@@ -838,8 +837,8 @@ $+0.0015$ ($p=0.74$) with the WB index and $+0.0001$ ($p=0.95$) with TREND;
 EP$\times$dirty is $-0.030$ ($p=0.06$) and $+0.003$ ($p=0.55$) respectively. There is
 no green trade creation at the extensive margin, and the dirty-margin coefficient here
 is, if anything, marginally stronger than in the intensive-margin specifications ---
-consistent with the fragile-not-null reading of Section~\ref{sec:dirty}, though it does
-not survive the conventional 5\% threshold on this grid either.
+consistent with the false-positive reading of Section~\ref{sec:dirty}: it does not clear
+the conventional 5\% threshold on this grid either.
 
 \subsection{Within-firm reallocation}
 
@@ -868,8 +867,8 @@ of how heavily that one bloc weights the aggregation. Re-including
 Hong Kong and Macao gives $-0.0009$ ($p=0.80$). Restricting to common-support products
 gives $-0.0022$ ($p=0.57$). Across every variation the dirty coefficient sits between
 $-0.0040$ and $-0.0060$ with asymptotic p-values between 0.02 and 0.09 --- persistently
-marginal, and, as Section~\ref{sec:dirty} established, only partially robust to
-bootstrap, permutation, and leave-one-out inference.
+marginal, and, as Section~\ref{sec:dirty} established, robust to none of the bootstrap,
+permutation, or leave-one-out checks.
 
 \begin{table}[htbp]
 \centering
@@ -980,10 +979,11 @@ provisions did not change what China exports on the green margin, the extensive 
 or the within-firm basket: a precise null, stable across estimation designs and sample
 variations, that survives an inference battery designed for the few-treated-clusters
 regime that characterizes this --- and most --- PTA settings. The dirty margin is the
-one partial exception: a negative effect on dirty exports survives some but not all of
-the same battery, and is driven by a single destination (Section~\ref{sec:dirty}) ---
-suggestive of a real, if narrowly identified, effect rather than a clean artifact, and a
-result the paper reports as fragile rather than either confirmed or dismissed.
+one apparent exception, and it does not survive scrutiny: a negative effect on dirty
+exports that is overwhelming under asymptotic standard errors clears none of the same
+battery and is driven by a single destination (Section~\ref{sec:dirty}) --- a false
+positive of the kind few-treated-cluster designs manufacture, reported here as a
+descriptive pattern and a cautionary case rather than an identified effect.
 
 The reading is not that environmental provisions never matter: \citet{abman2024} show
 they can, on environmental outcomes, when they are specific and enforceable. The reading

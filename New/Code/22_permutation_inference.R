@@ -96,9 +96,10 @@ run_coarse_permutation <- function(cell, group_var, term_label, out_file) {
     cc <- copy(cg)[, EP := NULL][pp, on = c("country_code", "year"), EP := i.EP][is.na(EP), EP := 0]
     tryCatch(est(cc), error = function(e) NA_real_)
   })
-  pval <- mean(abs(b_perm) >= abs(b_obs), na.rm = TRUE)
-  cat(sprintf("[coarse %s] coeff osservato %.6f | p-value %.4f (n=1000)\n", term_label, b_obs, pval))
-  fwrite(data.table(b_obs = b_obs, p_perm = pval, n_perm = 1000L), out_file)
+  n_used <- sum(!is.na(b_perm))
+  pval <- (1 + sum(abs(b_perm) >= abs(b_obs), na.rm = TRUE)) / (1 + n_used)
+  cat(sprintf("[coarse %s] coeff osservato %.6f | p-value %.4f (n=%d)\n", term_label, b_obs, pval, n_used))
+  fwrite(data.table(b_obs = b_obs, p_perm = pval, n_perm = n_used), out_file)
 }
 
 cat("=== Sezione A: permutazione grezza GREEN (WB) ===\n")
@@ -155,27 +156,28 @@ run_exact_batch <- function(data_file, green_file, dirty_file, depth_file, tripl
               td_dirty = get(depth_var) * dirty_p)]
 
   fes <- cell[, .(pd, dt, pt)]
-  # demean dei fissi (y, td) una volta sola
-  Xf <- as.matrix(fixest::demean(cell[, .(y, td_green, td_dirty)], f = fes, weights = cell$n))
-  y_dm <- Xf[, 1]; tdg_dm <- Xf[, 2]; tdb_dm <- Xf[, 3]
+  # demean di y una volta sola; EP e TD vengono demeanti per draw (C7 fix)
+  Xf <- as.matrix(fixest::demean(cell[, .(y)], f = fes, weights = cell$n))
+  y_dm <- Xf[, 1]
   rm(Xf); gc()
-  sw <- sqrt(cell$n)  # per la WLS via QR (pesi = n)
+  sw <- sqrt(cell$n)
 
-  # profili EP dei trattati
+  # profili EP e TD dei trattati — permutati insieme per preservare la collinearita'
   treated <- sort(unique(cell[get(treat_var) > 0, country_code]))
-  prof <- unique(cell[country_code %in% treated, .(country_code, year, EP = get(treat_var))])
+  prof <- unique(cell[country_code %in% treated,
+                      .(country_code, year, EP = get(treat_var), TD = get(depth_var))])
 
-  stima_perm <- function(ep_vec) {
+  stima_perm <- function(ep_vec, td_vec) {
     eg <- ep_vec * cell$env_good; eb <- ep_vec * cell$dirty_p
-    Xe <- as.matrix(fixest::demean(data.frame(eg = eg, eb = eb), f = fes, weights = cell$n))
-    X <- cbind(Xe[, 1], Xe[, 2], tdg_dm, tdb_dm)
-    cf <- qr.solve(X * sw, y_dm * sw)  # WLS: identica a lm pesato
+    tdg <- td_vec * cell$env_good; tdb <- td_vec * cell$dirty_p
+    Xdm <- as.matrix(fixest::demean(data.frame(eg, eb, tdg, tdb), f = fes, weights = cell$n))
+    cf <- qr.solve(Xdm * sw, y_dm * sw)
     c(green = cf[1], dirty = cf[2])
   }
 
   # verifica identita' (solo batch 1): deve riprodurre 12
   if (batch_id == 1L) {
-    b0 <- stima_perm(cell[[treat_var]])
+    b0 <- stima_perm(cell[[treat_var]], cell[[depth_var]])
     att <- fread(tripledd_file)
     tr_key <- if (treat_var == "WB_EP_Depth") "WB" else "TREND"
     ag <- att[treat == tr_key & grepl(":env_good$", term), coef]
@@ -192,9 +194,10 @@ run_exact_batch <- function(data_file, green_file, dirty_file, depth_file, tripl
     remap <- setNames(sample(treated), treated)
     pp <- copy(prof)[, country_code := remap[as.character(country_code)]]
     tmp <- copy(cell[, .(country_code, year)])
-    tmp[pp, on = c("country_code", "year"), EP := i.EP]
+    tmp[pp, on = c("country_code", "year"), c("EP", "TD") := .(i.EP, i.TD)]
     tmp[is.na(EP), EP := 0]
-    res[i, ] <- tryCatch(stima_perm(tmp$EP), error = function(e) c(NA_real_, NA_real_))
+    tmp[is.na(TD), TD := 0]
+    res[i, ] <- tryCatch(stima_perm(tmp$EP, tmp$TD), error = function(e) c(NA_real_, NA_real_))
     if (i %% 10L == 0L) cat(sprintf("  [%s batch %d] %d/%d\n", treat_var, batch_id, i, batch_size))
   }
   data.table(treat = treat_var, batch = batch_id, draw = seq_len(batch_size),
@@ -245,8 +248,10 @@ for (tv in c("WB_EP_Depth", "TREND_EP_Count")) {
                 tv, n_g, nrow(dd), n_d, nrow(dd)))
   summ[[tv]] <- data.table(
     treat = tr_key, n_perm = nrow(dd), n_used_green = n_g, n_used_dirty = n_d,
-    b_obs_green = bg, p_perm_green = mean(abs(dd$b_green) >= abs(bg), na.rm = TRUE),
-    b_obs_dirty = bb, p_perm_dirty = mean(abs(dd$b_dirty) >= abs(bb), na.rm = TRUE))
+    b_obs_green = bg,
+    p_perm_green = (1 + sum(abs(dd$b_green) >= abs(bg), na.rm = TRUE)) / (1 + n_g),
+    b_obs_dirty = bb,
+    p_perm_dirty = (1 + sum(abs(dd$b_dirty) >= abs(bb), na.rm = TRUE)) / (1 + n_d))
 }
 out <- rbindlist(summ)
 print(out)
