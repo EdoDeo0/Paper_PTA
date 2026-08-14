@@ -579,12 +579,34 @@ Le righe ``sola cooperazione'' e ``spazio regolatorio'' (indice TREND) funzionan
 controllo negativo: sono clausole prive di meccanismo commerciale. \textbf{Un'anomalia da
 dichiarare.} La riga ``spazio regolatorio'' risulta significativa su entrambi i margini
 ($p < 0{,}05$ su verde e sporco) con coefficienti positivi, il segno opposto alle attese.
-Questo risultato --- che emerge da $p$-value asintotici su circa venticinque cluster trattati
---- va preso con grande cautela, ma non va nascosto: se confermato anche sotto il
-\emph{wild cluster bootstrap} (non ancora calcolato per questa tabella), implicherebbe
-variazione confondente residua a livello destinazione$\times$anno$\times$tipo, cio\`e uno
-shock che gli effetti fissi non assorbono. La verifica \`e necessaria prima di presentare
-questa analisi.
+
+\textbf{La verifica richiesta \`e stata fatta, e il risultato regge} (script
+\texttt{20b\_wcb\_regulatoryspace.R}, 2026-08-14). Sotto \emph{wild cluster bootstrap}
+(B~=~9.999, cluster a destinazione) i due coefficienti restano significativi:
+$+0{,}0242$ sul verde con $p_{\mathrm{wcb}} = 0{,}046$ e intervallo $[+0{,}003;\ +0{,}046]$;
+$+0{,}0225$ sullo sporco con $p_{\mathrm{wcb}} = 0{,}022$ e intervallo
+$[+0{,}003;\ +0{,}042]$. Nessuno dei due intervalli contiene lo zero. Il controllo negativo,
+quindi, \textbf{non passa}, e va detto: \`e l'unico punto del lavoro in cui una clausola
+priva di meccanismo commerciale mostra un segnale che l'inferenza robusta non cancella.
+
+Due elementi delimitano per\`o quanto se ne pu\`o dedurre. \textbf{Primo}: i due margini si
+muovono \emph{insieme}. Il differenziale verde meno sporco vale $+0{,}0017$ con $p = 0{,}80$
+(test di Wald, $\chi^2 = 0{,}06$): verde e sporco salgono della stessa quantit\`a rispetto ai
+prodotti neutri. Non \`e la firma di uno spostamento di composizione verso i prodotti puliti
+--- che \`e l'oggetto misurato qui --- ma di qualcosa che muove entrambe le categorie contro
+la base neutra. \textbf{Secondo, e pi\`u decisivo}: questo sotto-indice non \`e un controllo
+negativo pulito in partenza. Lo ``spazio regolatorio'' vale il \textbf{71,5\%} del conteggio
+TREND sugli anni-paese trattati e correla \textbf{0,90} con il controllo di profondit\`a
+complessiva; e in questa stessa specifica il controllo di profondit\`a diventa a sua volta
+significativo, ma di segno opposto ($-0{,}0011$ sul verde, $p = 0{,}006$). Due regressori
+correlati a 0,90 che si spartiscono la varianza in un positivo grande e un negativo grande
+sono il problema di \emph{bundling} descritto in questa stessa sezione, applicato al
+controllo negativo --- non un canale indipendente misurato bene.
+
+La conclusione difendibile \`e quindi pi\`u debole, e va scritta cos\`i: questo disegno non
+riesce a separare un effetto dello ``spazio regolatorio'' dalla profondit\`a generale
+dell'accordo, e di conseguenza non pu\`o nemmeno usarlo come test di falsificazione pulito.
+Resta un limite dichiarato, non un risultato n\'e un'assoluzione.
 
 \textbf{Due avvertenze sulle stelle di questa tabella.} (i)~I $p$-value sono asintotici
 e su questo numero di cluster sono inaffidabili per le stesse ragioni illustrate in
@@ -684,12 +706,18 @@ nulla. Viene riportato sia nella versione basata sulla formula asintotica sia in
 basata sull'intervallo bootstrap, che \`e la pi\`u onesta perch\'e corrisponde
 all'inferenza effettivamente usata.
 
-\textbf{Che cosa dicono i numeri.} L'intervallo bootstrap sul margine verde \`e
-$[-1{,}8\%,\ +3{,}2\%]$ per disposizione. Al di sopra di $+3{,}2\%$ (effetto positivo) o
-al di sotto di $-1{,}8\%$ (effetto negativo) si pu\`o escludere l'effetto al 95\% di
-confidenza; in quel range il disegno non discrimina. La soglia di esclusione \`e quindi
-\emph{asimmetrica}: il disegno \`e pi\`u potente nell'escludere grandi effetti positivi
-che grandi effetti negativi.
+\textbf{Che cosa dicono i numeri.} Sull'unit\`a collassata l'intervallo bootstrap del
+margine verde \`e $[-1{,}8\%,\ +3{,}2\%]$ per disposizione: fuori da quel range l'effetto
+\`e escluso al 95\%, dentro il disegno non discrimina. La soglia \`e \emph{asimmetrica} ---
+il disegno esclude meglio i grandi effetti positivi che i grandi effetti negativi.
+
+Sul \emph{full panel}, che \`e la specificazione di riferimento, l'intervallo bootstrap \`e
+pi\`u largo e quasi simmetrico: $[-3{,}5\%,\ +3{,}6\%]$ per disposizione. \`E questa la
+cifra da usare quando si parla di precisione del lavoro nel suo complesso. Va segnalato che
+l'intervallo \emph{asintotico} corrispondente, $[-1{,}0\%,\ +0{,}55\%]$, \`e circa sei volte
+pi\`u stretto: costruire su quello un'affermazione di precisione significherebbe rivendicare
+esattamente la certezza che la sezione sull'inferenza dichiara ingiustificata con
+ventitr\'e cluster trattati. Le due cifre non vanno mescolate.
 
 \textbf{La riformulazione che ne discende.} Nel testo del lavoro conviene sostituire
 ovunque ``non troviamo alcun effetto'' con ``possiamo escludere effetti superiori a questa
@@ -706,10 +734,16 @@ soglia''. \`E pi\`u preciso, pi\`u difendibile e, paradossalmente, pi\`u forte.
 cinesi non hanno aumentato le esportazioni di beni ambientali rispetto ai prodotti neutri.
 Il coefficiente \`e prossimo a zero in tutte e quattro le varianti, in entrambe le unit\`a
 di analisi, con tutti e tre i metodi di inferenza, con tre gruppi di controllo alternativi,
-con una definizione alternativa di bene verde, sul margine estensivo e sulla ricomposizione
-interna alle imprese. \`E il risultato pi\`u solido del lavoro, e la
-Tabella~\ref{tab:mde} permette di enunciarlo nella forma corretta: sono esclusi effetti
-superiori a circa il 3\% per disposizione.
+con una definizione alternativa di bene verde e sul margine estensivo. (La quota verde
+\emph{interna} alle imprese punta nella stessa direzione, ma va tenuta fuori da questo
+elenco: quella specificazione \`e in livello e non ha gli effetti fissi
+impresa$\times$destinazione$\times$anno, quindi non identifica nulla --- vale come
+descrizione, non come conferma.) \`E il risultato pi\`u solido del lavoro, e la
+Tabella~\ref{tab:mde} permette di enunciarlo nella forma corretta: al 95\% di confidenza
+sono esclusi effetti superiori a $+3{,}2\%$ per disposizione sull'unit\`a collassata e a
+$+3{,}6\%$ sul \emph{full panel} --- che \`e la soglia da citare, essendo il \emph{full
+panel} la specificazione di riferimento. Sotto quella soglia il disegno non discrimina, e
+questo va detto insieme al resto.
 
 \textbf{Sul margine sporco la risposta \`e pi\`u sfumata, e va detta come tale.} Il
 coefficiente \`e negativo nella grande maggioranza delle specificazioni, ma non in tutte:

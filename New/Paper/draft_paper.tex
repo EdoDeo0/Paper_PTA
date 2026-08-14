@@ -38,9 +38,11 @@ transaction-level customs data covering 45.8 million firm--product--destination-
 observations. Identification exploits a triple-difference design: within a given
 firm--destination--year, I compare green and dirty products to neutral ones as EP depth
 varies across destinations and over time, absorbing the confounding effect of the agreement
-itself through firm--destination--year fixed effects. I find a precisely estimated null on the green margin, stable across six estimation
+itself through firm--destination--year fixed effects. I find a null on the green margin, stable across six estimation
 designs (full panel, collapsed panel, and four control-group subsamples), surviving wild
-cluster bootstrap and permutation inference. The dirty margin is a textbook false
+cluster bootstrap and permutation inference. Bootstrap bounds rule out effects larger
+than roughly one fifth of the benchmark estimate in the aggregate literature, while
+leaving smaller effects undetermined. The dirty margin is a textbook false
 positive: a negative effect on dirty exports that is overwhelming asymptotically
 ($p<0.001$) survives neither the wild cluster bootstrap ($p=0.07$) nor permutation
 inference ($p=0.23$), a coarser aggregation of the same test reverses its sign, and a
@@ -102,15 +104,15 @@ of selection into agreements rather than of a causal effect
 within a firm--destination--year cell, the agreement affects green, dirty, and neutral
 products symmetrically, so their \emph{differential} response to EP depth isolates the
 environmental content. The design follows the logic of the classic
-industry-$\times$-country interaction of \citet{rajan1998}, and mirrors the ``content
-conditional on agreement'' contrast that \citet{abman2024} identify as the credible
-margin. The analogy is structural, not literal: \citeauthor{rajan1998}'s industries are
+industry-$\times$-country interaction of \citet{rajan1998}, and mirrors the contrast that
+\citet{abman2024} exploit between agreements that do and do not contain specific
+environmental content, holding the existence of an agreement fixed. The analogy is structural, not literal: \citeauthor{rajan1998}'s industries are
 sorted by a technological trait (external finance dependence) that is fixed across
 countries, whereas green and dirty status here is a \emph{policy}-defined product
 classification (OECD and Mani--Wheeler lists), a distinction worth flagging even though
 it does not vary with the agreement and so cannot itself confound identification.
 
-The answer is a precisely estimated null, on both margins. Six independent estimation
+The answer is a null on both margins, bounded but not razor-sharp. Six independent estimation
 designs --- the full firm-level panel, a product--destination--year collapsed panel, and
 four control-group subsamples that probe the stability of the coefficient across
 comparison sets --- return an EP$\times$green coefficient between $-0.0009$ and
@@ -288,10 +290,19 @@ firm--destination--year, product--year) are precomputed.
 Goods (CLEG) as compiled in \citet{sauvage2014} (248 codes; verified match of 246/248
 against the project's source file, with the single discrepancy a granularity split of
 one HS heading into two sub-codes). Because the customs panel uses the HS1996 vintage
-while the OECD list is native HS2012, the list was translated to HS1996 (a unique 1:1
-concordance exists for all 247
-codes; export-value continuity checks at the 2002/2007/2012 revision boundaries confirm
-a clean mapping). \emph{Dirty} products are the HS6 codes belonging to the classic
+while the OECD list is native HS2012, the list was translated to HS1996: 246 of the 248
+codes have a unique 1:1 concordance and are translated, while the two that do not
+(871411 and 871419, the granularity split noted above) are retained at their original
+codes and flagged rather than dropped. Export-value continuity checks around the 2007
+revision boundary find no suspicious break on any translated code.\footnote{As a check
+on the classification itself rather than its translation, the main specification was
+re-estimated restricting green products to the 54 codes of the APEC Environmental Goods
+List \citep{sauvage2014}, on which explicit multilateral political consensus exists and
+which form a complete subset of the OECD list. The green coefficient is $+0.0050$
+(s.e.\ 0.0127, $p=0.69$) with the WB index and $+0.0032$ ($p=0.13$) with TREND: the sign
+flips but remains indistinguishable from zero, with standard errors roughly doubled, as
+expected from an 80\% reduction in the green sample. The null is not an artifact of
+borderline products in the broader list.} \emph{Dirty} products are the HS6 codes belonging to the classic
 pollution-intensive sectors of \citet{mani1998} and \citet{low1992} --- pulp and paper,
 industrial chemicals, petroleum refining, iron and steel, non-ferrous metals (plus
 cement in an extended list) --- mapped to HS1996 through the official WITS/UNSD
@@ -345,11 +356,13 @@ Section~\ref{sec:strategy}. The \emph{collapsed panel} aggregates it to
 HS6--destination--year cells (3.77 million; outcome: within-cell mean of log exports,
 regressions weighted by cell size) and serves both as a computational workhorse for
 the inference battery and as an internal cross-validation --- its fixed-effects
-structure replicates the identification argument one-for-one. The \emph{zero-filled
+structure preserves the identifying logic but not the firm dimension, a difference
+Section~\ref{sec:strategy} quantifies. The \emph{zero-filled
 PPML grid} (8.3 million cells) adds the combinations with no recorded trade, opening
 the extensive margin. The \emph{within-firm share panel} (13.3 million
 firm--destination--year observations) recasts the outcome as the green share of each
-firm's export basket to a destination, the margin aggregate data cannot see.
+firm's export basket to a destination; it enters as descriptive evidence only, for the
+identification reason given in Section~\ref{sec:robust}.
 
 Because the triple-difference compares green and dirty products to \emph{neutral}
 ones, the credibility of the comparison set can be probed directly. Four
@@ -387,9 +400,12 @@ itself \\
 \begin{tablenotes}\footnotesize
 \item Effective sizes after iterative singleton removal, as in
 Table~\ref{tab:stability}. C-prod-HS4 restricts the product margin and is read
-alongside C-overlap, never alone, because a within-firm reallocation spillover
-(a firm shifting between products in the same family) would contaminate it;
-C-overlap is immune by construction. The deep-vs-shallow design, in the spirit of
+alongside C-overlap, never alone, because a within-firm reallocation spillover would
+contaminate it: multi-product firms concentrate on core products when trade costs fall
+\citep{eckel2010}, so a neutral product in the same HS4 family, sold by the same firm,
+can be pushed down by the very reallocation the treatment induces --- which biases the
+green-versus-neutral contrast away from zero rather than toward it. C-overlap is immune
+by construction, which is why the two are reported together. The deep-vs-shallow design, in the spirit of
 the within-treated contrast of \citet{abman2024}, drops untreated destinations
 entirely, so the identifying comparison is between deeper and shallower
 environmental chapters among agreement partners; its limitation is the small number
@@ -464,8 +480,14 @@ same role the DESTA index \citep{dur2014} plays in \citet{brandi2020}; because
 \texttt{TotalDepth} counts all non-environmental provisions rather than isolating
 green-relevant ones (e.g.\ subsidy disciplines, technical-standard harmonization), it is
 an imperfect proxy for the depth of agreement content that is genuinely orthogonal to
-the environmental chapter, so residual correlation between $EP_{dt}$ and $TD_{dt}$ would
-attenuate, not inflate, the composition estimates. That correlation is substantial and
+the environmental chapter. An imperfectly measured control does not attenuate the
+coefficient on the variable of interest in a signable direction: it under-controls, and
+$\beta_1$ absorbs some of the effect of general depth with no guarantee about the sign.
+Rather than assert a direction, Section~\ref{sec:robust} reports the coefficient under
+four different depth controls --- including none at all --- and shows that the point
+estimate moves within a band narrower than one standard error
+(Table~\ref{tab:depthbounds}). That is evidence about the direction, where an appeal to
+attenuation would only have been an assumption. The correlation is substantial and
 should be stated plainly: across the 223 treated destination--years in the estimation
 sample, WB EP depth and non-environmental TotalDepth correlate at $0.91$ in the raw data
 and $0.96$ after destination and year demeaning (the variation the design actually
@@ -479,6 +501,28 @@ codings with such different degrees of overlap with general depth return the sam
 is itself reassuring: a result driven by the inability to separate environmental from
 general content would be expected to differ across them. Standard errors are clustered
 by destination, the level of treatment variation \citep{abadie2023}.
+
+One qualification on the estimand is due, and it matters for how $\beta_1$ should be
+read. Environmental depth is a \emph{continuous} dose that switches on at
+\emph{staggered} dates, and under that combination the two-way fixed-effects coefficient
+is not in general the ATT defined above: it is a weighted average of dose-specific and
+cohort-specific effects whose weights need not be convex, and comparisons across dose
+levels are additionally exposed to selection into dose that parallel trends alone does
+not rule out \citep{callaway2024, goodmanbacon2021, dechaisemartin2020}. This paper does
+not implement a continuous-dose robust estimator; the Sun--Abraham event study of
+Appendix~\ref{app:sunab} addresses only the staggered-timing half of the problem, and it
+does so on a binarized treatment. Two considerations limit how much this costs here.
+Estimating a null makes the weighting problem less consequential than it would be for a
+non-zero estimate --- non-convex weights distort the aggregation of heterogeneous
+effects, but a weighted average of effects that are individually near zero stays near
+zero unless the underlying effects are large and offsetting, which the sub-index and
+leave-one-out evidence gives no sign of. And the permutation test of
+Section~\ref{sec:strategy} is agnostic about the weighting entirely: it asks whether the
+observed coefficient, whatever weighted average it represents, is unusual relative to the
+same statistic computed under randomly reassigned EP profiles. $\beta_1$ is therefore
+best read as a weighted average of composition responses across doses and cohorts, not as
+a single structural ATT, and a continuous-dose estimator in the spirit of
+\citet{callaway2024} remains the natural next step for this design.
 
 A further identification concern works in a conservative direction. If deeper
 environmental chapters are more likely to be signed with destinations where consumer or
@@ -505,9 +549,25 @@ and three products per treated cell overall --- a reminder that the estimates ag
 many small within-firm contrasts rather than a few large ones. A collapsed panel at the HS6--destination--year level (3.77
 million cells; outcome: within-cell mean of log exports; regressions weighted by cell
 size; fixed effects $pd+dt+pt$), in the gravity-equation tradition of
-\citet{headmayer2014}, replicates the identification argument one-for-one --- $dt$ absorbs
-the agreement as $fdt$ does in the full panel --- at a fraction of the cost, and the two
-give nearly identical answers, an internal cross-validation of both pipelines.
+\citet{headmayer2014}, reproduces the design at a fraction of the cost, with $dt$ playing
+the role that $fdt$ plays in the full panel: it absorbs the agreement.
+
+What it does not reproduce is the firm dimension, and the two panels should be compared
+with that in mind rather than treated as interchangeable. Re-estimating the full panel
+with $pd+dt+pt$ in place of $fpd+fdt+pt$ recovers the collapsed coefficients to seven
+significant figures ($-0.0045685$ vs.\ $-0.0045685$ on green; $-0.011873$ vs.\
+$-0.011873$ on dirty), which establishes that the weighted collapse is algebraically the
+micro-regression under those fixed effects and that the two pipelines agree exactly where
+they are asked the same question. It also isolates what the firm effects do. On the green
+margin the two structures agree substantively ($-0.0046$ collapsed, $-0.0023$ full panel;
+both indistinguishable from zero). On the dirty margin they differ by a factor of
+$2.7$ ($-0.0119$ vs.\ $-0.0044$), and the gap is a result rather than a discrepancy: the
+collapsed specification compares products \emph{across} the firms serving a
+destination--year, so any shift in which firms export dirty goods enters the coefficient;
+$fdt$ removes that channel and leaves only reallocation within the firm. Roughly
+three-fifths of the collapsed dirty coefficient is therefore between-firm composition, not
+within-firm response --- consistent with Section~\ref{sec:dirty}'s reading, and a reason
+the full panel is the reference specification.
 
 \subsection{Inference with few treated clusters}
 
@@ -516,10 +576,15 @@ agreements. Asymptotic cluster-robust inference is unreliable in this regime, so
 headline estimate is subjected to three tests: (i) destination-clustered asymptotics;
 (ii) wild cluster bootstrap with 9{,}999 replications \citep{cameron2008,
 fischer2021, roodman2019} --- computed on Frisch--Waugh-residualized data (fixed effects
-demeaned once, not re-estimated at each bootstrap draw), an approximation that treats
-$pt$ as if it were nested within the destination cluster, which it is not, while $pd$
-and $dt$ are; demeaned coefficients match the unrestricted \texttt{fixest} estimates
-exactly. With only 23 \emph{treated} clusters among 236, the more demanding regime of
+demeaned once, not re-estimated at each bootstrap draw). This carries two approximations,
+both in the collapsed-panel implementation only. It treats $pt$ as if it were nested
+within the destination cluster, which it is not, while $pd$ and $dt$ are. And the
+small-sample corrections see the four regressors of the residualized equation rather than
+the four plus the absorbed fixed effects, so the degrees-of-freedom adjustment is not
+exact. Demeaned coefficients match the unrestricted \texttt{fixest} estimates exactly, so
+the point estimates are unaffected. Neither approximation applies to the full-panel
+bootstrap, which runs natively after \texttt{reghdfe} and is the version quoted for the
+headline intervals in Section~\ref{sec:results}. With only 23 \emph{treated} clusters among 236, the more demanding regime of
 \citet{mackinnon2017} and \citet{conley2011} applies: standard wild bootstrap asymptotics
 assume the number of treated clusters, not just clusters overall, grows large, which is
 why (iii) permutation inference \citep{fisher1935} is run as an independent check rather
@@ -527,7 +592,16 @@ than a formality. Entire EP profiles
 (depth and timing) are randomly reassigned 1{,}000 times across treated destinations,
 asking whether the observed coefficient stands out among placebos --- the sharpest
 answer to ``is it really the environmental content, or would any labelling of these
-destinations produce this number?''. The dynamic specification is an event study of the
+destinations produce this number?''. Three features of the test should be stated rather
+than left implicit. The null is the restricted one --- which treated destination holds
+which profile --- not treated versus untreated, since never-treated destinations are
+never given a profile. Depth and timing are permuted jointly, so the test asks about the
+whole treatment assignment and cannot separate environmental content from the date of
+entry. And the effective support is far smaller than 1{,}000: the eleven ASEAN
+destinations carry identical profiles, so permuting them among themselves changes
+nothing, leaving roughly nine distinct profiles. The permutation distribution is
+correspondingly granular, and the resolution of the resulting $p$-values is bounded by
+that, not by the number of draws. The dynamic specification is an event study of the
 green (dirty) vs.\ neutral differential around entry into force, with never-treated
 destinations as controls, endpoint bins declared, and a Sun--Abraham version
 \citep{sun2021} run on the destination-level composition gap to address staggered-timing
@@ -553,10 +627,18 @@ literature's reference estimate. \citet{brandi2020} find that one \emph{liberal}
 environmental provision raises the green share of developing-country exports by 0.4
 percentage points, about $+17\%$ of the mean green share --- roughly $+0.16$ log points
 of green relative to non-green exports per provision in the metric of
-equation~\eqref{eq:main}. The full-panel 95\% confidence interval for EP$\times$green
-is $[-0.0100, +0.0055]$ per WB provision (collapsed panel: $[-0.0182, +0.0091]$): the
-upper bound is about one twenty-ninth of the Brandi-equivalent effect, so the design
-rejects not just their point estimate but anything larger than a few percent of it. On
+equation~\eqref{eq:main}. Section~\ref{sec:strategy} argued that asymptotic inference is
+unreliable with 23 treated clusters; that argument applies to interval estimates as much
+as to p-values, so the bounds quoted here are wild cluster bootstrap intervals. The
+full-panel 95\% bootstrap confidence interval for EP$\times$green is
+$[-0.0353, +0.0355]$ per WB provision (collapsed panel: $[-0.0182, +0.0317]$). The
+corresponding asymptotic interval, $[-0.0100, +0.0055]$, is roughly six times narrower,
+and reporting precision on that basis would claim exactly the kind of certainty this
+paper's own inference section declares unwarranted. On the bootstrap bound, the upper
+limit is about one fifth of the Brandi-equivalent effect: the design rules out their
+point estimate and anything above roughly a fifth of it, and is uninformative below that
+threshold. This is a weaker statement than the asymptotic interval would support, and it
+is the one the design can sustain. On
 the dirty margin their trade-restrictive provisions reduce dirty exports by roughly 5\%
 of the mean per provision ($\approx -0.05$ log points); even taking our asymptotic
 full-panel point estimate at face value ($-0.0044$ per provision), the response is an
@@ -566,7 +648,8 @@ clauses, which are almost entirely absent from Chinese agreements of this period
 (Section~\ref{sec:robust}) --- which is precisely the interpretation the paper
 advances. In per-standard-deviation terms, a one-SD increase in WB EP depth across
 treated destination--years ($\approx$ 2.7 provisions) moves green relative to neutral
-exports by at most $-2.7\%$ to $+1.5\%$ at the 95\% bounds.
+exports by at most $-9.5\%$ to $+9.6\%$ at the 95\% bootstrap bounds ($-2.7\%$ to
+$+1.5\%$ on asymptotic bounds).
 
 \begin{table}[htbp]
 \centering
@@ -583,11 +666,16 @@ exports by at most $-2.7\%$ to $+1.5\%$ at the 95\% bounds.
 \textbf{Full panel} (reghdfe) & $-0.0022$ & $-0.0044$ & $-0.0001$ & $-0.0009$ \\
  & (0.0039) & (0.0022) & (0.0010) & (0.0006) \\
 \quad asymptotic $p$ & 0.57 & 0.052 & 0.91 & 0.15 \\
+\quad wild cluster bootstrap $p$ & 0.69 & 0.18 & 0.93 & 0.18 \\
+\quad bootstrap 95\% CI & $[-0.035,$ & $[-0.043,$ & $[-0.0037,$ & $[-0.0027,$ \\
+ & $+0.036]$ & $+0.011]$ & $+0.0025]$ & $+0.0007]$ \\
 \addlinespace
 \textbf{Collapsed panel} & $-0.0046$ & $-0.0119$\sym{***} & $+0.0018$ & $+0.0004$ \\
  & (0.0070) & (0.0030) & (0.0018) & (0.0016) \\
 \quad asymptotic $p$ & 0.51 & $<0.001$ & 0.32 & 0.83 \\
 \quad wild cluster bootstrap $p$ & 0.65 & 0.07 & 0.38 & 0.86 \\
+\quad bootstrap 95\% CI & $[-0.018,$ & $[-0.018,$ & $[-0.0018,$ & $[-0.0032,$ \\
+ & $+0.032]$ & $+0.002]$ & $+0.0071]$ & $+0.0054]$ \\
 \quad permutation $p$ & 0.61 & 0.23 & 0.18 & 0.85 \\
 \bottomrule
 \end{tabular}
@@ -602,7 +690,10 @@ specification of this table; p-values are the share of placebo assignments produ
 larger absolute coefficient. A coarser variant on a destination--year--product-type
 aggregate gives $p=0.40$ for green and reverses the dirty sign ($+0.005$, $p=0.49$): both
 versions leave the dirty coefficient indistinguishable from its placebo distribution;
-Section~\ref{sec:dirty} discusses the sign reversal under aggregation. \sym{*} $p<0.05$,
+Section~\ref{sec:dirty} discusses the sign reversal under aggregation. Bootstrap
+intervals, not asymptotic ones, are the basis for every magnitude claim in the text: with
+23 treated clusters the asymptotic intervals are roughly six times too narrow
+(Section~\ref{sec:strategy}). \sym{*} $p<0.05$,
 \sym{**} $p<0.01$, \sym{***} $p<0.001$ (asymptotic only; does not survive wild cluster
 bootstrap or permutation inference --- see text).
 \end{tablenotes}
@@ -649,6 +740,11 @@ Full panel, including HK--Macao & 23.6M & $-0.0009$ & 0.80 \\
 destination-clustered s.e. CEM match on log GDP p.c., growth, MFN tariff (year 2000).
 Deep/shallow split at the median of maximum EP depth (16 deep vs.\ 9 shallow countries
 in the estimation sample, which excludes Hong Kong and Macao).
+The common-support restriction is reported for completeness rather than as an
+independent test: 98.5\% of HS6 products are exported both to treated and to
+never-treated destinations, so it removes 314 of 21.5 million observations and reproduces
+the full panel almost exactly. Its value is in showing that extrapolation outside common
+support is not an issue here, not in providing a distinct estimate.
 TREND-index analogues (where estimated) give the same picture: full panel $-0.0001$
 ($p=0.91$), common support $-0.0001$ ($p=0.91$), deep vs.\ shallow $-0.0004$ ($p=0.72$).
 Controls: MFN tariff, market concentration (HHI), antidumping indicator.
@@ -669,7 +765,13 @@ $\geq$+5) is identified only by early cohorts (ASEAN 2005, Chile 2006, Pakistan 
 New Zealand 2008) and does not survive the Sun--Abraham estimator applied to the
 destination-level composition gap: the aggregated ATT is $-0.044$ ($p=0.24$) for the
 green gap and $+0.073$ ($p=0.28$) for the dirty gap --- consistent with cohort
-heterogeneity rather than a treatment effect \citep{sun2021}. The full Sun--Abraham
+heterogeneity rather than a treatment effect \citep{sun2021}. That estimator answers a
+narrower question than equation~\eqref{eq:main} and should not be read as confirming it:
+it binarizes treatment (EP present versus absent, discarding depth), carries no depth
+control, and runs on a destination--year composition gap built by collapsing across
+products, so it has no product--year fixed effects. It is a diagnostic for staggered
+timing and cohort heterogeneity --- which is what it is used for here --- not an
+independent replication of the static specification. The full Sun--Abraham
 event study is reported in Appendix~\ref{app:sunab}; one distant lead (the dirty gap
 at $t=-6$) is individually significant, and the appendix shows through a cohort
 decomposition that it reflects the idiosyncratic deviation of a single late-cohort
@@ -708,8 +810,10 @@ the coefficient at $-0.0097$ with $p=0.09$. The TREND index
 never shows the effect (bootstrap $p=0.86$). In
 the full firm-level panel the coefficient is $-0.0044$ with an asymptotic $p$ of 0.052
 --- just above conventional significance, the same order of magnitude as in the CEM
-subsample, and consistent with a marginal signal that inference discipline erases
-entirely. The honest reading is that the dirty margin is a false positive of exactly the
+subsample --- and the wild cluster bootstrap on that same panel moves it to $p=0.18$,
+with a 95\% interval of $[-0.043, +0.011]$ that comfortably contains zero. The marginal
+asymptotic signal is thus erased by robust inference on both panels independently, not
+only on the collapsed one. The honest reading is that the dirty margin is a false positive of exactly the
 kind few-cluster designs manufacture: a coefficient that is overwhelming under asymptotic
 standard errors ($p<0.001$) and that no form of robust inference sustains. It belongs in
 the paper as a descriptive pattern and a methodological warning, not as an identified
@@ -750,15 +854,40 @@ sub-indices correlate between 0.5 and 0.9 with each other and with the total cou
 With $\sim$14 agreements, provision-type heterogeneity is not separately identifiable
 --- in sharp contrast with \citet{brandi2020}, whose 680-agreement panel allows it (they
 report a maximum VIF of 4.6 across their provision-type variables; here, for the two
-mechanism-bearing sub-indices, it is unbounded). What can be said: the
+mechanism-bearing sub-indices, it is unbounded). One reading rule applies to everything
+that follows: each sub-index is estimated \emph{on its own}, replacing the aggregate index
+one at a time, not entered jointly. The coefficients are therefore not partial effects
+holding other clause types constant --- each absorbs whatever variation in the correlated
+sub-indices moves with it. Entering them jointly is precisely what the collinearity
+documented above rules out, so this is the only feasible reading, but it means the table
+is a set of separate comparisons and not a decomposition of the aggregate index into
+additive parts. What can be said: the
 mechanism-bearing bundle shows the same pattern as the aggregate index --- green never
 responds (green-liberalization $\times$ green: $p=0.90$; TREND green-market-access
 $\times$ green: $p=0.38$), while the dirty interaction is marginally negative on
 asymptotic p-values ($p=0.04$--$0.07$), the same asymptotics-only signal as the
 aggregate --- which Section~\ref{sec:dirty} shows does not survive robust inference. The
-placebo components with no trade mechanism (TREND soft provisions, regulatory-space
-clauses) show nothing on either margin ($p \geq 0.27$), which is reassuring: a selection
-story would light up precisely there. Enforcement provisions --- dispute-settlement
+two placebo components with no trade mechanism behave differently, and the difference is
+worth stating plainly rather than averaging away. TREND soft provisions show nothing on
+either margin ($\times$ green: $p=0.27$; $\times$ dirty: $p=0.86$), as the selection
+logic would predict. Regulatory-space clauses do not: they carry $+0.024$ on green and
+$+0.023$ on dirty, and both survive the wild cluster bootstrap ($p=0.046$ and $p=0.022$
+respectively, B=9{,}999). This is the only place in the paper where a component with no
+trade mechanism registers a signal that robust inference sustains, and it is reported
+here as a caveat, not resolved. Two features bound what can be read into it. First, the
+two margins move together: the green--dirty differential is $+0.0017$ with $p=0.80$, so
+the estimate describes green and dirty exports rising by the same amount against the
+neutral baseline --- a pattern that is not the signature of a shift in composition toward
+cleaner goods, which is the object this paper measures. Second, and more fundamentally,
+this sub-index is not a clean placebo to begin with. Regulatory-space clauses account for
+71.5\% of the TREND count across treated destination--years and correlate 0.90 with the
+TotalDepth control; in this specification the depth control itself flips to significantly
+negative ($\times$ green: $-0.0011$, $p=0.006$). Two regressors correlated at 0.90
+splitting into a large positive and a large negative coefficient is this section's
+bundling problem applied to the placebo, not an independent channel measured cleanly. The
+defensible conclusion is the weaker one: this design cannot separate a regulatory-space
+effect from general agreement depth, which means it cannot use that sub-index as a clean
+falsification test either. Enforcement provisions --- dispute-settlement
 mechanisms attached to the environmental chapter, which condition whether any of the
 above is binding rather than providing a trade mechanism themselves --- are likewise
 null on both margins and both codings (WB \texttt{EnforcementDSM} $\times$ green:
@@ -829,9 +958,13 @@ built to detect.
 \subsection{Extensive margin}
 
 Log-linear estimates condition on positive flows. If EPs created green trade at the
-extensive margin --- new firm--product--destination combinations --- the intensive
-estimates would miss it \citep{santossilva2006, larch2025}. On a zero-filled
-HS6--destination--year grid (8.3 million cells), PPML estimates of
+extensive margin --- combinations with no recorded trade before --- the intensive
+estimates would miss it \citep{santossilva2006, larch2025}. The test available here
+operates at the product--destination level, not the firm level: on a zero-filled
+HS6--destination--year grid (8.3 million cells), it detects green products newly exported
+to a destination, but not a new firm beginning to export a product that other Chinese
+firms already ship there --- which is the more common form of entry. The extensive margin
+is therefore probed, not exhausted. PPML estimates of
 equation~\eqref{eq:main}'s aggregated analogue confirm the null: EP$\times$green is
 $+0.0015$ ($p=0.74$) with the WB index and $+0.0001$ ($p=0.95$) with TREND;
 EP$\times$dirty is $-0.030$ ($p=0.06$) and $+0.003$ ($p=0.55$) respectively. There is
@@ -840,7 +973,7 @@ is, if anything, marginally stronger than in the intensive-margin specifications
 consistent with the false-positive reading of Section~\ref{sec:dirty}: it does not clear
 the conventional 5\% threshold on this grid either.
 
-\subsection{Within-firm reallocation}
+\subsection{Within-firm reallocation: a descriptive complement}
 
 The margin that aggregate data cannot see: does the green \emph{share} of a
 multiproduct firm's basket toward a destination respond to EP depth? On the
@@ -850,10 +983,94 @@ depth is $-0.0001$ ($p=0.50$) and on the TREND count $-0.00006$ ($p=0.043$,
 asymptotic). Both are economically negligible: a one-standard-deviation increase in
 the TREND count moves the within-firm green share by three hundredths of a percentage
 point, with the ``wrong'' sign, and the marginal asymptotic significance is subject to
-the same few-clusters caveat as everything else in this setting. Chinese firms did not
-rebalance their baskets. This module speaks to the within-plant evidence of
-\citet{cherniwchan2017}: where NAFTA tariff cuts changed what plants do, Chinese EP
-chapters did not change what exporters sell.
+the same few-clusters caveat as everything else in this setting.
+
+This module is reported as a descriptive complement, not as identifying evidence, and
+the reason is the one given in Section~\ref{sec:strategy}. The specification regresses
+the green share on the \emph{level} of EP depth with firm--destination and year fixed
+effects; it does not include the firm--destination--year absorption that the triple
+difference relies on, and it therefore inherits precisely the confound that
+Section~\ref{sec:strategy} argues is fatal to any level specification here --- EP depth
+switching on with the agreement, and ``environmental depth'' being indistinguishable
+from ``having a deep agreement'' across $\sim$14 agreements. A null recovered from a
+design that cannot identify an effect is not evidence that no effect exists; it is
+uninformative in both directions, and the marginally significant TREND coefficient
+illustrates the point rather than undercutting it. What the module does establish is
+descriptive and worth having: the within-firm green share is flat with respect to EP
+depth in the raw conditional means, which is at least consistent with the identified
+composition null and would have been a puzzle had it pointed the other way. It is not
+a firm-level counterpart to the within-plant evidence of \citet{cherniwchan2017}, whose
+NAFTA tariff variation identifies a level effect that this setting cannot; establishing
+that comparison would require re-specifying the share equation as a triple difference
+with firm--destination--year effects, which the current design leaves for future work.
+
+\subsection{How much the depth control decides}
+
+Environmental depth and general agreement depth move together at $0.96$ within
+destination and year, and any regression containing both must split their shared
+variation between them. How it splits depends on which depth measure is used, so a single
+coefficient understates the real uncertainty. Table~\ref{tab:depthbounds} therefore
+reports the green coefficient under four depth controls rather than one: none at all, the
+aggregate WB \texttt{TotalDepth}, a targeted version restricted to the 14 non-environmental
+areas that actually correlate with EP content, and the externally-coded DESTA index
+\citep{dur2014}.
+
+\begin{table}[htbp]
+\centering
+\caption{EP$\times$green under alternative depth controls (collapsed panel, WB index)}
+\label{tab:depthbounds}
+\small
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+Depth control & EP$\times$green & 95\% CI \\
+\midrule
+None & $-0.0057$ & $[-0.0118,\ +0.0003]$ \\
+\texttt{TotalDepth} aggregate (17 areas) --- \emph{main specification} & $-0.0046$ & $[-0.0182,\ +0.0091]$ \\
+\texttt{TotalDepth} targeted (14 areas) & $-0.0033$ & $[-0.0188,\ +0.0123]$ \\
+DESTA index (independent source) & $-0.0043$ & $[-0.0129,\ +0.0042]$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Collapsed panel, fixed effects $pd+dt+pt$, weighted by cell size, destination-clustered.
+Asymptotic intervals. The targeted control drops the three WB areas that do not correlate
+with EP depth (labour-market regulation, which has zero variance in Chinese agreements;
+visa and asylum; subsidies). DESTA covers seven policy areas coded independently of the
+World Bank instrument and excludes environmental provisions by construction, which is why
+it lowers the VIF from 5.7 to 1.9.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The point estimate moves within a band of $0.0024$ log points --- narrower than a single
+standard error of the main specification --- stays negative throughout, and every interval
+contains zero. Dropping the depth control altogether, which is the specification most
+exposed to confounding by general agreement depth, moves the coefficient away from zero
+rather than toward it. The choice of depth
+control therefore does not decide the green result: the collinearity inflates the standard
+errors, as Section~\ref{sec:strategy} says, but it does not put the point estimate at the
+mercy of an arbitrary modelling choice. Reporting the range is more informative than
+defending any one row of it.
+
+\subsection{Environmental share of agreement content}
+
+The main specification measures the marginal effect of one more environmental provision.
+A different question --- the one \citet{abman2024} pose --- is whether, \emph{given} that
+an agreement exists, a more environmentally-weighted agreement moves composition. That
+contrast requires restricting to PTA partners and replacing the level of EP depth with
+its share of total depth, $EP_{dt}/TD_{dt}$. On the collapsed panel restricted to the 25
+partner destinations (534,846 cells; the share takes 12 distinct values in
+$[0.012, 0.068]$), the green interaction is $-2.25$ (s.e.\ 1.15, $p=0.06$) and the dirty
+interaction $-1.60$ (s.e.\ 1.55, $p=0.32$). Two cautions apply, and together they keep
+this from being read as a result. The estimand changes: this is the effect of the
+environmental \emph{composition} of an agreement, not of an additional clause, so the
+coefficients are not on a scale comparable with the rest of the paper. And the share
+varies far less than the level does (coefficient of variation 0.19 against 0.62 on the
+same destinations), so the standard errors are correspondingly wide and the green
+coefficient clears neither conventional threshold despite its size. It is reported
+because the contrast is the one the closest antecedent in the literature uses, and
+because a marginally negative green coefficient is the opposite of what a green
+trade-creation story predicts --- not because this design identifies it well.
 
 \subsection{Sample robustness}
 
@@ -899,10 +1116,22 @@ antidumping indicator.
 \end{threeparttable}
 \end{table}
 
-A remaining caveat: the tariff control is the MFN rate, not the bilateral preferential
-rate (the WITS-TRAINS API was unavailable at the time of writing); this is mitigated by
-the fact that tariff liberalization varies at the destination--year level and is
-absorbed by $\theta_{fdt}$, and at the product level by the $TD$ interactions.
+A remaining caveat concerns the tariff control, and it is worth stating with the
+provenance made explicit. The variable is the applied duty recorded in the customs data
+rather than a rate constructed here; it varies across destinations for the same
+HS6--year in 97.9\% of product--year cells, so it is a destination-level tariff facing
+Chinese exporters and not a Chinese import duty, and its mean does not fall after PTA
+entry for partner destinations, so it is the MFN rather than the bilateral preferential
+rate. The preferential rate was not obtainable (the WITS-TRAINS API was unavailable at
+the time of writing). Three considerations bound what this costs. The tariff does not
+enter equation~\eqref{eq:main} at all --- it appears only in the ``with controls'' row of
+Table~\ref{tab:robust} and in the CEM matching --- so the headline estimates do not
+depend on it. Whatever tariff liberalization the agreements delivered varies at the
+destination--year level and is absorbed by $\theta_{fdt}$, and at the product level by
+$\theta_{pt}$. And the residual threat runs in a conservative direction: if PTA tariff
+cuts had been deeper on green goods than on neutral ones, the omitted preferential
+margin would load onto EP$\times$green with a positive sign, inflating rather than
+suppressing the estimate. The estimate is zero.
 
 \subsection{Destination-specific trends in the composition gap}
 
@@ -929,7 +1158,11 @@ artifact that the Sun--Abraham estimator already dismissed
 construction: destination-specific trends are estimated on \emph{pre-treatment} years
 only (all years for never-treated destinations) and projected forward before
 re-estimating the main specification on the detrended outcome. Every coefficient
-returns to an imprecise zero (TREND$\times$green $+0.0074$, bootstrap $p=0.18$;
+returns to an imprecise zero. (That variant estimates destination slopes in a first
+stage and subtracts them before re-estimating, so the second-stage inference does not
+carry the first-stage estimation error; with intervals this wide the omission is formal
+rather than material, but it is one more reason to read the exercise as diagnostic.)
+The coefficients are TREND$\times$green $+0.0074$, bootstrap $p=0.18$;
 WB$\times$green $+0.0168$, bootstrap $p=0.71$; dirty interactions $p=0.30$--$0.62$).
 That the one nominally robust coefficient in the trend specification reverses sign
 entirely depending on how the trends are estimated identifies it as an artifact of the
@@ -975,10 +1208,15 @@ composition null is not an artifact of how dirty products are classified.
 
 Using the universe of Chinese customs transactions and two independent codings of the
 environmental content of China's trade agreements, this paper finds that environmental
-provisions did not change what China exports on the green margin, the extensive margin,
-or the within-firm basket: a precise null, stable across estimation designs and sample
-variations, that survives an inference battery designed for the few-treated-clusters
-regime that characterizes this --- and most --- PTA settings. The dirty margin is the
+provisions did not change what China exports on the green margin or the extensive
+margin: a null that is stable across estimation designs and sample variations and that
+survives an inference battery designed for the few-treated-clusters regime
+characterizing this --- and most --- PTA settings. Its bootstrap bounds rule out effects
+larger than about one fifth of the benchmark estimate in the aggregate literature; below
+that threshold the design does not discriminate, and the claim is bounded rather than
+exact. A descriptive within-firm share panel points the same way, though the level
+specification it requires is not separately identified here
+(Section~\ref{sec:robust}). The dirty margin is the
 one apparent exception, and it does not survive scrutiny: a negative effect on dirty
 exports that is overwhelming under asymptotic standard errors clears none of the same
 battery and is driven by a single destination (Section~\ref{sec:dirty}) --- a false
@@ -1035,6 +1273,11 @@ Callaway, B., \& Sant'Anna, P.~H.~C. (2021).
 Difference-in-differences with multiple time periods.
 \emph{Journal of Econometrics}, 225(2), 200--230.
 
+\bibitem[Callaway et al.(2024)]{callaway2024}
+Callaway, B., Goodman-Bacon, A., \& Sant'Anna, P.~H.~C. (2024).
+Difference-in-differences with a continuous treatment.
+NBER Working Paper No.\ 32117.
+
 \bibitem[Cameron et al.(2008)]{cameron2008}
 Cameron, A.~C., Gelbach, J.~B., \& Miller, D.~L. (2008).
 Bootstrap-based improvements for inference with clustered errors.
@@ -1088,6 +1331,11 @@ R package.
 \bibitem[Fisher(1935)]{fisher1935}
 Fisher, R.~A. (1935).
 \emph{The Design of Experiments}. Oliver \& Boyd.
+
+\bibitem[Eckel \& Neary(2010)]{eckel2010}
+Eckel, C., \& Neary, J.~P. (2010).
+Multi-product firms and flexible manufacturing in the global economy.
+\emph{Review of Economic Studies}, 77(1), 188--217.
 
 \bibitem[Goodman-Bacon(2021)]{goodmanbacon2021}
 Goodman-Bacon, A. (2021).

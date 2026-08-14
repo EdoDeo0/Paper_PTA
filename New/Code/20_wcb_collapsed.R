@@ -90,9 +90,13 @@ for (tr_name in c("WB", "TREND")) {
                    error = function(e) { cat("ERRORE:", conditionMessage(e), "\n"); NULL })
     if (!is.null(bt)) {
       cat(sprintf("p_wcb = %.4f\n", bt$p_val))
+      ## nobs/nclust/fe esportati (prima vivevano solo nel log): la nota della
+      ## tabella principale cita "236 clusters" e senza queste colonne il CSV
+      ## non basta a ricostruirla mesi dopo (ROADMAP §10 punti 1 e 3).
       res[[paste(tr_name, param)]] <- data.table(
         treat = tr_name, term = param, coef = coef(m_lm)[[param]],
-        p_wcb = bt$p_val, conf_low = bt$conf_int[1], conf_high = bt$conf_int[2], B = 9999L)
+        p_wcb = bt$p_val, conf_low = bt$conf_int[1], conf_high = bt$conf_int[2], B = 9999L,
+        nobs = nrow(df), nclust = uniqueN(df$country_code), fe = "pd+dt+pt")
     }
   }
   rm(m_lm, df)

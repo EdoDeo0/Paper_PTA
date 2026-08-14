@@ -1,6 +1,6 @@
 # 01 - Lista green tradotta a HS1996 (vintage unica)
 
-Data: 2026-08-07
+Data: 2026-08-14
 
 ## Decisione
 Si e' scelto di fidarsi della vintage HS1996 dichiarata dal fornitore del dataset

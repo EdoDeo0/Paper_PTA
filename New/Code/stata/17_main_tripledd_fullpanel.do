@@ -154,22 +154,64 @@ drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
 cap mkdir "$ROOT/New/Output/TripleDiff"
 cap mkdir "$ROOT/New/Output/TripleDiff/Tables"
 
+*── Test F congiunto: file di destinazione ────────────────────────────────────
+* Il p congiunto citato nel paper (§4.1: 0.31 WB, 0.71 TREND) non aveva finora
+* alcuno script che lo generasse - esisteva solo battuto a mano nel .tex
+* (ROADMAP §10 punto 4). Si scrive con `file write` e non con un dataset perche'
+* reghdfe gira in `compact`: un `clear` costringerebbe a rileggere 45,8M righe.
+* La cache di ogni blocco controlla ANCHE il proprio marcatore F (`_F_WB`,
+* `_F_TREND`): una cache di stime vecchia, prodotta prima che questo test
+* esistesse, non ha il marcatore e forza la ristima - che e' l'unico modo di
+* rendere il numero riproducibile invece che battuto a mano.
+local FFILE "$ROOT/New/Output/TripleDiff/Tables/joint_F_fullpanel$OUTSFX.csv"
+local FMARK "$ROOT/New/Output/TripleDiff/Tables/_F_"
+cap confirm file "`FFILE'"
+if _rc {
+    file open fh using "`FFILE'", write replace
+    file write fh "treat,fe,terms,F,df,df_r,pval" _n
+    file close fh
+}
+
 * WB
 cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta"
-if _rc {
+local wb_cached = (_rc == 0)
+cap confirm file "`FMARK'WB$OUTSFX.txt"
+local wb_fdone = (_rc == 0)
+if !`wb_cached' | !`wb_fdone' {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
         absorb(fpd fdt pt) vce(cluster country_code) compact
     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", ///
-        tstat pval ci replace addlabel(treat, WB)
+        tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", nclust, e(N_clust))
+    test wb_green wb_dirty td_green td_dirty
+    file open fh using "`FFILE'", write append
+    file write fh "WB,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) "," (r(p)) _n
+    file close fh
+    file open mk using "`FMARK'WB$OUTSFX.txt", write replace
+    file write mk "done" _n
+    file close mk
+    di "[F] WB congiunto su 4 interazioni: F=" r(F) " p=" r(p)
 }
 
 * TREND (capture: se muore, il risultato WB resta salvato)
 cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta"
-if _rc {
+local tr_cached = (_rc == 0)
+cap confirm file "`FMARK'TREND$OUTSFX.txt"
+local tr_fdone = (_rc == 0)
+if !`tr_cached' | !`tr_fdone' {
     cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
         absorb(fpd fdt pt) vce(cluster country_code) compact
-    if !_rc regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta", ///
-        tstat pval ci replace addlabel(treat, TREND)
+    if !_rc {
+        regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta", ///
+            tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt", nclust, e(N_clust))
+        test tr_green tr_dirty td_green td_dirty
+        file open fh using "`FFILE'", write append
+        file write fh "TREND,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) "," (r(p)) _n
+        file close fh
+        file open mk using "`FMARK'TREND$OUTSFX.txt", write replace
+        file write mk "done" _n
+        file close mk
+        di "[F] TREND congiunto su 4 interazioni: F=" r(F) " p=" r(p)
+    }
 }
 
 *── DIAGNOSTICA C6: WB con absorb(pd dt pt), senza FE d'impresa ───────────────
@@ -181,7 +223,7 @@ if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
         absorb(pd_diag dt_diag pt) vce(cluster country_code) compact
     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta", ///
-        tstat pval ci replace addlabel(treat, WB_pddt)
+        tstat pval ci replace addlabel(treat, WB_pddt, fe, "pd+dt+pt", nclust, e(N_clust))
 }
 
 *── 4. Esporta CSV riassuntivo ─────────────────────────────────────────────────

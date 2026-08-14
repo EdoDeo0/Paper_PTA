@@ -1,5 +1,46 @@
 # Session Log — Paper_PTA
 
+## 2026-08-14 — Audit di `./New/`, fix dei 3 critici, arretrati roadmap (Mac, Sonnet 4.6)
+
+**Audit** (`./correspondence/audit/2026-08-14_audit_report.md`): FAIL, 3 critici + 14 fra
+warning e note. I numeri si riproducono; i problemi erano nel testo. **Tutti e tre i critici
+chiusi**: (1) la frase del placebo era falsa — `TREND_RegulatorySpace` e' significativo, WCB
+girato oggi conferma (p 0,046 verde / 0,022 sporco), ma i due margini si muovono insieme
+(differenziale p=0,80) e il sotto-indice e' il 71,5% del conteggio TREND e correla 0,90 con
+TotalDepth: dichiarato come limite, non risolto; (2) precisione ora sugli IC bootstrap
+(full panel [-0,035; +0,036], ~6x l'asintotico) — «un ventinovesimo di Brandi» diventa «un
+quinto», «-2,7/+1,5%» diventa «-9,5/+9,6%»; (3) quota verde within-firm declassata a
+descrittiva (specifica in livello senza FE impresaxdestinazionexanno).
+
+**Chiusi anche** i 7 punti di scrittura (E4 PPML non e' a livello impresa; E5 tolto
+«attenuate not inflate»; E6 permutazione ha ~9 profili distinti non 23; E7 gradi di liberta'
+del WCB collassato; E8 Sun-Abraham e' diagnostica di timing; E9 sotto-indici non sono una
+decomposizione; E10 regressori generati) e gli arretrati roadmap §10/§11.3: test F con
+script generatore, specifica FE e `nclust`/`nobs`/`se` nei CSV, §11.2 scritta, β₁ qualificato
+come media pesata + citazione Callaway-Goodman-Bacon-Sant'Anna, concordanza green 246/248,
+nota APEC, sezione EP_share, caveat MFN con provenienza verificata, citazione Eckel.
+
+**⚠️ Errore mio, importante**: il `.fst` sul Mac **precede il fix di luglio su
+`WB_EP_Depth`** (max 19 invece di 17). Due stime prodotte oggi erano sbagliate e lo script 31
+ha sovrascritto `dirty_leaveoneout.csv` — **recuperato con `git checkout HEAD --`**. Il
+pannello locale e' in quarantena come `panel_pdt_collapsed_STALE_preEnvLawsFix.fst`. Il WCB
+su RegulatorySpace resta valido (non legge `WB_EP_Depth`). Dettaglio in `./MISTAKES.md`,
+insieme ad altri due errori di metodo. Scoperto anche che `42_bounds_depth_controls.R`
+esisteva gia' e faceva la tabella che stavo ricostruendo (riga vera: -0,0057, non -0,0048).
+
+**Nuovi script**: `./New/Code/20b_wcb_regulatoryspace.R` (WCB reimplementato a mano,
+`fwildclusterboot` non installabile su Mac senza gfortran) e `./New/Code/16b_dose_bins.R`
+(fasce di dose per **testare** la linearita' invece di assumerla; contiene una guardia
+`stop()` anti-dataset-stantio, testata). `31_robustness_leaveoneout.R` esteso al margine
+verde + riga `senza_alta_dose` (Peru+Svizzera+Corea insieme).
+
+**Stato**: `draft_paper.tex` 32 pagine e `Tabelle_Stime.tex` 31, 0 errori. Nessun commit.
+**Da girare su Windows** (dati canonici li'): script 17 (test F), 20 e 31 (colonne nuove),
+16b (fasce di dose). **Aperti**: SD 2,7 vs 2,383 da allineare, conversione Brandi senza
+script, `.gitignore` su `./New/Data/`, master script, stimatore Callaway (decisione).
+
+---
+
 ## 2026-08-13 (sera) — C7: 4 varianti complete + paper corretto (Windows, Opus 5)
 
 **4 varianti C7 completate** (1000 draws ciascuna), p-value green/dirty per WB e TREND:
@@ -1355,3 +1396,5 @@ Also completed in earlier parts of this session (from prior context):
 
 - Review staging cards and promote any to full paper cards if needed (especially MansouriTounsi2026)
 - Continue analysis pipeline as needed
+
+---

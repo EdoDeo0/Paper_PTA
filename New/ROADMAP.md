@@ -92,7 +92,36 @@
 > salto di 1 unità). Piano operativo in **§8**, ordine di esecuzione in **§8.8**. Non ancora
 > eseguito nulla.
 
-> ✅ **AGGIORNAMENTO 2026-07-20 — INCLUSA LA COSTRUZIONE DEL DATASET DI BASE
+> ✅ **AGGIORNAMENTO 2026-08-14 — AUDIT DI `New/`: 3 CRITICI CHIUSI + ARRETRATI §10/§11.3.**
+> Audit in `correspondence/audit/2026-08-14_audit_report.md` (FAIL: 3 critici, 14 fra warning
+> e note; i numeri si riproducevano, i problemi erano nel testo). **Tutti e tre i critici
+> chiusi**, piu' i 7 punti di scrittura (E4-E10) e gli arretrati di §10 e §11.3. Dettaglio
+> completo in `session-log.md`, voce 2026-08-14. In sintesi:
+> - **Placebo**: `TREND_RegulatorySpace` E' significativo (WCB p=0,046 verde / 0,022 sporco,
+>   nuovo script `20b_wcb_regulatoryspace.R`) — la verifica che §Meccanismo di
+>   `Tabelle_Stime.tex` aspettava dal 12/08. Ma verde e sporco si muovono insieme
+>   (differenziale p=0,80) e il sotto-indice e' il **71,5%** del conteggio TREND con corr.
+>   **0,90** con TotalDepth: dichiarato come limite (il disegno non lo separa dalla
+>   profondita' generale, quindi non e' nemmeno un test di falsificazione pulito).
+> - **Precisione**: il paper ora usa gli IC **bootstrap** ovunque (full panel
+>   [-0,035; +0,036], ~6x l'asintotico). Chiude la lacuna paper-facing di §10.
+> - **Within-firm**: declassata a descrittiva (e' una spec in livello senza FE
+>   impresaxdestinazionexanno, cioe' il confound che §7.0-C1 dichiara fatale).
+> - **§11.3 chiusi**: 2 (WCB full panel nel paper), 3 (§11.2 scritta), 4 (tutte e 4 le lacune
+>   di export: test F con script in `stata/17`, `nclust`/`nobs`/`fe` in 20 e 31, `se` nel
+>   leave-one-out), 5 (Callaway-Goodman-Bacon-Sant'Anna citato, β₁ qualificato come media
+>   pesata a pesi non convessi; Abman non piu' fra virgolette).
+> - **Checkbox chiusi**: §8.1 ultimo punto (frase riscritta da «no effect» a bound espliciti),
+>   §8.4 ultimo punto (paragrafo EP_share col cambio di estimando), §8.10 ultimo punto (nota
+>   APEC). §8.6 chiuso: `42_bounds_depth_controls.R` **esisteva gia' ed era gia' girato** —
+>   la sua tabella e' ora nel paper (`tab:depthbounds`, riga «nessun controllo» = -0,0057).
+> - **Nuovo**: `16b_dose_bins.R` — fasce di dose (basso 1-5 / medio 6-7 / alto 8+) per
+>   **testare** la linearita' invece di assumerla, con guardia `stop()` anti-dataset-stantio.
+>   `31_robustness_leaveoneout.R` esteso al margine verde + riga `senza_alta_dose`
+>   (Peru+Svizzera+Corea insieme: il leave-one-out singolo non li intercetta perche' si
+>   coprono a vicenda). **Da girare su Windows**, insieme a 17, 20, 31.
+>
+> ⚠️ **AGGIORNAMENTO 2026-07-20 — INCLUSA LA COSTRUZIONE DEL DATASET DI BASE
 > (script 01-04), RINUMERAZIONE COMPLETA.** Il riordino del 07-16 partiva da
 > `final_dataset_pta_env_indices_compressed.fst` come input già dato: la
 > pipeline che lo COSTRUISCE (`Code/WB/WB_Dataset_Conversion.do` +
@@ -268,6 +297,17 @@ File: `final_dataset_pta_env_indices_compressed.fst` (~49,2 milioni di righe).
 > Righe: **49.245.304** | MD5: `2045C2610AA2217D50C2637A585D8338`.
 > La copia Mac ha 9 righe in meno (49.245.295) → da riallineare a questa quando comodo;
 > fino ad allora i risultati si producono e confrontano solo su Windows.
+>
+> ⛔ **NON E' SOLO UNA QUESTIONE DI 9 RIGHE (verificato 2026-08-14).** La copia Mac precede
+> anche il **fix di luglio su `WB_EP_Depth`** (esclusione di `Env_Laws_AC`/`Env_Laws_LE`,
+> vedi aggiornamento 2026-07-21/23): range **0-19 invece di 0-17**, Corea 19/17, Svizzera
+> 16/14, Peru 13/12. Un pannello collassato costruito da li' ha **forma identica** (stesso
+> numero di celle, 3.773.498) e **colonne diverse**: il baseline esce green -0,00227 /
+> dirty -0,00887 contro i -0,00457 / -0,01187 veri. Contare le righe NON intercetta il
+> problema. In questa situazione ci si e' cascati il 2026-08-14 (vedi `MISTAKES.md`).
+> **Regola**: su una macchina non canonica, prima di produrre qualsiasi stima nuova
+> ristimare una spec gia' nota e confrontarla col CSV in repo. `16b_dose_bins.R` incorpora
+> la guardia (`stop()` se `max(WB_EP_Depth) != 17`); replicarla negli altri script.
 Caricare **solo le colonne necessarie** con `read_fst(path, columns = c(...))`.
 
 **Outcome (già in log nel dataset):**
@@ -732,8 +772,15 @@ Il disegno è un triplo-differenza; il problema del control group si scompone in
       firm-level: non fattibile su questa macchina (richiede modelli non-lean), rimandato al server.
 - [ ] **C-deepshallow** (solo-PTA, deep vs shallow EP) stimata come identificazione alternativa,
       con controllo `TotalDepth`.
-- [ ] C-prod-HS4 riportata **accanto** a C-overlap (mai da sola) per esporre l'eventuale
-      spillover Eckel.
+- [x] **FATTO 2026-08-14** — C-prod-HS4 e C-overlap sono entrambe in `tab:stability`, e la
+      nota di `tab:samples` ora spiega **perche'** vanno lette insieme, con la citazione che
+      mancava: le imprese multiprodotto si concentrano sui prodotti core quando i costi di
+      commercio scendono (Eckel & Neary 2010, RESTud 77(1), 188-217, verificata alla fonte),
+      quindi un prodotto neutro della stessa famiglia HS4 venduto dalla stessa impresa puo'
+      essere spinto giu' dalla riallocazione stessa — il che allontana da zero il contrasto
+      verde-vs-neutro, non lo avvicina. Nella stessa passata dichiarato che il common support
+      droppa **314 osservazioni su 21,5M** e riproduce il full panel: vale come prova che
+      l'estrapolazione non e' un problema, non come stima distinta (audit E3).
 
 #### 7-R6 Audit post-bozza (Fable 5, 2026-07-08) e implementazione (Sonnet 5, 2026-07-08)
 
@@ -973,8 +1020,10 @@ qui i task ordinati per priorità di attacco.
 
 - [ ] C3 di §7-R6: commit dell'intera campagna 2026-07-06/12 (in attesa di conferma
       esplicita dell'utente).
-- [ ] PDF del draft: install tectonic su Windows interrotto a metà (2026-07-11), da
-      completare o compilare su Overleaf.
+- [x] **CHIUSO 2026-08-14** — il draft compila su Mac con `pdflatex` (TinyTeX):
+      `draft_paper.tex` 32 pagine, `Tabelle_Stime.tex` 31, 0 errori e 0 riferimenti non
+      definiti. I 4 overfull hbox sono preesistenti (path `\texttt` lunghi in
+      `tab:mechanism-share`). Su Windows tectonic resta da sistemare, ma non blocca piu' nulla.
 - [x] WCB sulla ladder full-panel: timeout a ~426s (2026-07-11) — decidere se timeout
       più lungo, collassato, o documentare come limitazione.
       **RISOLTO 2026-07-15** (`30_r7h_wcb_ladder.R`, Frisch-Waugh come 15/27/29):
@@ -1090,10 +1139,13 @@ gli SE già in `New/Output/TripleDiff/Tables/tripledd_collapsed.csv` più la SD 
       asint./5,90% WCB; TREND 4,16% asint./3,62% WCB). Il back-of-envelope preliminare del
       cappello (SD non pesata sui soli trattati) portava alla conclusione opposta. Vedi nota
       di correzione sotto.
-- [ ] Frase del paper riscritta: da "no effect" a "effetti sopra X esclusi al 95%; sotto X il
-      disegno non discrimina". Tutte le occorrenze, non solo l'abstract. (Non fatto in questa
-      sessione — richiede editing del testo del paper, fuori scope di questa passata di
-      esecuzione script.)
+- [x] **FATTO 2026-08-14** — frase riscritta da "no effect" a bound espliciti, in entrambi i
+      documenti. `draft_paper.tex`: §4.1 usa gli IC **bootstrap** (full panel
+      [-0,0353; +0,0355], collassato [-0,0182; +0,0317]) e non piu' gli asintotici; abstract,
+      intro e conclusione dicono "esclusi effetti sopra circa un quinto del benchmark, sotto
+      quella soglia il disegno non discrimina"; il per-1SD passa da -2,7/+1,5% a -9,5/+9,6%.
+      `Tabelle_Stime.tex` §MDE: aggiunto l'IC full panel accanto al collassato con la nota che
+      l'asintotico e' ~6x piu' stretto e non va mescolato.
 
 > ⚠️ **Correzione al back-of-envelope del cappello di §8 (eseguito 2026-08-07).** La tabella
 > preliminare usava la SD non pesata dei regressori sui soli 249 country-year trattati. Sul
@@ -1241,8 +1293,11 @@ già citato nel paper, ed è **il sotto-campione `C-deepshallow` che esiste già
       EP_share molto più bassa del livello (come atteso), SE ampi, e l'estimando è diverso
       (composizione ambientale dell'accordo dato che l'accordo esiste, non effetto marginale
       di una clausola in più).
-- [ ] Se entra nel paper: paragrafo che dichiara il cambio di estimando + il legame con ALR
-      2024. (Non fatto in questa sessione — editing del testo del paper fuori scope.)
+- [x] **FATTO 2026-08-14** — nuova sottosezione "Environmental share of agreement content"
+      in §5 di `draft_paper.tex`: dichiara il cambio di estimando (composizione ambientale
+      dell'accordo, non effetto marginale di una clausola), il legame con Abman et al. 2024,
+      e i due caveat (scala non comparabile; CV 0,19 contro 0,62, quindi SE ampi e nessuna
+      soglia superata).
 
 > **Nota tecnica**: la stima di questo checkpoint ha richiesto di bypassare il sottoprocesso
 > `callr` standard (usato per isolare i crash noti di `feols` su questa macchina) — con
@@ -1311,8 +1366,15 @@ coefficiente puntuale che il disegno non separa con precisione.
   Manski. Spesso è ciò che un referee vuole davvero vedere.
 
 **Checkpoint 8.6:**
-- [ ] Deciso dopo 8.1/8.3 se serve.
-- [ ] Se sì: nota metodologica scritta prima del codice.
+- [x] **CHIUSO 2026-08-14** — deciso: **non serve** il formalismo Manski. Si e' scoperto che
+      `42_bounds_depth_controls.R` era **gia' scritto e gia' girato**
+      (`New/Output/Diagnostics/42_bounds_depth_controls.md`): e' esattamente l'alternativa
+      leggera prevista qui sotto. La sua tabella e' ora nel paper come `tab:depthbounds`
+      (nessun controllo -0,0057 / TotalDepth -0,0046 / mirato -0,0033 / DESTA -0,0043; banda
+      0,0024, piu' stretta di un solo SE, tutti gli IC contengono lo zero). Serve anche come
+      sostituzione dell'argomento "attenuate, not inflate" di §3.2, che l'audit ha mostrato
+      non essere giustificato (E5).
+- [x] Nota metodologica: non necessaria, non essendosi fatto il Manski formale.
 
 ### 8.7 Switcher within-country (declassato a check descrittivo — NON una stima)
 
@@ -1474,9 +1536,12 @@ esiste perché la lista a 247 codici include prodotti borderline". Risposta: non
       **statisticamente indistinguibile da zero** (p=0,69) — coerente con il null, non
       un'evidenza contraria. SE quasi raddoppiati, come atteso dalla riduzione dell'80% del
       campione green.
-- [ ] Riportata come nota a piè di pagina nella sezione §6 del paper (robustezza
-      classificazione), con citazione Sauvage (2014) + APEC (2012). (Non fatto in questa
-      sessione — editing del testo del paper fuori scope.)
+- [x] **FATTO 2026-08-14** — nota a pie' di pagina in §2.2 di `draft_paper.tex` (accanto
+      alla descrizione della lista green, dove la minaccia di classificazione e' introdotta),
+      con i numeri (+0,0050 p=0,69 WB; +0,0032 p=0,13 TREND) e la lettura: il segno si
+      inverte ma resta indistinguibile da zero, SE quasi raddoppiati come atteso dal taglio
+      dell'80% del campione verde. Nella stessa passata corretto il conteggio della
+      concordanza green: 246/248 tradotti + 2 flaggati, non "tutti e 247".
 
 ---
 
@@ -1651,12 +1716,37 @@ ponderazione né nei dati. §11.2 si scrive ora.
 
 ### 11.3 Cosa resta (scrittura, non calcolo)
 
-1. Generare le tabelle LaTeX dai CSV — oggi ci sono ~32 tabelle e zero `\input{}` nel .tex.
-2. Collocare nel paper il WCB **full panel** di 17b (vedi §10, lacuna paper-facing).
-3. Scrivere §11.2 come robustezza, **dopo** aver fatto il test C6 (absorb pd dt pt).
-4. Le 4 lacune degli export di §10 (nobs/nclust nel 20, SE/N nel leave-one-out, spec FE, test F).
-5. Punti paper-facing già noti: `33_mde_equivalence.R` (C3), framing Sun-Abraham, riferimento
-   Callaway–Goodman-Bacon–Sant'Anna mancante, citazione Abman non verbatim.
+> ✅ **Punti 2-5 CHIUSI il 2026-08-14.** Il punto 1 va **riformulato**: `draft_paper.tex` ha
+> zero `\input{}`, ma `New/Paper/Tabelle/Tabelle_Stime.tex` ne ha **19 su 19 tabelle
+> generate** — le tabelle prodotte da `44_make_tables_tex.R` NON sono orfane, sono consumate
+> da quel documento. Resta vero che i numeri del `draft_paper.tex` sono battuti a mano (ed e'
+> li' che vive il rischio di trascrizione), e che i numeri nella **prosa** nessun generatore
+> li sistema.
+
+1. Generare le tabelle LaTeX dai CSV **per `draft_paper.tex`** (`Tabelle_Stime.tex` e' gia' a
+   posto: 19 `\input{}` su 19 tabelle).
+2. ✅ **FATTO** — WCB full panel di 17b nel paper: riga `wild cluster bootstrap p` e riga
+   `bootstrap 95% CI` per **entrambi** i pannelli in `tab:main`, e §4.1 riscritta sugli IC
+   bootstrap. Aggiunto anche il p=0,18 sul dirty full panel in §4.4: il falso positivo e' ora
+   documentato indipendentemente su due pannelli.
+3. ✅ **FATTO** — §11.2 scritta in §3.2 di `draft_paper.tex`: il collassato riproduce il
+   disegno **senza la dimensione d'impresa** (match a 7 cifre col test C6), e il divario 2,7x
+   sul dirty e' letto come selezione fra imprese (~3/5 del coefficiente collassato), non come
+   discrepanza. Tolta la frase «replica l'identificazione one-for-one», che era falsa.
+4. ✅ **FATTO** — tutte e 4 le lacune di export: `nobs`/`nclust`/`fe` in `20_wcb_collapsed.R`;
+   `se`/`nobs`/`nclust`/`fe` in `31_robustness_leaveoneout.R` (+ controllo di schema che
+   scarta una cache a colonne vecchie invece di mescolarla); `fe` e `nclust` via `addlabel`
+   sui tre `regsave` di `stata/17`; **test F congiunto** con export in
+   `joint_F_fullpanel<sfx>.csv` e marcatore di cache per modello. ⚠️ **Da rieseguire su
+   Windows** perche' i CSV prendano le colonne nuove — idealmente su tutte e 4 le varianti,
+   altrimenti restano disallineati fra loro.
+5. ✅ **FATTO** — Callaway-Goodman-Bacon-Sant'Anna (NBER WP 32117) citato, con un paragrafo in
+   §3.2 che qualifica β₁ come media pesata a pesi non necessariamente convessi invece che come
+   ATT; Sun-Abraham riqualificato come diagnostica di timing (E8); Abman non piu' fra
+   virgolette. Resta **aperta la decisione** se implementare lo stimatore a dose continua: con
+   11 paesi su 23 a dose 6 e solo Peru/Svizzera/Corea sopra 7 (la Corea con **un solo anno**
+   post a 17), servirebbe piu' a documentare il limite che a superarlo. Prima passo:
+   `16b_dose_bins.R`, che testa la linearita' invece di assumerla.
 7. ~~C7 — permutazione anti-conservativa~~ ✅ **CHIUSO (13/08, Windows)**.
    Fix in `New/Code/22_permutation_inference.R`: (a) profili EP e TD permutati insieme per
    preservare la collinearità within 0.96 — TD incluso in `prof` e passato a `stima_perm`;
