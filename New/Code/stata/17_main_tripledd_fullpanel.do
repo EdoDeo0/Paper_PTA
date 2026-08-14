@@ -180,8 +180,9 @@ local wb_fdone = (_rc == 0)
 if !`wb_cached' | !`wb_fdone' {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
         absorb(fpd fdt pt) vce(cluster country_code) compact
+    local ncl = e(N_clust)
     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", ///
-        tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", nclust, e(N_clust))
+        tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", nclust, `ncl')
     test wb_green wb_dirty td_green td_dirty
     file open fh using "`FFILE'", write append
     file write fh "WB,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) "," (r(p)) _n
@@ -201,8 +202,9 @@ if !`tr_cached' | !`tr_fdone' {
     cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
         absorb(fpd fdt pt) vce(cluster country_code) compact
     if !_rc {
+        local ncl = e(N_clust)
         regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta", ///
-            tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt", nclust, e(N_clust))
+            tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt", nclust, `ncl')
         test tr_green tr_dirty td_green td_dirty
         file open fh using "`FFILE'", write append
         file write fh "TREND,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) "," (r(p)) _n
@@ -222,8 +224,9 @@ cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
         absorb(pd_diag dt_diag pt) vce(cluster country_code) compact
+    local ncl = e(N_clust)
     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta", ///
-        tstat pval ci replace addlabel(treat, WB_pddt, fe, "pd+dt+pt", nclust, e(N_clust))
+        tstat pval ci replace addlabel(treat, WB_pddt, fe, "pd+dt+pt", nclust, `ncl')
 }
 
 *── 4. Esporta CSV riassuntivo ─────────────────────────────────────────────────

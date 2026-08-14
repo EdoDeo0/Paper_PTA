@@ -1162,6 +1162,16 @@ gli SE già in `New/Output/TripleDiff/Tables/tripledd_collapsed.csv` più la SD 
 > (+16 unità) → MDE 39,7% (WCB). Dettaglio completo, incluso il margine dirty, in
 > `New/Output/Diagnostics/33_mde_equivalence.md`.
 
+> ✅ **RICONCILIATO 2026-08-14 — SD 2,7 vs 2,383 (§A3 del piano fase2).** Il "≈2,7 provisions"
+> in `draft_paper.tex` §4.1 non era riproducibile sul campione principale (223 trattati
+> excl. HK/MO → SD non pesata 2,80); coincideva invece con la SD calcolata sulle **249**
+> destinazioni-anno trattate **incluse HK/Macao** (2,657 ≈ 2,7) — lo stesso bug di campione
+> già corretto altrove nel paper (audit R7.6) ma sfuggito a questa frase. Decisione utente:
+> **2,383 ovunque** (SD pesata per `n` sul campione di stima vero, coerente con questo box).
+> Bound della frase ricalcolati coerentemente: asintotico $-2,4\%$/$+1,3\%$ (era $-2,7\%$/
+> $+1,5\%$ con SD=2,7), bootstrap $-8,4\%$/$+8,5\%$ (era $-9,5\%$/$+9,6\%$). Testo corretto in
+> `draft_paper.tex` riga ~649-653.
+
 ### 8.2 Diagnostica di potenza per coorte/cluster (costo ~zero, chiude il quadro di 8.1)
 
 Documentare *perché* l'MDE è quello che è, così il limite è attribuito alla fonte giusta (pochi
@@ -1737,16 +1747,62 @@ ponderazione né nei dati. §11.2 si scrive ora.
    `se`/`nobs`/`nclust`/`fe` in `31_robustness_leaveoneout.R` (+ controllo di schema che
    scarta una cache a colonne vecchie invece di mescolarla); `fe` e `nclust` via `addlabel`
    sui tre `regsave` di `stata/17`; **test F congiunto** con export in
-   `joint_F_fullpanel<sfx>.csv` e marcatore di cache per modello. ⚠️ **Da rieseguire su
-   Windows** perche' i CSV prendano le colonne nuove — idealmente su tutte e 4 le varianti,
-   altrimenti restano disallineati fra loro.
+   `joint_F_fullpanel<sfx>.csv` e marcatore di cache per modello.
+   **✅ RIESEGUITO su Windows (2026-08-14, Task A del piano)**: `20` (4 varianti) e `31`
+   (4 varianti) ora scrivono `nobs/nclust/fe` (+`se` per 31); `nclust` = 236/238/236/238.
+   Stata 17 **solo baseline**: `joint_F_fullpanel.csv` prodotto (WB F=1,202 p=0,311; TREND
+   F=0,534 p=0,711). **Due cose restano aperte**:
+   - ✅ **Bug `regsave` corretto in codice (2026-08-14, Fase A piano fase2)**: nei tre blocchi
+     `regsave ... addlabel(..., nclust, e(N_clust))` di `stata/17_main_tripledd_fullpanel.do`
+     (WB, TREND, diagnostica `WB_pddt`) lo scalare e' ora catturato in `local ncl = e(N_clust)`
+     prima del `regsave` e passato come `` `ncl' ``. **Regenerazione del CSV rimandata alla
+     Fase C** (batch Stata a freddo): finche' non rigira, `nclust` nei CSV esistenti resta la
+     stringa `"e(N_clust)"`. Il `fe`/`nclust` corretto vive comunque nel `joint_F` e nei CSV R.
+   - ✅ **FATTO (15/08, Fase C del piano fase2)** — le 3 varianti opzionali rieseguite in
+     batch, nessun crash. `joint_F_fullpanel<sfx>.csv` ora esistono per tutte e 4 le
+     combinazioni: excl/totaldepth (baseline) WB F=1,202 p=0,311 TREND F=0,534 p=0,711;
+     incl/totaldepth WB F=1,551 p=0,188 TREND F=0,680 p=0,607; excl/desta WB F=1,567
+     p=0,184 TREND F=1,336 p=0,257; incl/desta WB F=1,541 p=0,191 TREND F=1,123 p=0,347.
+     Nessun F significativo in nessuna variante — storia invariata.
+   - ✅ **FATTO (15/08)** — baseline rigenerata per far prendere il fix regsave (A1):
+     `_full_WB.dta`/`_full_TREND.dta`/`_full_WB_pddt.dta` e i marcatori `_F_*` pre-fix
+     spostati in `New/Output/TripleDiff/Tables/_pre_regsavefix_backup/` (non cancellati) per
+     forzare la ristima; F ricalcolato identico allo storico (F=1,202/0,534, conferma che il
+     fix non tocca le stime). `nclust` nel CSV riassuntivo ora e' **numerico** ovunque
+     (225 baseline/desta, 227 inclHKMO/inclHKMO_desta, 229 sulla diagnostica C6 `pddt`) —
+     non piu' la stringa `"e(N_clust)"`. **Nota**: questo nclust (225-229, sul full panel con
+     FE `fpd+fdt+pt`, post-singleton) e' un numero diverso dai "236/238" gia' citati altrove
+     nel progetto — quelli vengono da `20_wcb_collapsed.R` sul **panel collassato** (FE `pd+dt+pt`
+     a livello di cella, non di riga), un conteggio di cluster su un disegno diverso. Non e'
+     un errore: il full panel con FE d'impresa droppa piu' singleton-cluster del collassato
+     (11 in meno, coerente sia su excl che incl). Se il paper cita "236 destination clusters"
+     riferendosi al full panel, va verificato/allineato — non toccato qui (fuori scope Fase C).
 5. ✅ **FATTO** — Callaway-Goodman-Bacon-Sant'Anna (NBER WP 32117) citato, con un paragrafo in
    §3.2 che qualifica β₁ come media pesata a pesi non necessariamente convessi invece che come
    ATT; Sun-Abraham riqualificato come diagnostica di timing (E8); Abman non piu' fra
-   virgolette. Resta **aperta la decisione** se implementare lo stimatore a dose continua: con
-   11 paesi su 23 a dose 6 e solo Peru/Svizzera/Corea sopra 7 (la Corea con **un solo anno**
-   post a 17), servirebbe piu' a documentare il limite che a superarlo. Prima passo:
-   `16b_dose_bins.R`, che testa la linearita' invece di assumerla.
+   virgolette.
+
+   **Decisione stimatore a dose continua — SOSPESA / "on demand" (2026-08-14).**
+   `16b_dose_bins.R` girato (baseline excl+totaldepth): 3 fasce di dose (basso 1-5, medio 6-7,
+   alto ≥8), **nessuna significativa** (p 0,25 / 0,58 / 0,70), test congiunto **F=1,978,
+   p=0,115** — non si rigetta la nullita' globale; rapporti coef/dose non monotoni (segno che
+   si inverte) → **nessuna forma identificabile**, rumore su campione grumoso (11/23 paesi a
+   dose 6, solo Peru/Svizzera/Corea sopra 7, Corea 1 anno a 17). Conclusione: implementare
+   Callaway a dose continua **non e' sbagliato ma e' ridondante** — riconfermerebbe lo stesso
+   limite gia' visibile in 16b (dose) e Sun-Abraham (timing), non lo supererebbe.
+   - **Nota di fattibilita' (per quando/se un referee lo chiede)**: il disegno triple-diff
+     sulla composizione NON entra direttamente in `did` (binario) ne' `contdid` (dose continua,
+     pacchetto giovane, maturita' da verificare). Serve un **approccio due-passi**:
+     (1) residualizzare il contrasto verde/neutro per cella con gli FE impresa-dest-anno →
+     collassare a un numero per paese-anno; (2) dare quel numero al pacchetto. Costi: scegliere
+     *cosa* sia "la differenza" (log-diff vs quota → estimandi diversi) e correggere l'inferenza
+     per **outcome generato** al passo 1. ~mezza giornata di lavoro. Nel paper, per ora, basta
+     una riga: robustezza a la Callaway coperta da Sun-Abraham (timing) + 16b (dose).
+   - Output 16b: `New/Output/TripleDiff/Tables/dose_bins_collapsed.csv`,
+     `New/Output/Diagnostics/16b_dose_bins.md`.
+   - ⚠️ **Debito codice**: `16b_dose_bins.R` ha richiesto un fix anti-crash (`lean=TRUE` +
+     colonne potate + `nthreads(2)`) sulla `feols` di riga 110 — applicato, coerente col
+     pattern gia' in `31_robustness_leaveoneout.R`.
 7. ~~C7 — permutazione anti-conservativa~~ ✅ **CHIUSO (13/08, Windows)**.
    Fix in `New/Code/22_permutation_inference.R`: (a) profili EP e TD permutati insieme per
    preservare la collinearità within 0.96 — TD incluso in `prof` e passato a `stima_perm`;
@@ -1788,6 +1844,13 @@ ponderazione né nei dati. §11.2 si scrive ora.
    pipeline). Regola ristretta a `New/Output/OLS/Bootstrap/*.rds`; sia `wcb_fullpanel.csv` che
    `bootstrap_summary.csv` sono ora visibili a git (non ancora committati — restano nel working
    tree per review, come da vincolo di sessione).
+7. ✅ **FATTO (14/08, §A4/Fase B del piano fase2)** — `.gitignore`: la riga blanket `New/Data/`
+   (0 file tracciati) sostituita con `New/Data/External/` (pacchetto Shapiro 2021 + DESTA
+   grezzi, ~17MB, terze parti). `*.fst`/`*.dta` restano globalmente esclusi (righe 4-5,
+   invariate). Verificato con `git status --untracked-files=all`: **18 file** ora tracciabili
+   in `New/Data/Classifications` (8), `New/Data/Subsamples` (4), `New/Data/TotalDepth` (4) —
+   nessun `.fst`/`.dta`/`External/` fra questi (`check-ignore` confermato su un campione).
+   **Non committati**: restano nel working tree.
 
 ### 11.4 Debito tecnico — thread limits da rialzare
 

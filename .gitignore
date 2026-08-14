@@ -1,6 +1,6 @@
 # Dati grandi — non versionati
 Data/Final Dataset/
-New/Data/
+New/Data/External/
 *.fst
 *.dta
 

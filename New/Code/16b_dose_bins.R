@@ -51,7 +51,7 @@ library(fixest)
 library(fst)
 source(here("New/Code/_sample_config.R"))
 threads_fst(1)
-setFixest_nthreads(4)
+setFixest_nthreads(2)
 
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
@@ -107,8 +107,13 @@ cell[, dt := .GRP, by = .(country_code, year)]
 cell[, pt := .GRP, by = .(hs6, year)]
 
 ## --- Stima -------------------------------------------------------------------
+## Colonne potate prima di feols: allocatore R instabile su questa macchina con
+## feols non-lean/colonne superflue anche sul panel collassato (vedi MISTAKES.md
+## e 31_robustness_leaveoneout.R, stesso pattern).
+cell_est <- cell[, .(y, n, pd, dt, pt, country_code, low_g, med_g, high_g, low_d, med_d, high_d,
+                      td_g, td_d, WB_EP_Depth, env_good, dirty_p)]
 m <- feols(y ~ low_g + med_g + high_g + low_d + med_d + high_d + td_g + td_d |
-             pd + dt + pt, data = cell, weights = ~n, cluster = ~country_code)
+             pd + dt + pt, data = cell_est, weights = ~n, cluster = ~country_code, lean = TRUE)
 cat("\n=== Coefficienti per fascia ===\n"); print(summary(m))
 
 ## Test congiunto: le tre fasce green sono tutte nulle?
@@ -121,7 +126,7 @@ cat(sprintf("\nTest congiunto (3 fasce green = 0): F = %.3f, p = %.4f\n",
 ## b1_lineare x (dose mediana della fascia). Lo scarto fra le due colonne e' la
 ## misura diretta di quanto la retta e' un compromesso.
 mlin <- feols(y ~ I(WB_EP_Depth * env_good) + I(WB_EP_Depth * dirty_p) + td_g + td_d |
-                pd + dt + pt, data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
+                pd + dt + pt, data = cell_est, weights = ~n, cluster = ~country_code, lean = TRUE)
 b1 <- coef(mlin)[[1]]
 med <- unique(cell[, .(country_code, year, WB_EP_Depth, dose_bin)])[
   dose_bin != "0_mai", .(dose_mediana = median(WB_EP_Depth)), by = dose_bin][order(dose_bin)]

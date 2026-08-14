@@ -1,5 +1,210 @@
 # Session Log — Paper_PTA
 
+## 2026-08-14/15 — Fase C del piano `..._fase2.md`: batch Stata a freddo, 4 run (Windows, Sonnet 5)
+
+L'utente ha dato il via esplicito. Eseguite in sequenza, un solo processo Stata alla volta,
+sorvegliando la crescita/mtime di log e CSV (mai l'exit code), nessun turno ceduto con
+messaggi interlocutori mentre un run era attivo. Nessun crash, nessuna variante saltata.
+
+**Asse editato**: i globals `PTA_SAMPLE`/`PTA_DEPTH` dentro
+`New/Code/stata/17_main_tripledd_fullpanel.do` (non `_sample_config.R`, che e' solo per gli
+script R e non e' mai stato toccato in questo blocco).
+
+1. **incl/totaldepth**: WB F=1,551 p=0,188; TREND F=0,680 p=0,607. `nclust`=227.
+2. **excl/desta**: WB F=1,567 p=0,184; TREND F=1,336 p=0,257. `nclust`=225. (Prima lettura del
+   CSV riassuntivo, presa a processo ancora attivo sul blocco C6 successivo, aveva colto un
+   file a meta' scrittura senza le colonne `fe`/`nclust` — rilettura a processo terminato
+   confermata corretta e completa.)
+3. **incl/desta**: WB F=1,541 p=0,191; TREND F=1,123 p=0,347. `nclust`=227.
+4. **baseline (excl/totaldepth), rigenerata per il fix regsave**: prima del run, `_full_WB.dta`,
+   `_full_TREND.dta`, `_full_WB_pddt.dta` e i marcatori `_F_WB.txt`/`_F_TREND.txt` (cache
+   dell'esecuzione di stamattina, precedente al fix di Fase A) spostati — non cancellati — in
+   `New/Output/TripleDiff/Tables/_pre_regsavefix_backup/`, insieme al vecchio
+   `joint_F_fullpanel.csv`, per forzare la ristima pulita ed evitare righe F duplicate.
+   Risultato: F=1,202 p=0,311 (WB) e F=0,534 p=0,711 (TREND) — **identico** allo storico gia'
+   citato nel paper, confermando che il fix regsave non tocca le stime. **`nclust` nel CSV
+   riassuntivo e' ora numerico** (225), non piu' la stringa `"e(N_clust)"`.
+
+**⚠️ Segnalazione (non richiesta esplicitamente ma rilevante)**: il valore atteso di `nclust`
+nella richiesta era 236, ma il numero vero prodotto da stata/17 (full panel, FE `fpd+fdt+pt`,
+post-singleton) e' **225** (227 con HK/MO). Il 236/238 gia' in uso altrove nel progetto viene
+da `20_wcb_collapsed.R`, sul **panel collassato** (FE `pd+dt+pt` a livello di cella) — un
+disegno diverso, non lo stesso conteggio. Non e' un errore del fix: il full panel con FE
+d'impresa droppa 11 cluster-destinazione in piu' come singleton rispetto al collassato,
+coerentemente sia su excl (225 vs 236) che su incl (227 vs 238). Se `draft_paper.tex` cita
+"236 destination clusters" in un punto che si riferisce al full panel (riga ~574,
+§Inference with few treated clusters), andrebbe verificato — **non toccato qui**, fuori
+scope di Fase C. Dettaglio in ROADMAP §11.3 punto 4.
+
+**Config finale**: `New/Code/stata/17...do` riportato su `excl`/`totaldepth` dopo l'ultimo run
+(gia' la configurazione richiesta per il baseline). `_sample_config.R` invariato,
+`excl`/`totaldepth`. Nessun commit.
+
+## 2026-08-14 (4) — Fase B del piano `..._fase2.md`: entrambi gli STOP risolti (Windows, Sonnet 5)
+
+L'utente ha deciso sui due 🛑 STOP di Fase A. Eseguita Fase B; **Fase C (batch Stata) resta in
+attesa** del via esplicito, non toccata.
+
+**1. SD → 2,383 ovunque.** `New/Paper/draft_paper.tex` righe 649-653: sostituito "across
+treated destination–years ($\approx$ 2.7 provisions)" con "in the estimating sample ($\approx$
+2.383 provisions, weighted by cell size and inclusive of never-treated destination–years at
+EP=0)" — riformulazione necessaria perche' 2,383 misura una popolazione diversa da quella
+descritta dalla vecchia frase (pesata, tutte le celle, non solo i trattati). **Bound ricalcolati
+in cascata** (CI × 2,383 invece di CI × 2,7, sulla stessa CI full-panel WB×green gia' in uso,
+da `tripledd_full_reghdfe.csv` e `wcb_fullpanel.csv`): asintotico $-2,7\%/+1,5\% \to
+-2,4\%/+1,3\%$; bootstrap $-9,5\%/+9,6\% \to -8,4\%/+8,5\%$. Nessun altro numero della stessa
+sezione (le CI in log-punti a monte, righe 633-636) dipende dalla SD — non toccato. Il "2.7"
+rimasto a riga 564 e' un rapporto diverso e corretto (0,0119/0,0044 = fattore 2,7 fra dirty
+collassato e full panel), non un refuso, lasciato intatto. **Controlli statici** (pdflatex
+assente, non compilato): `$` pari (686, conteggio globale), `\begin{}`/`\end{}` bilanciati
+(42/42). Coerenza con la tabella MDE riquadrata di ROADMAP §8.1 confermata: stessa SD 2,383,
+nessuna contraddizione (l'MDE e' 2,8×SE, quantita' diversa dal bound di CI, quindi i due numeri
+non devono coincidere — solo la SD in comune deve, ed e' la stessa). Dettaglio in ROADMAP,
+box dopo §8.1.
+
+**2. `.gitignore` applicato.** Riga 3 (`New/Data/`, blanket) sostituita con
+`New/Data/External/`. Verificato `git status --untracked-files=all New/Data`: **esattamente
+18 file** ora tracciabili (Classifications 8, Subsamples 4, TotalDepth 4 — combacia con la
+proposta di Fase A), zero `.fst`/`.dta`/file sotto `External/` fra questi (`git check-ignore`
+confermato su campioni di entrambi i lati). **Non committato**: file nel working tree.
+
+**3. Brandi**: nessuna azione — `New/Code/45_brandi_comparison.R` e
+`New/Paper/Tabelle/tab_20_brandi.tex` restano come da Fase A, frammento non agganciato con
+`\input{}` (scelta di posizionamento dell'utente).
+
+**Config finale**: `_sample_config.R` invariato, `excl`/`totaldepth`. Nessun commit.
+
+## 2026-08-14 (3) — Fase A del piano `New/PIANO_ESECUZIONE_2026-08-14_fase2.md` eseguita (Windows, Sonnet 5)
+
+**A1 — fix bug `regsave`**: in `New/Code/stata/17_main_tripledd_fullpanel.do`, i tre blocchi
+`regsave ... addlabel(..., nclust, e(N_clust))` (WB, TREND, diagnostica `WB_pddt`) catturavano
+la stringa letterale invece del numero. Fix: `local ncl = e(N_clust)` prima di ogni `regsave`,
+poi `` `ncl' `` in `addlabel`. Verifica statica: braces bilanciate (16/16), tre occorrenze di
+`nclust` ora usano il local. **Regenerazione rimandata a Fase C** (serve Stata).
+
+**A2 — master script**: creato `New/Code/run_pipeline.R`. Documenta ed esegue in sequenza
+Step 0-3 (costruzione dataset, ora `New/Code/stata/01`+`02.R`+`stata/03`+`04.R`, che
+sostituiscono gli script omonimi di `Code/Dataset_Creation/` citati in CLAUDE.md) + tutti gli
+script 05-44 di `New/Code/` + i 4 script Stata full-panel (17/17b/18/19b). Ogni step gira in
+un sotto-processo `Rscript` dedicato e viene verificato su disco (esistenza, per CSV/FST anche
+righe/colonne) con `stop()` se l'artefatto manca. I `.fst` pesanti (Step 3, panel collassato)
+sono dietro `REBUILD_FST` (default `FALSE`). Gli step Stata non sono lanciati: viene stampato
+il comando PowerShell esatto e ci si ferma finche' l'artefatto non compare. Parse-check pulito
+(`Rscript -e 'parse(...)'`, 55 espressioni), **non eseguito end-to-end** (ore di calcolo).
+
+**A3 🛑 STOP — SD 2,7 vs 2,383**: ricalcolate entrambe sul `.fst` canonico
+(`New/Data/Collapsed/panel_pdt_collapsed.fst`, mtime 21/07, post-fix `WB_EP_Depth` di luglio).
+**2,383** = SD di `WB_EP_Depth` pesata per `n` su **tutte** le 3.773.498 celle del panel
+collassato (incl. mai-trattate a EP=0) — la SD del regressore *cosi' come entra nella
+regressione pesata*, prodotta da `33_mde_equivalence.R` (confermata identica: 2,3827).
+**2,7** (`draft_paper.tex` riga 650, "≈2.7 provisions") non e' riproducibile su nessuna
+definizione pulita sul campione principale: e' invece **2,80** se calcolata come SD non pesata
+di `WB_EP_Depth` sulle 223 destinazioni-anno trattate (escl. HK/MO, campione principale), ma
+diventa **2,657 ≈ 2,7** se calcolata sulle **249** destinazioni-anno trattate **includendo
+HK/Macao** — lo stesso errore di campione (249 vs 223) gia' identificato e corretto altrove nel
+paper (audit R7.6) ma non propagato a questa frase. Riprova indiretta: i bound riportati nella
+stessa frase (-9,5%/+9,6% bootstrap, -2,7%/+1,5% asintotico) si ottengono moltiplicando i CI
+per SD=2,7 esattamente (es. 0,0100×2,7=2,7%), non per 2,383. **Raccomandazione**: usare 2,383
+ovunque — e' la SD del regressore nel campione di stima effettivo (pesato, include le
+mai-trattate come identifica il disegno), gia' usata nella tabella MDE box di ROADMAP §8.1, e
+rimuove contestualmente il refuso HK/MO. Con 2,383 i bound della frase diventerebbero
+circa asintotico [-2,4%,+1,3%], bootstrap [-8,4%,+8,5%] (non ricalcolati esattamente, solo
+riscalati). **Nessun testo toccato**: decisione dell'utente.
+
+**A4 🛑 STOP — `.gitignore` per `New/Data/`**: oggi la riga 3 del `.gitignore` (`New/Data/`)
+ignora **l'intera cartella** (0 file tracciati), ma le righe 4-5 (`*.fst`, `*.dta`, globali a
+tutto il repo) gia' escludono i binari pesanti ovunque — quindi la riga 3 e' l'unica cosa che
+tiene fuori anche le classificazioni/mapping piccole. **Regola proposta**: rimuovere la riga 3
+e sostituirla con `New/Data/External/` (pacchetto di replica Shapiro 2021 + dati DESTA grezzi,
+~17MB scaricati da terzi, non autorati, riottenibili dalla fonte). Cosi' `*.fst`/`*.dta`
+restano globalmente ignorati (nessun altro cambiamento), e diventano versionabili **18 file,
+~1,3MB totali** in `New/Data/Classifications` (8 file, incl. `green_codes_hs1996.csv`,
+`dirty_goods_hs6.csv`, `co2_intensity_hs6.csv`, un concordance WITS 616K e uno zip 100K),
+`New/Data/Subsamples` (4 file flag), `New/Data/TotalDepth` (4 CSV). **Non applicata**: decisione
+dell'utente.
+
+**A5 — script Brandi**: fonte trovata (`wiki/Brandi2020_EPsGreenExports.md`, Brandi et al. 2020,
+World Development, DOI verificato) — i due numeri gia' citati nel paper (+17% quota green per
+provisione liberale, -5% quota dirty per provisione trade-restrictive) sono confermati dalla
+paper card. Creato `New/Code/45_brandi_comparison.R`: converte i due numeri in log-punti
+(ln(1+x), stessa trasformazione gia' nel testo), legge le nostre stime full-panel WB
+(`tripledd_full_reghdfe.csv` asintotico, `wcb_fullpanel.csv` bootstrap) e calcola il rapporto
+CI/point-estimate contro l'equivalente Brandi. **Eseguito**: green asintotico ~1/29, green WCB
+~1/4 (paper dice "about one fifth", coerente), dirty point estimate ~1/12 ("order of magnitude
+smaller", coerente). Scrive `New/Paper/Tabelle/tab_20_brandi.tex` (non ancora `\input{}`-ato nel
+paper — fuori scope, solo lo script era richiesto).
+
+**Fase C (batch Stata a freddo)**: **non eseguita**, in attesa del "via" esplicito dell'utente
+e di temperature PC basse, come da regola del piano.
+
+**Config finale**: `_sample_config.R` invariato su `excl`/`totaldepth` (mai toccato). Nessun
+commit. Aggiornato anche `New/ROADMAP.md` §11.3 punto 4 (bug regsave: da "aperto" a "corretto
+in codice, regen in Fase C").
+
+## 2026-08-14 (2) — Pianificazione + orchestrazione Task A + decisione Callaway (Windows, Opus 4.8)
+
+**Cosa fatto**: verificato lo stato reale su disco (gli export nuovi NON c'erano ancora: F-test
+e dose mancanti, colonne vecchie nei CSV) → scritto il piano `New/PIANO_ESECUZIONE_2026-08-14.md`
+(self-contained, 4 script da rigirare + decisione Callaway + pendenze) → eseguito il **Task A**
+via subagente Sonnet in background (dettaglio nell'entry sotto). Tutti gli output nuovi ora su
+disco e verificati.
+
+**Decisione Callaway — SOSPESA, va in ROADMAP**: 16b mostra che sulla dose non c'e' forma
+identificabile (3 fasce piatte, F p=0,115, segno che si inverte) → uno stimatore continuo
+riconfermerebbe lo stesso limite. Discusso a fondo: **non e' metodologicamente sbagliato, e'
+ridondante** dati i pochi paesi sopra dose 7. Emerso anche che il caso NON entra
+direttamente nei pacchetti (`did`/`contdid`): serve un approccio **due-passi** (residualizzare
+il contrasto verde/neutro per cella → collassare a paese-anno → dare al pacchetto), con la
+scelta di *cosa* sia "la differenza" e l'inferenza su outcome generato. Fattibile ma ~mezza
+giornata e in gran parte ridondante. **Parcheggiato come "on demand"** su decisione utente.
+
+**Da fare (nuove/riprese)**: bug `regsave` in stata/17 (`nclust` esporta `"e(N_clust)"` invece
+del numero); 3 varianti Stata 17 opzionali saltate → CSV disallineati; pendenze §5 del piano
+(SD 2,7 vs 2,383, Brandi, `.gitignore New/Data/`, master script). **Nessun commit.**
+
+## 2026-08-14 — Task A del piano `New/PIANO_ESECUZIONE_2026-08-14.md` eseguito (Windows, macchina canonica)
+
+**Obiettivo**: rigirare 4 script perche' i CSV prendano le colonne nuove (nobs/nclust/fe/se),
+niente modifiche di merito. Fermato al Task B (decisione Callaway) come da istruzioni —
+nessuno stimatore continuo implementato, nessun commit.
+
+**A1 (16b, baseline)**: crashato 3 volte con l'allocatore R (`recursive gc invocation`) sulla
+`feols` principale (riga 110), che a differenza della seconda `feols` dello stesso file non
+aveva `lean=TRUE` ne' colonne potate. Applicato il fix minimo gia' in uso altrove nel repo
+(`31_robustness_leaveoneout.R`): `lean=TRUE` + `cell_est` con solo le colonne necessarie +
+`setFixest_nthreads(2)` invece di 4. Girato pulito dopo il fix. Risultato: 3 fasce di dose,
+nessuna individualmente significativa (p 0,25 / 0,58 / 0,70), test congiunto F=1,978 p=0,115
+— non si rigetta l'ipotesi che tutte e tre siano zero. Rapporti coef/dose_mediana non
+monotoni (0,056 / -0,006 / 0,004): segno che si inverte, non ne' linearita' ne' concavita'
+pulita, piu' probabile rumore su un campione grumoso. Vedi dettaglio dato al utente nella
+stessa conversazione per la raccomandazione preliminare su Callaway (verso il "non
+implementare").
+
+**A2 (20, 4 varianti)**: tutte girate in-process, nessun crash. `nobs/nclust/fe` ora nei CSV.
+p_wcb con oscillazione ~1pp attesa (fwildclusterboot non seedato). nclust: 236 (excl), 238
+(incl), 236 (desta — NON calato di ~2 come previsto dal piano: Timor Est resta in campione
+via le celle pre-trattamento a dose 0), 238 (incl+desta).
+
+**A3 (31, 4 varianti)**: ~8-10 segfault intermittenti in totale (pattern gia' noto, non
+riconducibile a un bug del codice — lo script ha gia' colonne potate, `lean=TRUE`,
+`nthreads(2)`), tutti recuperati dal salvataggio incrementale del CSV con semplice
+riavvio dello script (nessun edit). Tutte e 4 le varianti completate: 26 righe (excl), 28
+(incl), 26 (desta), 28 (incl+desta). Baseline coef dirty -0,0118734, coincide con lo storico
+e con lo script 20.
+
+**A4 (Stata 17, solo baseline)**: girato senza errori, ~15 min (i modelli erano gia' in
+cache, mancava solo il marcatore F). F congiunto: WB F=1,202 p=0,311, TREND F=0,534 p=0,711
+— coincidono con i valori gia' citati nel paper. **Anomalia**: nel CSV riassuntivo la colonna
+`nclust` esporta la stringa letterale `"e(N_clust)"` invece del numero — `regsave`'s
+`addlabel()` non valuta l'espressione. Non corretto (fuori scope, .do gia' committato).
+**Le 3 varianti opzionali (incl/totaldepth, excl/desta, incl/desta) saltate** per tempo —
+restano disallineate rispetto alla baseline.
+
+**Stato finale**: `_sample_config.R` riportato su `excl`/`totaldepth`. Nessun commit.
+Modificato solo `New/Code/16b_dose_bins.R` (fix minimo anti-crash, vedi sopra) — deviazione
+dal piano ("codice gia' corretto, basta girarlo") resa necessaria dal crash ripetuto;
+segnalata all'utente nel report finale insieme alla raccomandazione preliminare su Callaway.
+
 ## 2026-08-14 — Audit di `./New/`, fix dei 3 critici, arretrati roadmap (Mac, Sonnet 4.6)
 
 **Audit** (`./correspondence/audit/2026-08-14_audit_report.md`): FAIL, 3 critici + 14 fra

@@ -4,6 +4,28 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-14 — 16b_dose_bins.R crashava sempre: mancava lean=TRUE/pruning sulla feols principale
+
+**Cosa e' successo.** Il piano di esecuzione diceva "codice gia' corretto, basta farlo
+girare". `16b_dose_bins.R` e' invece crashato 3 volte di fila con l'allocatore R
+(`*** recursive gc invocation`), zero output prodotto. La causa: la `feols` principale
+(riga 110, quella che produce i coefficienti di fascia) non aveva `lean=TRUE` ne' colonne
+potate, mentre la SECONDA `feols` dello stesso script (riga 124, di confronto) le aveva
+entrambe. Incoerenza interna allo stesso file.
+
+**Causa.** Pattern gia' documentato in memoria di progetto
+(`windows-pc-crashes-on-full-panel-fixest`): l'allocatore crasha su `feols` non-lean anche
+sul panel collassato (3,7M celle), ed e' sensibile alle colonne tenute in memoria.
+
+**Prevenzione.** Applicato lo stesso fix gia' verificato in `31_robustness_leaveoneout.R`:
+`lean=TRUE` + subset esplicito delle colonne necessarie prima di ogni `feols` + `nthreads(2)`
+invece di 4. Prima di fidarsi di "il codice e' gia' corretto" in un piano di handoff, quando
+uno script crasha con l'allocatore, controllare se TUTTE le chiamate `feols` dello stesso
+file seguono lo stesso pattern anti-crash — un'incoerenza fra due chiamate nello stesso
+script e' un indizio piu' diretto di un bug locale che di un problema ambientale generico.
+
+---
+
 ## 2026-08-14 — Stime girate su una copia obsoleta del dataset, e output Windows sovrascritto
 
 **Cosa e' successo.** Ho ricostruito il pannello collassato sul Mac partendo da

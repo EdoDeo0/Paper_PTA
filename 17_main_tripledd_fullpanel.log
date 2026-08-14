@@ -21,7 +21,7 @@ Notes:
       3. Maximum number of variables is set to 5,000 but can be increased;
           see help set_maxvar.
 
-. do C:\Work\projects\Paper_PTA\New\Code\stata\17_main_tripledd_fullpanel.do 
+. do New\Code\stata\17_main_tripledd_fullpanel.do 
 
 . *****************************************************************************
 > ***
@@ -176,7 +176,7 @@ Duplicates in terms of hs6
 . tempfile green
 
 . save `green'
-file C:\Users\edodr\AppData\Local\Temp\ST_169c_000001.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_354c_000001.tmp saved as .dta
     format
 
 . 
@@ -192,7 +192,7 @@ file C:\Users\edodr\AppData\Local\Temp\ST_169c_000001.tmp saved as .dta
 . tempfile dirty
 
 . save `dirty'
-file C:\Users\edodr\AppData\Local\Temp\ST_169c_000002.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_354c_000002.tmp saved as .dta
     format
 
 . 
@@ -206,7 +206,7 @@ file C:\Users\edodr\AppData\Local\Temp\ST_169c_000002.tmp saved as .dta
 . tempfile depth
 
 . save `depth'
-file C:\Users\edodr\AppData\Local\Temp\ST_169c_000003.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_354c_000003.tmp saved as .dta
     format
 
 . 
@@ -317,27 +317,186 @@ dirty:  7.0%
 . cap mkdir "$ROOT/New/Output/TripleDiff/Tables"
 
 . 
+. *── Test F congiunto: file di destinazione ──────────────────────────────────
+> ──
+. * Il p congiunto citato nel paper (§4.1: 0.31 WB, 0.71 TREND) non aveva finor
+> a
+. * alcuno script che lo generasse - esisteva solo battuto a mano nel .tex
+. * (ROADMAP §10 punto 4). Si scrive con `file write` e non con un dataset perc
+> he'
+. * reghdfe gira in `compact`: un `clear` costringerebbe a rileggere 45,8M righ
+> e.
+. * La cache di ogni blocco controlla ANCHE il proprio marcatore F (`_F_WB`,
+. * `_F_TREND`): una cache di stime vecchia, prodotta prima che questo test
+. * esistesse, non ha il marcatore e forza la ristima - che e' l'unico modo di
+. * rendere il numero riproducibile invece che battuto a mano.
+. local FFILE "$ROOT/New/Output/TripleDiff/Tables/joint_F_fullpanel$OUTSFX.csv"
+
+. local FMARK "$ROOT/New/Output/TripleDiff/Tables/_F_"
+
+. cap confirm file "`FFILE'"
+
+. if _rc {
+.     file open fh using "`FFILE'", write replace
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/joint_F_fullpanel
+    > .csv not found)
+.     file write fh "treat,fe,terms,F,df,df_r,pval" _n
+.     file close fh
+. }
+
+. 
 . * WB
 . cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta"
 
-. if _rc {
+. local wb_cached = (_rc == 0)
+
+. cap confirm file "`FMARK'WB$OUTSFX.txt"
+
+. local wb_fdone = (_rc == 0)
+
+. if !`wb_cached' | !`wb_fdone' {
 .     reghdfe ln_export wb_green wb_dirty td_green td_dirty, ///
 >         absorb(fpd fdt pt) vce(cluster country_code) compact
+(dropped 2.43e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 21,519,511
+Absorbing 3 HDFE groups                           F(   4,    224) =       1.20
+Statistics robust to heteroskedasticity           Prob > F        =     0.3108
+                                                  R-squared       =     0.8734
+                                                  Adj R-squared   =     0.7440
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     1.3334
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0022564   .0039258    -0.57   0.566    -.0099927    .0054799
+    wb_dirty |  -.0043521   .0022268    -1.95   0.052    -.0087403    .0000361
+    td_green |   .0000608    .000104     0.58   0.560    -.0001441    .0002657
+    td_dirty |   .0001875   .0000963     1.95   0.053    -2.21e-06    .0003772
+       _cons |   9.573249   .0003564  2.7e+04   0.000     9.572547    9.573951
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6181372     6181372           0    *|
+         fdt |   4631458     4631458           0    *|
+          pt |     64508           1       64507     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+.     local ncl = e(N_clust)
 .     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", /
 > //
->         tstat pval ci replace addlabel(treat, WB)
+>         tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", nclust, `
+> ncl')
+(file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_WB.dta
+    not found)
+file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_WB.dta
+    saved
+.     test wb_green wb_dirty td_green td_dirty
+
+ ( 1)  wb_green = 0
+ ( 2)  wb_dirty = 0
+ ( 3)  td_green = 0
+ ( 4)  td_dirty = 0
+
+       F(  4,   224) =    1.20
+            Prob > F =    0.3108
+.     file open fh using "`FFILE'", write append
+.     file write fh "WB,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) "," (r(
+> p)) _n
+.     file close fh
+.     file open mk using "`FMARK'WB$OUTSFX.txt", write replace
+(file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_F_WB.txt not
+    found)
+.     file write mk "done" _n
+.     file close mk
+.     di "[F] WB congiunto su 4 interazioni: F=" r(F) " p=" r(p)
+[F] WB congiunto su 4 interazioni: F=1.2020783 p=.31077937
 . }
 
 . 
 . * TREND (capture: se muore, il risultato WB resta salvato)
 . cap confirm file "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta"
 
-. if _rc {
+. local tr_cached = (_rc == 0)
+
+. cap confirm file "`FMARK'TREND$OUTSFX.txt"
+
+. local tr_fdone = (_rc == 0)
+
+. if !`tr_cached' | !`tr_fdone' {
 .     cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty, ///
 >         absorb(fpd fdt pt) vce(cluster country_code) compact
-.     if !_rc regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUT
-> SFX.dta", ///
->         tstat pval ci replace addlabel(treat, TREND)
+(dropped 2.43e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 21,519,511
+Absorbing 3 HDFE groups                           F(   4,    224) =       0.53
+Statistics robust to heteroskedasticity           Prob > F        =     0.7106
+                                                  R-squared       =     0.8734
+                                                  Adj R-squared   =     0.7440
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     1.3334
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0000956   .0009958    -0.10   0.924    -.0020579    .0018667
+    tr_dirty |  -.0008948   .0006246    -1.43   0.153    -.0021257     .000336
+    td_green |  -3.74e-06    .000163    -0.02   0.982     -.000325    .0003175
+    td_dirty |   .0001678   .0001281     1.31   0.191    -.0000845    .0004202
+       _cons |   9.573076     .00051  1.9e+04   0.000     9.572071    9.574081
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6181372     6181372           0    *|
+         fdt |   4631458     4631458           0    *|
+          pt |     64508           1       64507     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+.     if !_rc {
+.         local ncl = e(N_clust)
+.         regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.
+> dta", ///
+>             tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt", nc
+> lust, `ncl')
+(file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_TREND.dta
+    not found)
+file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_TREND.dta
+    saved
+.         test tr_green tr_dirty td_green td_dirty
+
+ ( 1)  tr_green = 0
+ ( 2)  tr_dirty = 0
+ ( 3)  td_green = 0
+ ( 4)  td_dirty = 0
+
+       F(  4,   224) =    0.53
+            Prob > F =    0.7106
+.         file open fh using "`FFILE'", write append
+.         file write fh "TREND,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) 
+> "," (r(p)) _n
+.         file close fh
+.         file open mk using "`FMARK'TREND$OUTSFX.txt", write replace
+(file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_F_TREND.txt
+    not found)
+.         file write mk "done" _n
+.         file close mk
+.         di "[F] TREND congiunto su 4 interazioni: F=" r(F) " p=" r(p)
+[F] TREND congiunto su 4 interazioni: F=.53441433 p=.71057983
+.     }
 . }
 
 . 
@@ -385,9 +544,11 @@ Absorbed degrees of freedom:
           pt |     69254           1       69253     |
 -----------------------------------------------------+
 * = FE nested within cluster; treated as redundant for DoF computation
+.     local ncl = e(N_clust)
 .     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dt
 > a", ///
->         tstat pval ci replace addlabel(treat, WB_pddt)
+>         tstat pval ci replace addlabel(treat, WB_pddt, fe, "pd+dt+pt", nclust
+> , `ncl')
 (file
     C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full_WB_pddt.dta
     not found)
@@ -420,9 +581,6 @@ file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_regh
 .     use "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta", clear
 .     export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_pddt$O
 > UTSFX.csv", replace
-(file
-    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_pdd
-    > t.csv not found)
 file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_pddt
 > .csv saved
 .     di "[C6] tripledd_full_pddt$OUTSFX.csv"
