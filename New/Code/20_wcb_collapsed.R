@@ -62,6 +62,12 @@ cat("Panel:", format(nrow(cell), big.mark = ","), "celle |",
     uniqueN(cell$country_code), "cluster (paesi)\n")
 
 ## --- WCB per ciascun indice (WB, TREND) ------------------------------------
+## Riproducibilita': da fwildclusterboot 0.13 boottest() campiona con dqrng e
+## NON accetta piu' un argomento `seed`. set.seed() da solo non basta (testato:
+## p_wcb oscilla ~1pp); serve dqrng::dqset.seed(). Il pacchetto raccomanda di
+## fissare ENTRAMBI i generatori una volta, prima delle chiamate.
+set.seed(42)
+dqrng::dqset.seed(42)
 res <- list()
 for (tr_name in c("WB", "TREND")) {
   tr <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")[[tr_name]]
@@ -85,7 +91,7 @@ for (tr_name in c("WB", "TREND")) {
   # boottest sulle due interazioni EP
   for (param in c("ep_green", "ep_dirty")) {
     cat("  boottest:", param, "... ")
-    bt <- tryCatch(boottest(m_lm, param = param, clustid = "country_code", B = 9999, seed = 42L),
+    bt <- tryCatch(boottest(m_lm, param = param, clustid = "country_code", B = 9999),
                    error = function(e) { cat("ERRORE:", conditionMessage(e), "\n"); NULL })
     if (!is.null(bt)) {
       cat(sprintf("p_wcb = %.4f\n", bt$p_val))

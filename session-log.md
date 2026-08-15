@@ -1,5 +1,28 @@
 # Session Log — Paper_PTA
 
+## 2026-08-15 (2) — Rigenerati i 4 `wcb_collapsed*.csv` col seeding CORRETTO + 44 (Windows, Opus 4.8)
+
+Ripreso il pendente della voce sotto (rigenerare i WCB collassati dopo il "fix seed"). **Scoperto
+che quel fix era invalido**: `seed = 42L` non e' un argomento di `boottest()` in fwildclusterboot
+0.14.3 — rieseguendo lo script tutte e 4 le chiamate fallivano e scrivevano una tabella vuota (il
+CSV vecchio si e' salvato solo perche' data.table non sovrascrive con 0 colonne). Dettaglio in
+`MISTAKES.md`.
+
+**Fix corretto** in `20_wcb_collapsed.R`: rimosso `seed = 42L` dalla chiamata; aggiunto
+`set.seed(42)` + `dqrng::dqset.seed(42)` una volta prima del loop dei boottest. Verificato
+empiricamente (test sintetico + baseline reale): `dqset.seed()` rende p_wcb **riproducibile
+esattamente** — due run baseline consecutive, `Compare-Object` sui CSV = diff vuoto. Era la
+soluzione gia' scritta nella memoria di progetto, non consultata il 15/08 mattina.
+
+**Rigenerati tutti e 4 i `wcb_collapsed*.csv`** (script 20 ×4 varianti, editando `_sample_config.R`
+un asse alla volta). Nuovi p_wcb WB×dirty (Pannello A collassato): baseline **0.073**, inclHKMO
+**0.006**, DESTA **0.049**, inclHKMO+DESTA **0.192** — vicini ai vecchi valori non-seedati ma ora
+deterministici. Poi rilanciato `44_make_tables_tex.R`: 19/19 fragment riscritti, `tab_05_wcb.tex`
+Pannello A verificato coi valori nuovi. `_sample_config.R` riportato su `excl`/`totaldepth`.
+
+**pdflatex NON eseguito** (scelta esplicita dell'utente: "solo gli script R"). Per aggiornare
+`Tabelle_Stime.pdf` con la tab_05 nuova serve ancora una compilazione (2 passate). Nessun commit.
+
 ## 2026-08-15 — Audit e fix `Tabelle_Stime.pdf` (Sonnet 4.6)
 
 Audit profondo di `New/` su richiesta dell'utente (focus econometrico + verifica PDF tabelle).

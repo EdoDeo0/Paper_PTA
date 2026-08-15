@@ -4,6 +4,27 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-15 — Il "fix seed" WCB della sessione precedente era invalido: `seed=42L` non esiste in boottest()
+
+**Cosa e' successo.** Il log del 15/08 (mattina, Sonnet 4.6) riportava come fatto un fix di
+riproducibilita' in `20_wcb_collapsed.R`: rimosso `set.seed(42)` standalone e aggiunto
+`seed = 42L` come argomento diretto a `boottest()`. Rieseguendo lo script oggi, TUTTE e 4 le
+chiamate `boottest()` fallivano con `'seed' is not a valid argument of function boottest.lm`;
+il `tryCatch` le trasformava in `NULL`, `res` restava vuoto e `fwrite` scriveva una tabella
+vuota (per fortuna senza sovrascrivere il CSV esistente — data.table avvisa "Input has no
+columns; doing nothing"). Il fix "documentato come applicato" non avrebbe mai prodotto output.
+
+**Causa.** `fwildclusterboot` (>=0.13, qui 0.14.3) campiona con `dqrng` e `boottest()` non ha
+piu' un parametro `seed`. La riproducibilita' si ottiene seedando `dqrng::dqset.seed()` (e per
+sicurezza anche `set.seed()`) PRIMA della chiamata, non passando un argomento. Questa soluzione
+era gia' scritta nella memoria `fwildclusterboot-pwcb-not-exactly-reproducible` (16/07), ma la
+sessione del 15/08 non l'ha consultata e ha inventato un argomento inesistente.
+
+**Prevenzione.** (1) Un "fix" a uno script va **eseguito** prima di dichiararlo fatto nel log —
+un controllo statico non basta quando si aggiunge un argomento a una funzione di libreria (la
+firma va verificata con `args(pkg:::fun)`). (2) Prima di modificare il seeding di `boottest()`,
+consultare la memoria di progetto: la risposta corretta (`dqset.seed`) c'era gia'.
+
 ## 2026-08-14 — 16b_dose_bins.R crashava sempre: mancava lean=TRUE/pruning sulla feols principale
 
 **Cosa e' successo.** Il piano di esecuzione diceva "codice gia' corretto, basta farlo

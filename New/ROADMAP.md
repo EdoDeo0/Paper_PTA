@@ -61,9 +61,16 @@
 >   2. **`fwildclusterboot` p_wcb non esattamente riproducibile**: il
 >      generatore `dqrng` interno non è seedato da `set.seed()` di R base;
 >      i p-value del wild cluster bootstrap oscillano di ~1pp anche tra run
->      identiche (coefficienti restano deterministici). **Fix (2026-08-15)**:
->      passare `seed = 42L` direttamente come argomento a `boottest()` (rimosso
->      `set.seed(42)` standalone). Codice aggiornato; CSV da rigenerare su Windows.
+>      identiche (coefficienti restano deterministici). **Fix errato del
+>      2026-08-15 mattina** (`seed = 42L` come argomento di `boottest()`):
+>      quell'argomento NON esiste in fwildclusterboot 0.14.3 → lo script
+>      falliva e scriveva CSV vuoti (vedi `MISTAKES.md`). **Fix corretto
+>      2026-08-15 (2)**: in `20_wcb_collapsed.R`, `set.seed(42)` +
+>      `dqrng::dqset.seed(42)` una volta prima del loop dei `boottest()`.
+>      Verificato: p_wcb riproducibile ESATTAMENTE (diff byte-per-byte vuoto
+>      tra due run baseline). **Tutti e 4 i `wcb_collapsed*.csv` rigenerati
+>      su Windows** e `44_make_tables_tex.R` rilanciato (tab_05 aggiornata).
+>      Manca solo la compilazione pdflatex di `Tabelle_Stime.pdf`.
 >   3. **Il riferimento pre-riordino stesso era incompleto in due punti**,
 >      mai notato prima: `deepshallow×TREND` (script 24/13) non aveva mai
 >      una cache valida, e il leave-one-out dirty (script 31/15b) aveva solo
