@@ -1,5 +1,31 @@
 # Session Log — Paper_PTA
 
+## 2026-08-15 (3) — Compilazione `Tabelle_Stime.pdf` + fix incongruenza 23/25 treated (Mac, Sonnet→Opus 4.8)
+
+Compilato `New/Paper/Tabelle/Tabelle_Stime.pdf` con due passate pdflatex (TinyTeX). Il PDF
+era stantio: `tab_05_wcb.tex` (09:17) era piu' recente dell'ultimo PDF (08:58) per via della
+rigenerazione dei `wcb_collapsed*.csv` della sessione precedente. `draft_paper.pdf` era gia'
+aggiornato (compilato alle 00:30, `.tex` modificato alle 00:27 — invariato).
+
+**Controllo "errori grossolani" richiesto dall'utente.** Verificati contro i CSV sorgente:
+tutti e 32 i valori di tab_05 (Pannelli A/B/C/D = `wcb_collapsed*` + `wcb_fullpanel*`) e tab_06
+combaciano esattamente; seeding di `20_wcb_collapsed.R` corretto (`dqset.seed`, non l'argomento
+`seed` inventato del MISTAKES); log di compilazione senza ref/citazioni irrisolte; distinzione
+225/236 clusters gia' corretta nel paper.
+
+**Trovata e corretta un'incongruenza 23 vs 25 destinazioni trattate.** Radice: 23 = excl
+HK/Macao (baseline headline), 25 = incl HK/Macao (i 23 + HongKong 110 + Macau 121). Verificato
+coi drop del leave-one-out (`dirty_leaveoneout.csv` = 23 paesi, `_inclHKMO` = 25). Il paper usa
+23 ovunque (coerente); `Tabelle_Stime` usava 25 anche nelle **note di inferenza** che annotano
+tabelle con colonna (1) = excl HK/MO. Su indicazione dell'utente ("25 dove ne abbiamo usate 25,
+23 dove ne abbiamo usate 23") corretto **solo l'inferenza** a 23 — lasciato 25 nel descrittivo
+(tab_01 elenca tutte e 25 con nota di esclusione; corpo righe 190/196 = universo completo).
+Punti portati a 23: `tab_05_wcb.tex` nota, `tab_16_leaveoneout.tex` nota, corpo righe 319/680
+(720 era gia' 23). Fix replicato nel **generatore** `44_make_tables_tex.R` righe 454/1006 cosi'
+non torna a 25 a un rerun.
+
+**Risultato: 31 pagine, 0 errori, 1 overfull preesistente.** Nessun commit.
+
 ## 2026-08-15 (2) — Rigenerati i 4 `wcb_collapsed*.csv` col seeding CORRETTO + 44 (Windows, Opus 4.8)
 
 Ripreso il pendente della voce sotto (rigenerare i WCB collassati dopo il "fix seed"). **Scoperto

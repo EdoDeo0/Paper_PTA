@@ -70,7 +70,13 @@
 >      Verificato: p_wcb riproducibile ESATTAMENTE (diff byte-per-byte vuoto
 >      tra due run baseline). **Tutti e 4 i `wcb_collapsed*.csv` rigenerati
 >      su Windows** e `44_make_tables_tex.R` rilanciato (tab_05 aggiornata).
->      Manca solo la compilazione pdflatex di `Tabelle_Stime.pdf`.
+>      **Compilato `Tabelle_Stime.pdf` il 2026-08-15 (3)** (Mac, 31 pp, 0 err).
+>      Nella stessa sessione, in un giro di verifica, corretta un'incongruenza
+>      **23 vs 25 destinazioni trattate**: 23 = excl HK/Macao (baseline), 25 =
+>      incl HK/Macao. Nelle **note di inferenza** (tab_05, tab_16, corpo del
+>      documento) portato a 23 per allinearsi alla colonna baseline e al paper;
+>      lasciato 25 nel **descrittivo** (tab_01 = universo completo). Fix anche
+>      nel generatore `44_make_tables_tex.R` (righe 454/1006).
 >   3. **Il riferimento pre-riordino stesso era incompleto in due punti**,
 >      mai notato prima: `deepshallow×TREND` (script 24/13) non aveva mai
 >      una cache valida, e il leave-one-out dirty (script 31/15b) aveva solo

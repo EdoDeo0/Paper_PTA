@@ -43,7 +43,7 @@ Conteggio EP $\times$ Sporco: coefficiente & -0.00089 & -0.00101 & -0.00140 & -0
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
 \item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
-\item \textbf{A cosa serve.} I $p$-value ordinari sono affidabili quando i gruppi su cui si raggruppano gli errori sono molti. Qui i gruppi trattati sono 25 e gli accordi realmente distinti circa 14: in questa situazione i $p$-value ordinari tendono a dichiarare significativo ci\`o che non lo \`e. Il \emph{wild cluster bootstrap} ricostruisce la distribuzione del coefficiente rimescolando i dati 9.999 volte e restituisce un $p$-value molto pi\`u prudente.
+\item \textbf{A cosa serve.} I $p$-value ordinari sono affidabili quando i gruppi su cui si raggruppano gli errori sono molti. Qui i gruppi trattati sono 23 e gli accordi realmente distinti circa 14: in questa situazione i $p$-value ordinari tendono a dichiarare significativo ci\`o che non lo \`e. Il \emph{wild cluster bootstrap} ricostruisce la distribuzione del coefficiente rimescolando i dati 9.999 volte e restituisce un $p$-value molto pi\`u prudente.
 \item Il confronto con la Tabella \ref{tab:main-coll} \`e istruttivo: dove il $p$-value ordinario \`e $<0.001$, quello bootstrap pu\`o salire sopra 0.05.
 \item Pannelli C e D calcolati con \texttt{boottest} in Stata su dati residualizzati (Frisch--Waugh), perch\'e il comando non regge pi\`u di un insieme di effetti fissi assorbiti.
 \end{tablenotes}
