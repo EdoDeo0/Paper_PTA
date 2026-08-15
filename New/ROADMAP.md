@@ -61,8 +61,9 @@
 >   2. **`fwildclusterboot` p_wcb non esattamente riproducibile**: il
 >      generatore `dqrng` interno non è seedato da `set.seed()` di R base;
 >      i p-value del wild cluster bootstrap oscillano di ~1pp anche tra run
->      identiche (coefficienti restano deterministici). Non è un bug del
->      nostro codice. Salvato come memoria di progetto permanente.
+>      identiche (coefficienti restano deterministici). **Fix (2026-08-15)**:
+>      passare `seed = 42L` direttamente come argomento a `boottest()` (rimosso
+>      `set.seed(42)` standalone). Codice aggiornato; CSV da rigenerare su Windows.
 >   3. **Il riferimento pre-riordino stesso era incompleto in due punti**,
 >      mai notato prima: `deepshallow×TREND` (script 24/13) non aveva mai
 >      una cache valida, e il leave-one-out dirty (script 31/15b) aveva solo

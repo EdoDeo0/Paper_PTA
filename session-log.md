@@ -1,5 +1,43 @@
 # Session Log — Paper_PTA
 
+## 2026-08-15 — Audit e fix `Tabelle_Stime.pdf` (Sonnet 4.6)
+
+Audit profondo di `New/` su richiesta dell'utente (focus econometrico + verifica PDF tabelle).
+Verdetto: codice e stime affidabili, `draft_paper.pdf` corretto; `Tabelle_Stime.pdf` conteneva
+i p-value di permutazione **pre-C7** (bug già dichiarato critico).
+
+**Fix applicati:**
+
+1. **`20_wcb_collapsed.R` riga 88**: rimosso `set.seed(42)` standalone; aggiunto `seed = 42L`
+   come argomento diretto a `boottest()`. Necessario perché fwildclusterboot usa dqrng
+   internamente e non risponde a `set.seed()`. I CSV WCB collassati vanno rigenerati su Windows.
+
+2. **Rigenerazione fragment `.tex`**: `Rscript New/Code/44_make_tables_tex.R` — tutti e 19
+   i fragment rigenerati da CSV aggiornati (inclusa `tab_06_permutation.tex` con i valori
+   post-C7: dirty baseline 0.235, incl 0.137, DESTA 0.140 — erano 0.023/0.003/0.036).
+
+3. **Ricompilazione `Tabelle_Stime.pdf`**: 2 passate pdflatex, 31 pagine, 0 errori.
+   PDF aggiornato alle 08:58 del 15/08/2026.
+
+**Pendente su Windows**: rigenerare `wcb_collapsed*.csv` (tutte e 4 le varianti) dopo il fix
+seed in `20_wcb_collapsed.R`, poi rilanciare `44_make_tables_tex.R` e pdflatex per aggiornare
+tab_05 con p-value WCB stabili e riproducibili. Particolarmente rilevante per DESTA dirty
+(p_wcb ~0.047, sul filo del 5%). Nessun commit.
+
+## 2026-08-15 — Compilazione PDF del draft su Mac (Opus 4.8)
+
+Ripristinato il contesto dai log. Unico pendente concreto: `New/Paper/draft_paper.tex`
+portava le edit di Fase B (14/08, SD 2,383 + bound ricalcolati alle righe 649-653) fatte su
+Windows **senza** `pdflatex`, solo controlli statici — nessun PDF che le riflettesse (in
+`New/Paper/` esisteva solo `Tabelle/Tabelle_Stime.pdf`).
+
+**Compilato** `draft_paper.tex` con `pdflatex` (TinyTeX, `~/.local/bin/pdflatex`), due passate
+per gli xref, build isolata nello scratchpad. Risultato: **`New/Paper/draft_paper.pdf`, 32
+pagine, 0 errori, 0 riferimenti/citazioni non definiti**. 5 overfull hbox, tutti cosmetici e
+preesistenti (path `\texttt` lunghi + contenuto tabelle: righe 8-16, 198-227, 242-270, 468,
+907-929) — non introdotti da queste edit. Bibliografia inline (`thebibliography`), nessun
+`.bib`/bibtex. Nessun commit. Working tree: solo `draft_paper.pdf` nuovo (non gitignorato).
+
 ## 2026-08-14/15 — Fase C del piano `..._fase2.md`: batch Stata a freddo, 4 run (Windows, Sonnet 5)
 
 L'utente ha dato il via esplicito. Eseguite in sequenza, un solo processo Stata alla volta,

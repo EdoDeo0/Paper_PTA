@@ -85,8 +85,7 @@ for (tr_name in c("WB", "TREND")) {
   # boottest sulle due interazioni EP
   for (param in c("ep_green", "ep_dirty")) {
     cat("  boottest:", param, "... ")
-    set.seed(42)
-    bt <- tryCatch(boottest(m_lm, param = param, clustid = "country_code", B = 9999),
+    bt <- tryCatch(boottest(m_lm, param = param, clustid = "country_code", B = 9999, seed = 42L),
                    error = function(e) { cat("ERRORE:", conditionMessage(e), "\n"); NULL })
     if (!is.null(bt)) {
       cat(sprintf("p_wcb = %.4f\n", bt$p_val))
