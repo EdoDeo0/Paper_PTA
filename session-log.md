@@ -1,5 +1,19 @@
 # Session Log — Paper_PTA
 
+## 2026-08-17 — Ricognizione stato progetto + questione ppml_agg_pdt_zerofill (Mac, Sonnet 4.6)
+
+Sessione di aggiornamento contestuale: riletto session-log, MISTAKES.md, ROADMAP (sezioni §11.x).
+Stato confermato: tutto il calcolo è completato (4 varianti OLS/WCB/permutazione, Stata batch Fase C,
+wcb_collapsed rigenerati con seeding corretto, PDF compilati). Nessun commit ancora fatto.
+
+**Problema emerso: `New/Data/Final Dataset/ppml_agg_pdt_zerofill.fst` è un input orfano.**
+Lo script che lo ha costruito non esiste nel repo né su Mac. Non è chiaro se la griglia è un
+cross-join completo (tutti HS6×destinazione×anno) o solo le coppie già osservate (zero-fill
+condizionato). I due casi hanno implicazioni diverse sull'interpretabilità del PPML come test
+di "trade creation". **Da fare su Windows**: cercare lo script di costruzione con il prompt
+preparato in sessione (cerca `ppml_agg_pdt_zerofill`, `agg_export`, `zerofill` in `C:\Work`).
+Se lo script non esiste, va ricostruito e documentato. Nessun commit.
+
 ## 2026-08-15 (3) — Compilazione `Tabelle_Stime.pdf` + fix incongruenza 23/25 treated (Mac, Sonnet→Opus 4.8)
 
 Compilato `New/Paper/Tabelle/Tabelle_Stime.pdf` con due passate pdflatex (TinyTeX). Il PDF
