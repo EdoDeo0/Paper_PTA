@@ -1,5 +1,39 @@
 # Session Log — Paper_PTA
 
+## 2026-08-17 (2) — RISOLTO: builder di ppml_agg_pdt_zerofill.fst ritrovato e ricostruito (Windows, Opus 4.8)
+
+Chiuso il pendente della voce sotto (input orfano del PPML con zeri). **Lo script builder non
+esisteva come file .R**: il `.fst` era stato costruito in una **sessione interattiva RStudio**
+(21/03/2026, riga per riga, mai salvata), poi riscritto il 21/07 (mtime del `.fst`). Cercato in
+tutto `C:\` (repo, Desktop, Documenti, OneDrive, Cestino, temp, tutti gli `.Rhistory`, history di
+VS Code): nessun builder salvato. Il codice sopravviveva solo nella console history di RStudio
+`C:\Users\edodr\AppData\Local\RStudio\history_database.1` (righe ~2400-2840). Ricostruito e
+salvato come **`New/Code/29b_build_ppml_zerofill.R`** (path adattati al layout attuale, header con
+provenienza + TODO ricostruzione).
+
+**Risposta alla domanda aperta sulla griglia**: e' **zero-fill CONDIZIONATO, non cross-join
+completo**. `active_pairs <- unique(dt_agg[agg_export > 0, .(hs6, country_code)])` -> solo le coppie
+(hs6, destinazione) con >=1 flusso positivo nel periodo, completate su tutti gli anni. Le
+combinazioni prodotto-destinazione mai scambiate non entrano. Quindi il PPML misura il margine
+estensivo **temporale within-coppia** (accensioni/spegnimenti fra anni entro coppie gia' attive),
+non la nascita di mercati-prodotto nuovi. Il claim di "green trade creation" va letto in senso
+ristretto.
+
+**Coerenza del `.fst` con i fix (verificata leggendo il file, 8.310.464 righe, 2000-2015, 4999
+hs6, 238 dest, 53,5% zeri)**: i risultati PPML **sono corretti**. Motivo: `30_robustness_extensive_
+ppml.R` legge dal `.fst` solo agg_export/hs6/country/year/WB_EP_Depth/TREND_EP_Count/pd/dt/pt e
+**RICALCOLA a runtime** env_good (green), dirty e TotalDepth dai CSV correnti. Verificato: env_good
+congelata nel `.fst` = 238 prodotti green (mappatura luglio), env_good fresh dal
+`green_codes_hs1996.csv` (07/08) = **246 prodotti** (21.312 celle diverse) -> ma la stima usa i 246
+freschi, non la colonna congelata. Trattamento `WB_EP_Depth` nel `.fst` va 0..17 = **post-fix di
+luglio** (pre-fix era max 19). Sorgente `final_dataset_pta_env_indices_compressed.fst` del 21/07
+18:23, `.fst` PPML scritto alle 23:46 (stesso sorgente).
+
+**`.fst` DA RICOSTRUIRE in futuro (non urgente)**: solo per igiene interna — rilanciare
+`29b_build_ppml_zerofill.R` cosi' anche la `env_good` congelata passa a 246, eliminando il rischio
+che un futuro consumer che legga env_good direttamente dal file usi la classificazione vecchia. I
+risultati attuali NON cambiano. Nessun commit.
+
 ## 2026-08-17 — Ricognizione stato progetto + questione ppml_agg_pdt_zerofill (Mac, Sonnet 4.6)
 
 Sessione di aggiornamento contestuale: riletto session-log, MISTAKES.md, ROADMAP (sezioni §11.x).
