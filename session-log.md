@@ -1,5 +1,46 @@
 # Session Log — Paper_PTA
 
+## 2026-08-20 — Rilettura audit 18/08 + smistamento roadmap Mac/Windows (Mac, Sonnet 5)
+
+Ripresa dei tre documenti dell'audit 18/08 (`correspondence/audit/2026-08-18_*`). Nessuna
+modifica ai file: sessione di orientamento, chiesto all'utente cosa voleva fare con la roadmap
+prima di agire. Prodotta mappa Mac-vs-Windows dei 16 item (R1-R16): **solo testo/refactoring,
+fattibili su Mac** — R1 (auto-link tabelle `\input{}`), R2-R5, R7, R8, R10, R11 (fix testuali
+draft), R6a (dichiarare assenza trimming). **Richiedono nuove stime, solo Windows** (regola
+progetto: no stime su Mac, `.fst` stantio) — R6b (robustezza trim), R12 (continuous-dose
+Callaway, parcheggiato), R13 (triple-diff quantità/unit value), R14 (rigenerare
+`ppml_agg_pdt_zerofill.fst`), R15 (rigenerare 4 CSV `wcb_collapsed*` con nobs post-singleton,
+richiede rilancio bootstrap WCB). R16 (commit di consolidamento) non è una regressione, solo
+decisione utente.
+
+**Decisione utente:** spostarsi su Windows per la prossima sessione. Nessun fix applicato ancora.
+
+## 2026-08-18 — Audit completo di `New/` + risposte alle 26 domande + roadmap (Mac, Fable 5)
+
+Audit richiesto via `/audit` su tutta la nuova versione (dati, elaborazioni, codici, disegno,
+inferenza, interpretazione), piu' 26 domande dell'utente sul draft. Nessuna stima prodotta
+(Mac non canonico, dataset stantio — regola rispettata): audit statico + verifica dei numeri
+del paper contro i CSV versionati. **Tutti i numeri di testata si riproducono** (tab:main
+completa, F congiunti, WCB full/collapsed, permutazione, pddt a 8 cifre, nota APEC, Brandi).
+
+**Verdetto: CONDITIONAL PASS** — nessun critico, 4 warning tutti di scrittura/automazione:
+(W1) la frase «no weighting is by any post-treatment outcome» e' imprecisa (i pesi n sono
+contemporanei; la difesa giusta e' l'equivalenza algebrica col micro); (W2) footnote APEC:
+flip di segno e SE raddoppiati valgono solo per WB, non TREND; (W3) le tabelle del draft sono
+ancora trascritte a mano (pending `\input{}` dall'11/08); (W4) tensione ATT
+estimando/stimatore in §3.2. Note: «one fifth» vs 1/4 (rapporto vero 0.226); conteggio green
+247/248 incoerente (vero: 248, match 246/248, split 871411/871419); citazione mancante per le
+control-group batteries; nessun trimming/winsorizing in tutta la pipeline (scelta coerente ma
+non dichiarata nel paper — lo script 13 misura soltanto gli outlier UV p1/p99).
+
+**Tre documenti prodotti** in `correspondence/audit/`:
+`2026-08-18_audit_report.md`, `2026-08-18_risposte_26_domande.md` (tutte e 26, verificate su
+codice/CSV — tra cui: permutazione = EP+TD permutati INSIEME solo tra i 23 trattati; ~9
+profili distinti → p-value granulari; collapsed ≡ micro a parita' di FE; gap dirty 2,7x =
+between-firm; pddt in `tripledd_full_pddt.csv` senza tabella), e
+`2026-08-18_roadmap_soluzioni.md` (R1-R16 con testo pronto, file e verifiche; 🛑 = decisioni
+utente). Nessun file di `New/` modificato. Nessun commit.
+
 ## 2026-08-17 (2) — RISOLTO: builder di ppml_agg_pdt_zerofill.fst ritrovato e ricostruito (Windows, Opus 4.8)
 
 Chiuso il pendente della voce sotto (input orfano del PPML con zeri). **Il builder non esisteva
