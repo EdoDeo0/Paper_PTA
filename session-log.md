@@ -1,5 +1,54 @@
 # Session Log — Paper_PTA
 
+## 2026-08-21 (2) — N3 chiuso: nota troncata ptab_main riparata (Mac, Sonnet 4.6)
+
+**N3 applicato e verificato.**
+Fix a una riga in `New/Code/44_make_tables_tex.R` r.1275: `wcb_c$nobs[1]` → `wcb_c$nobs_pre[1]`
+(causa: R15 aveva rinominato la colonna; `sprintf` riceveva `numeric(0)` → riga sparita in silenzio).
+Script rilanciato (0 errori, 19 tabelle + 5 frammenti ok). Verifica: `grep "TREND). Collapsed panel"
+fragments/ptab_main.tex` → 1 occorrenza. PDF ricompilato in 2 passate pdflatex, 0 errori.
+
+**Aperti:** N1 (Windows, CRITICO — guardia FW in 46/47 + rerun WCB corrotti), N2+N4b (testo, dopo N1),
+N5/N6 (igiene Windows), 🛑 R10/R12/abstract-Brandi.
+
+---
+
+## 2026-08-21 — Audit completo post-roadmap + risposte 26 domande + roadmap N1-N7 (Mac, Fable 5)
+
+Rieseguito `/audit` sull'intera `New/` nello stato post-fix R1–R15 (commit sincronizzati,
+working tree pulito → R16 chiuso). Audit statico, nessuna stima su Mac (regola rispettata).
+Le 26 domande sono quelle del 18/08 (non rielencate nel messaggio): risposte riverificate
+sullo stato attuale.
+
+**Verdetto: CONDITIONAL PASS.** Il paper si riproduce integralmente (ptab_main/pddt/robust/
+depthbounds/stability verificati contro i CSV; fix R1–R11 tutti presenti nel draft). Ma:
+
+**1 CRITICO (confinato a output non ancora nel paper):** i worker WCB di `46_robustness_trim.R`
+e `47_outcome_decomposition.R` NON hanno la guardia d'identità Frisch–Waugh (presente in
+16/22/27/29/31) e il bug noto di corruzione silenziosa ha colpito **3 blocchi su 12** (tutti
+TREND): `wcb_trimmed_collapsed` (TREND), `wcb_decomp_collapsed` (uv/TREND),
+`wcb_decomp_fullpanel` (qua/TREND) — coefficienti WCB ≠ asintotici (es. uv/TREND: −0.000116
+nel WCB contro −0.015074 vero). **La conclusione del log 20/08 «TREND×uv svanisce col WCB
+(p=0.17/0.87)» è NON supportata**: quei p testano la regressione sbagliata. I blocchi WB
+coincidono a ≥12 cifre (trim dirty p_wcb 0.0398 collassato probabilmente valido, da
+riconfermare). Fix: guardia FW + guardia anti-stale + rerun WCB su Windows (roadmap N1).
+
+**2 WARNING:** (W1) nota di `ptab_main.tex` troncata nel PDF — causa: `44_make_tables_tex.R`
+r.~1275 legge `wcb_c$nobs[1]`, colonna rinominata da R15 in `nobs_pre` → sprintf a lunghezza
+zero → riga sparita in silenzio (fix a una riga, N3, fattibile su Mac); (W2) il trimming è
+stato calcolato ma il paper dice ancora solo «no trimming» — e il risultato RAFFORZA il dirty
+(p_wcb 0.073→0.040): da dichiarare nel paper dopo il rerun (N2, testo pronto, 🛑 framing).
+
+**Tre documenti prodotti** in `correspondence/audit/`: `2026-08-21_audit_report.md`,
+`2026-08-21_risposte_26_domande.md`, `2026-08-21_roadmap_soluzioni.md` (N1–N7 dettagliati).
+Aggiunta voce a `MISTAKES.md` (guardia FW omessa in script nuovi). Nessun file di `New/`
+modificato. Nessun commit.
+
+**Aperti:** N1 (Windows, critico), N2+N4b (testo, dopo N1), N3 (Mac, 15 min), N5/N6 (igiene),
+🛑 R10/R12/abstract-Brandi.
+
+---
+
 ## 2026-08-20 (3) — Roadmap testuale completata: R8 + verifica R1–R11 (Windows, Sonnet 4.6)
 
 **Verifica sistematica dei fix testuali della roadmap `2026-08-18_roadmap_soluzioni.md`:**

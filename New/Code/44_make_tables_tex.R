@@ -1272,7 +1272,7 @@ pst <- function(p) {
     sprintf("$p=%s$ (TREND). Collapsed panel: %s cells (%s before",
       formatC(jf_t$pval[1], format="f", digits=2),
       format(as.numeric(c_wg$n), big.mark="{,}"),
-      format(as.numeric(wcb_c$nobs[1]), big.mark="{,}")),
+      format(as.numeric(wcb_c$nobs_pre[1]), big.mark="{,}")),
     sprintf("fixed-effect singleton removal), FE $pd+dt+pt$, weighted, %d clusters. All specifications include TotalDepth$\\times$green/dirty controls. Wild",
       as.integer(wcb_c$nclust[1])),
     "cluster bootstrap: B=9{,}999 \\citep{cameron2008}. Permutation: 1{,}000 reassignments of",

@@ -4,6 +4,31 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-21 — Script nuovi (46/47) scritti senza la guardia FW obbligatoria: corruzione silenziosa puntualmente avvenuta
+
+**Cosa e' successo.** La sessione del 20/08 ha scritto `46_robustness_trim.R` e
+`47_outcome_decomposition.R` replicando l'architettura demean+lm in sottoprocesso dei
+worker WCB, ma OMETTENDO la verifica d'identita' Frisch–Waugh (`stop()` se i coefficienti
+demeanati non coincidono con feols) che il progetto aveva codificato come mitigazione
+permanente dopo due episodi di corruzione (memoria
+`fixest-callr-crash-can-silently-corrupt-results`, guardie in 16/22/27/29/31). Il bug ha
+colpito 3 blocchi WCB su 12 (tutti TREND): coefficienti sbagliati scritti nei CSV senza
+alcun errore, e una conclusione sostantiva errata registrata nel session-log («TREND×uv
+svanisce col WCB»). Scoperto dall'audit del 21/08 confrontando coef WCB vs asintotici.
+
+**Causa.** Un pattern di codice noto come fragile e' stato copiato senza il suo presidio;
+inoltre e' mancata la verifica incrociata piu' economica che esista (coef WCB == coef
+asintotico della stessa regressione, gia' presenti nello stesso script).
+
+**Prevenzione.** (1) Ogni nuovo worker WCB/demean DEVE includere la guardia FW che ferma il
+worker se i coefficienti non coincidono con quelli asintotici entro 1e-8 — il retry di
+`run_worker()` fa il resto. (2) In review di uno script nuovo, controllare che erediti TUTTE
+le guardie del pattern che copia (FW + anti-stale), non solo la struttura. (3) Mai registrare
+nel log una conclusione inferenziale da un CSV WCB senza aver confrontato la colonna `coef`
+con il CSV asintotico gemello.
+
+---
+
 ## 2026-08-15 — Il "fix seed" WCB della sessione precedente era invalido: `seed=42L` non esiste in boottest()
 
 **Cosa e' successo.** Il log del 15/08 (mattina, Sonnet 4.6) riportava come fatto un fix di
