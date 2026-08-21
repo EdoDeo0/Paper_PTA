@@ -6,7 +6,7 @@
 ##              (in New/_legacy/code/). Run: ~2 min (legge il pannello raw
 ##              una volta, via callr, in sola lettura).
 ##
-## Cosa fa: la lista dei prodotti "verdi" (Data/Env_Codes_HS.dta, 247 codici,
+## Cosa fa: la lista dei prodotti "verdi" (Data/Env_Codes_HS.dta, 248 codici,
 ## nativa HS2012) va usata contro un pannello che il fornitore dichiara
 ## HS1996. Questo script la traduce UNA VOLTA a HS1996 (non blocco-per-anno:
 ## la concordanza per-blocco fu abbandonata, vedi _legacy/code/03_hs_concordance.R,
@@ -16,7 +16,7 @@
 ##
 ## Nota storica (bug A2, fix integrato qui): la prima versione del continuity
 ## check (03b) filtrava il pannello sul codice ORIGINALE HS2012, non sul
-## codice HS1996 tradotto (hs6_final) — per i 10/247 codici dove i due
+## codice HS1996 tradotto (hs6_final) — per i 10/248 codici dove i due
 ## differiscono, il check verificava la continuita' del codice sbagliato.
 ## Qui il filtro e' su hs6_final fin dall'inizio: un solo continuity check,
 ## corretto, non due passaggi separati.

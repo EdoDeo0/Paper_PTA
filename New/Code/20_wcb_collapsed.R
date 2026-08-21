@@ -101,7 +101,7 @@ for (tr_name in c("WB", "TREND")) {
       res[[paste(tr_name, param)]] <- data.table(
         treat = tr_name, term = param, coef = coef(m_lm)[[param]],
         p_wcb = bt$p_val, conf_low = bt$conf_int[1], conf_high = bt$conf_int[2], B = 9999L,
-        nobs = nrow(df), nclust = uniqueN(df$country_code), fe = "pd+dt+pt")
+        nobs_pre = nrow(df), nclust = uniqueN(df$country_code), fe = "pd+dt+pt")
     }
   }
   rm(m_lm, df)
@@ -109,6 +109,14 @@ for (tr_name in c("WB", "TREND")) {
 }
 
 out <- rbindlist(res)
+TRIPLEDD_FILE <- out_path(here("New/Output/TripleDiff/Tables/tripledd_collapsed.csv"))
+if (file.exists(TRIPLEDD_FILE)) {
+  td <- fread(TRIPLEDD_FILE)
+  nobs_map <- td[, .(nobs_post = first(nobs)), by = treat]
+  out[nobs_map, on = "treat", nobs_post := i.nobs_post]
+} else {
+  cat("[WARN] tripledd_collapsed.csv non trovato — nobs_post non aggiunto\n")
+}
 fwrite(out, OUT_FILE)
 cat("\n[OK] wcb_collapsed.csv\n")
 print(out)

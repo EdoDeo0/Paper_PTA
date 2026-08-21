@@ -6,12 +6,12 @@
 ## marcando i 54 codici che compaiono anche nella APEC Environmental Goods
 ## List (2012 Vladivostok Declaration, Annex C - via Sauvage 2014, Table A.1,
 ## colonna APEC). Verificato: tutti e 54 i codici HS2007 dell'APEC EGL
-## compaiono nella nostra lista OECD Combined List (247 codici, HS1996) -
+## compaiono nella nostra lista OECD Combined List (248 codici, HS1996) -
 ## nessuna conversione extra necessaria (441872/HS2007 -> 441830/HS1996 gia'
 ## presente nel file di concordanza).
 ##
 ## Ristima la spec principale (collapsed panel) usando SOLO i prodotti
-## APEC-green come margine "green", invece dei 247 codici OECD completi -
+## APEC-green come margine "green", invece dei 248 codici OECD completi -
 ## check di robustezza sulla classificazione: se il null regge anche sui
 ## prodotti su cui c'e' consenso politico multilaterale esplicito, la
 ## classificazione piu' ampia non puo' essere accusata di rumore.
@@ -118,13 +118,13 @@ tri_main <- fread(here("New/Output/TripleDiff/Tables/tripledd_collapsed.csv"))
 md <- c(
 "# 8.10 — APEC EGL subsample: nota di classificazione",
 "",
-"54 codici HS (dei 247 della OECD Combined List usata nel paper) marcati come",
+"54 codici HS (dei 248 della OECD Combined List usata nel paper) marcati come",
 "appartenenti anche alla APEC Environmental Goods List (2012 Vladivostok",
 "Declaration, Annex C; fonte: Sauvage, J. (2014), \"The Stringency of",
 "Environmental Regulations and Trade in Environmental Goods\", OECD Trade and",
 "Environment Working Paper 2014/03, Table A.1, colonna APEC).",
 "",
-sprintf("Colonna `apec_egl` aggiunta a `green_codes_hs1996.csv` (%d/%d = 54/247 codici).",
+sprintf("Colonna `apec_egl` aggiunta a `green_codes_hs1996.csv` (%d/%d = 54/248 codici).",
         sum(green$apec_egl), nrow(green)),
 "",
 sprintf("Nel panel collassato: prodotti APEC-green = **%.2f%%** delle celle (contro %.1f%% per la lista OECD completa).",
@@ -132,7 +132,7 @@ sprintf("Nel panel collassato: prodotti APEC-green = **%.2f%%** delle celle (con
 "",
 "## Confronto: lista completa vs sottoinsieme APEC EGL",
 "",
-"| | Lista completa OECD (247 codici, spec principale) | Sottoinsieme APEC EGL (54 codici) |",
+"| | Lista completa OECD (248 codici, spec principale) | Sottoinsieme APEC EGL (54 codici) |",
 "|---|---:|---:|",
 sprintf("| WB x green | %.4f (se %.4f, p=%.3f) | %.4f (se %.4f, p=%.3f) |",
         tri_main[treat=="WB" & term=="WB_EP_Depth:env_good", coef],
@@ -153,7 +153,7 @@ sprintf("| TREND x green | %.4f (se %.4f, p=%.3f) | %.4f (se %.4f, p=%.3f) |",
 "",
 "Il null regge anche restringendo il margine green ai 54 prodotti su cui esiste",
 "consenso politico multilaterale esplicito (APEC 2012): la classificazione piu'",
-"ampia (247 codici OECD) non puo' essere accusata di introdurre rumore che",
+"ampia (248 codici OECD) non puo' essere accusata di introdurre rumore che",
 "nasconde un effetto reale. Come atteso, il campione ridotto (~79% in meno di",
 "prodotti green) produce SE piu' ampi - il check e' di segno/direzione, non di",
 "maggiore precisione.",

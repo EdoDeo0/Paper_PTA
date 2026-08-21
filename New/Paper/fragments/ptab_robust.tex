@@ -1,0 +1,23 @@
+\small
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+Variation & Obs. & EP$\times$green ($p$) & EP$\times$dirty ($p$) \\
+\midrule
+Baseline & 21.5M & $-0.0023$ (0.57) & $-0.0044$ (0.052) \\
+With controls & 19.3M & $-0.0002$ (0.94) & $-0.0060$ (0.022) \\
+Excluding ASEAN & 19.2M & $-0.0025$ (0.48) & $-0.0044$ (0.051) \\
+Including HK--Macao & 23.6M & $-0.0009$ (0.80) & $-0.0041$ (0.094) \\
+Common support & 21.5M & $-0.0022$ (0.57) & $-0.0044$ (0.052) \\
+\midrule
+PPML, zero-filled grid & 7.9M cells & $+0.0015$ (0.74) & $-0.0301$ (0.06) \\
+Within-firm green share & 13.3M & \multicolumn{2}{c}{$-0.0001$ (0.50)} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Asymptotic destination-clustered p-values in parentheses; the dirty column's
+marginal significance does not survive wild cluster bootstrap, permutation, or
+leave-one-out inference (Section~\ref{sec:dirty}). Controls: ln(1+MFN tariff), ln HHI,
+antidumping indicator.
+\end{tablenotes}
+\end{threeparttable}

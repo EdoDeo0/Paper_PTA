@@ -1129,4 +1129,380 @@ get_coll <- function(sfx, tr) {
   }
 }
 
-cat("\n=== Fatto. File generati in", OUT, "===\n")
+########################################################################
+## ═══════════════════════════════════════════════════════════════════
+## PAPER-FORMAT FRAGMENTS (English, draft_paper.tex layout)
+## Output: New/Paper/fragments/ptab_*.tex
+## These are \input{}-ready: they contain the inner tabular+notes,
+## NOT the table/caption/label wrapper (that stays in the draft).
+## ═══════════════════════════════════════════════════════════════════
+FRAG <- file.path(ROOT, "New/Paper/fragments")
+dir.create(FRAG, recursive = TRUE, showWarnings = FALSE)
+wr_frag <- function(lines, file) {
+  writeLines(lines, file.path(FRAG, file))
+  cat("[ok] fragment:", file, "\n")
+}
+cat("\n=== Generazione frammenti paper in", FRAG, "===\n")
+
+## helpers for paper format (4-decimal, sign-preserving)
+pfmt <- function(x, d = 4) {
+  x <- as.numeric(x)
+  s <- formatC(abs(x), format = "f", digits = d)
+  ifelse(x >= 0, paste0("$+", s, "$"), paste0("$-", s, "$"))
+}
+pfmt_se <- function(x, d = 4) paste0("(", formatC(as.numeric(x), format="f", digits=d), ")")
+pfmt_p  <- function(p) {
+  p <- as.numeric(p)
+  ifelse(p < 0.001, "$<$0.001", formatC(p, format = "f", digits = 2))
+}
+pfmt_p3  <- function(p) {
+  p <- as.numeric(p)
+  ifelse(p < 0.001, "$<$0.001", formatC(p, format = "f", digits = 3))
+}
+pfmt_n <- function(x) {
+  x <- as.numeric(x)
+  ifelse(x >= 1e6, paste0(formatC(x/1e6, format="f", digits=1), "M"),
+    formatC(x, format="d", big.mark=","))
+}
+pst <- function(p) {
+  p <- as.numeric(p)
+  ifelse(is.na(p), "",
+    ifelse(p < 0.001, "\\sym{***}",
+      ifelse(p < 0.01, "\\sym{**}",
+        ifelse(p < 0.05, "\\sym{*}", ""))))
+}
+
+########################################################################
+## PTAB 1 — tab:main  (triple-diff main results)
+########################################################################
+{
+  coll <- rd(file.path(DIR_T, "tripledd_collapsed.csv"))
+  full <- rd(file.path(DIR_T, "tripledd_full_reghdfe.csv"))
+  wcb_c <- rd(file.path(DIR_T, "wcb_collapsed.csv"))
+  wcb_f <- rd(file.path(ROOT, "New/Output/OLS/Bootstrap/wcb_fullpanel.csv"))
+  perm  <- rd(file.path(DIR_T, "r710_permutation_summary.csv"))
+  jf    <- rd(file.path(DIR_T, "joint_F_fullpanel.csv"))
+
+  gf <- function(var_name, treat) {
+    r <- full[full$var == var_name & full$treat == treat, ]
+    if (!nrow(r)) return(list(b=NA, se=NA, p=NA, n=NA))
+    list(b=r$coef[1], se=r$stderr[1], p=r$pval[1], n=r$N[1])
+  }
+  gc <- function(term_name, treat) {
+    r <- coll[coll$term == term_name & coll$treat == treat, ]
+    if (!nrow(r)) return(list(b=NA, se=NA, p=NA, n=NA))
+    list(b=r$coef[1], se=r$se[1], p=r$pval[1], n=r$nobs[1])
+  }
+  gwf <- function(spec) {
+    r <- wcb_f[wcb_f$spec == spec, ]
+    if (!nrow(r)) return(list(p=NA, lo=NA, hi=NA))
+    list(p=r$p_wcb[1], lo=r$ci_low[1], hi=r$ci_high[1])
+  }
+  gwc <- function(term_name, treat) {
+    r <- wcb_c[wcb_c$term == term_name & wcb_c$treat == treat, ]
+    if (!nrow(r)) return(list(p=NA, lo=NA, hi=NA))
+    list(p=r$p_wcb[1], lo=r$conf_low[1], hi=r$conf_high[1])
+  }
+  gpm <- function(treat) {
+    r <- perm[perm$treat == treat, ]
+    if (!nrow(r)) return(list(pg=NA, pd=NA))
+    list(pg=r$p_perm_green[1], pd=r$p_perm_dirty[1])
+  }
+
+  f_wg <- gf("wb_green","WB"); f_wd <- gf("wb_dirty","WB")
+  f_tg <- gf("tr_green","TREND"); f_td <- gf("tr_dirty","TREND")
+  c_wg <- gc("WB_EP_Depth:env_good","WB"); c_wd <- gc("WB_EP_Depth:dirty_p","WB")
+  c_tg <- gc("TREND_EP_Count:env_good","TREND"); c_td <- gc("TREND_EP_Count:dirty_p","TREND")
+  wf_wg <- gwf("WB_green"); wf_wd <- gwf("WB_dirty")
+  wf_tg <- gwf("TREND_green"); wf_td <- gwf("TREND_dirty")
+  wc_wg <- gwc("ep_green","WB"); wc_wd <- gwc("ep_dirty","WB")
+  wc_tg <- gwc("ep_green","TREND"); wc_td <- gwc("ep_dirty","TREND")
+  pm_w <- gpm("WB"); pm_t <- gpm("TREND")
+
+  ci_fmt <- function(lo, d=3) {
+    paste0("$[", formatC(as.numeric(lo), format="f", digits=d), ",$ ")
+  }
+  ci_fmt2 <- function(hi, d=3) {
+    paste0("$", ifelse(as.numeric(hi)>=0,"+",""), formatC(as.numeric(hi), format="f", digits=d), "]$")
+  }
+
+  jf_w <- jf[jf$treat=="WB",]; jf_t <- jf[jf$treat=="TREND",]
+
+  L <- c(
+    "\\small", "\\begin{threeparttable}",
+    "\\begin{tabular}{lcccc}", "\\toprule",
+    " & \\multicolumn{2}{c}{WB EP depth} & \\multicolumn{2}{c}{TREND EP count} \\\\",
+    "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}",
+    " & $\\times$ green & $\\times$ dirty & $\\times$ green & $\\times$ dirty \\\\",
+    "\\midrule",
+    sprintf("\\textbf{Full panel} (reghdfe) & %s & %s & %s & %s \\\\",
+      pfmt(f_wg$b), pfmt(f_wd$b), pfmt(f_tg$b), pfmt(f_td$b)),
+    sprintf(" & %s & %s & %s & %s \\\\",
+      pfmt_se(f_wg$se), pfmt_se(f_wd$se), pfmt_se(f_tg$se), pfmt_se(f_td$se)),
+    sprintf("\\quad asymptotic $p$ & %s & %s & %s & %s \\\\",
+      pfmt_p(f_wg$p), pfmt_p3(f_wd$p), pfmt_p(f_tg$p), pfmt_p(f_td$p)),
+    sprintf("\\quad wild cluster bootstrap $p$ & %s & %s & %s & %s \\\\",
+      pfmt_p(wf_wg$p), pfmt_p(wf_wd$p), pfmt_p(wf_tg$p), pfmt_p(wf_td$p)),
+    sprintf("\\quad bootstrap 95\\%% CI & %s & %s & %s & %s \\\\",
+      ci_fmt(wf_wg$lo,3), ci_fmt(wf_wd$lo,3), ci_fmt(wf_tg$lo,4), ci_fmt(wf_td$lo,4)),
+    sprintf(" & %s & %s & %s & %s \\\\",
+      ci_fmt2(wf_wg$hi,3), ci_fmt2(wf_wd$hi,3), ci_fmt2(wf_tg$hi,4), ci_fmt2(wf_td$hi,4)),
+    "\\addlinespace",
+    sprintf("\\textbf{Collapsed panel} & %s%s & %s%s & %s & %s \\\\",
+      pfmt(c_wg$b), "", pfmt(c_wd$b), pst(c_wd$p), pfmt(c_tg$b), pfmt(c_td$b)),
+    sprintf(" & %s & %s & %s & %s \\\\",
+      pfmt_se(c_wg$se), pfmt_se(c_wd$se), pfmt_se(c_tg$se), pfmt_se(c_td$se)),
+    sprintf("\\quad asymptotic $p$ & %s & %s & %s & %s \\\\",
+      pfmt_p(c_wg$p), pfmt_p(c_wd$p), pfmt_p(c_tg$p), pfmt_p(c_td$p)),
+    sprintf("\\quad wild cluster bootstrap $p$ & %s & %s & %s & %s \\\\",
+      pfmt_p(wc_wg$p), pfmt_p(wc_wd$p), pfmt_p(wc_tg$p), pfmt_p(wc_td$p)),
+    sprintf("\\quad bootstrap 95\\%% CI & %s & %s & %s & %s \\\\",
+      ci_fmt(wc_wg$lo,3), ci_fmt(wc_wd$lo,3), ci_fmt(wc_tg$lo,4), ci_fmt(wc_td$lo,4)),
+    sprintf(" & %s & %s & %s & %s \\\\",
+      ci_fmt2(wc_wg$hi,3), ci_fmt2(wc_wd$hi,3), ci_fmt2(wc_tg$hi,4), ci_fmt2(wc_td$hi,4)),
+    sprintf("\\quad permutation $p$ & %s & %s & %s & %s \\\\",
+      pfmt_p(pm_w$pg), pfmt_p(pm_w$pd), pfmt_p(pm_t$pg), pfmt_p(pm_t$pd)),
+    "\\bottomrule", "\\end{tabular}",
+    "\\begin{tablenotes}\\footnotesize",
+    sprintf("\\item Full panel: %s obs.\\ after iterative singleton removal, FE",
+      format(as.numeric(f_wg$n), big.mark="{,}")),
+    sprintf("$fpd+fdt+pt$, %d destination clusters; joint F on the four interactions: $p=%s$ (WB),",
+      as.integer(full[full$var=="wb_green" & full$treat=="WB", "nclust"][1]),
+      formatC(jf_w$pval[1], format="f", digits=2)),
+    sprintf("$p=%s$ (TREND). Collapsed panel: %s cells (%s before",
+      formatC(jf_t$pval[1], format="f", digits=2),
+      format(as.numeric(c_wg$n), big.mark="{,}"),
+      format(as.numeric(wcb_c$nobs[1]), big.mark="{,}")),
+    sprintf("fixed-effect singleton removal), FE $pd+dt+pt$, weighted, %d clusters. All specifications include TotalDepth$\\times$green/dirty controls. Wild",
+      as.integer(wcb_c$nclust[1])),
+    "cluster bootstrap: B=9{,}999 \\citep{cameron2008}. Permutation: 1{,}000 reassignments of",
+    "entire EP profiles across treated destinations, re-estimated on the exact collapsed",
+    "specification of this table; p-values are the share of placebo assignments producing a",
+    "larger absolute coefficient. A coarser variant on a destination--year--product-type",
+    "aggregate gives $p=0.40$ for green and reverses the dirty sign ($+0.005$, $p=0.49$): both",
+    "versions leave the dirty coefficient indistinguishable from its placebo distribution;",
+    "Section~\\ref{sec:dirty} discusses the sign reversal under aggregation. Bootstrap",
+    "intervals, not asymptotic ones, are the basis for every magnitude claim in the text: with",
+    "23 treated clusters the asymptotic intervals are roughly six times too narrow",
+    "(Section~\\ref{sec:strategy}). \\sym{*} $p<0.05$,",
+    "\\sym{**} $p<0.01$, \\sym{***} $p<0.001$ (asymptotic only; does not survive wild cluster",
+    "bootstrap or permutation inference --- see text).",
+    "\\end{tablenotes}", "\\end{threeparttable}")
+  wr_frag(L, "ptab_main.tex")
+}
+
+########################################################################
+## PTAB 2 — tab:stability  (EP×green across designs)
+########################################################################
+{
+  stab <- rd(file.path(DIR_T, "tripledd_stability.csv"))
+  full_wb <- full[full$var == "wb_green" & full$treat == "WB", ]
+
+  rows <- list(
+    list(lab = "Full panel (firm level)",
+         n   = pfmt_n(full_wb$N[1]),
+         b   = pfmt(full_wb$coef[1]),
+         p   = pfmt_p(full_wb$pval[1])),
+    list(lab = "Collapsed panel",
+         n   = paste0(pfmt_n(coll[coll$treat=="WB" & coll$term=="WB_EP_Depth:env_good","nobs"]), " cells"),
+         b   = pfmt(coll[coll$treat=="WB" & coll$term=="WB_EP_Depth:env_good","coef"]),
+         p   = pfmt_p(coll[coll$treat=="WB" & coll$term=="WB_EP_Depth:env_good","pval"]))
+  )
+
+  stab_groups <- list(
+    list(csv_group = "prodHS4",   lab = "C-prod-HS4 (within green HS4 families)"),
+    list(csv_group = "cem_v1",    lab = "CEM-matched destinations"),
+    list(csv_group = "deepshallow", lab = "Deep vs.\\ shallow (PTA partners only)")
+  )
+  for (sg in stab_groups) {
+    r <- stab[stab$group == sg$csv_group & stab$treat == "WB" &
+              stab$term == "WB_EP_Depth:env_good", ]
+    if (nrow(r)) {
+      rows <- c(rows, list(list(lab=sg$lab, n=pfmt_n(r$nobs[1]),
+                                b=pfmt(r$coef[1]), p=pfmt_p(r$pval[1]))))
+    }
+  }
+
+  rob <- rd(file.path(DIR_T, "tripledd_robustness_reghdfe.csv"))
+  rob_overlap <- rob[rob$model == "D_WB_overlap" & rob$var == "wb_green", ]
+  rob_ctrl    <- rob[rob$model == "A_WB_controls" & rob$var == "wb_green", ]
+  rob_noasean <- rob[rob$model == "B_WB_noASEAN"  & rob$var == "wb_green", ]
+  rob_hkmo    <- rob[rob$model == "C_WB_inclHKMO" & rob$var == "wb_green", ]
+
+  rows <- c(rows, list(
+    list(lab="Common support (C-overlap)", n=pfmt_n(rob_overlap$N[1]),
+         b=pfmt(rob_overlap$coef[1]), p=pfmt_p(rob_overlap$pval[1])),
+    list(lab="Full panel, with controls", n=pfmt_n(rob_ctrl$N[1]),
+         b=pfmt(rob_ctrl$coef[1]), p=pfmt_p(rob_ctrl$pval[1])),
+    list(lab="Full panel, excluding ASEAN", n=pfmt_n(rob_noasean$N[1]),
+         b=pfmt(rob_noasean$coef[1]), p=pfmt_p(rob_noasean$pval[1])),
+    list(lab="Full panel, including HK--Macao", n=pfmt_n(rob_hkmo$N[1]),
+         b=pfmt(rob_hkmo$coef[1]), p=pfmt_p(rob_hkmo$pval[1]))
+  ))
+
+  L <- c("\\small", "\\begin{threeparttable}",
+    "\\begin{tabular}{lccc}", "\\toprule",
+    "Design & Effective sample & EP$\\times$green & $p$ \\\\", "\\midrule")
+  for (r in rows) {
+    L <- c(L, sprintf("%s & %s & %s & %s \\\\", r$lab, r$n, r$b, r$p))
+  }
+  L <- c(L, "\\bottomrule", "\\end{tabular}",
+    "\\begin{tablenotes}\\footnotesize",
+    "\\item Each row estimates equation~\\eqref{eq:main} on the indicated subsample;",
+    "destination-clustered s.e. CEM match on log GDP p.c., growth, MFN tariff (year 2000).",
+    "Deep/shallow split at the median of maximum EP depth (16 deep vs.\\ 9 shallow countries",
+    "in the estimation sample, which excludes Hong Kong and Macao).",
+    "The common-support restriction is reported for completeness rather than as an",
+    "independent test: 98.5\\% of HS6 products are exported both to treated and to",
+    "never-treated destinations, so it removes 314 of 21.5 million observations and reproduces",
+    "the full panel almost exactly. Its value is in showing that extrapolation outside common",
+    "support is not an issue here, not in providing a distinct estimate.",
+    "TREND-index analogues (where estimated) give the same picture: full panel $-0.0001$",
+    "($p=0.91$), common support $-0.0001$ ($p=0.91$), deep vs.\\ shallow $-0.0004$ ($p=0.72$).",
+    "Controls: MFN tariff, market concentration (HHI), antidumping indicator.",
+    "\\end{tablenotes}", "\\end{threeparttable}")
+  wr_frag(L, "ptab_stability.tex")
+}
+
+########################################################################
+## PTAB 3 — tab:depthbounds  (EP×green under alternative depth controls)
+########################################################################
+{
+  nodepth  <- rd(file.path(DIR_T, "tripledd_collapsed_nodepth.csv"))
+  baseline <- coll
+  targeted <- rd(file.path(DIR_T, "tripledd_collapsed_targeted.csv"))
+  desta    <- rd(file.path(DIR_T, "tripledd_collapsed_desta.csv"))
+
+  get_wb_green <- function(d, term_name) {
+    r <- d[d$treat == "WB" & d$term == term_name, ]
+    if (!nrow(r)) return(list(b=NA, se=NA, p=NA))
+    list(b=r$coef[1], se=r$se[1], p=r$pval[1])
+  }
+  ci_asym <- function(b, se) {
+    lo <- as.numeric(b) - 1.96 * as.numeric(se)
+    hi <- as.numeric(b) + 1.96 * as.numeric(se)
+    sprintf("$[%s,\\ %s%s]$",
+      formatC(lo, format="f", digits=4),
+      ifelse(hi>=0, "+", ""),
+      formatC(hi, format="f", digits=4))
+  }
+
+  r_none <- get_wb_green(nodepth, "WB_EP_Depth:env_good")
+  r_base <- get_wb_green(baseline, "WB_EP_Depth:env_good")
+  r_targ <- get_wb_green(targeted, "WB_EP_Depth:env_good")
+  r_dest <- get_wb_green(desta, "WB_EP_Depth:env_good")
+
+  L <- c("\\small", "\\begin{threeparttable}",
+    "\\begin{tabular}{lcc}", "\\toprule",
+    "Depth control & EP$\\times$green & 95\\% CI \\\\", "\\midrule",
+    sprintf("None & %s & %s \\\\", pfmt(r_none$b), ci_asym(r_none$b, r_none$se)),
+    sprintf("\\texttt{TotalDepth} aggregate (17 areas) --- \\emph{main specification} & %s & %s \\\\",
+      pfmt(r_base$b), ci_asym(r_base$b, r_base$se)),
+    sprintf("\\texttt{TotalDepth} targeted (14 areas) & %s & %s \\\\",
+      pfmt(r_targ$b), ci_asym(r_targ$b, r_targ$se)),
+    sprintf("DESTA index (independent source) & %s & %s \\\\",
+      pfmt(r_dest$b), ci_asym(r_dest$b, r_dest$se)),
+    "\\bottomrule", "\\end{tabular}",
+    "\\begin{tablenotes}\\footnotesize",
+    "\\item Collapsed panel, fixed effects $pd+dt+pt$, weighted by cell size, destination-clustered.",
+    "Asymptotic intervals. The targeted control drops the three WB areas that do not correlate",
+    "with EP depth (labour-market regulation, which has zero variance in Chinese agreements;",
+    "visa and asylum; subsidies). DESTA covers seven policy areas coded independently of the",
+    "World Bank instrument and excludes environmental provisions by construction, which is why",
+    "it lowers the VIF from 5.7 to 1.9.",
+    "\\end{tablenotes}", "\\end{threeparttable}")
+  wr_frag(L, "ptab_depthbounds.tex")
+}
+
+########################################################################
+## PTAB 4 — tab:robust  (sample robustness, full panel)
+########################################################################
+{
+  ppml <- rd(file.path(DIR_T, "ppml_extensive.csv"))
+  ppml_wg <- ppml[ppml$treat=="WB" & ppml$term=="WB_EP_Depth:env_good", ]
+  ppml_wd <- ppml[ppml$treat=="WB" & ppml$term=="WB_EP_Depth:dirty_p", ]
+  rob_wf  <- rob[rob$model=="G_WB_withinfirm" & rob$var=="WB_EP_Depth", ]
+
+  rob_rows <- list(
+    list(lab="Baseline", m="wb_green", md="wb_dirty", src=full_wb <- full[full$treat=="WB",]),
+    list(lab="With controls", m="A_WB_controls"),
+    list(lab="Excluding ASEAN", m="B_WB_noASEAN"),
+    list(lab="Including HK--Macao", m="C_WB_inclHKMO"),
+    list(lab="Common support", m="D_WB_overlap")
+  )
+
+  L <- c("\\small", "\\begin{threeparttable}",
+    "\\begin{tabular}{lcccc}", "\\toprule",
+    "Variation & Obs. & EP$\\times$green ($p$) & EP$\\times$dirty ($p$) \\\\", "\\midrule")
+
+  full_base_g <- full[full$var=="wb_green" & full$treat=="WB", ]
+  full_base_d <- full[full$var=="wb_dirty" & full$treat=="WB", ]
+  L <- c(L, sprintf("Baseline & %s & %s (%s) & %s (%s) \\\\",
+    pfmt_n(full_base_g$N[1]),
+    pfmt(full_base_g$coef[1]), pfmt_p(full_base_g$pval[1]),
+    pfmt(full_base_d$coef[1]), pfmt_p3(full_base_d$pval[1])))
+
+  for (mdl in c("A_WB_controls", "B_WB_noASEAN", "C_WB_inclHKMO", "D_WB_overlap")) {
+    rg <- rob[rob$model == mdl & rob$var == "wb_green", ]
+    rdd <- rob[rob$model == mdl & rob$var == "wb_dirty", ]
+    lab <- switch(mdl,
+      "A_WB_controls" = "With controls",
+      "B_WB_noASEAN"  = "Excluding ASEAN",
+      "C_WB_inclHKMO" = "Including HK--Macao",
+      "D_WB_overlap"  = "Common support")
+    L <- c(L, sprintf("%s & %s & %s (%s) & %s (%s) \\\\",
+      lab, pfmt_n(rg$N[1]),
+      pfmt(rg$coef[1]), pfmt_p(rg$pval[1]),
+      pfmt(rdd$coef[1]), pfmt_p3(rdd$pval[1])))
+  }
+
+  L <- c(L, "\\midrule",
+    sprintf("PPML, zero-filled grid & %s cells & %s (%s) & %s (%s) \\\\",
+      pfmt_n(ppml_wg$nobs[1]),
+      pfmt(ppml_wg$coef[1]), pfmt_p(ppml_wg$pval[1]),
+      pfmt(ppml_wd$coef[1]), pfmt_p(ppml_wd$pval[1])),
+    sprintf("Within-firm green share & %s & \\multicolumn{2}{c}{%s (%s)} \\\\",
+      pfmt_n(rob_wf$N[1]),
+      pfmt(rob_wf$coef[1]), pfmt_p(rob_wf$pval[1])),
+    "\\bottomrule", "\\end{tabular}",
+    "\\begin{tablenotes}\\footnotesize",
+    "\\item Asymptotic destination-clustered p-values in parentheses; the dirty column's",
+    "marginal significance does not survive wild cluster bootstrap, permutation, or",
+    "leave-one-out inference (Section~\\ref{sec:dirty}). Controls: ln(1+MFN tariff), ln HHI,",
+    "antidumping indicator.",
+    "\\end{tablenotes}", "\\end{threeparttable}")
+  wr_frag(L, "ptab_robust.tex")
+}
+
+########################################################################
+## PTAB 5 — tab:pddt  (pd+dt+pt equivalence diagnostic, appendix)
+########################################################################
+{
+  pddt <- rd(file.path(DIR_T, "tripledd_full_pddt.csv"))
+  if (!is.null(pddt)) {
+    pddt_wg <- pddt[pddt$var=="wb_green" & pddt$treat=="WB_pddt", ]
+    pddt_wd <- pddt[pddt$var=="wb_dirty"  & pddt$treat=="WB_pddt", ]
+
+    L <- c("\\small", "\\begin{threeparttable}",
+      "\\begin{tabular}{lccc}", "\\toprule",
+      " & EP$\\times$green & EP$\\times$dirty & Obs. \\\\", "\\midrule",
+      sprintf("Collapsed panel ($pd+dt+pt$, R) & %s & %s & %s \\\\",
+        pfmt(c_wg$b), pfmt(c_wd$b), pfmt_n(c_wg$n)),
+      sprintf("& %s & %s & \\\\",
+        pfmt_se(c_wg$se), pfmt_se(c_wd$se)),
+      sprintf("Full panel ($pd+dt+pt$, Stata) & %s & %s & %s \\\\",
+        pfmt(pddt_wg$coef[1]), pfmt(pddt_wd$coef[1]), pfmt_n(pddt_wg$N[1])),
+      sprintf("& %s & %s & \\\\",
+        pfmt_se(pddt_wg$stderr[1]), pfmt_se(pddt_wd$stderr[1])),
+      "\\bottomrule", "\\end{tabular}",
+      "\\begin{tablenotes}\\footnotesize",
+      "\\item WB index. Destination-clustered standard errors in parentheses. Both rows",
+      "use FE $pd+dt+pt$. The collapsed-panel estimates (R, cell-count weighted) and the",
+      "full-panel estimates (Stata, unweighted) agree to seven significant figures,",
+      "confirming the algebraic equivalence. The full panel retains the firm dimension.",
+      "\\end{tablenotes}", "\\end{threeparttable}")
+    wr_frag(L, "ptab_pddt.tex")
+  }
+}
+
+cat("\n=== Fatto. File generati in", OUT, "e", FRAG, "===\n")

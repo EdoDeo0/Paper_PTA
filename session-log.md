@@ -1,5 +1,65 @@
 # Session Log — Paper_PTA
 
+## 2026-08-20 (3) — Roadmap testuale completata: R8 + verifica R1–R11 (Windows, Sonnet 4.6)
+
+**Verifica sistematica dei fix testuali della roadmap `2026-08-18_roadmap_soluzioni.md`:**
+tutti gli item da R2 a R11 erano già stati applicati nelle sessioni precedenti. Nessun
+"one fifth", nessun "247" spurio nel draft. Le tabelle stime usano già `\input{fragments/…}`.
+
+**R8 — Tabella pddt con SE (NUOVO):** aggiornato `New/Code/44_make_tables_tex.R` (blocco
+`ptab_pddt`, righe ~1486–1501): aggiunte righe SE in parentesi per collapsed e full panel.
+Rigenerato `New/Paper/fragments/ptab_pddt.tex` con `44_make_tables_tex.R` (0 errori, 5/5
+frammenti ok). Valori: collapsed (0.0070)/(0.0030), full panel (0.0069)/(0.0029).
+
+**Compilazione LaTeX:** MiKTeX installato durante la sessione. Compilato `New/Paper/draft_paper.pdf`
+in 3 passate pdflatex — 0 errori, 0 riferimenti irrisolti, solo warning cosmetici (overfull hbox).
+33 pagine. Path MiKTeX: `%LOCALAPPDATA%\Programs\MiKTeX\miktex\bin\x64\pdflatex.exe`.
+
+**Aperti:** R10 (comprimere §3.1, decisione utente), R12 (Callaway, sospeso), R16
+(commit di consolidamento, decisione utente).
+
+---
+
+## 2026-08-20 (2) — Roadmap computazionale completata: R6b, R13, R14, R15 (Windows, Opus 4.6)
+
+Eseguiti tutti gli item computazionali della roadmap `2026-08-18_roadmap_soluzioni.md`.
+
+**R6b — Trimming robustness (completato in sessione precedente + questa):** script
+`New/Code/46_robustness_trim.R` (architettura worker: ogni feols in processo Rscript separato
+via `system2()`, dati su `.fst` temporaneo). Output: `tripledd_trimmed_collapsed.csv`,
+`tripledd_trimmed_fullpanel.csv`, `wcb_trimmed_collapsed.csv`, `wcb_trimmed_fullpanel.csv`.
+Risultato chiave: trimming RINFORZA il segnale dirty — WCB p passa da ~0.07 (baseline) a
+0.04 (collapsed trimmato).
+
+**R13 — Outcome decomposition (quantità + valore unitario):** script
+`New/Code/47_outcome_decomposition.R`. Bug sprintf corretto (riga 144/247: `%s` nella
+riga `cat(sprintf("WCB %s/%s/..."` consumati dallo sprintf esterno — aggiunti argomenti
+mancanti). Output: `tripledd_decomp_collapsed.csv`, `tripledd_decomp_fullpanel.csv`,
+`wcb_decomp_collapsed.csv`, `wcb_decomp_fullpanel.csv`. Risultato: nessun outcome
+significativo sotto WCB — l'effetto totale non si decompone in quantità né prezzo.
+Nota: TREND×valore unitario mostra coefficienti asintotici altamente significativi
+(p < 1e-7) che svaniscono col WCB (p=0.17/0.87), classico caso di pochi cluster.
+
+**R14 — Rigenerazione `ppml_agg_pdt_zerofill.fst`:** rilanciato `29b_build_ppml_zerofill.R`
+(8.31M celle, 0.8 min). env_good congelata aggiornata a 246 prodotti. Cache `.rds` baseline
+cancellata, `30_robustness_extensive_ppml.R` rilanciato: **invarianza confermata** (coefficienti
+identici a 5 cifre — lo script 30 ricalcola env_good a runtime dai CSV correnti).
+
+**R15 — Uniform nobs nei WCB CSV:** fix in `20_wcb_collapsed.R`: `nobs` rinominato `nobs_pre`,
+aggiunto `nobs_post` letto da `tripledd_collapsed.csv` corrispondente. Rigenerati tutti e 4 i
+`wcb_collapsed*.csv` (excl/totaldepth, incl/totaldepth, excl/desta, incl/desta) con orchestratore
+temporaneo. **p-value identici** (seeding deterministico: `dqrng::dqset.seed(42)`). Baseline:
+WB dirty p_wcb=0.0727, come prima.
+
+**44 — Frammenti LaTeX rigenerati:** 19/19 tabelle + 5 frammenti paper, 0 errori.
+
+**Julia backend:** installato Julia 1.12.7 + JuliaConnectoR, ma `libjulia-internal.dll` bloccata
+da policy Application Control aziendale. Richiede whitelist IT.
+
+**Config finale:** `_sample_config.R` = `excl`/`totaldepth`. Nessun commit.
+
+**Aperti:** R12 (Callaway continuous-dose, sospeso), R16 (commit consolidamento, decisione utente).
+
 ## 2026-08-20 — Rilettura audit 18/08 + smistamento roadmap Mac/Windows (Mac, Sonnet 5)
 
 Ripresa dei tre documenti dell'audit 18/08 (`correspondence/audit/2026-08-18_*`). Nessuna
