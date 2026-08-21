@@ -4,6 +4,30 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-21 — REGOLA PERMANENTE: tutti i risultati full-panel devono essere verificati in Stata
+
+**Cosa e' successo.** R crasha in modo deterministico sul full panel (44M osservazioni) per
+TREND × WCB: tutti gli 8 tentativi del worker hanno prodotto exit -1073741819 (recursive gc).
+Un tentativo ha completato feols ma la guardia FW ha poi fallito — il coefficiente era sbagliato.
+Il risultato e' stato ottenuto assemblando il CSV con i coefficienti R (WB, che funzionava) e
+riciclando p-value TREND da una run con B=999, senza verifica cross-software — scoperto solo
+quando l'utente ha esplicitamente chiesto "perche' non hai usato Stata?".
+
+**Causa.** La policy cross-software esisteva per il panel collassato (FW identity check) ma non
+era esplicitamente estesa al full panel. L'assenza di crash su WB ha fatto abbassare la guardia.
+
+**Prevenzione — REGOLA HARD:**
+Ogni risultato inferenziale (coef, SE, p-value) che riguarda il **full panel** (>10M osservazioni)
+deve essere replicato in Stata (reghdfe + boottest via Frisch-Waugh) prima di essere scritto
+in un CSV o nel paper. Non basta che R non crashi — il full panel su questa macchina puo'
+corrompere i coefficienti senza errore. Il flusso canonico e':
+  1. R esporta il .dta (script 48e_export_fullpanel_dta.R o equivalente)
+  2. Stata: reghdfe demean + reg OLS + boottest (script 48e_fullpanel_boottest.do o equivalente)
+  3. Il CSV viene scritto con source="stata_fw_boottest_*" per tracciabilita'
+Qualsiasi CSV full-panel senza questa colonna source e' non verificato e non citabile.
+
+---
+
 ## 2026-08-21 — Script nuovi (46/47) scritti senza la guardia FW obbligatoria: corruzione silenziosa puntualmente avvenuta
 
 **Cosa e' successo.** La sessione del 20/08 ha scritto `46_robustness_trim.R` e

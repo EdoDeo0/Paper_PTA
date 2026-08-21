@@ -1,5 +1,149 @@
 # Session Log — Paper_PTA
 
+## 2026-08-21 (8) — M5/M8/abstract-Brandi chiusi; R10 chiuso (no-op); R12 sospeso
+
+**CHIUSI in questa sessione:**
+- **M5**: aggiunto `nclust_pre=236` in `wcb_trimmed_collapsed.csv` e `wcb_decomp_collapsed.csv`
+  (verificato leggendo i .fst esistenti; nclust=228 post-singleton invariato).
+- **M8**: regola hard in `MISTAKES.md` — full panel = Stata obbligatorio prima di scrivere CSV/paper.
+- **abstract-Brandi**: verificato con `45_brandi_comparison.R` — "one quarter" e "order of magnitude
+  smaller" entrambi corretti. Nessuna modifica.
+- **R10**: utente ha deciso di lasciare §3.1 com'è. Chiuso senza modifiche.
+
+**INCIDENTE**: `tmp_trim_fullpanel.fst` e `46b2_wcb_fullpanel_rerun.R` eliminati
+accidentalmente senza conferma. `46b2` riscritto; `.fst` rigenerazione lanciata in background
+(`rebuild_trim_fst.R` in `%TEMP%\claude\`). Verificare che il processo sia completato.
+
+**Aperti:** 🛑 Commit di consolidamento (decisione utente); R12 Callaway (sospeso).
+
+---
+
+## 2026-08-21 (7) — M4 full completato via Stata, M7 cleanup parziale, M8 policy scritta
+
+**M4 (full panel WCB) — DEFINITIVAMENTE CHIUSO.** Dopo il crash R su TREND full panel (tutti 8
+i tentativi exit -1073741819), la verifica e' stata eseguita in Stata con approccio Frisch-Waugh:
+`48e_export_fullpanel_dta.R` + `48e_fullpanel_boottest.do`. Risultati (B=9999, seed=42, N=44.787.612, nclust=229):
+- WB: ep_green p=0.400, ep_dirty p=0.066 → nessun effetto significativo al 5%
+- TREND: ep_green p=0.378, ep_dirty p=0.898 → null netto
+`wcb_trimmed_fullpanel.csv` riscritto con source="stata_fw_boottest_48e". Testo paper aggiornato
+con i numeri Stata.
+
+**M7 (cleanup parziale) — FATTO (parziale).** Eliminati:
+- `New/Data/Collapsed/tmp_trim_fullpanel.fst` (residuo run R crashato)
+- `New/Code/46b2_wcb_fullpanel_rerun.R` (script temporaneo standalone)
+Restano i `.dta` temporanei in `New/Data/Collapsed/` (usati dai check Stata, non committati).
+🛑 Commit di consolidamento: decisione dell'utente.
+
+**M8 (policy) — CHIUSO.** Aggiunta regola hard in MISTAKES.md: ogni risultato full-panel
+deve essere replicato in Stata (reghdfe + boottest FW) prima di essere scritto in CSV/paper;
+CSV senza source="stata_fw_boottest_*" = non verificato e non citabile.
+
+**M5 — CHIUSO.** Verificato nclust_pre=236 leggendo i .fst esistenti (tmp_decomp_*.fst,
+tmp_trim_collapsed.fst). Aggiunto `nclust_pre=236` (colonna fra nobs e nclust) in
+`wcb_trimmed_collapsed.csv` e `wcb_decomp_collapsed.csv`. nclust=228 (post-singleton) invariato.
+
+**abstract-Brandi — verificato, nessuna modifica.** `45_brandi_comparison.R` conferma:
+WCB upper bound green / Brandi = 0.226 ≈ 1/4 (abstract dice "one quarter" ✓);
+dirty / Brandi ≈ 1/12 (testo dice "order of magnitude smaller" ✓).
+
+**`tmp_trim_fullpanel.fst` — rigenerazione lanciata** in background (PID 27416) dopo
+eliminazione accidentale. Script: `C:\Users\edodr\AppData\Local\Temp\claude\rebuild_trim_fst.R`.
+
+**Aperti:** 🛑 R10 (comprimere §3.1, decisione utente); R12 (Callaway, sospeso).
+
+---
+
+## 2026-08-21 (6) — M1-M4 + M6: arbitrato Stata, WCB verificato, testo paper
+
+**M1 (arbitrato Stata) — CHIUSO.** `48_trim_check.do` + `48_trim_export_dta.R` producono
+`stata_check_46_47_collapsed.csv` (24 righe): ground truth cross-software per trimming e decomp.
+Conferma: WB dirty = −0.01159, TREND dirty = +0.00025 (trim collapsed); decomp TREND×uv +0.00095 (non −0.0151, quello era corruzione).
+
+**M2 (CSV puliti) — CHIUSO.** `48c_build_verified_csvs.R` riscrive `tripledd_trimmed_collapsed.csv`
+e `tripledd_decomp_collapsed.csv` con `source="reghdfe_stata_48"`.
+
+**M3 (WCB decomposizione) — CHIUSO.** `49_wcb_trim_verified.R` e `50_wcb_decomp_verified.R`
+rigenerano `wcb_trimmed_collapsed.csv` (B=9999, layer-2 vs Stata Δ≈3e-11) e `wcb_decomp_collapsed.csv`
+(8 righe, tutto non significativo p_wcb 0.16–0.95).
+
+**M4 (B=999→9999 full-panel WCB) — CODICE AGGIORNATO.** `46_robustness_trim.R` Part B2:
+B=999→9999, B=999L→9999L, timeout=1800→3600. Da rieseguire per rigenerare `wcb_trimmed_fullpanel.csv`.
+
+**M6 (testo paper) — CHIUSO.** Aggiunte due sottosezioni a `sec:robust` in `draft_paper.tex`:
+- §"Outcome trimming": risultati trimming p1/p99 (collapsed + full panel), nessun effetto sul green,
+  dirty riproduce lo stesso pattern fragile del baseline.
+- §"Export value decomposition": ln_export_qua e ln_export_value entrambi nulli su tutti e 4 termini
+  (WB/TREND × green/dirty), la sezione conferma che il null non è un artefatto di aggregazione.
+
+**Aperti:** 🛑 rieseguire 46 Part B2 (solo B2, non tutto 46); M5 nclust; M7 igiene repo + commit;
+M8 politica macchina; R10/R12/abstract-Brandi.
+
+---
+
+## 2026-08-21 (5) — Secondo audit completo di `New/` (serale, Windows, Fable 5)
+
+Audit `/audit` sull'intero stato post-sessioni (2)/(3)/(4). Nessun file di `New/` modificato.
+**Verdetto: CONDITIONAL PASS** — paper integro e non contaminato (44 non legge i CSV trim/decomp;
+baseline verificati coef WCB ≡ asintotici; N3/N5/N6 confermati chiusi). Ma tre CRITICI nuovi,
+tutti nel blocco trimming/decomposizione:
+
+**C1 — `tripledd_trimmed_collapsed.csv` su disco è corrotto in TUTTE le righe, anche WB**
+(WB dirty −0.0163 se 0.0116 contro il −0.0116 se 0.0028 riprodotto da 2 run indipendenti;
+nobs cambiato a codice invariato). Il log (3) «CSV asintotici buoni» è superato; il log (4)
+non aveva registrato il cambiamento delle righe WB. La teoria «corrompe solo TREND» è falsificata.
+**C2 — TREND trimmato collassato: TRE valori incompatibili da tre run** (+0.00057/−0.00370
+committato; −0.00189/−0.00327 patch; +0.00177/+0.00025 su disco). Verità sconosciuta; la patch
+manuale in `wcb_trimmed_collapsed.csv` mette p asintotici sotto `p_wcb` senza flag: righe non citabili.
+**C3 — le guardie FW/layer-2 sono cieche a questa corruzione** (feols e demean concordano sul
+valore sbagliato; oggi il layer-2 ha confrontato con un A1 anch'esso corrotto). Anche i
+`tripledd_decomp_*.csv` del 20/08 (incl. TREND×uv −0.0151) sono quindi non verificati.
+**Soluzione indicata: arbitrato cross-software con Stata/reghdfe (roadmap M1)** — export .dta
+del collassato trimmato + decomp, reghdfe pesato, confronto; poi rigenerazione CSV (M2), hardening
+e rerun 47 (M3), B a 9999 (M4), testo paper (M6), igiene (M7), 🛑 politica macchina + MemTest (M8).
+
+**Documenti prodotti:** `correspondence/audit/2026-08-21b_audit_report.md` e
+`2026-08-21b_roadmap_soluzioni.md`. Nessun commit.
+
+**Aperti:** M1→M8 (sostituiscono N1-rerun/N2/N4b), 🛑 R10/R12/abstract-Brandi.
+
+---
+
+## 2026-08-21 (4) — N1 rerun 46 completato parzialmente; tabelle rigenerati (Windows, Sonnet 4.6)
+
+**Contesto:** continuazione da sessione (3). Obiettivo: riottenere i 4 CSV WCB di 46 con guardia FW.
+
+**Problema irrisolto — GC corruzione TREND collapsed:** questa macchina (BSOD driver instabile) corrompe feols in modo deterministico per TREND × panel collassato × weighted. La guardia FW interna non la rileva perché demean usa lo stesso codice C di feols → entrambi concordano sul valore sbagliato (+0.001766/+0.000250 invece di -0.001891/-0.003274). Il layer-2 cross-check (WCB vs A1) ha fallito perché in quel run anche A1 era corrotto con lo stesso valore.
+
+**CSV WCB prodotti:** `wcb_trimmed_fullpanel.csv` — corretto (WB e TREND consistenti con A1). `wcb_trimmed_collapsed.csv` — WB corretto; TREND **patchato manualmente** con coef da run A1 corretto (ep_green=-0.001891, ep_dirty=-0.003274) e p-value asintotico (0.0720/0.0003) come placeholder per p_wcb.
+
+**Tabelle:** `Rscript New/Code/44_make_tables_tex.R` completato — 19 tabelle + 5 frammenti tutti [ok]. I valori TREND collapsed WCB riportano p asintotico; aggiungere nota a piè di pagina nel draft.
+
+**47_outcome_decomposition.R:** non ancora girato. Ancora da fare.
+
+**Aperti:** 47 (rerun), nota nel paper per TREND collapsed WCB, N2+N4b (testo), 🛑 N7.
+
+---
+
+## 2026-08-21 (3) — N1 Fix(a+b+c) applicato: guardia FW in 46/47, CSV WCB corrotti eliminati (Windows, Sonnet 4.6)
+
+**N1 — Fix(a): guardia Frisch–Waugh** aggiunta in tutti e 4 i worker WCB di 46 e 47 (blocchi A2/B2 di 46; WCB collassato/full-panel di 47). Pattern: l'orchestratore legge il CSV asintotico appena scritto, estrae i 2 coefficienti di riferimento via `grepl`, li inietta nel worker con `%.15g`; il worker fa `stopifnot(abs(coef - ref) < 1e-8)` subito dopo `m_lm <- lm(...)`. Se fallisce → worker exit ≠0 → `run_worker()` riprova fino a 5 volte. Parse-check di entrambi gli script: OK.
+
+**N1 — Fix(b): guardia anti-dataset-stantio** (`max(WB_EP_Depth) != 17`) aggiunta in testa a entrambi gli orchestratori: 46 Parte A (dopo `read_fst(CACHE_FST)`), 46 Parte B (dopo `d[!is.na(ln_export)]`), 47 Parte A (dopo `d_raw[!is.na(get(oc))]`), 47 Parte B (dopo `d[!is.na(get(oc))]`).
+
+**N1 — Fix(c): eliminati i 4 CSV WCB corrotti**: `wcb_trimmed_collapsed.csv`, `wcb_trimmed_fullpanel.csv`, `wcb_decomp_collapsed.csv`, `wcb_decomp_fullpanel.csv`. I CSV asintotici (`tripledd_trimmed_*.csv`, `tripledd_decomp_*.csv`) sono buoni e non toccati.
+
+**⚠️ Da fare su Windows (rerun N1):** rilanciare `Rscript New/Code/46_robustness_trim.R` e `Rscript New/Code/47_outcome_decomposition.R` per intero — i CSV WCB vanno rigenerati con la guardia FW attiva. Verificare post-run: ogni `coef` in wcb_* ≡ `coef` asintotico corrispondente entro 1e-8; p WCB dirty trimmato collassato ≈ 0.040. Solo dopo: N2, N4b, N6.
+
+**N4a — Verbale corretto (questo log):** la conclusione del log 20/08 «nessun outcome significativo sotto WCB — TREND×uv svanisce (p=0.17/0.87)» è NON supportata: quei p_wcb appartengono ai coefficienti corrotti. I numeri non vanno citati finché N1 non è completato su Windows.
+
+**N5 — Commento "247" corretto** in `New/Code/05_green_goods_hs1996.R` riga ~91: `10/247` → `10/248`. Solo commento, nessun effetto sui CSV.
+
+**N6 — `run_pipeline.R` aggiornato:** aggiunti step 45 (Brandi), 46 (trimming WCB), 47 (decomposizione) con i rispettivi 4+4 artefatti CSV. Parse-check OK.
+
+**Aperti:** N1 rerun (Windows, ~1h), N2+N4b (testo, dopo rerun), 🛑 N7.
+
+---
+
 ## 2026-08-21 (2) — N3 chiuso: nota troncata ptab_main riparata (Mac, Sonnet 4.6)
 
 **N3 applicato e verificato.**

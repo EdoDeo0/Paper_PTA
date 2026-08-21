@@ -1099,6 +1099,45 @@ non-robust pattern documented throughout Section~\ref{sec:dirty}, not a new or
 sharper result. The continuous measure does not overturn the conclusion that the
 composition null is not an artifact of how dirty products are classified.
 
+\subsection{Outcome trimming}
+
+The baseline conditions on all positive flows without trimming; the design-based
+inference battery is the primary guard against influential observations. As a
+moment-based complement, I trim log export value at its 1st and 99th percentiles.
+The collapsed panel retains 3,605,798 cells (from 3,786,234; a loss of 4.8\%);
+the full panel retains 44.8 million observations.
+
+Point estimates are virtually unchanged. On the collapsed panel, EP$\times$green
+is $-0.0048$ (WB, bootstrap $p=0.61$) and $+0.0018$ (TREND, bootstrap $p=0.41$);
+EP$\times$dirty is $-0.01159$ (WB, bootstrap $p=0.041$) and $+0.00025$ (TREND,
+bootstrap $p=0.89$). On the full panel (44.8 million observations), the WB dirty coefficient is
+$-0.01170$ (bootstrap $p=0.066$, $B=9{,}999$, Frisch--Waugh decomposition
+estimated in \textsc{Stata}/\texttt{reghdfe} + \texttt{boottest}); the TREND
+coefficient is $+0.00027$ (bootstrap $p=0.90$, $B=9{,}999$). The green null is
+unaffected. The dirty margin reproduces the same pattern as the baseline ---
+marginally significant under one coding, null under the other, and not robust
+across both --- ruling out outlier influence as an alternative explanation.
+
+\subsection{Export value decomposition: quantity and unit value}
+
+Log export value conflates shipment volume and price per unit. A reallocation
+toward cleaner products could in principle operate through either channel, and two
+effects of opposite sign could cancel in the aggregate outcome. To rule out this
+masking, I re-estimate equation~\eqref{eq:main} on the collapsed panel replacing
+the outcome with log export quantity and log export unit value (value divided by
+quantity, both in logs). Both outcomes are constructed at the HS6--destination--year
+cell and estimated with the same FE structure and wild cluster bootstrap used
+throughout ($B=9{,}999$; layer-2 cross-check against \textsc{Stata}/\texttt{reghdfe}).
+
+Neither channel registers a significant effect, for either index or either product
+type. Quantity margin: EP$\times$green $-0.0055$ (WB, $p=0.53$), $+0.0019$
+(TREND, $p=0.43$); EP$\times$dirty $-0.0115$ (WB, $p=0.25$), $-0.0004$
+(TREND, $p=0.89$). Unit-value margin: EP$\times$green $+0.0005$ (WB, $p=0.85$),
+$-0.0001$ (TREND, $p=0.87$); EP$\times$dirty $+0.0006$ (WB, $p=0.95$),
+$+0.0009$ (TREND, $p=0.16$). The composition null is not an averaging artifact:
+EP depth moves neither the volume nor the price of green or dirty exports relative
+to the neutral baseline.
+
 % ============================================================================
 \section{Conclusion}\label{sec:conclusion}
 % ============================================================================

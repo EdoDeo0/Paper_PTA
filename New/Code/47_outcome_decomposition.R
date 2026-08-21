@@ -46,16 +46,22 @@ dep   <- fread(DEPTH_FILE)[, .(country_code, year, dep_val__ = get(DEPTH_VAR))]
 RSCRIPT  <- file.path(R.home("bin"), "Rscript")
 OUTCOMES <- c("ln_export_qua", "ln_export_value")
 
-run_worker <- function(worker_code, label, max_tries = 5) {
+run_worker <- function(worker_code, label, max_tries = 5, timeout = 420) {
   tf <- tempfile(fileext = ".R")
   writeLines(worker_code, tf)
   on.exit(unlink(tf))
   for (tent in 1:max_tries) {
     cat(sprintf("  [%s] tentativo %d ... ", label, tent))
-    rc <- system2(RSCRIPT, args = shQuote(tf), stdout = "", stderr = "")
-    if (rc == 0) { cat("OK\n"); return(invisible(TRUE)) }
-    cat(sprintf("crash (exit %d)\n", rc))
-    Sys.sleep(2)
+    res <- processx::run(RSCRIPT, args = tf, timeout = timeout,
+                         stdout = "", stderr = "", error_on_status = FALSE)
+    if (isTRUE(res$timeout)) {
+      cat(sprintf("timeout (%ds) — kill e retry\n", timeout))
+    } else if (res$status == 0) {
+      cat("OK\n"); return(invisible(TRUE))
+    } else {
+      cat(sprintf("crash (exit %d)\n", res$status))
+    }
+    Sys.sleep(3)
   }
   stop(sprintf("%s fallito dopo %d tentativi", label, max_tries))
 }
@@ -75,6 +81,7 @@ for (oc in OUTCOMES) {
     oc, "hs6", "country_code", "year", "WB_EP_Depth", "TREND_EP_Count")))
   if (HKMO_DROP) d_raw <- d_raw[!country_code %in% HKMO_CODES]
   d_raw <- d_raw[!is.na(get(oc))]
+  stopifnot("Dataset stantio: max(WB_EP_Depth) != 17" = max(d_raw$WB_EP_Depth, na.rm = TRUE) == 17)
   cell <- d_raw[, .(y = mean(get(oc)), n = .N,
                     WB_EP_Depth = first(WB_EP_Depth), TREND_EP_Count = first(TREND_EP_Count)),
                 by = .(hs6, country_code, year)]
@@ -120,7 +127,7 @@ cat(sprintf("[%s/%s] ep_green %%+.6f | ep_dirty %%+.6f\\n",
     run_worker(worker, paste("collapsed", oc, tr_name))
   }
 
-  ## WCB
+  ## WCB (guardia FW in-worker — vedi commento in 46/A2)
   for (tr_name in c("WB", "TREND")) {
     tr <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")[[tr_name]]
     wcb_csv <- out_path(file.path(OUT_DIR, sprintf("tmp_wcb_decomp_c_%s_%s.csv", oc, tolower(tr_name))))
@@ -133,11 +140,20 @@ set.seed(42); dqrng::dqset.seed(42)
 cell <- as.data.table(read_fst("%s"))
 cell[, `:=`(ep_green = %s * env_good, ep_dirty = %s * dirty_p,
             td_green = %s * env_good, td_dirty = %s * dirty_p)]
-X <- fixest::demean(cell[, .(y, ep_green, ep_dirty, td_green, td_dirty)],
-                    f = cell[, .(pd, dt, pt)], weights = cell$n)
-df <- as.data.frame(X); df$n_w <- cell$n; df$country_code <- cell$country_code
-rm(X, cell); gc()
+m_ref <- feols(y ~ ep_green + ep_dirty + td_green + td_dirty | pd + dt + pt,
+               data = cell, weights = ~n, cluster = ~country_code)
+ref_green <- coef(m_ref)[["ep_green"]]; ref_dirty <- coef(m_ref)[["ep_dirty"]]
+keep_obs <- obs(m_ref); rm(m_ref); gc()
+cell_s <- cell[keep_obs]; rm(cell, keep_obs); gc()
+X <- fixest::demean(cell_s[, .(y, ep_green, ep_dirty, td_green, td_dirty)],
+                    f = cell_s[, .(pd, dt, pt)], weights = cell_s$n)
+df <- as.data.frame(X); df$n_w <- cell_s$n; df$country_code <- cell_s$country_code
+rm(X, cell_s); gc()
 m_lm <- lm(y ~ 0 + ep_green + ep_dirty + td_green + td_dirty, data = df, weights = n_w)
+stopifnot(
+  "FW identity FAILED (ep_green)" = abs(coef(m_lm)[["ep_green"]] - ref_green) < 1e-6,
+  "FW identity FAILED (ep_dirty)" = abs(coef(m_lm)[["ep_dirty"]] - ref_dirty) < 1e-6
+)
 res <- list()
 for (param in c("ep_green", "ep_dirty")) {
   bt <- boottest(m_lm, param = param, clustid = "country_code", B = 9999)
@@ -183,6 +199,7 @@ for (oc in OUTCOMES) {
     "WB_EP_Depth", "TREND_EP_Count", "env_good")))
   if (HKMO_DROP) d <- d[!country_code %in% HKMO_CODES]
   d <- d[!is.na(get(oc))]
+  stopifnot("Dataset stantio: max(WB_EP_Depth) != 17" = max(d$WB_EP_Depth, na.rm = TRUE) == 17)
   cat(sprintf("  Obs: %s\n", format(nrow(d), big.mark = ",")))
 
   d[dirty, on = "hs6", dirty_p := i.dirty_p]
@@ -223,7 +240,7 @@ cat(sprintf("[%s/%s] ep_green %%+.6f | ep_dirty %%+.6f\\n",
     run_worker(worker, paste("full panel", oc, tr_name))
   }
 
-  ## WCB
+  ## WCB (guardia FW in-worker + obs() — vedi commento in 46/A2)
   for (tr_name in c("WB", "TREND")) {
     tr <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")[[tr_name]]
     wcb_csv <- out_path(file.path(OUT_DIR, sprintf("tmp_wcb_decomp_fp_%s_%s.csv", oc, tolower(tr_name))))
@@ -236,11 +253,20 @@ set.seed(42); dqrng::dqset.seed(42)
 d <- as.data.table(read_fst("%s"))
 d[, `:=`(ep_green = %s * env_good, ep_dirty = %s * dirty_p,
          td_green = %s * env_good, td_dirty = %s * dirty_p)]
-X <- fixest::demean(d[, .(%s, ep_green, ep_dirty, td_green, td_dirty)],
-                    f = d[, .(pd, dt, pt)])
-df <- as.data.frame(X); df$country_code <- d$country_code
-rm(X, d); gc()
+m_ref <- feols(%s ~ ep_green + ep_dirty + td_green + td_dirty | pd + dt + pt,
+               data = d, cluster = ~country_code)
+ref_green <- coef(m_ref)[["ep_green"]]; ref_dirty <- coef(m_ref)[["ep_dirty"]]
+keep_obs <- obs(m_ref); rm(m_ref); gc()
+d_s <- d[keep_obs]; rm(d, keep_obs); gc()
+X <- fixest::demean(d_s[, .(%s, ep_green, ep_dirty, td_green, td_dirty)],
+                    f = d_s[, .(pd, dt, pt)])
+df <- as.data.frame(X); df$country_code <- d_s$country_code
+rm(X, d_s); gc()
 m_lm <- lm(%s ~ 0 + ep_green + ep_dirty + td_green + td_dirty, data = df)
+stopifnot(
+  "FW identity FAILED (ep_green)" = abs(coef(m_lm)[["ep_green"]] - ref_green) < 1e-6,
+  "FW identity FAILED (ep_dirty)" = abs(coef(m_lm)[["ep_dirty"]] - ref_dirty) < 1e-6
+)
 res <- list()
 for (param in c("ep_green", "ep_dirty")) {
   bt <- boottest(m_lm, param = param, clustid = "country_code", B = 9999)
@@ -252,7 +278,8 @@ for (param in c("ep_green", "ep_dirty")) {
 }
 fwrite(rbindlist(res), "%s")
 ',    gsub("\\\\", "/", tmp_fst), tr, tr, DEPTH_VAR, DEPTH_VAR,
-      oc, oc, oc, tr_name, oc, tr_name, gsub("\\\\", "/", wcb_csv))
+      oc, oc, oc,
+      oc, tr_name, oc, tr_name, gsub("\\\\", "/", wcb_csv))
 
     run_worker(worker, paste("WCB full panel", oc, tr_name))
   }

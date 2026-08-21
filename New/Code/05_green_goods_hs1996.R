@@ -88,7 +88,7 @@ green[, vintage_note := fifelse(
 
 ## --- Sezione 4: verifica continuita' di export sul codice CORRETTO --------
 # filtriamo il pannello su hs6_final (non sull'originale HS2012): un codice
-# con match univoco ma diverso dall'originale (10/247 casi) nel pannello
+# con match univoco ma diverso dall'originale (10/248 casi) nel pannello
 # esiste solo sotto hs6_final, mai sotto il codice HS2012 di partenza
 #
 # PERCHE' PROPRIO IL 2006->2007: il 2007 e' l'anno in cui e' entrata in

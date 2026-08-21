@@ -1,0 +1,359 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New/Code/stata/48_trim_check.do 
+
+. ************************************************************
+. *** 48 — Verifica Stata: trimming e decomposizione collassati
+. ************************************************************
+. ** Author: Edoardo Vitella
+. **
+. ** Cosa fa: stima le triple-diff su tre dataset collassati
+. ** (trim, decomp-qua, decomp-uv) con reghdfe + cluster country_code.
+. ** Output: New/Output/TripleDiff/Tables/stata_check_46_47_collapsed.csv
+. **
+. ** Prerequisito: aver lanciato 48_trim_export_dta.R prima.
+. ** Lanciare in batch (non interattivo):
+. **   stata-mp /e do "New/Code/stata/48_trim_check.do"
+. ** o dal menu File > Do in Stata.
+. 
+. clear all
+
+. set more off
+
+. 
+. ** Cartella progetto = working directory al momento del lancio.
+. ** Se si lancia da fuori, impostare qui il percorso assoluto:
+. * cd "C:/Work/projects/Paper_PTA"
+. 
+. local out_dir "New/Output/TripleDiff/Tables"
+
+. local in_dir  "New/Data/Collapsed"
+
+. 
+. ** File CSV di output aggregato (global per essere accessibile dentro i progr
+> ammi)
+. global CSV_OUT "`out_dir'/stata_check_46_47_collapsed.csv"
+
+. 
+. ** Pulisce il CSV se esiste (lo ricostruiremo riga per riga)
+. capture erase "$CSV_OUT"
+
+. 
+. ************************************************************
+. ** MACRO: lancia reghdfe WB e TREND sullo stesso dataset
+. ** Argomenti:
+. **   `1' = etichetta dataset  (trim / decomp_qua / decomp_uv)
+. **   `2' = percorso .dta
+. ************************************************************
+. capture program drop run_block
+
+. program define run_block
+  1.     args dataset dta_path
+  2. 
+.     use "`dta_path'", clear
+  3.     local nrow = _N
+  4.     di as txt "Dataset: `dataset' | N = `nrow'"
+  5. 
+.     ** --- WB ---
+.     reghdfe y wb_green wb_dirty td_green td_dirty [aw=n], ///
+>         absorb(pd dt pt) vce(cluster country_code)
+  6.     local ncl = e(N_clust)
+  7.     local nobs = e(N)
+  8. 
+.     ** Salvare coefficienti manualmente nel CSV
+.     ** (regsave non disponibile ovunque; usiamo postfile)
+.     foreach var in wb_green wb_dirty td_green td_dirty {
+  9.         local coef_`var' = _b[`var']
+ 10.         local se_`var'   = _se[`var']
+ 11.         local t_`var'    = _b[`var'] / _se[`var']
+ 12.         local p_`var'    = 2 * ttail(e(df_r), abs(`t_`var''))
+ 13.     }
+ 14. 
+.     ** Scrivi righe WB (tutti i regressori)
+.     foreach var in wb_green wb_dirty td_green td_dirty {
+ 15.         file open fh using "$CSV_OUT", write append text
+ 16.         file write fh ///
+>             "`dataset',WB,`var'," ///
+>             (string(`coef_`var'', "%20.10f")) "," ///
+>             (string(`se_`var'', "%20.10f")) "," ///
+>             (string(`p_`var'', "%20.10f")) "," ///
+>             "`nobs',`ncl'" _n
+ 17.         file close fh
+ 18.     }
+ 19. 
+.     ** --- TREND ---
+.     reghdfe y tr_green tr_dirty td_green td_dirty [aw=n], ///
+>         absorb(pd dt pt) vce(cluster country_code)
+ 20.     local ncl = e(N_clust)
+ 21.     local nobs = e(N)
+ 22. 
+.     foreach var in tr_green tr_dirty td_green td_dirty {
+ 23.         local coef_`var' = _b[`var']
+ 24.         local se_`var'   = _se[`var']
+ 25.         local t_`var'    = _b[`var'] / _se[`var']
+ 26.         local p_`var'    = 2 * ttail(e(df_r), abs(`t_`var''))
+ 27.     }
+ 28. 
+.     foreach var in tr_green tr_dirty td_green td_dirty {
+ 29.         file open fh using "$CSV_OUT", write append text
+ 30.         file write fh ///
+>             "`dataset',TREND,`var'," ///
+>             (string(`coef_`var'', "%20.10f")) "," ///
+>             (string(`se_`var'', "%20.10f")) "," ///
+>             (string(`p_`var'', "%20.10f")) "," ///
+>             "`nobs',`ncl'" _n
+ 31.         file close fh
+ 32.     }
+ 33. 
+.     di as txt "  -> scritte 8 righe per `dataset'"
+ 34. end
+
+. 
+. ** Intestazione CSV
+. file open fh using "$CSV_OUT", write replace text
+(file New/Output/TripleDiff/Tables/stata_check_46_47_collapsed.csv not found)
+
+. file write fh "dataset,treat,var,coef,se,pval,nobs,nclust" _n
+
+. file close fh
+
+. 
+. ** Lancia i 3 dataset
+. run_block "trim"       "`in_dir'/tmp_check_trim.dta"
+Dataset: trim | N = 3698033
+(dropped 92235 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,605,798
+Absorbing 3 HDFE groups                           F(   4,    227) =       7.26
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8467
+                                                  Adj R-squared   =     0.8228
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5548
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0048097   .0068724    -0.70   0.485    -.0183516    .0087322
+    wb_dirty |  -.0115907   .0028494    -4.07   0.000    -.0172053   -.0059761
+    td_green |  -.0000409   .0002357    -0.17   0.862    -.0005053    .0004236
+    td_dirty |   .0003821   .0001771     2.16   0.032     .0000332     .000731
+       _cons |   9.259166   .0006224  1.5e+04   0.000      9.25794    9.260392
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    415821      415821           0    *|
+          dt |      3504        3504           0    *|
+          pt |     67803           1       67802     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92235 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,605,798
+Absorbing 3 HDFE groups                           F(   4,    227) =       3.72
+Statistics robust to heteroskedasticity           Prob > F        =     0.0059
+                                                  R-squared       =     0.8467
+                                                  Adj R-squared   =     0.8228
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5548
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0017657   .0018289     0.97   0.335     -.001838    .0053694
+    tr_dirty |   .0002501   .0015285     0.16   0.870    -.0027617    .0032619
+    td_green |  -.0004649   .0002577    -1.80   0.073    -.0009726    .0000429
+    td_dirty |  -.0000846   .0002889    -0.29   0.770    -.0006539    .0004847
+       _cons |   9.259889   .0011585  7993.12   0.000     9.257606    9.262172
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    415821      415821           0    *|
+          dt |      3504        3504           0    *|
+          pt |     67803           1       67802     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  -> scritte 8 righe per trim
+
+. run_block "decomp_qua" "`in_dir'/tmp_check_decomp_qua.dta"
+Dataset: decomp_qua | N = 3764972
+(dropped 92263 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,672,709
+Absorbing 3 HDFE groups                           F(   4,    227) =       1.26
+Statistics robust to heteroskedasticity           Prob > F        =     0.2875
+                                                  R-squared       =     0.9295
+                                                  Adj R-squared   =     0.9186
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.6271
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0055357   .0069429    -0.80   0.426    -.0192164     .008145
+    wb_dirty |  -.0114503   .0066716    -1.72   0.087    -.0245966     .001696
+    td_green |     .00003    .000244     0.12   0.902    -.0004507    .0005107
+    td_dirty |    .000473   .0003001     1.58   0.116    -.0001183    .0010642
+       _cons |   7.314845    .000762  9599.29   0.000     7.313343    7.316346
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420720      420720           0    *|
+          dt |      3505        3505           0    *|
+          pt |     68527           1       68526     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92263 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,672,709
+Absorbing 3 HDFE groups                           F(   4,    227) =       1.50
+Statistics robust to heteroskedasticity           Prob > F        =     0.2029
+                                                  R-squared       =     0.9295
+                                                  Adj R-squared   =     0.9186
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.6271
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0018725   .0020414     0.92   0.360      -.00215    .0058951
+    tr_dirty |  -.0003802   .0018513    -0.21   0.837    -.0040282    .0032677
+    td_green |  -.0004347   .0002831    -1.54   0.126    -.0009926    .0001232
+    td_dirty |   .0001027   .0003349     0.31   0.759    -.0005572    .0007627
+       _cons |   7.315477   .0012215  5989.12   0.000      7.31307    7.317884
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420720      420720           0    *|
+          dt |      3505        3505           0    *|
+          pt |     68527           1       68526     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  -> scritte 8 righe per decomp_qua
+
+. run_block "decomp_uv"  "`in_dir'/tmp_check_decomp_uv.dta"
+Dataset: decomp_uv | N = 3764972
+(dropped 92263 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,672,709
+Absorbing 3 HDFE groups                           F(   4,    227) =       0.81
+Statistics robust to heteroskedasticity           Prob > F        =     0.5169
+                                                  R-squared       =     0.9702
+                                                  Adj R-squared   =     0.9656
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.3599
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0005095   .0027696     0.18   0.854    -.0049479    .0059668
+    wb_dirty |   .0006262    .004155     0.15   0.880    -.0075611    .0088136
+    td_green |  -.0000615   .0001523    -0.40   0.687    -.0003616    .0002386
+    td_dirty |  -.0001582   .0001903    -0.83   0.407    -.0005332    .0002168
+       _cons |   1.986429    .000424  4684.71   0.000     1.985594    1.987265
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420720      420720           0    *|
+          dt |      3505        3505           0    *|
+          pt |     68527           1       68526     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92263 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,672,709
+Absorbing 3 HDFE groups                           F(   4,    227) =       1.18
+Statistics robust to heteroskedasticity           Prob > F        =     0.3224
+                                                  R-squared       =     0.9702
+                                                  Adj R-squared   =     0.9656
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.3599
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0001163   .0006975    -0.17   0.868    -.0014908    .0012581
+    tr_dirty |   .0009469   .0005314     1.78   0.076    -.0001002     .001994
+    td_green |  -.0000265   .0001459    -0.18   0.856     -.000314     .000261
+    td_dirty |  -.0002709   .0001276    -2.12   0.035    -.0005222   -.0000196
+       _cons |   1.986571   .0004967  3999.18   0.000     1.985593     1.98755
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420720      420720           0    *|
+          dt |      3505        3505           0    *|
+          pt |     68527           1       68526     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  -> scritte 8 righe per decomp_uv
+
+. 
+. di as result _n "=== FATTO. Output: `csv_out' ==="
+
+=== FATTO. Output:  ===
+
+. di as txt "Struttura: dataset,treat,var,coef,se,pval,nobs,nclust"
+Struttura: dataset,treat,var,coef,se,pval,nobs,nclust
+
+. di as txt "Righe attese: 24 (3 dataset x 2 indici x 4 termini)"
+Righe attese: 24 (3 dataset x 2 indici x 4 termini)
+
+. 
+end of do-file

@@ -1,0 +1,316 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New/Code/stata/48e_fullpanel_boottest.do 
+
+. ************************************************************
+. *** 48e — Stata boottest: full panel trimmato (WB + TREND)
+. *** Approccio Frisch-Waugh ottimizzato:
+. ***   Fase 1 — demean tutte le 7 variabili in un passaggio
+. ***   Fase 2 — reg OLS + boottest per WB
+. ***   Fase 3 — reg OLS + boottest per TREND
+. ************************************************************
+. ** Prerequisito: 48e_export_fullpanel_dta.R
+. ** Output: New/Output/TripleDiff/Tables/stata_check_trim_fullpanel.csv
+. 
+. clear all
+
+. set more off
+
+. 
+. local dta      "New/Data/Collapsed/tmp_check_trim_fullpanel.dta"
+
+. local dta_dm   "New/Data/Collapsed/tmp_trim_fullpanel_demeaned.dta"
+
+. global CSV_OUT "New/Output/TripleDiff/Tables/stata_check_trim_fullpanel.csv"
+
+. 
+. ** Intestazione CSV
+. capture erase "$CSV_OUT"
+
+. file open fh using "$CSV_OUT", write replace text
+(file New/Output/TripleDiff/Tables/stata_check_trim_fullpanel.csv not found)
+
+. file write fh "dataset,treat,var,coef,se,pval,p_boot,B,nobs,nclust" _n
+
+. file close fh
+
+. 
+. capture program drop write_row
+
+. program define write_row
+  1.     args dataset treat var coef se pval p_boot B nobs nclust
+  2.     file open fh using "$CSV_OUT", write append text
+  3.     file write fh "`dataset',`treat',`var',`coef',`se',`pval',`p_boot',`B'
+> ,`nobs',`nclust'" _n
+  4.     file close fh
+  5. end
+
+. 
+. ************************************************************
+. ** FASE 1: demean tutte le variabili (una sola lettura del .dta)
+. ************************************************************
+. di as txt _n "=== FASE 1: demeaning (7 variabili su 44M obs) ==="
+
+=== FASE 1: demeaning (7 variabili su 44M obs) ===
+
+. 
+. use "`dta'", clear
+
+. 
+. foreach v in y wb_green wb_dirty tr_green tr_dirty td_green td_dirty {
+  2.     di as txt "  demeaning `v'..."
+  3.     qui reghdfe `v', absorb(pd dt pt) residuals(`v'_dm) tol(1e-8)
+  4. }
+  demeaning y...
+  demeaning wb_green...
+  demeaning wb_dirty...
+  demeaning tr_green...
+  demeaning tr_dirty...
+  demeaning td_green...
+  demeaning td_dirty...
+
+. 
+. ** Salva solo le variabili necessarie + country_code
+. keep y_dm wb_green_dm wb_dirty_dm tr_green_dm tr_dirty_dm td_green_dm td_dirt
+> y_dm country_code
+
+. save "`dta_dm'", replace
+(file New/Data/Collapsed/tmp_trim_fullpanel_demeaned.dta not found)
+file New/Data/Collapsed/tmp_trim_fullpanel_demeaned.dta saved
+
+. di as txt "Demeaned dataset salvato: `dta_dm'"
+Demeaned dataset salvato: New/Data/Collapsed/tmp_trim_fullpanel_demeaned.dta
+
+. 
+. ************************************************************
+. ** FASE 2: WB — reg OLS + boottest
+. ************************************************************
+. di as txt _n "=== FASE 2: WB reg + boottest ==="
+
+=== FASE 2: WB reg + boottest ===
+
+. 
+. use "`dta_dm'", clear
+
+. local nobs   = _N
+
+. local nclust = 0
+
+. qui levelsof country_code, local(cclist)
+
+. local nclust : word count `cclist'
+
+. 
+. reg y_dm wb_green_dm wb_dirty_dm td_green_dm td_dirty_dm, cluster(country_cod
+> e) nocons
+
+Linear regression                               Number of obs     =   44787612
+                                                F(4, 228)         =       5.66
+                                                Prob > F          =     0.0002
+                                                R-squared         =     0.0000
+                                                Root MSE          =      2.072
+
+                         (Std. err. adjusted for 229 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        y_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ wb_green_dm |  -.0059709   .0060788    -0.98   0.327    -.0179488     .006007
+ wb_dirty_dm |  -.0116981   .0031189    -3.75   0.000    -.0178437   -.0055525
+ td_green_dm |   .0000263   .0002247     0.12   0.907    -.0004164    .0004691
+ td_dirty_dm |   .0003795    .000175     2.17   0.031     .0000346    .0007244
+------------------------------------------------------------------------------
+
+. local nobs   = e(N)
+
+. local nclust = e(N_clust)
+
+. 
+. foreach v in wb_green wb_dirty td_green td_dirty {
+  2.     local coef_`v' = _b[`v'_dm]
+  3.     local se_`v'   = _se[`v'_dm]
+  4.     local t_`v'    = _b[`v'_dm] / _se[`v'_dm]
+  5.     local p_`v'    = 2 * ttail(e(df_r), abs(`t_`v''))
+  6. }
+
+. di as txt "OLS WB: wb_dirty = " _b[wb_dirty_dm] "  (p=" 2*ttail(e(df_r),abs(_
+> b[wb_dirty_dm]/_se[wb_dirty_dm])) ")"
+OLS WB: wb_dirty = -.0116981  (p=.00022367)
+
+. 
+. di as txt "  boottest wb_green_dm..."
+  boottest wb_green_dm...
+
+. boottest wb_green_dm, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(228) =    -0.9822
+                        Prob>|t| =     0.3997
+
+. local p_boot_wb_green = r(p)
+
+. di as txt "  p_boot wb_green = `p_boot_wb_green'"
+  p_boot wb_green = .3997399739973997
+
+. 
+. di as txt "  boottest wb_dirty_dm..."
+  boottest wb_dirty_dm...
+
+. boottest wb_dirty_dm, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(228) =    -3.7507
+                        Prob>|t| =     0.0662
+
+. local p_boot_wb_dirty = r(p)
+
+. di as txt "  p_boot wb_dirty = `p_boot_wb_dirty'"
+  p_boot wb_dirty = .0662066206620662
+
+. 
+. foreach v in wb_green wb_dirty td_green td_dirty {
+  2.     local pb = .
+  3.     if "`v'" == "wb_green" local pb = `p_boot_wb_green'
+  4.     if "`v'" == "wb_dirty" local pb = `p_boot_wb_dirty'
+  5.     write_row "trim_full" "WB" "`v'" `coef_`v'' `se_`v'' `p_`v'' `pb' 9999
+>  `nobs' `nclust'
+  6. }
+
+. di as txt "  -> WB scritto nel CSV"
+  -> WB scritto nel CSV
+
+. 
+. ************************************************************
+. ** FASE 3: TREND — reg OLS + boottest
+. ************************************************************
+. di as txt _n "=== FASE 3: TREND reg + boottest ==="
+
+=== FASE 3: TREND reg + boottest ===
+
+. 
+. use "`dta_dm'", clear
+
+. 
+. reg y_dm tr_green_dm tr_dirty_dm td_green_dm td_dirty_dm, cluster(country_cod
+> e) nocons
+
+Linear regression                               Number of obs     =   44787612
+                                                F(4, 228)         =       2.52
+                                                Prob > F          =     0.0420
+                                                R-squared         =     0.0000
+                                                Root MSE          =      2.072
+
+                         (Std. err. adjusted for 229 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        y_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ tr_green_dm |   .0018652   .0017986     1.04   0.301    -.0016789    .0054093
+ tr_dirty_dm |   .0002675   .0016066     0.17   0.868    -.0028983    .0034333
+ td_green_dm |  -.0004525   .0002679    -1.69   0.093    -.0009805    .0000755
+ td_dirty_dm |   -.000092    .000288    -0.32   0.750    -.0006596    .0004755
+------------------------------------------------------------------------------
+
+. local nobs   = e(N)
+
+. local nclust = e(N_clust)
+
+. 
+. foreach v in tr_green tr_dirty td_green td_dirty {
+  2.     local coef_`v' = _b[`v'_dm]
+  3.     local se_`v'   = _se[`v'_dm]
+  4.     local t_`v'    = _b[`v'_dm] / _se[`v'_dm]
+  5.     local p_`v'    = 2 * ttail(e(df_r), abs(`t_`v''))
+  6. }
+
+. di as txt "OLS TREND: tr_dirty = " _b[tr_dirty_dm] "  (p=" 2*ttail(e(df_r),ab
+> s(_b[tr_dirty_dm]/_se[tr_dirty_dm])) ")"
+OLS TREND: tr_dirty = .00026749  (p=.86791691)
+
+. 
+. di as txt "  boottest tr_green_dm..."
+  boottest tr_green_dm...
+
+. boottest tr_green_dm, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(228) =     1.0370
+                        Prob>|t| =     0.3777
+
+. local p_boot_tr_green = r(p)
+
+. di as txt "  p_boot tr_green = `p_boot_tr_green'"
+  p_boot tr_green = .3777377737773777
+
+. 
+. di as txt "  boottest tr_dirty_dm..."
+  boottest tr_dirty_dm...
+
+. boottest tr_dirty_dm, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(228) =     0.1665
+                        Prob>|t| =     0.8977
+
+. local p_boot_tr_dirty = r(p)
+
+. di as txt "  p_boot tr_dirty = `p_boot_tr_dirty'"
+  p_boot tr_dirty = .8976897689768977
+
+. 
+. foreach v in tr_green tr_dirty td_green td_dirty {
+  2.     local pb = .
+  3.     if "`v'" == "tr_green" local pb = `p_boot_tr_green'
+  4.     if "`v'" == "tr_dirty" local pb = `p_boot_tr_dirty'
+  5.     write_row "trim_full" "TREND" "`v'" `coef_`v'' `se_`v'' `p_`v'' `pb' 9
+> 999 `nobs' `nclust'
+  6. }
+
+. di as txt "  -> TREND scritto nel CSV"
+  -> TREND scritto nel CSV
+
+. 
+. ** Pulizia
+. capture erase "`dta_dm'"
+
+. 
+. di as result _n "=== FATTO. Output: $CSV_OUT ==="
+
+=== FATTO. Output: New/Output/TripleDiff/Tables/stata_check_trim_fullpanel.csv 
+> ===
+
+. 
+end of do-file

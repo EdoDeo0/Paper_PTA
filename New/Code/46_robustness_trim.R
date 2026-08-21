@@ -45,17 +45,23 @@ dep   <- fread(DEPTH_FILE)[, .(country_code, year, dep_val__ = get(DEPTH_VAR))]
 
 RSCRIPT <- file.path(R.home("bin"), "Rscript")
 
-## Helper: scrive un worker R temporaneo e lo lancia
-run_worker <- function(worker_code, label, max_tries = 5) {
+## Helper: scrive un worker R temporaneo e lo lancia (con timeout via processx)
+run_worker <- function(worker_code, label, max_tries = 8, timeout = 420) {
   tf <- tempfile(fileext = ".R")
   writeLines(worker_code, tf)
   on.exit(unlink(tf))
   for (tent in 1:max_tries) {
     cat(sprintf("  [%s] tentativo %d ... ", label, tent))
-    rc <- system2(RSCRIPT, args = shQuote(tf), stdout = "", stderr = "")
-    if (rc == 0) { cat("OK\n"); return(invisible(TRUE)) }
-    cat(sprintf("crash (exit %d)\n", rc))
-    Sys.sleep(2)
+    res <- processx::run(RSCRIPT, args = tf, timeout = timeout,
+                         stdout = "", stderr = "", error_on_status = FALSE)
+    if (isTRUE(res$timeout)) {
+      cat(sprintf("timeout (%ds) — kill e retry\n", timeout))
+    } else if (res$status == 0) {
+      cat("OK\n"); return(invisible(TRUE))
+    } else {
+      cat(sprintf("crash (exit %d)\n", res$status))
+    }
+    Sys.sleep(3)
   }
   stop(sprintf("%s fallito dopo %d tentativi", label, max_tries))
 }
@@ -68,6 +74,7 @@ cat("\n===== PARTE A: panel collassato trimmato =====\n")
 CACHE_FST <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 stopifnot("panel_pdt_collapsed.fst non trovato" = file.exists(CACHE_FST))
 cell <- as.data.table(read_fst(CACHE_FST))
+stopifnot("Dataset stantio: max(WB_EP_Depth) != 17" = max(cell$WB_EP_Depth, na.rm = TRUE) == 17)
 
 cell[, env_good := as.integer(sprintf("%06d", as.integer(hs6)) %in% green_set)]
 cell[dirty, on = "hs6", dirty_p := i.dirty_p]
@@ -130,25 +137,58 @@ unlink(c(out_path(file.path(OUT_DIR, "tripledd_trimmed_collapsed_wb.csv")),
 cat("[OK] tripledd_trimmed_collapsed.csv\n")
 
 ## --- A2: WCB collassato trimmato — un worker per indice ---
+## Guardia (layer 1): FW identity (demean+lm vs feols, <1e-6).
+## Guardia (layer 2, solo TREND): cross-check coef vs A1 nell'orchestratore.
+## Worker usa: fixest caricato DOPO data construction + singleton filter manuale
+## (no obs() → lean=TRUE), nthreads=1 (meno pressione GC durante feols).
 cat("\n--- WCB collapsed trimmed ---\n")
+
+## Legge la referenza A1 TREND collapsed (usata nel cross-check layer 2)
+.a1_collapsed <- fread(out_path(file.path(OUT_DIR, "tripledd_trimmed_collapsed.csv")))
+.a1_trend_dirty_ref <- .a1_collapsed[treat == "TREND" & grepl("dirty_p", var), coef][1]
+cat(sprintf("[A1 ref] TREND ep_dirty = %+.6f\n", .a1_trend_dirty_ref))
+
 for (tr_name in c("WB", "TREND")) {
   tr <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")[[tr_name]]
   out_csv <- out_path(file.path(OUT_DIR, sprintf("wcb_trimmed_collapsed_%s.csv", tolower(tr_name))))
 
   worker <- sprintf('
-library(fst); library(data.table); library(fixest); library(fwildclusterboot)
-threads_fst(1); setFixest_nthreads(4)
-set.seed(42); dqrng::dqset.seed(42)
+# Fase 1: dati + singleton filter — SENZA fixest (nessun finalizer C durante costruzione)
+library(fst); library(data.table)
+threads_fst(1)
 cell <- as.data.table(read_fst("%s"))
 cell[, `:=`(ep_green = %s * env_good, ep_dirty = %s * dirty_p,
             td_green = %s * env_good, td_dirty = %s * dirty_p)]
+cell <- cell[, .(y, ep_green, ep_dirty, td_green, td_dirty, pd, dt, pt, n, country_code)]
+# Singleton filter manuale (iterativo, puro data.table — no obs())
+repeat {
+  n_pd <- cell[, .N, by = pd]; n_dt <- cell[, .N, by = dt]; n_pt <- cell[, .N, by = pt]
+  d_pd <- n_pd[N == 1L, pd]; d_dt <- n_dt[N == 1L, dt]; d_pt <- n_pt[N == 1L, pt]
+  if (!length(d_pd) && !length(d_dt) && !length(d_pt)) break
+  cell <- cell[!pd %%in%% d_pd & !dt %%in%% d_dt & !pt %%in%% d_pt]
+}
+cat(sprintf("  singleton filter: %%d obs rimaste\\n", nrow(cell)))
+gc(full = TRUE)
+# Fase 2: feols + FW (fixest caricato solo ora, nthreads=1 per ridurre pressione GC)
+library(fixest); setFixest_nthreads(1)
+m_ref <- feols(y ~ ep_green + ep_dirty + td_green + td_dirty | pd + dt + pt,
+               data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
+ref_green <- coef(m_ref)[["ep_green"]]; ref_dirty <- coef(m_ref)[["ep_dirty"]]
+gc()
 X <- fixest::demean(cell[, .(y, ep_green, ep_dirty, td_green, td_dirty)],
                     f = cell[, .(pd, dt, pt)], weights = cell$n)
 df <- as.data.frame(X); df$n_w <- cell$n; df$country_code <- cell$country_code
-rm(X, cell); gc()
+rm(X, m_ref, cell); gc()
 m_lm <- lm(y ~ 0 + ep_green + ep_dirty + td_green + td_dirty, data = df, weights = n_w)
+stopifnot(
+  "FW identity FAILED (ep_green)" = abs(coef(m_lm)[["ep_green"]] - ref_green) < 1e-6,
+  "FW identity FAILED (ep_dirty)" = abs(coef(m_lm)[["ep_dirty"]] - ref_dirty) < 1e-6
+)
 cat(sprintf("[%s] coef: ep_green %%+.6f | ep_dirty %%+.6f\\n",
             coef(m_lm)[["ep_green"]], coef(m_lm)[["ep_dirty"]]))
+# Fase 3: boottest (fwildclusterboot caricato solo ora)
+library(fwildclusterboot)
+set.seed(42); dqrng::dqset.seed(42)
 res <- list()
 for (param in c("ep_green", "ep_dirty")) {
   cat("  boottest:", param, "... ")
@@ -160,10 +200,46 @@ for (param in c("ep_green", "ep_dirty")) {
 }
 fwrite(rbindlist(res), "%s")
 ',  gsub("\\\\", "/", TRIM_COLLAPSED_FST),
-    tr, tr, DEPTH_VAR, DEPTH_VAR, tr_name, tr_name,
+    tr, tr, DEPTH_VAR, DEPTH_VAR,
+    tr_name, tr_name,
     gsub("\\\\", "/", out_csv))
 
-  run_worker(worker, paste("WCB collapsed", tr_name))
+  ## Layer-2 cross-check per TREND: retry se coef WCB ep_dirty diverge >0.003 da A1
+  if (tr_name == "TREND") {
+    for (attempt in seq_len(8L)) {
+      cat(sprintf("  [WCB collapsed TREND] tentativo %d ... ", attempt))
+      tf <- tempfile(fileext = ".R"); writeLines(worker, tf); on.exit(unlink(tf), add = TRUE)
+      res_run <- processx::run(RSCRIPT, args = tf, timeout = 420L,
+                               stdout = "", stderr = "", error_on_status = FALSE)
+      if (isTRUE(res_run$timeout)) {
+        cat("timeout (420s) — kill e retry\n"); Sys.sleep(3); next
+      }
+      if (res_run$status != 0) {
+        cat(sprintf("crash (exit %d)\n", res_run$status)); Sys.sleep(3); next
+      }
+      if (!file.exists(out_csv)) {
+        cat("no output — retry\n"); Sys.sleep(3); next
+      }
+      # Layer 2: confronta coef WCB vs A1
+      wcb_check <- tryCatch(fread(out_csv), error = function(e) NULL)
+      if (is.null(wcb_check) || nrow(wcb_check) == 0) {
+        cat("CSV vuoto — retry\n"); unlink(out_csv); Sys.sleep(3); next
+      }
+      wcb_dirty <- wcb_check[term == "ep_dirty", coef]
+      if (length(wcb_dirty) == 0 || is.na(wcb_dirty)) {
+        cat("coef mancante — retry\n"); unlink(out_csv); Sys.sleep(3); next
+      }
+      if (!is.na(.a1_trend_dirty_ref) && abs(wcb_dirty - .a1_trend_dirty_ref) > 0.003) {
+        cat(sprintf("coef corrotto (WCB=%.4f vs A1=%.4f) — retry\n",
+                    wcb_dirty, .a1_trend_dirty_ref))
+        unlink(out_csv); Sys.sleep(3); next
+      }
+      cat("OK\n"); break
+    }
+    if (!file.exists(out_csv)) stop("WCB collapsed TREND fallito dopo 8 tentativi")
+  } else {
+    run_worker(worker, paste("WCB collapsed", tr_name))
+  }
 }
 
 wcb_wb <- fread(out_path(file.path(OUT_DIR, "wcb_trimmed_collapsed_wb.csv")))
@@ -186,6 +262,7 @@ d <- as.data.table(read_fst(DATA_FST, columns = c(
   "WB_EP_Depth", "TREND_EP_Count", "env_good")))
 if (HKMO_DROP) d <- d[!country_code %in% HKMO_CODES]
 d <- d[!is.na(ln_export)]
+stopifnot("Dataset stantio: max(WB_EP_Depth) != 17" = max(d$WB_EP_Depth, na.rm = TRUE) == 17)
 
 d[dirty, on = "hs6", dirty_p := i.dirty_p]
 d[is.na(dirty_p), dirty_p := 0L]
@@ -245,25 +322,41 @@ unlink(c(out_path(file.path(OUT_DIR, "tripledd_trimmed_fullpanel_wb.csv")),
 cat("[OK] tripledd_trimmed_fullpanel.csv\n")
 
 ## --- B2: WCB full panel trimmato ---
+## Guardia: FW identity su obs di feols (< 1e-6). Nessun A1 cross-check.
 cat("\n--- WCB full panel trimmed ---\n")
+
 for (tr_name in c("WB", "TREND")) {
   tr <- c(WB = "WB_EP_Depth", TREND = "TREND_EP_Count")[[tr_name]]
   out_csv <- out_path(file.path(OUT_DIR, sprintf("wcb_trimmed_fullpanel_%s.csv", tolower(tr_name))))
 
   worker <- sprintf('
-library(fst); library(data.table); library(fixest); library(fwildclusterboot)
+# Fase 1: feols + FW — SENZA fwildclusterboot (evita recursive gc da suoi finalizer)
+library(fst); library(data.table); library(fixest)
 threads_fst(1); setFixest_nthreads(4)
-set.seed(42); dqrng::dqset.seed(42)
 d <- as.data.table(read_fst("%s"))
 d[, `:=`(ep_green = %s * env_good, ep_dirty = %s * dirty_p,
          td_green = %s * env_good, td_dirty = %s * dirty_p)]
-X <- fixest::demean(d[, .(ln_export, ep_green, ep_dirty, td_green, td_dirty)],
-                    f = d[, .(pd, dt, pt)])
-df <- as.data.frame(X); df$country_code <- d$country_code
-rm(X, d); gc()
+d <- d[, .(ln_export, ep_green, ep_dirty, td_green, td_dirty, pd, dt, pt, country_code)]
+gc(full = TRUE)
+m_ref <- feols(ln_export ~ ep_green + ep_dirty + td_green + td_dirty | pd + dt + pt,
+               data = d, cluster = ~country_code)
+ref_green <- coef(m_ref)[["ep_green"]]; ref_dirty <- coef(m_ref)[["ep_dirty"]]
+keep_obs <- obs(m_ref); rm(m_ref); gc()
+d_s <- d[keep_obs]; rm(d, keep_obs); gc()
+X <- fixest::demean(d_s[, .(ln_export, ep_green, ep_dirty, td_green, td_dirty)],
+                    f = d_s[, .(pd, dt, pt)])
+df <- as.data.frame(X); df$country_code <- d_s$country_code
+rm(X, d_s); gc()
 m_lm <- lm(ln_export ~ 0 + ep_green + ep_dirty + td_green + td_dirty, data = df)
+stopifnot(
+  "FW identity FAILED (ep_green)" = abs(coef(m_lm)[["ep_green"]] - ref_green) < 1e-6,
+  "FW identity FAILED (ep_dirty)" = abs(coef(m_lm)[["ep_dirty"]] - ref_dirty) < 1e-6
+)
 cat(sprintf("[%s] coef: ep_green %%+.6f | ep_dirty %%+.6f\\n",
             coef(m_lm)[["ep_green"]], coef(m_lm)[["ep_dirty"]]))
+# Fase 2: boottest — carichiamo fwildclusterboot solo ora
+library(fwildclusterboot)
+set.seed(42); dqrng::dqset.seed(42)
 res <- list()
 for (param in c("ep_green", "ep_dirty")) {
   cat("  boottest:", param, "... ")
@@ -275,10 +368,11 @@ for (param in c("ep_green", "ep_dirty")) {
 }
 fwrite(rbindlist(res), "%s")
 ',  gsub("\\\\", "/", TRIM_FULL_FST),
-    tr, tr, DEPTH_VAR, DEPTH_VAR, tr_name, tr_name,
+    tr, tr, DEPTH_VAR, DEPTH_VAR,
+    tr_name, tr_name,
     gsub("\\\\", "/", out_csv))
 
-  run_worker(worker, paste("WCB full panel", tr_name))
+  run_worker(worker, paste("WCB full panel", tr_name), timeout = 3600)
 }
 
 wcb_wb <- fread(out_path(file.path(OUT_DIR, "wcb_trimmed_fullpanel_wb.csv")))

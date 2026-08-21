@@ -336,4 +336,24 @@ run_rscript("44", "Generatore CSV -> frammenti LaTeX",
   script = "New/Code/44_make_tables_tex.R",
   artifacts = file.path(ROOT, "New/Paper/Tabelle"))
 
+run_rscript("45", "Confronto Brandi et al. (2020)",
+  script = "New/Code/45_brandi_comparison.R",
+  artifacts = file.path(ROOT, "New/Paper/Tabelle/tab_20_brandi.tex"))
+
+run_rscript("46", "Robustezza trimming p1/p99 (Windows-only: stima + WCB)",
+  script = "New/Code/46_robustness_trim.R",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_trimmed_collapsed.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_trimmed_fullpanel.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_trimmed_collapsed.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_trimmed_fullpanel.csv")))
+
+run_rscript("47", "Decomposizione outcome: quantita' + valore unitario (Windows-only)",
+  script = "New/Code/47_outcome_decomposition.R",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_decomp_collapsed.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_decomp_fullpanel.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_decomp_collapsed.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_decomp_fullpanel.csv")))
+
 cat("\n[run_pipeline] Fine. Ogni step eseguito e' stato verificato su disco.\n")
