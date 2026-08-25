@@ -1,0 +1,501 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\stata\61_secondary_wcb_collapsed.do 
+
+. *****************************************************************************
+> ***
+. ****** 61 - WCB secondari sul panel collassato (Stata, FWL + boottest)     **
+> ****
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisiti: Rscript New/Code/52_export_collapsed_dta.R   (collapsed_omnib
+> us.dta)
+. *               Rscript New/Code/48_trim_export_dta.R        (tmp_check_trim/
+> decomp)
+. *
+. * Chiude i p-value bootstrap che erano rimasti prodotti solo in R. Il paper l
+> i
+. * cita tutti; i coefficienti erano gia' ancorati a Stata, i p no.
+. *
+. * BLOCCHI (tutti sul panel collassato, [aw=n], cluster country_code, B=9999):
+. *   trend       trend destinazione x green/dirty      <-> r79b_wcb_trends.csv
+. *   regspace    placebo TREND_RegulatorySpace         <-> wcb_regulatoryspace
+> .csv
+. *   trim        outcome trimmato p1/p99               <-> wcb_trimmed_collaps
+> ed.csv
+. *   decomp_qua  outcome = log quantita'               <-> wcb_decomp_collapse
+> d.csv
+. *   decomp_uv   outcome = log valore unitario         <-> wcb_decomp_collapse
+> d.csv
+. *   co2         intensita' CO2 continua al posto di dirty <-> r711_shapiro_in
+> tensity.csv
+. *
+. * METODO. Stesso schema di 52 (S3) e 48e: Frisch-Waugh esplicito — si demeana
+> no
+. * outcome e regressori sulle FE con reghdfe pesato, poi `reg` senza costante 
+> sui
+. * residui e `boottest` su quella. Si usa FWL e non boottest nativo per restar
+> e
+. * confrontabili con R, che fa esattamente questo (fwildclusterboot lavora su 
+> un
+. * oggetto lm gia' residualizzato).
+. *
+. * GUARDIA. Ogni blocco confronta il coefficiente demeanato col valore atteso
+. * (dalla stima asintotica gia' verificata) e fa `exit 9` se lo scarto supera
+. * 1e-4: e' la regola di progetto dopo l'incidente S3 del 22/08.
+. *
+. * Output: New/Output/TripleDiff/Tables_Stata/secondary_wcb_stata.csv
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto - ~30-45 min):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\61_s
+> econdary_wcb_collapsed.do"
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
+
+. global COLL "$ROOT\New\Data\Collapsed"
+
+. global CO2  "$ROOT\New\Data\Classifications\co2_intensity_hs6.csv"
+
+. global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. global BREPS 9999
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which boottest
+
+. if _rc {
+.     di as error "boottest non installato."
+.     exit 1
+. }
+
+. cap mkdir "$TAB"
+
+. 
+. global CSV "$TAB\secondary_wcb_stata.csv"
+
+. capture erase "$CSV"
+
+. file open fh using "$CSV", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\secondary_w
+    > cb_stata.csv not found)
+
+. file write fh "block,treat,term,coef,se,pval_asy,p_boot,B,nobs,nclust,source"
+>  _n
+
+. file close fh
+
+. 
+. *****************************************************************************
+> ***
+. * Programma riutilizzabile: FWL + boottest
+. *   `1' block   etichetta del blocco
+. *   `2' treat   WB / TREND / (altro)
+. *   `3' regs    i 4 regressori (gia' presenti in memoria)
+. *   `4' absorb  specifica di absorb()
+. *   `5' params  i regressori su cui fare boottest
+. *   `6' expect  coefficiente atteso per il PRIMO di `params' (guardia)
+. * Richiede in memoria: y, n, country_code + i regressori.
+. *****************************************************************************
+> ***
+. capture program drop fwl_boot
+
+. program define fwl_boot
+  1.     args block treat regs absorb params expect
+  2. 
+.     di as text _n "--- [`block' `treat'] demeaning su: `absorb'"
+  3.     foreach v in y `regs' {
+  4.         cap drop `v'_dm
+  5.         qui reghdfe `v' [aw=n], absorb(`absorb') residuals(`v'_dm) tol(1e-
+> 8)
+  6.     }
+  7. 
+.     local dmregs ""
+  8.     foreach v of local regs {
+  9.         local dmregs "`dmregs' `v'_dm"
+ 10.     }
+ 11. 
+.     qui reg y_dm `dmregs' [aw=n], cluster(country_code) nocons
+ 12.     local nobs   = e(N)
+ 13.     local nclust = e(N_clust)
+ 14. 
+.     * --- guardia di riproduzione -------------------------------------------
+.     local first : word 1 of `params'
+ 15.     local got = _b[`first'_dm]
+ 16.     local dev = abs(`got' - (`expect'))
+ 17.     di as text "  guardia: `first' = " %12.9f `got' "  atteso " %12.9f (`e
+> xpect') "  scarto " %9.2e `dev'
+ 18.     if `dev' > 1e-4 {
+ 19.         di as error "  [`block' `treat'] FWL non riproduce il baseline. In
+> terrompo."
+ 20.         exit 9
+ 21.     }
+ 22. 
+.     foreach p of local params {
+ 23.         local b   = _b[`p'_dm]
+ 24.         local se  = _se[`p'_dm]
+ 25.         local pa  = 2 * ttail(`nclust' - 1, abs(`b'/`se'))
+ 26.         set seed 42
+ 27.         cap boottest `p'_dm, reps($BREPS) cluster(country_code) nograph
+ 28.         if _rc {
+ 29.             di as error "  boottest fallito su `p' (rc=" _rc ")"
+ 30.             local pb = .
+ 31.         }
+ 32.         else {
+ 33.             local pb = r(p)
+ 34.         }
+ 35.         di as res "  [`block' `treat'] `p': coef=" %10.7f `b' "  p_asy=" %
+> 6.4f `pa' "  p_boot=" %6.4f `pb'
+ 36.         file open fh using "$CSV", write append text
+ 37.         file write fh "`block',`treat',`p',`b',`se',`pa',`pb',$BREPS,`nobs
+> ',`nclust',reghdfe_boottest_61" _n
+ 38.         file close fh
+ 39.     }
+ 40. end
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO 1 - trend destinazione x green/dirty
+. *   R: 27_robustness_desttrends_wcb.R -> r79b_wcb_trends.csv
+. *   attesi: WB green -0.0050988, dirty -0.0082466; TREND green -0.0021694
+. *****************************************************************************
+> ***
+. use "$DTA", clear
+
+. su WB_EP_Depth, meanonly
+
+. if r(max) != 17 {
+.     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio."
+.     exit 1
+. }
+
+. gen double trend_g = (year - 2000) * env_good
+
+. gen double trend_b = (year - 2000) * dirty_p
+
+. gen double td_green = TotalDepth_nonEnv * env_good
+
+. gen double td_dirty = TotalDepth_nonEnv * dirty_p
+
+. 
+. preserve
+
+.     gen double ep_green = WB_EP_Depth * env_good
+
+.     gen double ep_dirty = WB_EP_Depth * dirty_p
+
+.     fwl_boot trend WB "ep_green ep_dirty td_green td_dirty" ///
+>         "pd dt pt country_code#c.trend_g country_code#c.trend_b" ///
+>         "ep_green ep_dirty" -0.00509881107366483
+
+--- [trend WB] demeaning su: pd dt pt country_code#c.trend_g country_code#c.tre
+> nd_b
+  guardia: ep_green = -0.005098811  atteso -0.005098811  scarto  6.76e-12
+  [trend WB] ep_green: coef=-0.0050988  p_asy=0.1583  p_boot=0.4941
+  [trend WB] ep_dirty: coef=-0.0082466  p_asy=0.0527  p_boot=0.2745
+
+. restore
+
+. 
+. preserve
+
+.     gen double ep_green = TREND_EP_Count * env_good
+
+.     gen double ep_dirty = TREND_EP_Count * dirty_p
+
+.     fwl_boot trend TREND "ep_green ep_dirty td_green td_dirty" ///
+>         "pd dt pt country_code#c.trend_g country_code#c.trend_b" ///
+>         "ep_green ep_dirty" -0.00216942793411946
+
+--- [trend TREND] demeaning su: pd dt pt country_code#c.trend_g country_code#c.
+> trend_b
+  guardia: ep_green = -0.002169428  atteso -0.002169428  scarto  1.04e-12
+  [trend TREND] ep_green: coef=-0.0021694  p_asy=0.0006  p_boot=0.0146
+  [trend TREND] ep_dirty: coef=-0.0013695  p_asy=0.2361  p_boot=0.3553
+
+. restore
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO 2 - placebo regulatory space (TREND_RegulatorySpace)
+. *   R: 20b_wcb_regulatoryspace.R -> wcb_regulatoryspace.csv
+. *   attesi: sub_green +0.0242135, sub_dirty +0.0225215
+. *****************************************************************************
+> ***
+. use "$DTA", clear
+
+. gen double sub_green = TREND_RegulatorySpace * env_good
+
+. gen double sub_dirty = TREND_RegulatorySpace * dirty_p
+
+. gen double td_green  = TotalDepth_nonEnv * env_good
+
+. gen double td_dirty  = TotalDepth_nonEnv * dirty_p
+
+. fwl_boot regspace TREND_RegulatorySpace "sub_green sub_dirty td_green td_dirt
+> y" ///
+>     "pd dt pt" "sub_green sub_dirty" 0.0242134625854162
+
+--- [regspace TREND_RegulatorySpace] demeaning su: pd dt pt
+  guardia: sub_green =  0.024213463  atteso  0.024213463  scarto  1.01e-16
+  [regspace TREND_RegulatorySpace] sub_green: coef= 0.0242135  p_asy=0.0146  p_
+> boot=0.0447
+  [regspace TREND_RegulatorySpace] sub_dirty: coef= 0.0225215  p_asy=0.0089  p_
+> boot=0.0206
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO 3 - outcome trimmato p1/p99, e BLOCCHI 4-5 decomposizione
+. *   I .dta sono gia' pronti da 48_trim_export_dta.R e hanno le interazioni
+. *   pre-costruite (wb_green, wb_dirty, tr_green, tr_dirty, td_green, td_dirty
+> ).
+. *****************************************************************************
+> ***
+. * trim: attesi WB green -0.0048097, dirty -0.0115907; TREND green +0.0017657
+. use "$COLL\tmp_check_trim.dta", clear
+
+. preserve
+
+.     rename (wb_green wb_dirty) (ep_green ep_dirty)
+
+.     fwl_boot trim WB "ep_green ep_dirty td_green td_dirty" "pd dt pt" ///
+>         "ep_green ep_dirty" -0.0048096803
+
+--- [trim WB] demeaning su: pd dt pt
+  guardia: ep_green = -0.004809680  atteso -0.004809680  scarto  1.82e-11
+  [trim WB] ep_green: coef=-0.0048097  p_asy=0.4806  p_boot=0.6102
+  [trim WB] ep_dirty: coef=-0.0115907  p_asy=0.0001  p_boot=0.0407
+
+. restore
+
+. preserve
+
+.     rename (tr_green tr_dirty) (ep_green ep_dirty)
+
+.     fwl_boot trim TREND "ep_green ep_dirty td_green td_dirty" "pd dt pt" ///
+>         "ep_green ep_dirty" 0.0017656778
+
+--- [trim TREND] demeaning su: pd dt pt
+  guardia: ep_green =  0.001765678  atteso  0.001765678  scarto  7.25e-12
+  [trim TREND] ep_green: coef= 0.0017657  p_asy=0.3308  p_boot=0.4043
+  [trim TREND] ep_dirty: coef= 0.0002501  p_asy=0.8689  p_boot=0.8939
+
+. restore
+
+. 
+. * decomposizione quantita': attesi WB green -0.0055357, TREND green +0.001872
+> 5
+. use "$COLL\tmp_check_decomp_qua.dta", clear
+
+. preserve
+
+.     rename (wb_green wb_dirty) (ep_green ep_dirty)
+
+.     fwl_boot decomp_qua WB "ep_green ep_dirty td_green td_dirty" "pd dt pt" /
+> //
+>         "ep_green ep_dirty" -0.0055357137
+
+--- [decomp_qua WB] demeaning su: pd dt pt
+  guardia: ep_green = -0.005535714  atteso -0.005535714  scarto  1.73e-11
+  [decomp_qua WB] ep_green: coef=-0.0055357  p_asy=0.4217  p_boot=0.5250
+  [decomp_qua WB] ep_dirty: coef=-0.0114503  p_asy=0.0845  p_boot=0.2495
+
+. restore
+
+. preserve
+
+.     rename (tr_green tr_dirty) (ep_green ep_dirty)
+
+.     fwl_boot decomp_qua TREND "ep_green ep_dirty td_green td_dirty" "pd dt pt
+> " ///
+>         "ep_green ep_dirty" 0.0018725301
+
+--- [decomp_qua TREND] demeaning su: pd dt pt
+  guardia: ep_green =  0.001872530  atteso  0.001872530  scarto  3.80e-11
+  [decomp_qua TREND] ep_green: coef= 0.0018725  p_asy=0.3555  p_boot=0.4327
+  [decomp_qua TREND] ep_dirty: coef=-0.0003802  p_asy=0.8359  p_boot=0.8861
+
+. restore
+
+. 
+. * decomposizione valore unitario: attesi WB green +0.0005095, TREND green -0.
+> 0001163
+. use "$COLL\tmp_check_decomp_uv.dta", clear
+
+. preserve
+
+.     rename (wb_green wb_dirty) (ep_green ep_dirty)
+
+.     fwl_boot decomp_uv WB "ep_green ep_dirty td_green td_dirty" "pd dt pt" //
+> /
+>         "ep_green ep_dirty" 0.000509497
+
+--- [decomp_uv WB] demeaning su: pd dt pt
+  guardia: ep_green =  0.000509497  atteso  0.000509497  scarto  1.74e-11
+  [decomp_uv WB] ep_green: coef= 0.0005095  p_asy=0.8528  p_boot=0.8506
+  [decomp_uv WB] ep_dirty: coef= 0.0006262  p_asy=0.8792  p_boot=0.9467
+
+. restore
+
+. preserve
+
+.     rename (tr_green tr_dirty) (ep_green ep_dirty)
+
+.     fwl_boot decomp_uv TREND "ep_green ep_dirty td_green td_dirty" "pd dt pt"
+>  ///
+>         "ep_green ep_dirty" -0.0001163438
+
+--- [decomp_uv TREND] demeaning su: pd dt pt
+  guardia: ep_green = -0.000116344  atteso -0.000116344  scarto  4.35e-11
+  [decomp_uv TREND] ep_green: coef=-0.0001163  p_asy=0.8664  p_boot=0.8672
+  [decomp_uv TREND] ep_dirty: coef= 0.0009469  p_asy=0.0734  p_boot=0.1691
+
+. restore
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO 6 - intensita' CO2 continua al posto della dummy dirty
+. *   R: 29_robustness_co2intensity.R -> r711_shapiro_intensity.csv
+. *   z-score calcolato sui non mancanti, poi i mancanti prendono la media (z=0
+> )
+. *   attesi: WB ep_green -0.0050343, TREND ep_green +0.0008802
+. *****************************************************************************
+> ***
+. preserve
+
+.     import delimited "$CO2", clear varnames(1)
+(encoding automatically selected: ISO-8859-1)
+(4 vars, 4,607 obs)
+
+.     keep hs6_int co2_total
+
+.     rename hs6_int hs6
+
+.     duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+.     tempfile co2f
+
+.     save `co2f'
+file C:\Users\edodr\AppData\Local\Temp\ST_10e58_00000a.tmp saved as .dta
+    format
+
+. restore
+
+. 
+. use "$DTA", clear
+
+. merge m:1 hs6 using `co2f', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        88,393
+        from master                    88,393  
+        from using                          0  
+
+    Matched                         3,685,105  
+    -----------------------------------------
+
+. 
+. qui su co2_total
+
+. local mu  = r(mean)
+
+. local sdv = r(sd)
+
+. di as text "[co2] media=" %12.9f `mu' "  sd=" %12.9f `sdv' "  mancanti=" _N -
+>  r(N)
+[co2] media= 0.000830424  sd= 0.000451639  mancanti=88393
+
+. replace co2_total = `mu' if missing(co2_total)
+(88,393 real changes made)
+
+. gen double co2_z = (co2_total - `mu') / `sdv'
+
+. 
+. gen double td_green = TotalDepth_nonEnv * env_good
+
+. gen double td_co2   = TotalDepth_nonEnv * co2_z
+
+. 
+. preserve
+
+.     gen double ep_green = WB_EP_Depth * env_good
+
+.     gen double ep_co2   = WB_EP_Depth * co2_z
+
+.     fwl_boot co2 WB "ep_green ep_co2 td_green td_co2" "pd dt pt" ///
+>         "ep_green ep_co2" -0.00503428654364612
+
+--- [co2 WB] demeaning su: pd dt pt
+  guardia: ep_green = -0.005034287  atteso -0.005034287  scarto  4.16e-11
+  [co2 WB] ep_green: coef=-0.0050343  p_asy=0.4715  p_boot=0.5441
+  [co2 WB] ep_co2: coef=-0.0025502  p_asy=0.6526  p_boot=0.7067
+
+. restore
+
+. preserve
+
+.     gen double ep_green = TREND_EP_Count * env_good
+
+.     gen double ep_co2   = TREND_EP_Count * co2_z
+
+.     fwl_boot co2 TREND "ep_green ep_co2 td_green td_co2" "pd dt pt" ///
+>         "ep_green ep_co2" 0.000880240505214241
+
+--- [co2 TREND] demeaning su: pd dt pt
+  guardia: ep_green =  0.000880240  atteso  0.000880241  scarto  1.90e-11
+  [co2 TREND] ep_green: coef= 0.0008802  p_asy=0.6052  p_boot=0.6771
+  [co2 TREND] ep_co2: coef=-0.0013143  p_asy=0.0108  p_boot=0.0630
+
+. restore
+
+. 
+. di as result _n "=== 61 FATTO. Output: $CSV ==="
+
+=== 61 FATTO. Output: C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_S
+> tata\secondary_wcb_stata.csv ===
+
+. 
+end of do-file

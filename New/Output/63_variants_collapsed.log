@@ -1,0 +1,706 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\stata\63_variants_collapsed.do excl de
+> sta 
+
+. *****************************************************************************
+> ***
+. ****** 63 - Batteria collassata per le VARIANTI di campione/profondita'    **
+> ****
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisiti: 52_export_collapsed_dta.R      -> collapsed_omnibus.dta
+. *               62_export_collapsed_inclhkmo_dta.R -> collapsed_omnibus_inclH
+> KMO.dta
+. *
+. * PERCHE' ESISTE. Le tabelle di `Tabelle_Stime.pdf` riportano una matrice 2x2
+> :
+. *   campione   {escl. HK/Macao, incl. HK/Macao}
+. *   profondita'{TotalDepth (Banca Mondiale), DESTA}
+. * La colonna baseline (escl + TotalDepth) era gia' replicata in Stata; le alt
+> re
+. * tre no. Questo do-file le produce, scrivendo CSV con lo STESSO schema dei
+. * corrispondenti file R, cosi' che 44_make_tables_tex.R possa leggerli senza
+. * trascrizioni manuali.
+. *
+. * PARAMETRI (impostati in testa, come in 17/17b/18):
+. *   $VSAMPLE  excl | incl
+. *   $VDEPTH   totaldepth | desta
+. * Da cui si derivano il .dta di input, la variabile di profondita' e il suffi
+> sso
+. * di output. Si puo' lanciare anche sul BASELINE (excl+totaldepth): non
+. * sovrascrive nulla di verificato (i file baseline gia' agli atti hanno nomi
+. * diversi) e serve a produrre anche per il baseline una copia in schema R, co
+> si'
+. * che il generatore di tabelle abbia una fonte Stata uniforme sulle 4 variant
+> i.
+. *
+. * BLOCCHI                                        gemello R
+. *   A baseline collassato (WB, TREND)            tripledd_collapsed{sfx}.csv
+. *   B WCB su A (FWL + boottest)                  wcb_collapsed{sfx}.csv
+. *   C 7 sotto-indici                             subindices_collapsed{sfx}.cs
+> v
+. *   D intensita' CO2 continua (+ WCB)            r711_shapiro_intensity{sfx}.
+> csv
+. *   E leave-one-out (26 spec)                    dirty_leaveoneout{sfx}.csv
+. *   F trend destinazione (coef + WCB)            r79_desttrends{sfx}.csv, r79
+> b_wcb_trends{sfx}.csv
+. *   G pre-trend detrendizzati (+ WCB)            r79c_pretrends{sfx}.csv
+. *
+. * NON coperti qui (richiedono input o tempi diversi, vedi ROADMAP):
+. *   PPML margine estensivo -> serve la griglia zero-fill per variante
+. *   permutazione           -> ~25 h per variante
+. *
+. * RESUME-SAFE: ogni blocco salta se il proprio CSV esiste gia'.
+. *
+. * ESECUZIONE BATCH (una volta per variante, da PowerShell, root progetto):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\63_v
+> ariants_collapsed.do"
+. * cambiando $VSAMPLE/$VDEPTH in testa. Tempo stimato: 1,5-3 h per variante
+. * (il blocco F e' il piu' lento: assorbe 2 slope per destinazione).
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. 
+. *── PARAMETRI ───────────────────────────────────────────────────────────────
+> ──
+. * Default (usati se non si passa nulla da riga di comando)
+. global VSAMPLE "incl"        // excl | incl
+
+. global VDEPTH  "totaldepth"  // totaldepth | desta
+
+. 
+. * Override da riga di comando, per poter accodare le varianti senza editare i
+> l
+. * file:  ... /e do "63_variants_collapsed.do" incl desta
+. if "`1'" != "" global VSAMPLE "`1'"
+
+. if "`2'" != "" global VDEPTH  "`2'"
+
+. *────────────────────────────────────────────────────────────────────────────
+> ──
+. 
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. global COLL "$ROOT\New\Data\Collapsed"
+
+. global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. global BREPS 9999
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which boottest
+
+. if _rc {
+.     di as error "boottest non installato."
+.     exit 1
+. }
+
+. cap mkdir "$TAB"
+
+. 
+. *── Derivazione dei parametri ───────────────────────────────────────────────
+> ─
+. if !inlist("$VSAMPLE", "excl", "incl") {
+.     di as error "VSAMPLE deve essere excl o incl, trovato: $VSAMPLE"
+.     exit 198
+. }
+
+. if !inlist("$VDEPTH", "totaldepth", "desta") {
+.     di as error "VDEPTH deve essere totaldepth o desta, trovato: $VDEPTH"
+.     exit 198
+. }
+
+. * La combinazione excl+totaldepth E' il baseline. Eseguirla qui e' LEGITTIMO 
+> e
+. * voluto: serve a produrre anche per il baseline dei CSV con lo stesso schema
+. * dei file R (nomi canonici, cartella Tables_Stata), cosi' che il generatore 
+> di
+. * tabelle abbia una fonte Stata uniforme per tutte e quattro le varianti.
+. * NON sovrascrive nulla di verificato: i file baseline gia' agli atti
+. * (omnibus_collapsed_reghdfe.csv, wcb_collapsed_boottest.csv,
+. * dirty_leaveoneout_stata.csv, secondary_wcb_stata.csv) hanno nomi diversi e
+. * restano intatti. Dove i due percorsi si sovrappongono il confronto e' un
+. * controllo di coerenza interna in piu'.
+. if "$VSAMPLE" == "excl" & "$VDEPTH" == "totaldepth" {
+.     di as text "[nota] variante BASELINE: i CSV gia' verificati non vengono t
+> occati"
+.     di as text "       (nomi diversi); qui si produce la copia in schema R."
+. }
+
+. 
+. if "$VSAMPLE" == "excl" {
+.     global VDTA "$COLL\collapsed_omnibus.dta"
+.     local  sfx1 ""
+. }
+
+. else {
+.     global VDTA "$COLL\collapsed_omnibus_inclHKMO.dta"
+.     local  sfx1 "_inclHKMO"
+. }
+
+. if "$VDEPTH" == "totaldepth" {
+.     global DEPTHVAR "TotalDepth_nonEnv"
+.     local  sfx2 ""
+. }
+
+. else {
+.     global DEPTHVAR "DESTA_depth_index"
+.     local  sfx2 "_desta"
+. }
+
+. global SFX "`sfx1'`sfx2'"
+
+. global SRC "reghdfe_stata_63"
+
+. 
+. di as text _n "==============================================================
+> ="
+
+===============================================================
+
+. di as text "  Variante: campione=$VSAMPLE  profondita'=$VDEPTH"
+  Variante: campione=excl  profondita'=desta
+
+. di as text "  Input:  $VDTA"
+  Input:  C:\Work\projects\Paper_PTA\New\Data\Collapsed\collapsed_omnibus.dta
+
+. di as text "  Suffisso output: '$SFX'"
+  Suffisso output: '_desta'
+
+. di as text "==============================================================="
+===============================================================
+
+. 
+. confirm file "$VDTA"
+
+. 
+. *── Caricamento e preparazione comune ───────────────────────────────────────
+> ─
+. capture program drop load_variant
+
+. program define load_variant
+  1.     use "$VDTA", clear
+  2.     qui su WB_EP_Depth, meanonly
+  3.     if r(max) != 17 {
+  4.         di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stant
+> io."
+  5.         exit 1
+  6.     }
+  7.     * DESTA: le celle TRATTATE senza copertura DESTA si eliminano (Timor E
+> st e
+.     * simili), le non trattate prendono 0. Identico a 52 blocco 7 e a 28.R.
+.     if "$VDEPTH" == "desta" {
+  8.         qui count
+  9.         local n0 = r(N)
+ 10.         drop if missing(DESTA_depth_index) & WB_EP_Depth > 0
+ 11.         qui count
+ 12.         di as text "[desta] celle trattate senza copertura eliminate: " `n
+> 0' - r(N)
+ 13.         replace DESTA_depth_index = 0 if missing(DESTA_depth_index)
+ 14.     }
+ 15.     qui count
+ 16.     di as text "[dati] celle in memoria: " r(N)
+ 17. end
+
+. 
+. *── Helper: scrive una riga in un CSV ───────────────────────────────────────
+> ─
+. capture program drop wrow
+
+. program define wrow
+  1.     args csv line
+  2.     file open fh using "`csv'", write append text
+  3.     file write fh `"`line'"' _n
+  4.     file close fh
+  5. end
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO A - baseline collassato  ->  tripledd_collapsed{sfx}.csv
+. *   schema R: treat,term,coef,se,pval,nobs
+. *****************************************************************************
+> ***
+. local outA "$TAB\tripledd_collapsed$SFX.csv"
+
+. capture confirm file "`outA'"
+
+. if _rc {
+.     load_variant
+(4,051 observations deleted)
+[desta] celle trattate senza copertura eliminate: 4051
+(3,233,716 real changes made)
+[dati] celle in memoria: 3769447
+.     file open fh using "`outA'", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\tripledd_co
+    > llapsed_desta.csv not found)
+.     file write fh "treat,term,coef,se,pval,nobs" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_dirty td_green td_dirty
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_dirty = `xv' * dirty_p
+  7.         qui gen double td_green = $DEPTHVAR * env_good
+  8.         qui gen double td_dirty = $DEPTHVAR * dirty_p
+  9.         qui reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 10.         local NN = e(N)
+ 11.         di as res "  [A `treat'] ep_green=" %10.7f _b[ep_green] "  ep_dirt
+> y=" %10.7f _b[ep_dirty] "  N=" `NN'
+ 12.         * nomi dei termini identici a quelli usati da R (fixest)
+.         local t1 "`xv':env_good"
+ 13.         local t2 "`xv':dirty_p"
+ 14.         local t3 "env_good:$DEPTHVAR"
+ 15.         local t4 "dirty_p:$DEPTHVAR"
+ 16.         local i = 1
+ 17.         foreach v in ep_green ep_dirty td_green td_dirty {
+ 18.             local tn "`t`i''"
+ 19.             local b  = _b[`v']
+ 20.             local s  = _se[`v']
+ 21.             local p  = 2 * ttail(e(df_r), abs(`b'/`s'))
+ 22.             wrow "`outA'" "`treat',`tn',`b',`s',`p',`NN'"
+ 23.             local ++i
+ 24.         }
+ 25.     }
+  [A WB] ep_green=-0.0043316  ep_dirty=-0.0113421  N=3677333
+  [A TREND] ep_green= 0.0016118  ep_dirty=-0.0002473  N=3677333
+.     di as result "[A] scritto `outA'"
+[A] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\tripl
+> edd_collapsed_desta.csv
+. }
+
+. else di as text "[A] gia' presente, salto."
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO B - WCB sul baseline  ->  wcb_collapsed{sfx}.csv
+. *   schema R: treat,term,coef,p_wcb,conf_low,conf_high,B,nobs_pre,nclust,fe,n
+> obs_post
+. *****************************************************************************
+> ***
+. local outB "$TAB\wcb_collapsed$SFX.csv"
+
+. capture confirm file "`outB'"
+
+. if _rc {
+.     load_variant
+(4,051 observations deleted)
+[desta] celle trattate senza copertura eliminate: 4051
+(3,233,716 real changes made)
+[dati] celle in memoria: 3769447
+.     qui count
+.     local nobs_pre = r(N)
+.     file open fh using "`outB'", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\wcb_collaps
+    > ed_desta.csv not found)
+.     file write fh "treat,term,coef,p_wcb,conf_low,conf_high,B,nobs_pre,nclust
+> ,fe,nobs_post" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_dirty td_green td_dirty
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_dirty = `xv' * dirty_p
+  7.         qui gen double td_green = $DEPTHVAR * env_good
+  8.         qui gen double td_dirty = $DEPTHVAR * dirty_p
+  9.         * Frisch-Waugh: demean con [aw=n] su pd dt pt (come 52 S3 e come R
+> )
+.         foreach v in y ep_green ep_dirty td_green td_dirty {
+ 10.             cap drop `v'_dm
+ 11.             qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol
+> (1e-8)
+ 12.         }
+ 13.         qui reg y_dm ep_green_dm ep_dirty_dm td_green_dm td_dirty_dm [aw=n
+> ], ///
+>             cluster(country_code) nocons
+ 14.         local nobs_post = e(N)
+ 15.         local nclust    = e(N_clust)
+ 16.         foreach p in ep_green ep_dirty {
+ 17.             local b = _b[`p'_dm]
+ 18.             set seed 42
+ 19.             cap boottest `p'_dm, reps($BREPS) cluster(country_code) nograp
+> h
+ 20.             if _rc {
+ 21.                 local pb = .
+ 22.                 local lo = .
+ 23.                 local hi = .
+ 24.             }
+ 25.             else {
+ 26.                 local pb = r(p)
+ 27.                 cap local lo = r(CI)[1,1]
+ 28.                 cap local hi = r(CI)[1,2]
+ 29.             }
+ 30.             di as res "  [B `treat'] `p': coef=" %10.7f `b' "  p_wcb=" %6.
+> 4f `pb'
+ 31.             wrow "`outB'" "`treat',`p',`b',`pb',`lo',`hi',$BREPS,`nobs_pre
+> ',`nclust',pd+dt+pt,`nobs_post'"
+ 32.         }
+ 33.     }
+  [B WB] ep_green: coef=-0.0043316  p_wcb=0.5465
+  [B WB] ep_dirty: coef=-0.0113421  p_wcb=0.0468
+  [B TREND] ep_green: coef= 0.0016118  p_wcb=0.5077
+  [B TREND] ep_dirty: coef=-0.0002473  p_wcb=0.9054
+.     di as result "[B] scritto `outB'"
+[B] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\wcb_c
+> ollapsed_desta.csv
+. }
+
+. else di as text "[B] gia' presente, salto."
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO C - 7 sotto-indici  ->  subindices_collapsed{sfx}.csv
+. *   schema R: sub_index,term,coef,se,pval,nobs
+. *****************************************************************************
+> ***
+. local outC "$TAB\subindices_collapsed$SFX.csv"
+
+. capture confirm file "`outC'"
+
+. if _rc {
+.     load_variant
+(4,051 observations deleted)
+[desta] celle trattate senza copertura eliminate: 4051
+(3,233,716 real changes made)
+[dati] celle in memoria: 3769447
+.     file open fh using "`outC'", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\subindices_
+    > collapsed_desta.csv not found)
+.     file write fh "sub_index,term,coef,se,pval,nobs" _n
+.     file close fh
+. 
+.     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
+>                  WB_EnforcementDSM TREND_EnforcementDSM ///
+>                  TREND_Hard TREND_Soft TREND_RegulatorySpace {
+  2.         cap drop sub_green sub_dirty td_green td_dirty
+  3.         qui gen double sub_green = `s' * env_good
+  4.         qui gen double sub_dirty = `s' * dirty_p
+  5.         qui gen double td_green  = $DEPTHVAR * env_good
+  6.         qui gen double td_dirty  = $DEPTHVAR * dirty_p
+  7.         cap qui reghdfe y sub_green sub_dirty td_green td_dirty [aw=n], //
+> /
+>             absorb(pd dt pt) vce(cluster country_code)
+  8.         if _rc {
+  9.             di as error "  [C `s'] stima fallita (rc=" _rc ")"
+ 10.             continue
+ 11.         }
+ 12.         local NN = e(N)
+ 13.         di as res "  [C `s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty
+> =" %10.7f _b[sub_dirty]
+ 14.         local i = 1
+ 15.         foreach v in sub_green sub_dirty td_green td_dirty {
+ 16.             if `i' == 1 local tn "SUB:env_good"
+ 17.             if `i' == 2 local tn "SUB:dirty_p"
+ 18.             if `i' == 3 local tn "env_good:$DEPTHVAR"
+ 19.             if `i' == 4 local tn "dirty_p:$DEPTHVAR"
+ 20.             local b = _b[`v']
+ 21.             local se = _se[`v']
+ 22.             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
+ 23.             wrow "`outC'" "`s',`tn',`b',`se',`p',`NN'"
+ 24.             local ++i
+ 25.         }
+ 26.     }
+  [C WB_GreenLiberalization] sub_green=-0.0140688  sub_dirty=-0.1000600
+  [C TREND_GreenMarketAccess] sub_green=-0.0289589  sub_dirty=-0.0542981
+  [C WB_EnforcementDSM] sub_green=-0.0104865  sub_dirty=-0.0197359
+  [C TREND_EnforcementDSM] sub_green= 0.0031611  sub_dirty=-0.0086442
+  [C TREND_Hard] sub_green= 0.0017040  sub_dirty=-0.0023443
+  [C TREND_Soft] sub_green= 0.0132220  sub_dirty=-0.0015463
+  [C TREND_RegulatorySpace] sub_green= 0.0148889  sub_dirty= 0.0091544
+.     di as result "[C] scritto `outC'"
+[C] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\subin
+> dices_collapsed_desta.csv
+. }
+
+. else di as text "[C] gia' presente, salto."
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO D - intensita' CO2 continua  ->  r711_shapiro_intensity{sfx}.csv
+. *   schema R: treat,term,coef,se_asy,p_asy,p_wcb,conf_low,conf_high,nobs,B
+. *   co2_z e' gia' nel .dta per la variante incl; per la variante excl si
+. *   ricalcola qui con la stessa regola (media/sd sui non mancanti, NA -> medi
+> a).
+. *****************************************************************************
+> ***
+. local outD "$TAB\r711_shapiro_intensity$SFX.csv"
+
+. capture confirm file "`outD'"
+
+. if _rc {
+.     load_variant
+(4,051 observations deleted)
+[desta] celle trattate senza copertura eliminate: 4051
+(3,233,716 real changes made)
+[dati] celle in memoria: 3769447
+.     capture confirm variable co2_z
+.     if _rc {
+.         preserve
+.             import delimited "$ROOT\New\Data\Classifications\co2_intensity_hs
+> 6.csv", ///
+>                 clear varnames(1)
+(encoding automatically selected: ISO-8859-1)
+(4 vars, 4,607 obs)
+.             keep hs6_int co2_total
+.             rename hs6_int hs6
+.             duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+.             tempfile co2f
+.             save `co2f'
+file C:\Users\edodr\AppData\Local\Temp\ST_10144_000002.tmp saved as .dta
+    format
+.         restore
+.         merge m:1 hs6 using `co2f', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        88,309
+        from master                    88,309  
+        from using                          0  
+
+    Matched                         3,681,138  
+    -----------------------------------------
+.         qui su co2_total
+.         local mu = r(mean)
+.         local sd = r(sd)
+.         replace co2_total = `mu' if missing(co2_total)
+(88,309 real changes made)
+.         gen double co2_z = (co2_total - `mu') / `sd'
+.     }
+. 
+.     file open fh using "`outD'", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\r711_shapir
+    > o_intensity_desta.csv not found)
+.     file write fh "treat,term,coef,se_asy,p_asy,p_wcb,conf_low,conf_high,nobs
+> ,B" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_co2 td_green td_co2
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_co2   = `xv' * co2_z
+  7.         qui gen double td_green = $DEPTHVAR * env_good
+  8.         qui gen double td_co2   = $DEPTHVAR * co2_z
+  9.         foreach v in y ep_green ep_co2 td_green td_co2 {
+ 10.             cap drop `v'_dm
+ 11.             qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol
+> (1e-8)
+ 12.         }
+ 13.         qui reg y_dm ep_green_dm ep_co2_dm td_green_dm td_co2_dm [aw=n], /
+> //
+>             cluster(country_code) nocons
+ 14.         local NN  = e(N)
+ 15.         local NCL = e(N_clust)
+ 16.         foreach p in ep_green ep_co2 {
+ 17.             local b  = _b[`p'_dm]
+ 18.             local se = _se[`p'_dm]
+ 19.             local pa = 2 * ttail(`NCL'-1, abs(`b'/`se'))
+ 20.             set seed 42
+ 21.             cap boottest `p'_dm, reps($BREPS) cluster(country_code) nograp
+> h
+ 22.             if _rc {
+ 23.                 local pb = .
+ 24.                 local lo = .
+ 25.                 local hi = .
+ 26.             }
+ 27.             else {
+ 28.                 local pb = r(p)
+ 29.                 cap local lo = r(CI)[1,1]
+ 30.                 cap local hi = r(CI)[1,2]
+ 31.             }
+ 32.             di as res "  [D `treat'] `p': coef=" %10.7f `b' "  p_wcb=" %6.
+> 4f `pb'
+ 33.             wrow "`outD'" "`treat',`p',`b',`se',`pa',`pb',`lo',`hi',`NN',$
+> BREPS"
+ 34.         }
+ 35.     }
+  [D WB] ep_green: coef=-0.0024783  p_wcb=0.7969
+  [D WB] ep_co2: coef= 0.0012768  p_wcb=0.7735
+  [D TREND] ep_green: coef= 0.0010641  p_wcb=0.6522
+  [D TREND] ep_co2: coef=-0.0008277  p_wcb=0.0832
+.     di as result "[D] scritto `outD'"
+[D] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\r711_
+> shapiro_intensity_desta.csv
+. }
+
+. else di as text "[D] gia' presente, salto."
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO E - leave-one-out  ->  dirty_leaveoneout{sfx}.csv
+. *   schema R: spec,dropped_country,coef,se,pval,coef_green,se_green,pval_gree
+> n,
+. *             nobs,nclust,fe   (coef = margine DIRTY, coef_green = margine ve
+> rde)
+. *****************************************************************************
+> ***
+. local outE "$TAB\dirty_leaveoneout$SFX.csv"
+
+. capture confirm file "`outE'"
+
+. if _rc {
+.     load_variant
+(4,051 observations deleted)
+[desta] celle trattate senza copertura eliminate: 4051
+(3,233,716 real changes made)
+[dati] celle in memoria: 3769447
+.     * dirty_ext (non presente nel .dta): serve per la spec lista_estesa
+.     preserve
+.         import delimited "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv"
+> , ///
+>             clear varnames(1)
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+.         keep hs6 dirty_ext
+.         duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+.         tempfile dext
+.         save `dext'
+file C:\Users\edodr\AppData\Local\Temp\ST_10144_000004.tmp saved as .dta
+    format
+.     restore
+.     merge m:1 hs6 using `dext', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     3,189,684
+        from master                 3,189,684  
+        from using                          0  
+
+    Matched                           579,763  
+    -----------------------------------------
+.     replace dirty_ext = 0 if missing(dirty_ext)
+(3,189,684 real changes made)
+. 
+.     qui gen double ep_green     = WB_EP_Depth * env_good
+.     qui gen double ep_dirty     = WB_EP_Depth * dirty_p
+.     qui gen double td_green     = $DEPTHVAR * env_good
+.     qui gen double td_dirty     = $DEPTHVAR * dirty_p
+.     qui gen double ep_dirty_ext = WB_EP_Depth * dirty_ext
+.     qui gen double td_dirty_ext = $DEPTHVAR * dirty_ext
+. 
+.     file open fh using "`outE'", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\dirty_leave
+    > oneout_desta.csv not found)
+.     file write fh "spec,dropped_country,coef,se,pval,coef_green,se_green,pval
+> _green,nobs,nclust,fe" _n
+.     file close fh
+. 
+.     * programma: stima e scrive una riga
+.     capture program drop loo_row
+.     program define loo_row
+  1.         * `dvar' = regressore dirty (ep_dirty o ep_dirty_ext)
+.         * `tvar' = controllo di profondita' abbinato (td_dirty o td_dirty_ext
+> )
+.         args csv spec dropped dvar tvar
+  2.         qui reghdfe y ep_green `dvar' td_green `tvar' ///
+>             [aw=n], absorb(pd dt pt) vce(cluster country_code)
+  3.         local NN  = e(N)
+  4.         local NCL = e(N_clust)
+  5.         local bd  = _b[`dvar']
+  6.         local sd  = _se[`dvar']
+  7.         local pd_ = 2 * ttail(e(df_r), abs(`bd'/`sd'))
+  8.         local bg  = _b[ep_green]
+  9.         local sg  = _se[ep_green]
+ 10.         local pg  = 2 * ttail(e(df_r), abs(`bg'/`sg'))
+ 11.         file open fh using "`csv'", write append text
+ 12.         file write fh "`spec',`dropped',`bd',`sd',`pd_',`bg',`sg',`pg',`NN
+> ',`NCL',pd+dt+pt" _n
+ 13.         file close fh
+ 14.         di as res "  [E `spec'] dirty=" %10.7f `bd' "  green=" %10.7f `bg'
+>  "  N=" `NN'
+ 15.     end
+. 
+.     loo_row "`outE'" baseline "" ep_dirty td_dirty
+  [E baseline] dirty=-0.0113421  green=-0.0043316  N=3677333
+.     loo_row "`outE'" lista_estesa "" ep_dirty_ext td_dirty_ext
+  [E lista_estesa] dirty=-0.0107327  green=-0.0043843  N=3677333
+. 
+.     * senza_alta_dose: Peru(434) + Svizzera(331) + Corea(133) insieme
+.     preserve
+.         drop if inlist(country_code, 434, 331, 133)
+(116,047 observations deleted)
+.         loo_row "`outE'" senza_alta_dose "434+331+133" ep_dirty td_dirty
+  [E senza_alta_dose] dirty=-0.0160934  green=-0.0090921  N=3562172
+.     restore
+. 
+.     qui levelsof country_code if WB_EP_Depth > 0, local(treated)
+.     foreach cc of local treated {
+  2.         preserve
+  3.             drop if country_code == `cc'
+  4.             loo_row "`outE'" "senza_`cc'" "`cc'" ep_dirty td_dirty
+  5.         restore
+  6.     }
+(34,068 observations deleted)
+  [E senza_103] dirty=-0.0113495  green=-0.0043883  N=3643627
+(12,364 observations deleted)
+  [E senza_105] dirty=-0.0113514  green=-0.0043982  N=3665525
+(27,908 observations deleted)
+  [E senza_106] dirty=-0.0111858  green=-0.0042632  N=3649873
+(20,827 observations deleted)
+  [E senza_107] dirty=-0.0112134  green=-0.0042990  N=3656998
+(46,816 observations deleted)
+  [E senza_111] dirty=-0.0114545  green=-0.0042897  N=3630711
+(48,449 observations deleted)
+  [E senza_112] dirty=-0.0119480  green=-0.0047000  N=3629071
+(11,324 observations deleted)
+  [E senza_119] dirty=-0.0113399  green=-0.0043665  N=3666567
+(50,569 observations deleted)
+  [E senza_122] dirty=-0.0109648  green=-0.0048200  N=3626931
+(38,720 observations deleted)
+  [E senza_127] dirty=-0.0106275  green=-0.0049669  N=3638934
+(43,832 observations deleted)
+  [E senza_129] dirty=-0.0115077  green=-0.0046589  N=3633777

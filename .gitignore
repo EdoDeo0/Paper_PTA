@@ -11,6 +11,9 @@ New/Output/OLS/Bootstrap/*.rds
 
 # Log di esecuzione
 New/*.log
+# Log dei batch Stata (spostati qui dalla radice il 2026-08-23): sono la prova
+# materiale dei run, si tengono nel working tree ma non si versionano.
+New/Output/Diagnostics/stata_logs/
 
 # File temporanei
 .Rhistory

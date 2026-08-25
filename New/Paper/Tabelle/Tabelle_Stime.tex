@@ -439,10 +439,28 @@ ordinario, non a una tripla differenza. Si costruisce quindi una variabile dipen
 \`e gi\`a un \emph{divario}: media dei prodotti verdi meno media dei neutri nella stessa
 destinazione e anno. A quel punto il metodo si applica direttamente.
 
+\textbf{Un dettaglio che cambia la lettura: gli errori standard.} Le quote con cui si
+aggregano i gruppi di ingresso non sono note, sono \emph{stimate} sui dati, e Sun e Abraham
+prescrivono di tenerne conto nel calcolo della precisione. Il pacchetto R usato in origine
+(\texttt{fixest::sunab}) le tratta invece come pesi fissi. I coefficienti sono identici fino
+alla quindicesima cifra, la precisione no: dove un solo gruppo di ingresso identifica il
+periodo i due errori standard coincidono esattamente (non c'\`e nulla da stimare), dove i
+gruppi sono molti e discordi quello corretto \`e fino a 3-4 volte pi\`u grande. Poich\'e i
+periodi \emph{anteriori} all'entrata sono proprio quelli in cui i gruppi divergono di pi\`u,
+trattare le quote come note fabbrica pre-trend apparenti a partire da quella divergenza.
+Questa tabella riporta gli errori standard corretti, calcolati in Stata con
+\texttt{eventstudyinteract}.
+
 \textbf{Che cosa dicono i numeri} (Tabella~\ref{tab:sunab}). Nessun salto sistematico
-attorno all'entrata in vigore. Alcuni coefficienti nei periodi molto anteriori risultano
-significativi: sono stimati su poche coorti con pochi anni di storia precedente e vanno
-segnalati apertamente quando si presenta questa analisi, non nascosti.
+attorno all'entrata in vigore, e --- con gli errori standard corretti --- nessun
+coefficiente distinguibile da zero nella finestra mostrata, n\'e prima n\'e dopo. Il caso
+pi\`u istruttivo \`e il divario sporco sei anni \emph{prima} dell'entrata: con i pesi
+trattati come noti risultava $+0{,}047$ con $p=0{,}001$, cio\`e un pre-trend allarmante;
+con la varianza corretta lo stesso coefficiente ha $p=0{,}34$. Guardando i singoli gruppi
+si capisce perch\'e: il Cile devia di $-0{,}49$ e il Per\`u di $-0{,}33$, la Nuova Zelanda
+di $+0{,}14$ e l'Australia di $+0{,}10$. Non c'\`e uno spostamento comune, ci sono
+oscillazioni di segno opposto mediate in un numero solo --- ed \`e esattamente quello che
+la varianza corretta segnala.
 
 \input{tab_09_sunab}
 

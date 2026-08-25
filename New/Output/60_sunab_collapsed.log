@@ -1,0 +1,958 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\stata\60_sunab_collapsed.do 
+
+. *****************************************************************************
+> ***
+. ****** 60 - Sun-Abraham sul gap di composizione (Stata, eventstudyinteract) *
+> ***
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisito: Rscript New/Code/52_export_collapsed_dta.R  (collapsed_omnibu
+> s.dta)
+. *
+. * Replica in Stata di 23_eventstudy_sunab.R (sezioni A e B). Chiude l'ultimo
+. * blocco del paper che esisteva solo in R (audit 2026-08-25, item F3).
+. *
+. * DISEGNO. La triple-diff non si presta direttamente allo stimatore di
+. * Sun & Abraham (2021). Il trucco (identico a 23.R): per ogni destinazione-an
+> no
+. * si costruisce il GAP DI COMPOSIZIONE
+. *     gap_green_dt = media pesata di y sui prodotti green  - media sui neutri
+. *     gap_dirty_dt = media pesata di y sui prodotti dirty  - media sui neutri
+. * (pesi = n, il conteggio di transazioni della cella). Il gap E' il
+. * differenziale che la triple-diff stima; sul panel destinazione-anno
+. * l'entrata in vigore del PTA con EP e' un normale DiD scaglionato, quindi
+. * eventstudyinteract si applica direttamente con i never-treated come coorte
+. * di controllo.
+. *
+. * CORRISPONDENZA CON fixest::sunab()
+. *   - riferimento t = -1                       -> dummy g_m1 OMESSA
+. *   - never-treated = coorte di controllo      -> control_cohort(nevertreated
+> )
+. *   - FE destinazione + anno, pesi n_tot,      -> absorb(country_code year),
+. *     cluster destinazione                        [aw=n_tot], vce(cluster ...
+> )
+. *   - finestra piena dei tempi relativi        -> g_m15..g_m2, g_p0..g_p13
+. *   - ATT aggregato: fixest media i periodi post pesando per la somma dei PES
+> I
+. *     della regressione (n_tot) nel campione di stima. Verificato in R:
+. *     media semplice 0.075252, pesata per conteggio 0.078868, pesata per
+. *     n_tot 0.0729019 == ATT di fixest 0.0729017. Qui si replica la terza.
+. *
+. * SEZIONI
+. *   A. costruzione del gap panel (destinazione-anno)
+. *   B. IW estimates + ATT aggregato, per gap_green e gap_dirty
+. *   C. diagnostica del lead t=-6 sul dirty (appendice del paper):
+. *      coefficienti coorte-specifici, finestra [-6,+5], esclusione coorti
+. *      2014-15, leave-one-cohort-out
+. *
+. * Output: New/Output/TripleDiff/Tables_Stata/sunab_stata.csv        (IW + ATT
+> )
+. *         New/Output/TripleDiff/Tables_Stata/sunab_diag_stata.csv   (sezione 
+> C)
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto - pochi minuti):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\60_s
+> unab_collapsed.do"
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
+
+. global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which avar
+
+. if _rc ssc install avar
+
+. cap which eventstudyinteract
+
+. if _rc ssc install eventstudyinteract
+
+. 
+. cap mkdir "$TAB"
+
+. 
+. *****************************************************************************
+> ***
+. * A. GAP PANEL destinazione-anno
+. *****************************************************************************
+> ***
+. use "$DTA", clear
+
+. 
+. su WB_EP_Depth, meanonly
+
+. if r(max) != 17 {
+.     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio."
+.     exit 1
+. }
+
+. 
+. * base: tutte le celle destinazione-anno presenti nel panel collassato
+. preserve
+
+.     collapse (sum) n_tot=n (firstnm) EP=WB_EP_Depth, by(country_code year)
+
+.     tempfile base
+
+.     save `base'
+file C:\Users\edodr\AppData\Local\Temp\ST_10b6c_000002.tmp saved as .dta
+    format
+
+. restore
+
+. 
+. * media pesata di y sui tre gruppi di prodotto
+. preserve
+
+.     keep if env_good == 1
+(3,455,728 observations deleted)
+
+.     collapse (mean) y_green=y [aw=n], by(country_code year)
+
+.     tempfile gg
+
+.     save `gg'
+file C:\Users\edodr\AppData\Local\Temp\ST_10b6c_000004.tmp saved as .dta
+    format
+
+. restore
+
+. 
+. preserve
+
+.     keep if dirty_p == 1
+(3,245,316 observations deleted)
+
+.     collapse (mean) y_dirty=y [aw=n], by(country_code year)
+
+.     tempfile gd
+
+.     save `gd'
+file C:\Users\edodr\AppData\Local\Temp\ST_10b6c_000006.tmp saved as .dta
+    format
+
+. restore
+
+. 
+. preserve
+
+.     keep if env_good == 0 & dirty_p == 0
+(845,952 observations deleted)
+
+.     collapse (mean) y_neutral=y [aw=n], by(country_code year)
+
+.     tempfile gn
+
+.     save `gn'
+file C:\Users\edodr\AppData\Local\Temp\ST_10b6c_000008.tmp saved as .dta
+    format
+
+. restore
+
+. 
+. use `base', clear
+
+. merge 1:1 country_code year using `gg', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           168
+        from master                       168  
+        from using                          0  
+
+    Matched                             3,448  
+    -----------------------------------------
+
+. merge 1:1 country_code year using `gd', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           323
+        from master                       323  
+        from using                          0  
+
+    Matched                             3,293  
+    -----------------------------------------
+
+. merge 1:1 country_code year using `gn', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             9
+        from master                         9  
+        from using                          0  
+
+    Matched                             3,607  
+    -----------------------------------------
+
+. 
+. gen double gap_green = y_green - y_neutral
+(175 missing values generated)
+
+. gen double gap_dirty = y_dirty  - y_neutral
+(327 missing values generated)
+
+. 
+. * coorte di entrata = primo anno con EP > 0; never-treated -> 10000
+. gen int _ey = year if EP > 0 & !missing(EP)
+(3,393 missing values generated)
+
+. bysort country_code: egen int entry_year = min(_ey)
+(3,251 missing values generated)
+
+. drop _ey
+
+. gen byte nevertreated = missing(entry_year)
+
+. replace entry_year = 10000 if nevertreated
+(3,251 real changes made)
+
+. 
+. gen int rel_time = year - entry_year if !nevertreated
+(3,251 missing values generated)
+
+. 
+. * --- guardie strutturali (devono coincidere con 23.R) ----------------------
+> ---
+. qui count
+
+. local nrow = r(N)
+
+. qui levelsof country_code, local(dd)
+
+. local ndest : word count `dd'
+
+. qui levelsof country_code if !nevertreated, local(tt)
+
+. local ntreat : word count `tt'
+
+. di as txt "[gap] righe=`nrow' destinazioni=`ndest' trattate=`ntreat'"
+[gap] righe=3616 destinazioni=236 trattate=23
+
+. if `nrow' != 3616 | `ndest' != 236 | `ntreat' != 23 {
+.     di as error "Gap panel non conforme (atteso 3616 / 236 / 23). Interrompo.
+> "
+.     exit 9
+. }
+
+. qui count if missing(gap_green)
+
+. di as txt "[gap] NA gap_green=" r(N) " (atteso 175)"
+[gap] NA gap_green=175 (atteso 175)
+
+. qui count if missing(gap_dirty)
+
+. di as txt "[gap] NA gap_dirty=" r(N) " (atteso 327)"
+[gap] NA gap_dirty=327 (atteso 327)
+
+. 
+. * --- dummy di tempo relativo: -15..-2 e 0..13 (t=-1 riferimento) -----------
+> ---
+. local RELVARS ""
+
+. forvalues k = 15(-1)2 {
+  2.     gen byte g_m`k' = (rel_time == -`k') & !missing(rel_time)
+  3.     local RELVARS "`RELVARS' g_m`k'"
+  4. }
+
+. forvalues k = 0/13 {
+  2.     gen byte g_p`k' = (rel_time == `k') & !missing(rel_time)
+  3.     local RELVARS "`RELVARS' g_p`k'"
+  4. }
+
+. global RELVARS "`RELVARS'"
+
+. 
+. * il gap panel e' un artefatto riusabile (e ispezionabile): lo si salva su di
+> sco
+. save "$ROOT\New\Data\Collapsed\sunab_gap_panel.dta", replace
+(file C:\Work\projects\Paper_PTA\New\Data\Collapsed\sunab_gap_panel.dta not
+    found)
+file C:\Work\projects\Paper_PTA\New\Data\Collapsed\sunab_gap_panel.dta saved
+
+. tempfile gappanel
+
+. save `gappanel'
+file C:\Users\edodr\AppData\Local\Temp\ST_10b6c_000009.tmp saved as .dta
+    format
+
+. 
+. *****************************************************************************
+> ***
+. * B. IW estimates + ATT aggregato
+. *****************************************************************************
+> ***
+. * Programma: stima IW su un outcome, salva coefficienti per periodo e ATT.
+. capture program drop sunab_run
+
+. program define sunab_run
+  1.     args outc relvars tag
+  2.     eventstudyinteract `outc' `relvars' [aw=n_tot], ///
+>         cohort(entry_year) control_cohort(nevertreated) ///
+>         absorb(country_code year) vce(cluster country_code)
+  3. 
+.     tempname B V
+  4.     mat `B' = e(b_iw)
+  5.     mat `V' = e(V_iw)
+  6.     local NN   = e(N)
+  7.     local NCL  = e(N_clust)
+  8. 
+.     * pesi ATT: somma di n_tot sui periodi post nel campione di stima
+.     tempvar insamp
+  9.     gen byte `insamp' = e(sample)
+ 10. 
+.     local L = colsof(`B')
+ 11.     mat WW = J(1, `L', 0)
+ 12.     forvalues j = 1/`L' {
+ 13.         local nm : word `j' of `relvars'
+ 14.         if substr("`nm'", 1, 3) == "g_p" {
+ 15.             local k = substr("`nm'", 4, .)
+ 16.             qui su n_tot if `insamp' & rel_time == `k' & !nevertreated, me
+> anonly
+ 17.             mat WW[1, `j'] = cond(r(N) > 0, r(sum), 0)
+ 18.         }
+ 19.     }
+ 20. 
+.     mata: b = st_matrix("`B'"); V = st_matrix("`V'"); w = st_matrix("WW")
+ 21.     mata: w = w :/ sum(w)
+ 22.     mata: st_numscalar("att_b", (w * b')[1,1])
+ 23.     mata: st_numscalar("att_v", (w * V * w')[1,1])
+ 24. 
+.     scalar att_se = sqrt(att_v)
+ 25.     scalar att_t  = att_b / att_se
+ 26.     scalar att_p  = 2 * ttail(`NCL' - 1, abs(att_t))
+ 27.     di as res "[`tag'] ATT = " %9.6f att_b "  se = " %9.6f att_se "  p = "
+>  %6.4f att_p
+ 28. 
+.     * --- accumulo su file --------------------------------------------------
+> --
+.     preserve
+ 29.         clear
+ 30.         local NR = `L' + 1
+ 31.         set obs `NR'
+ 32.         gen str24 spec    = "`tag'"
+ 33.         gen str16 term    = ""
+ 34.         gen double coef   = .
+ 35.         gen double se     = .
+ 36.         gen double pval   = .
+ 37.         forvalues j = 1/`L' {
+ 38.             local nm : word `j' of `relvars'
+ 39.             qui replace term = "`nm'"                    in `j'
+ 40.             qui replace coef = `B'[1, `j']               in `j'
+ 41.             qui replace se   = sqrt(`V'[`j', `j'])       in `j'
+ 42.             qui replace pval = 2*ttail(`NCL'-1, abs(coef[`j']/se[`j'])) in
+>  `j'
+ 43.         }
+ 44.         qui replace term = "ATT_aggregato" in `NR'
+ 45.         qui replace coef = att_b           in `NR'
+ 46.         qui replace se   = att_se          in `NR'
+ 47.         qui replace pval = att_p           in `NR'
+ 48.         gen long   nobs   = `NN'
+ 49.         gen int    nclust = `NCL'
+ 50.         gen str32  source = "eventstudyinteract_stata_60"
+ 51.         * NB: un `tempfile' creato dentro un program viene CANCELLATO all'
+> uscita
+.         * del program -> i pezzi si salvano come .dta veri (stile cache del p
+> rogetto).
+.         save "$TAB\SUNAB_`tag'.dta", replace
+ 52.     restore
+ 53. end
+
+. 
+. use `gappanel', clear
+
+. sunab_run gap_green "$RELVARS" gap_green
+(sum of wgt is 11,768,980)
+(obs=365)
+
+IW estimates for dynamic effects                        Number of obs =  3,435
+Absorbing 2 HDFE groups                                 F(135, 227)   =      .
+                                                        Prob > F      =      .
+                                                        R-squared     = 0.6746
+                                                        Adj R-squared = 0.6345
+                                                        Root MSE      = 0.1045
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   gap_green | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       g_m15 |  -.0537314   .0297872    -1.80   0.073    -.1124261    .0049633
+       g_m14 |  -.0696265   .0621577    -1.12   0.264    -.1921063    .0528534
+       g_m13 |   -.091637     .08974    -1.02   0.308    -.2684668    .0851929
+       g_m12 |   .0219049   .0618257     0.35   0.723    -.0999208    .1437307
+       g_m11 |    .009366   .0428381     0.22   0.827    -.0750451    .0937771
+       g_m10 |    -.05004   .0617412    -0.81   0.419    -.1716992    .0716192
+        g_m9 |  -.0127844   .0855635    -0.15   0.881    -.1813848    .1558159
+        g_m8 |  -.0000775   .0688679    -0.00   0.999    -.1357796    .1356246
+        g_m7 |  -.0392077    .048759    -0.80   0.422    -.1352857    .0568704
+        g_m6 |    .002687   .0523011     0.05   0.959    -.1003707    .1057446
+        g_m5 |   .0021875   .0443836     0.05   0.961    -.0852691    .0896441
+        g_m4 |   .0345393   .0376001     0.92   0.359    -.0395506    .1086292
+        g_m3 |   .0020675   .0266219     0.08   0.938    -.0503901    .0545251
+        g_m2 |   .0034349   .0196278     0.18   0.861     -.035241    .0421108
+        g_p0 |   .0116422   .0173788     0.67   0.504    -.0226021    .0458866
+        g_p1 |   .0190665   .0263289     0.72   0.470    -.0328139    .0709469
+        g_p2 |   -.004872   .0323899    -0.15   0.881    -.0686954    .0589513
+        g_p3 |    -.02439    .036211    -0.67   0.501    -.0957427    .0469627
+        g_p4 |  -.0186697   .0503269    -0.37   0.711    -.1178373    .0804978
+        g_p5 |  -.0233333   .0531435    -0.44   0.661     -.128051    .0813844
+        g_p6 |   .0026586   .0519044     0.05   0.959    -.0996175    .1049346
+        g_p7 |  -.0320193   .0523069    -0.61   0.541    -.1350884    .0710498
+        g_p8 |  -.0779296   .0580507    -1.34   0.181    -.1923167    .0364576
+        g_p9 |  -.0932646   .0633825    -1.47   0.143     -.218158    .0316287
+       g_p10 |  -.1376967   .0620946    -2.22   0.028    -.2600521   -.0153413
+       g_p11 |   .0126749   .0875906     0.14   0.885    -.1599198    .1852696
+       g_p12 |  -.0080164    .064292    -0.12   0.901    -.1347017     .118669
+       g_p13 |  -.0368532   .0771307    -0.48   0.633    -.1888369    .1151306
+------------------------------------------------------------------------------
+[gap_green] ATT = -0.042120  se =  0.037985  p = 0.2687
+Number of observations (_N) was 0, now 29.
+(29 missing values generated)
+(29 missing values generated)
+(29 missing values generated)
+(29 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNAB_gap_g
+    > reen.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNAB_gap_g
+    > reen.dta saved
+
+. 
+. use `gappanel', clear
+
+. sunab_run gap_dirty "$RELVARS" gap_dirty
+(sum of wgt is 11,768,669)
+(obs=363)
+
+IW estimates for dynamic effects                        Number of obs =  3,284
+Absorbing 2 HDFE groups                                 F(135, 225)   =      .
+                                                        Prob > F      =      .
+                                                        R-squared     = 0.9170
+                                                        Adj R-squared = 0.9063
+                                                        Root MSE      = 0.1823
+                         (Std. err. adjusted for 226 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   gap_dirty | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       g_m15 |   .0080337    .102268     0.08   0.937    -.1934918    .2095592
+       g_m14 |   .2241076   .0822975     2.72   0.007     .0619351    .3862801
+       g_m13 |   .0304753   .0691623     0.44   0.660    -.1058134    .1667639
+       g_m12 |   .1267564    .054593     2.32   0.021     .0191773    .2343355
+       g_m11 |   -.001467   .1092709    -0.01   0.989    -.2167922    .2138583
+       g_m10 |  -.0355703   .0674122    -0.53   0.598    -.1684104    .0972699
+        g_m9 |   .0641124   .0800562     0.80   0.424    -.0936433    .2218682
+        g_m8 |  -.0478274   .0612312    -0.78   0.436    -.1684875    .0728327
+        g_m7 |  -.0186209   .0320079    -0.58   0.561    -.0816945    .0444528
+        g_m6 |   .0466153   .0482789     0.97   0.335    -.0485214     .141752
+        g_m5 |  -.0446982   .0506024    -0.88   0.378    -.1444134    .0550169
+        g_m4 |  -.0210143   .0340306    -0.62   0.538    -.0880737    .0460451
+        g_m3 |  -.0451034   .0342316    -1.32   0.189     -.112559    .0223522
+        g_m2 |  -.0079954   .0375398    -0.21   0.832    -.0819699    .0659792
+        g_p0 |   .0578836   .0357193     1.62   0.107    -.0125036    .1282707
+        g_p1 |   .0660953   .0504748     1.31   0.192    -.0333686    .1655591
+        g_p2 |   .0765349   .0650652     1.18   0.241    -.0516803    .2047501
+        g_p3 |   .0920503   .0646314     1.42   0.156      -.03531    .2194106
+        g_p4 |   .0905664   .0675044     1.34   0.181    -.0424554    .2235881
+        g_p5 |   .1152688   .0731969     1.57   0.117    -.0289703    .2595079
+        g_p6 |   .1263914   .0906858     1.39   0.165    -.0523107    .3050934
+        g_p7 |   .1083338   .0886321     1.22   0.223    -.0663214     .282989
+        g_p8 |    .098267    .082521     1.19   0.235    -.0643458    .2608798
+        g_p9 |    .052302   .0903966     0.58   0.563    -.1258302    .2304342
+       g_p10 |  -.0152618   .1011547    -0.15   0.880    -.2145934    .1840699
+       g_p11 |   .1031687   .0816667     1.26   0.208    -.0577607    .2640981
+       g_p12 |   .0880587   .0862021     1.02   0.308     -.081808    .2579255
+       g_p13 |  -.0061259   .0828594    -0.07   0.941    -.1694056    .1571538
+------------------------------------------------------------------------------
+[gap_dirty] ATT =  0.072902  se =  0.066808  p = 0.2763
+Number of observations (_N) was 0, now 29.
+(29 missing values generated)
+(29 missing values generated)
+(29 missing values generated)
+(29 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNAB_gap_d
+    > irty.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNAB_gap_d
+    > irty.dta saved
+
+. 
+. * assemblaggio
+. use "$TAB\SUNAB_gap_green.dta", clear
+
+. append using "$TAB\SUNAB_gap_dirty.dta"
+
+. order spec term coef se pval nobs nclust source
+
+. export delimited using "$TAB\sunab_stata.csv", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\sunab_stata
+    > .csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\sunab_stata.
+> csv saved
+
+. di as res "=== sunab_stata.csv scritto (" _N " righe) ==="
+=== sunab_stata.csv scritto (58 righe) ===
+
+. 
+. *****************************************************************************
+> ***
+. * C. DIAGNOSTICA del lead t=-6 sul dirty (appendice del paper)
+. *****************************************************************************
+> ***
+. global DIAGTAGS ""
+
+. 
+. * --- C1. coefficienti coorte-specifici a t=-6 (regressione interagita) -----
+> --
+. use `gappanel', clear
+
+. eventstudyinteract gap_dirty $RELVARS [aw=n_tot], ///
+>     cohort(entry_year) control_cohort(nevertreated) ///
+>     absorb(country_code year) vce(cluster country_code)
+(sum of wgt is 11,768,669)
+(obs=363)
+
+IW estimates for dynamic effects                        Number of obs =  3,284
+Absorbing 2 HDFE groups                                 F(135, 225)   =      .
+                                                        Prob > F      =      .
+                                                        R-squared     = 0.9170
+                                                        Adj R-squared = 0.9063
+                                                        Root MSE      = 0.1823
+                         (Std. err. adjusted for 226 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   gap_dirty | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       g_m15 |   .0080337    .102268     0.08   0.937    -.1934918    .2095592
+       g_m14 |   .2241076   .0822975     2.72   0.007     .0619351    .3862801
+       g_m13 |   .0304753   .0691623     0.44   0.660    -.1058134    .1667639
+       g_m12 |   .1267564    .054593     2.32   0.021     .0191773    .2343355
+       g_m11 |   -.001467   .1092709    -0.01   0.989    -.2167922    .2138583
+       g_m10 |  -.0355703   .0674122    -0.53   0.598    -.1684104    .0972699
+        g_m9 |   .0641124   .0800562     0.80   0.424    -.0936433    .2218682
+        g_m8 |  -.0478274   .0612312    -0.78   0.436    -.1684875    .0728327
+        g_m7 |  -.0186209   .0320079    -0.58   0.561    -.0816945    .0444528
+        g_m6 |   .0466153   .0482789     0.97   0.335    -.0485214     .141752
+        g_m5 |  -.0446982   .0506024    -0.88   0.378    -.1444134    .0550169
+        g_m4 |  -.0210143   .0340306    -0.62   0.538    -.0880737    .0460451
+        g_m3 |  -.0451034   .0342316    -1.32   0.189     -.112559    .0223522
+        g_m2 |  -.0079954   .0375398    -0.21   0.832    -.0819699    .0659792
+        g_p0 |   .0578836   .0357193     1.62   0.107    -.0125036    .1282707
+        g_p1 |   .0660953   .0504748     1.31   0.192    -.0333686    .1655591
+        g_p2 |   .0765349   .0650652     1.18   0.241    -.0516803    .2047501
+        g_p3 |   .0920503   .0646314     1.42   0.156      -.03531    .2194106
+        g_p4 |   .0905664   .0675044     1.34   0.181    -.0424554    .2235881
+        g_p5 |   .1152688   .0731969     1.57   0.117    -.0289703    .2595079
+        g_p6 |   .1263914   .0906858     1.39   0.165    -.0523107    .3050934
+        g_p7 |   .1083338   .0886321     1.22   0.223    -.0663214     .282989
+        g_p8 |    .098267    .082521     1.19   0.235    -.0643458    .2608798
+        g_p9 |    .052302   .0903966     0.58   0.563    -.1258302    .2304342
+       g_p10 |  -.0152618   .1011547    -0.15   0.880    -.2145934    .1840699
+       g_p11 |   .1031687   .0816667     1.26   0.208    -.0577607    .2640981
+       g_p12 |   .0880587   .0862021     1.02   0.308     -.081808    .2579255
+       g_p13 |  -.0061259   .0828594    -0.07   0.941    -.1694056    .1571538
+------------------------------------------------------------------------------
+
+. 
+. tempname BI VI
+
+. mat `BI' = e(b_interact)
+
+. mat `VI' = e(V_interact)
+
+. local NCL   = e(N_clust)
+
+. local NN_C1 = e(N)
+
+. local jcol = colnumb(`BI', "g_m6")
+
+. if `jcol' == . {
+.     di as error "colonna g_m6 non trovata in e(b_interact)"
+.     exit 9
+. }
+
+. local nrowsB = rowsof(`BI')
+
+. local rnames : rownames `BI'
+
+. 
+. preserve
+
+.     clear
+
+.     set obs `nrowsB'
+Number of observations (_N) was 0, now 9.
+
+.     gen str24 spec  = "per_coorte"
+
+.     gen str16 term  = "g_m6"
+
+.     gen str8  coorte = ""
+(9 missing values generated)
+
+.     gen double coef = .
+(9 missing values generated)
+
+.     gen double se   = .
+(9 missing values generated)
+
+.     gen double pval = .
+(9 missing values generated)
+
+.     forvalues i = 1/`nrowsB' {
+  2.         local rn : word `i' of `rnames'
+  3.         qui replace coorte = "`rn'"                  in `i'
+  4.         qui replace coef   = `BI'[`i', `jcol']       in `i'
+  5.         qui replace se     = sqrt(`VI'[`i', `jcol']) in `i'
+  6.     }
+
+.     qui replace pval = 2*ttail(`NCL'-1, abs(coef/se)) if se > 0 & !missing(se
+> )
+
+.     qui drop if coef == 0 & (se == 0 | missing(se))
+
+.     gen long nobs   = `NN_C1'
+
+.     gen int  nclust = `NCL'
+
+.     save "$TAB\SUNABDIAG_per_coorte.dta", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_p
+    > er_coorte.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_p
+    > er_coorte.dta saved
+
+. restore
+
+. global DIAGTAGS "per_coorte"
+
+. 
+. * --- programma per le varianti (registra solo il lead t=-6 e l'ATT) --------
+> --
+. capture program drop sunab_diag
+
+. program define sunab_diag
+  1.     args relvars tag
+  2.     cap eventstudyinteract gap_dirty `relvars' [aw=n_tot], ///
+>         cohort(entry_year) control_cohort(nevertreated) ///
+>         absorb(country_code year) vce(cluster country_code)
+  3.     if _rc {
+  4.         di as error "[`tag'] stima fallita (rc=" _rc "), riga saltata"
+  5.         exit 0
+  6.     }
+  7.     tempname B V
+  8.     mat `B' = e(b_iw)
+  9.     mat `V' = e(V_iw)
+ 10.     local NN  = e(N)
+ 11.     local NCL = e(N_clust)
+ 12.     local j   = colnumb(`B', "g_m6")
+ 13. 
+.     tempvar insamp
+ 14.     gen byte `insamp' = e(sample)
+ 15.     local L = colsof(`B')
+ 16.     mat WW = J(1, `L', 0)
+ 17.     forvalues jj = 1/`L' {
+ 18.         local nm : word `jj' of `relvars'
+ 19.         if substr("`nm'", 1, 3) == "g_p" {
+ 20.             local k = substr("`nm'", 4, .)
+ 21.             qui su n_tot if `insamp' & rel_time == `k' & !nevertreated, me
+> anonly
+ 22.             mat WW[1, `jj'] = cond(r(N) > 0, r(sum), 0)
+ 23.         }
+ 24.     }
+ 25.     mata: b = st_matrix("`B'"); V = st_matrix("`V'"); w = st_matrix("WW")
+ 26.     mata: w = w :/ sum(w)
+ 27.     mata: st_numscalar("att_b", (w * b')[1,1])
+ 28.     mata: st_numscalar("att_v", (w * V * w')[1,1])
+ 29.     scalar att_se = sqrt(att_v)
+ 30.     scalar att_p  = 2 * ttail(`NCL'-1, abs(att_b/att_se))
+ 31. 
+.     preserve
+ 32.         clear
+ 33.         set obs 2
+ 34.         gen str24 spec  = "`tag'"
+ 35.         gen str16 term  = ""
+ 36.         gen str8  coorte = ""
+ 37.         gen double coef = .
+ 38.         gen double se   = .
+ 39.         gen double pval = .
+ 40.         if `j' != . {
+ 41.             qui replace term = "g_m6"                  in 1
+ 42.             qui replace coef = `B'[1, `j']             in 1
+ 43.             qui replace se   = sqrt(`V'[`j', `j'])     in 1
+ 44.             qui replace pval = 2*ttail(`NCL'-1, abs(coef[1]/se[1])) in 1
+ 45.         }
+ 46.         qui replace term = "ATT" in 2
+ 47.         qui replace coef = att_b in 2
+ 48.         qui replace se   = att_se in 2
+ 49.         qui replace pval = att_p in 2
+ 50.         qui drop if missing(coef)
+ 51.         gen long  nobs   = `NN'
+ 52.         gen int   nclust = `NCL'
+ 53.         save "$TAB\SUNABDIAG_`tag'.dta", replace
+ 54.     restore
+ 55.     global DIAGTAGS "$DIAGTAGS `tag'"
+ 56. end
+
+. 
+. * --- C2. baseline (replica della sezione B, per avere t=-6 e ATT insieme) --
+> --
+. use `gappanel', clear
+
+. sunab_diag "$RELVARS" baseline
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_b
+    > aseline.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_b
+    > aseline.dta saved
+
+. 
+. * --- C3. finestra [-6,+5] come l'event study TWFE --------------------------
+> --
+. use `gappanel', clear
+
+. keep if missing(rel_time) | inrange(rel_time, -6, 5)
+(136 observations deleted)
+
+. local WIN "g_m6 g_m5 g_m4 g_m3 g_m2 g_p0 g_p1 g_p2 g_p3 g_p4 g_p5"
+
+. sunab_diag "`WIN'" finestra_m6_p5
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_f
+    > inestra_m6_p5.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_f
+    > inestra_m6_p5.dta saved
+
+. 
+. * --- C4. senza le coorti 2014-2015 (Islanda, Svizzera, Australia) ----------
+> --
+. use `gappanel', clear
+
+. drop if entry_year >= 2014 & !nevertreated
+(48 observations deleted)
+
+. sunab_diag "$RELVARS" senza_coorti_2014_15
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_s
+    > enza_coorti_2014_15.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_s
+    > enza_coorti_2014_15.dta saved
+
+. 
+. * --- C5. leave-one-cohort-out sul lead t=-6 --------------------------------
+> --
+. use `gappanel', clear
+
+. qui levelsof entry_year if !nevertreated, local(cohorts)
+
+. foreach cy of local cohorts {
+  2.     use `gappanel', clear
+  3.     drop if entry_year == `cy' & !nevertreated
+  4.     sunab_diag "$RELVARS" loo_coorte_`cy'
+  5. }
+(80 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2002.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2002.dta saved
+(157 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2005.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2005.dta saved
+(16 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2006.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2006.dta saved
+(16 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2007.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2007.dta saved
+(16 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2008.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2008.dta saved
+(16 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2010.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2010.dta saved
+(16 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2011.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2011.dta saved
+(32 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2014.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2014.dta saved
+(16 observations deleted)
+Number of observations (_N) was 0, now 2.
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(2 missing values generated)
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2015.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\SUNABDIAG_l
+    > oo_coorte_2015.dta saved
+
+. 
+. * assemblaggio diagnostica
+. clear
+
+. foreach t of global DIAGTAGS {
+  2.     append using "$TAB\SUNABDIAG_`t'.dta"
+  3. }
+
+. gen str32 source = "eventstudyinteract_stata_60"
+
+. order spec term coorte coef se pval nobs nclust source
+
+. export delimited using "$TAB\sunab_diag_stata.csv", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\sunab_diag_
+    > stata.csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\sunab_diag_s
+> tata.csv saved
+
+. di as res "=== sunab_diag_stata.csv scritto (" _N " righe) ==="
+=== sunab_diag_stata.csv scritto (31 righe) ===
+
+. di as res "=== 60 FATTO ==="
+=== 60 FATTO ===
+
+. 
+end of do-file

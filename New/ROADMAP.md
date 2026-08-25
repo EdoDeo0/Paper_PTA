@@ -89,6 +89,34 @@
 > - Nessun commit fatto da Claude (regola del progetto): tutte le modifiche
 >   sono nel working tree, pronte per la review dell'utente.
 >
+> ✅ **AGGIORNAMENTO 2026-08-23 — CAMPAGNA STATA S1–S8: ESITO REALE E CHIUSURA ROADMAP P1–P8.**
+> Audit in `correspondence/audit/2026-08-23_audit_report.md` (CONDITIONAL PASS, 8/10) +
+> roadmap `2026-08-23_roadmap_soluzioni.md`. Il cross-check numerico R↔Stata di S1–S7 —
+> mai eseguito prima, nonostante il session-log lo desse per fatto — è stato completato.
+> **Ancorati a Stata (identità numerica verificata):** saturation ladder (96/96 modelli;
+> `tab:ladder` ≡ R a tutte le cifre — era il buco più pesante del censimento 21d),
+> event study (22 coef a 12 cifre), PPML (9 cifre), baseline collassato, 7 sotto-indici,
+> APEC, dose bins, DESTA, dest-trends (8 cifre), stability prodHS4 (tutte le cifre).
+> **Tre problemi trovati e chiusi:** (1) S3 produceva un CSV di spazzatura con colonna
+> `source` — `cap drop y` + `varabbrev` faceva stimare `year` (assorbita da `dt`) e i 4
+> `boottest` fallivano per `[aw=n]` letto come constraint; corretto e rilanciato, i p
+> bootstrap collassati ora coincidono con R entro errore Monte Carlo (**WB dirty 0,0717
+> vs 0,0727**, cioè il p=0,07 dell'abstract è verificato cross-software). (2) S5 non aveva
+> mai scritto il CSV (crash `r(198)` su graffe inline); corretto. (3) La permutazione di
+> `56.do` usa un design **diverso** da quella del paper: rimescola i profili fra tutti i
+> ~236 paesi, mentre `22.R` (e il paper, p=0,235) lo fa fra i soli 23 trattati. I due file
+> sono ora annotati e c'è `56b_permutation_treatedonly.do` che replica il design del paper
+> (🛑 run di ~24 h da autorizzare).
+> **Nuovi script:** `stata/58_stability_fullpanel.do` (chiude il buco della tabella
+> stability: le spec di `52` giravano sul collassato invece che sul full panel con FE
+> `fpd+fdt+pt`), `stata/56b_permutation_treatedonly.do`, `58c_build_verified_depthbounds.R`
+> (riscrive i 3 CSV depthbounds stantii dai `.dta` Stata).
+> **Igiene:** `set varabbrev off` in 12 do-file (la condizione che ha reso invisibile il
+> bug S3); campagna S2–S8 registrata in `run_pipeline.R`; log Stata spostati in
+> `New/Output/Diagnostics/stata_logs/`; nuova voce in `MISTAKES.md`.
+> 🛑 **Resta aperto:** `17b`/`18` hanno in testa la config residua `incl`/`desta` — un loro
+> rerun NON produrrebbe il baseline (decisione utente).
+
 > ⚠️ **AGGIORNAMENTO 2026-08-03 — POTENZA E COLLINEARITÀ EP/TotalDepth (§8).** Discussione
 > Q&A (non un audit) partita dal finding #3 dell'audit `2026-08-02_audit_report.md`: la
 > collinearità within destinazione-anno tra `WB_EP_Depth` e `TotalDepth_nonEnv` (corr. 0,96,
@@ -1894,3 +1922,20 @@ Il guadagno più grande è su 22: con 8 thread invece di 2 il tempo stimato scen
 con 2 thread su 24 core). Fare questo test *dopo* aver controllato le temperature a freddo e,
 se possibile, dopo un memtest — perché un crash a 8 thread con il bug già fixato sarebbe un
 segnale hardware, non di codice.
+
+---
+
+## §Convenzioni CSV — semantica di nobs e nclust
+
+| Contesto | nobs | nclust |
+|---|---|---|
+| CSV asintotici collassati (fixest, source assente) | post-singleton feols | 236 = grezzo (uniqueN country_code) |
+| CSV asintotici da Stata (source=reghdfe_stata_48) | e(N) post-singleton | 228 = e(N_clust) |
+| WCB collassati (49/50) | post-singleton | nclust_pre=236, nclust=228 |
+| Full panel R (fpd+fdt+pt, stata/17) | e(N) | 225 (excl) / 227 (incl) |
+| Full panel trim Stata (48e, source=stata_fw_boottest_48e) | 44.787.612 | 229 |
+
+**Regola:** nelle tabelle del paper si riporta sempre il conteggio del disegno
+(236 collassato / 225 full panel baseline) con nota sul post-singleton, come già fa `ptab_main`.
+Il valore 228/229/225 compare solo nella nota a piè di tabella o in prosa esplicita.
+Aggiornato: 2026-08-21 (audit notturno, Fable 5).

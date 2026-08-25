@@ -29,35 +29,24 @@ First draft. Comments welcome. All remaining errors are my own.}}
 \maketitle
 
 \begin{abstract}
-\noindent Environmental provisions (EPs) are now ubiquitous in preferential trade agreements
-(PTAs), yet evidence on their trade effects remains scarce and is based on aggregate data.
-I study whether the EPs contained in the PTAs signed by China between 2000 and 2015 changed
-the \emph{composition} of Chinese exports --- shifting firms' export baskets toward
-environmental (green) goods and away from pollution-intensive (dirty) goods --- using
-transaction-level customs data covering 45.8 million firm--product--destination--year
-observations. Identification exploits a triple-difference design: within a given
-firm--destination--year, I compare green and dirty products to neutral ones as EP depth
-varies across destinations and over time, absorbing the confounding effect of the agreement
-itself through firm--destination--year fixed effects. I find a null on the green margin, stable across six estimation
-designs (full panel, collapsed panel, and four control-group subsamples), surviving wild
-cluster bootstrap and permutation inference. Bootstrap bounds rule out effects larger
-than roughly one quarter of the benchmark estimate in the aggregate literature, while
-leaving smaller effects undetermined. The dirty margin is a textbook false
-positive: a negative effect on dirty exports that is overwhelming asymptotically
-($p<0.001$) survives neither the wild cluster bootstrap ($p=0.07$) nor permutation
-inference ($p=0.23$), a coarser aggregation of the same test reverses its sign, and a
-leave-one-out exercise shows it is carried by a single destination (Australia); it is
-best read as a descriptive pattern, not an identified effect. The central reading is not that environmental provisions are
-inert, but that Chinese agreements bundle provisions so tightly that the two World Bank
-sub-indices with a direct trade mechanism (green-goods liberalization, binding standards)
-are perfectly collinear in-sample and non-zero in only three treated country--years:
-mechanism-bearing content is essentially absent from Chinese PTAs of this period, and the
-data cannot separately identify what it would do. This is consistent with, not a contrast
-to, \citet{brandi2020}: their effects are driven by explicitly trade-restrictive or
-trade-liberalizing clauses, and China's 2000--2015 agreements --- dominated by cooperation
-language --- contain almost none of that content. The result is compatible with
-\citet{abman2024} on the same logic: specific, enforceable provisions can move outcomes;
-generic ones do not.\\[4pt]
+\noindent Environmental provisions (EPs) are now ubiquitous in preferential trade
+agreements, yet evidence on their trade effects rests on aggregate data. I ask whether the
+EPs in China's 2000--2015 agreements shifted the \emph{composition} of its exports toward
+green and away from dirty products, using 45.8 million
+firm--product--destination--year customs transactions. A triple-difference compares green
+and dirty products to neutral ones within firm--destination--year cells, so that
+firm--destination--year fixed effects absorb the agreement itself. The green margin is a
+null: stable across six estimation designs and robust to wild cluster bootstrap and
+permutation inference, with bootstrap bounds that rule out effects larger than roughly one
+quarter of the benchmark estimate in the aggregate literature. The dirty margin is a
+textbook false positive --- overwhelming asymptotically ($p<0.001$), it survives neither
+the bootstrap ($p=0.07$) nor permutation inference ($p=0.28$), and a leave-one-out exercise
+shows a single destination carries it. The central reading is about content, not chapters:
+the two World Bank sub-indices with a direct trade mechanism are perfectly collinear
+in-sample and non-zero in only three treated country--years. China's chapters were thin and
+cooperation-only, which makes the null consistent with --- not contrary to ---
+\citet{brandi2020} and \citet{abman2024}, whose effects come from specific, enforceable
+clauses.\\[4pt]
 \textbf{Keywords:} trade agreements, environmental provisions, export composition, China.\\
 \textbf{JEL:} F13, F14, F18, Q56.
 \end{abstract}
@@ -91,6 +80,21 @@ Bangkok Agreement) to substantial chapters (New Zealand 2008, Switzerland 2014, 
 Chinese exports toward green goods and away from dirty goods, relative to neutral
 products, within the same firm, destination, and year.
 
+Why transaction-level data, when the existing evidence is aggregate? Because a
+composition effect measured on country-pair flows and one measured inside a firm are not
+the same object. In aggregate data the green share of a country's exports can rise
+without any exporter changing its own product mix --- it is enough that different firms,
+or different products, enter and exit the market. That is a real phenomenon, but it is
+not the reallocation the policy argument for environmental chapters has in mind, and it
+is mechanically vulnerable to compositional churn. Firm--product--destination--year
+transactions let me hold the firm, the destination, and the year fixed and ask whether
+the \emph{same} exporter tilted its basket, which is a strictly more demanding test of
+the same hypothesis. The cost is that a firm-level design cannot be compared with the
+aggregate literature term by term; the paper pays that cost explicitly by also estimating
+the design on a product--destination--year panel, and by showing that this collapsed
+panel is algebraically identical to the micro regression under the same fixed effects
+(Appendix~\ref{app:pddt}), so the two levels of aggregation can be read on one scale.
+
 The focus on composition, rather than on export volumes, is dictated by identification.
 EP depth in Chinese agreements varies at the destination--year level, enters in force
 together with the agreement itself, and afterwards almost never changes (only three
@@ -112,7 +116,13 @@ countries, whereas green and dirty status here is a \emph{policy}-defined produc
 classification (OECD and Mani--Wheeler lists), a distinction worth flagging even though
 it does not vary with the agreement and so cannot itself confound identification.
 
-The answer is a null on both margins, bounded but not razor-sharp. Six independent estimation
+The answer has two halves, and it is worth stating them in the same words each time they
+recur. On the green margin the paper reports a \emph{bounded null}: an estimate
+indistinguishable from zero, with bootstrap bounds that rule out effects larger than
+roughly a quarter of the benchmark estimate in the aggregate literature and say nothing
+below that. On the dirty margin it reports a \emph{non-result}: an apparent effect that
+no form of robust inference sustains, which is a different object from a precisely
+estimated zero and is not claimed as one. Six independent estimation
 designs --- the full firm-level panel, a product--destination--year collapsed panel, and
 four control-group subsamples that probe the stability of the coefficient across
 comparison sets --- return an EP$\times$green coefficient between $-0.0009$ and
@@ -124,7 +134,7 @@ reshuffle entire EP profiles across treated destinations \citep{fisher1935,bertr
 --- because only 23 destinations (and effectively 14 agreements) are treated. A
 negative coefficient on EP$\times$dirty (asymptotic $p<0.001$ in the collapsed
 panel) illustrates exactly why this discipline matters: its wild-bootstrap p-value is
-0.07, permutation inference on the exact estimating equation gives $p=0.23$, a coarser
+0.07, permutation inference on the exact estimating equation gives $p=0.28$, a coarser
 aggregate version of the same permutation flips its sign ($p=0.49$), the TREND index never
 confirms it, and a leave-one-out exercise shows it is carried by a single destination
 (Australia, $p=0.24$ once excluded); South Korea, the destination whose removal
@@ -152,14 +162,40 @@ in \citealp{brandi2020}), so the null is not merely a failure to reject. Second,
 stable across control groups --- an artifact of the comparison set would move as the
 comparison set moves, and it does not.
 
-This paper contributes to three literatures: the trade effects of PTA content
-\citep{hofmann2017, dur2014, neri2023, baccini2017}, the trade--environment nexus
-\citep{cherniwchan2017, shapiro2021, dechezlepretre2017}, and the effectiveness of
-environmental clauses in trade agreements \citep{brandi2020, abman2024, morin2018,
-baghdadi2013}.
+This paper contributes to three literatures. The first studies the trade effects of what
+is \emph{inside} trade agreements rather than whether one exists. \citet{hofmann2017}
+built the World Bank coding of provision-level content used here, and \citet{dur2014} the
+DESTA index of overall agreement depth that this paper uses as an alternative control;
+both establish that agreements differ enormously in content at similar headline
+coverage. \citet{neri2023} show that deeper agreements affect exporters heterogeneously,
+and \citet{baccini2017} that the gains are distributed unevenly across firms --- results
+that motivate looking at composition inside the firm rather than at aggregate flows. This
+paper adds the observation that content variation can be too bundled to identify, which is
+a limit on the whole research program and not a feature of one dataset.
+
+The second is the trade--environment nexus. \citet{cherniwchan2017} shows, with
+within-plant US data around NAFTA, that trade liberalization changes emissions through the
+behaviour of individual producers rather than only through reallocation across them;
+\citet{shapiro2021} documents that trade policy is itself systematically tilted against
+clean goods; \citet{dechezlepretre2017} survey the competitiveness effects of environmental
+regulation, the mechanism through which EPs would have to operate. \citet{copeland2022}
+survey the field and flag the effectiveness of environmental provisions as open. This
+paper contributes firm-level evidence on the export side of that question, where the
+existing work is plant-level and domestic.
+
+The third is the effectiveness of environmental clauses specifically.
+\citet{brandi2020} find that environmental provisions raise the green and lower the dirty
+share of developing-country exports, using aggregate bilateral flows and the TREND coding
+of \citet{morin2018}; \citet{abman2024} find that forest- and biodiversity-specific
+provisions offset deforestation following entry into force; \citet{baghdadi2013} find
+convergence in emissions among partners whose agreements contain environmental clauses.
+The common thread in the positive findings is specificity: effects come from clauses with
+an identifiable mechanism. This paper is the mirror image of that thread --- a large,
+well-powered sample whose clauses lack such content, and which correspondingly shows
+nothing.
 Methodologically, it offers a template for honest inference when treatment varies across
-few clusters \citep{cameron2008, abadie2023} and for control-group stability analysis in
-triple-difference designs.
+few clusters \citep{cameron2008, abadie2023, mackinnon2017} and for control-group
+stability analysis in triple-difference designs.
 
 The remainder of the paper proceeds as follows. Section~\ref{sec:background} describes
 the agreements and the data. Section~\ref{sec:strategy} presents the empirical strategy.
@@ -335,7 +371,7 @@ Collapsed panel (HS6--dest--year) & \\
 \midrule
 Cells & 3{,}773{,}498 \\
 \quad green / dirty cells & 8.4\% / 14.0\% \\
-Zero-filled PPML grid (HS6--dest--year) & 8{,}310{,}464 \\
+Zero-filled PPML grid (HS6--dest--year) & 8{,}179{,}904 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
@@ -357,7 +393,7 @@ regressions weighted by cell size) and serves both as a computational workhorse 
 the inference battery and as an internal cross-validation --- its fixed-effects
 structure preserves the identifying logic but not the firm dimension, a difference
 Section~\ref{sec:strategy} quantifies. The \emph{zero-filled
-PPML grid} (8.3 million cells) adds the combinations with no recorded trade, opening
+PPML grid} (8.2 million cells) adds the combinations with no recorded trade, opening
 the extensive margin. The \emph{within-firm share panel} (13.3 million
 firm--destination--year observations) recasts the outcome as the green share of each
 firm's export basket to a destination; it enters as descriptive evidence only, for the
@@ -581,7 +617,14 @@ the full panel is the reference specification.
 
 There are 225 destination clusters in the full-panel reference specification (236 in
 the collapsed panel) but only 23 treated ones, and effectively 14
-agreements. Asymptotic cluster-robust inference is unreliable in this regime, so every
+agreements.\footnote{Every estimate in the paper was produced twice, in \textsc{Stata}
+(\texttt{reghdfe}, \texttt{boottest}, \texttt{ppmlhdfe}, \texttt{eventstudyinteract}) and
+in \textsc{R} (\texttt{fixest}, \texttt{fwildclusterboot}). Point estimates agree to at
+least eight significant digits throughout. The numbers reported are the \textsc{Stata}
+ones, because the do-files are the more direct route to replication. Two quantities
+legitimately differ between implementations and are discussed where they arise:
+bootstrap and permutation $p$-values, which carry Monte Carlo error, and the
+Sun--Abraham standard errors of Appendix~\ref{app:sunab}.} Asymptotic cluster-robust inference is unreliable in this regime, so every
 headline estimate is subjected to three tests: (i) destination-clustered asymptotics;
 (ii) wild cluster bootstrap with 9{,}999 replications \citep{cameron2008,
 fischer2021, roodman2019} --- computed on Frisch--Waugh-residualized data (fixed effects
@@ -628,7 +671,7 @@ EP$\times$green coefficient is $-0.0022$ (s.e.\ 0.0039) with the WB index and $-
 $p=0.31$ and $p=0.71$ respectively. The collapsed panel returns $-0.0046$ (WB): the wild
 cluster bootstrap p-value is 0.65, and permutation inference on the exact estimating
 equation --- 1{,}000 reassignments of entire EP profiles across treated destinations
---- gives $p=0.61$: the observed coefficient is well within the bulk of the placebo
+--- gives $p=0.60$: the observed coefficient is well within the bulk of the placebo
 distribution.
 
 To gauge magnitudes, it helps to benchmark the confidence intervals against the
@@ -702,7 +745,7 @@ already-diverging composition gap) without establishing that the assumption hold
 exactly thereafter. The late negative drift for green products (bin
 $\geq$+5) is identified only by early cohorts (ASEAN 2005, Chile 2006, Pakistan 2007,
 New Zealand 2008) and does not survive the Sun--Abraham estimator applied to the
-destination-level composition gap: the aggregated ATT is $-0.044$ ($p=0.24$) for the
+destination-level composition gap: the aggregated ATT is $-0.042$ ($p=0.27$) for the
 green gap and $+0.073$ ($p=0.28$) for the dirty gap --- consistent with cohort
 heterogeneity rather than a treatment effect \citep{sun2021}. That estimator answers a
 narrower question than equation~\eqref{eq:main} and should not be read as confirming it:
@@ -711,10 +754,10 @@ control, and runs on a destination--year composition gap built by collapsing acr
 products, so it has no product--year fixed effects. It is a diagnostic for staggered
 timing and cohort heterogeneity --- which is what it is used for here --- not an
 independent replication of the static specification. The full Sun--Abraham
-event study is reported in Appendix~\ref{app:sunab}; one distant lead (the dirty gap
-at $t=-6$) is individually significant, and the appendix shows through a cohort
-decomposition that it reflects the idiosyncratic deviation of a single late-cohort
-destination rather than a common pre-trend.
+event study is reported in Appendix~\ref{app:sunab}: no lead or lag in the
+$[-10,+8]$ window is individually distinguishable from zero, so the interaction-weighted
+estimator agrees with the two-way fixed-effects picture on both the absence of a
+pre-trend and the absence of a break at entry.
 
 \begin{figure}[htbp]
 \centering
@@ -733,8 +776,8 @@ textbook illustration of why few-cluster inference matters: every robust check t
 coefficient is put through returns it to the null. The wild cluster bootstrap raises its
 p-value to 0.07, just above the conventional 5\% threshold. Permutation inference on the
 exact estimating equation agrees: reshuffling entire EP profiles across treated
-destinations, 23.5\% of placebo draws produce a coefficient as large in absolute value
-($p=0.23$), placing the observed estimate squarely inside the placebo distribution. A
+destinations, 27.7\% of placebo draws produce a coefficient as large in absolute value
+($p=0.28$), placing the observed estimate squarely inside the placebo distribution. A
 coarser permutation on a destination--year--product-type aggregate reverses the sign
 entirely (+0.005, $p=0.49$): aggregating to one observation per
 destination--year--product-type collapses the within-cell heterogeneity across firms and
@@ -900,7 +943,7 @@ Log-linear estimates condition on positive flows. If EPs created green trade at 
 extensive margin --- combinations with no recorded trade before --- the intensive
 estimates would miss it \citep{santossilva2006, larch2025}. The test available here
 operates at the product--destination level, not the firm level: on a zero-filled
-HS6--destination--year grid (8.3 million cells), it detects green products newly exported
+HS6--destination--year grid (8.2 million cells), it detects green products newly exported
 to a destination, but not a new firm beginning to export a product that other Chinese
 firms already ship there --- which is the more common form of entry. The extensive margin
 is therefore probed, not exhausted. PPML estimates of
@@ -977,8 +1020,10 @@ The main specification measures the marginal effect of one more environmental pr
 A different question --- the one \citet{abman2024} pose --- is whether, \emph{given} that
 an agreement exists, a more environmentally-weighted agreement moves composition. That
 contrast requires restricting to PTA partners and replacing the level of EP depth with
-its share of total depth, $EP_{dt}/TD_{dt}$. On the collapsed panel restricted to the 25
-partner destinations (534,846 cells; the share takes 12 distinct values in
+its share of total depth, $EP_{dt}/TD_{dt}$. On the collapsed panel restricted to the 23
+partner destinations it contains (Hong Kong and Macao being excluded throughout;
+534{,}846 cells, of which 516{,}684 survive iterative singleton
+removal; the share takes 12 distinct values in
 $[0.012, 0.068]$), the green interaction is $-2.25$ (s.e.\ 1.15, $p=0.06$) and the dirty
 interaction $-1.60$ (s.e.\ 1.55, $p=0.32$). Two cautions apply, and together they keep
 this from being read as a result. The estimand changes: this is the effect of the
@@ -1104,8 +1149,9 @@ composition null is not an artifact of how dirty products are classified.
 The baseline conditions on all positive flows without trimming; the design-based
 inference battery is the primary guard against influential observations. As a
 moment-based complement, I trim log export value at its 1st and 99th percentiles.
-The collapsed panel retains 3,605,798 cells (from 3,786,234; a loss of 4.8\%);
-the full panel retains 44.8 million observations.
+Trimming removes 2.0\% of collapsed-panel cells (3,773,498 to 3,698,033); after the
+usual iterative singleton removal the estimation sample is 3,605,798 cells. The full
+panel retains 44.8 million observations.
 
 Point estimates are virtually unchanged. On the collapsed panel, EP$\times$green
 is $-0.0048$ (WB, bootstrap $p=0.61$) and $+0.0018$ (TREND, bootstrap $p=0.41$);
@@ -1144,18 +1190,17 @@ to the neutral baseline.
 
 Using the universe of Chinese customs transactions and two independent codings of the
 environmental content of China's trade agreements, this paper finds that environmental
-provisions did not change what China exports on the green margin or the extensive
-margin: a null that is stable across estimation designs and sample variations and that
-survives an inference battery designed for the few-treated-clusters regime
-characterizing this --- and most --- PTA settings. Its bootstrap bounds rule out effects
-larger than about one quarter of the benchmark estimate in the aggregate literature; below
-that threshold the design does not discriminate, and the claim is bounded rather than
-exact. A descriptive within-firm share panel points the same way, though the level
-specification it requires is not separately identified here
-(Section~\ref{sec:robust}). The dirty margin is the
-one apparent exception, and it does not survive scrutiny: a negative effect on dirty
-exports that is overwhelming under asymptotic standard errors clears none of the same
-battery and is driven by a single destination (Section~\ref{sec:dirty}) --- a false
+provisions did not change what China exports, on the green margin or at the extensive
+margin. The green result is a \emph{bounded null}: stable across estimation designs and
+sample variations, robust to an inference battery built for the few-treated-clusters
+regime that characterizes this --- and most --- PTA settings, with bootstrap bounds that
+rule out effects larger than about one quarter of the benchmark estimate in the aggregate
+literature and say nothing below that threshold. A descriptive within-firm share panel
+points the same way, though the level specification it requires is not separately
+identified here (Section~\ref{sec:robust}). The dirty margin is the one apparent
+exception, and it is a \emph{non-result} rather than a second bounded null: a negative
+coefficient that is overwhelming under asymptotic standard errors, clears none of the same
+battery, and is carried by a single destination (Section~\ref{sec:dirty}) --- a false
 positive of the kind few-treated-cluster designs manufacture, reported here as a
 descriptive pattern and a cautionary case rather than an identified effect.
 
@@ -1372,8 +1417,29 @@ Figure~\ref{fig:sunab} plots the interaction-weighted event study of
 between the weighted mean outcome of green, respectively dirty, products and that of
 neutral products within each destination--year), with never-treated destinations as
 the control group and $t=-1$ as the reference period. The aggregated ATTs confirm the
-static results: $-0.044$ ($p=0.24$) for the green gap and $+0.073$ ($p=0.28$) for the
+static results: $-0.042$ ($p=0.27$) for the green gap and $+0.073$ ($p=0.28$) for the
 dirty gap.
+
+The standard errors reported here account for the fact that the cohort shares used to
+aggregate the cohort-specific effects are \emph{estimated} rather than known, as
+\citet{sun2021} prescribe. This is not a technicality: the two implementations of the
+estimator used in this project agree on every coefficient to fifteen digits but not on
+their precision, because one of them treats the shares as fixed weights. The difference
+is zero exactly where a single cohort identifies the period --- there is nothing to
+estimate --- and grows to a factor of three to four at the distant leads, where many
+cohorts with sharply discordant estimates are averaged. Since the pre-period leads are
+precisely where cohort dispersion is largest, treating the weights as known would
+manufacture apparent pre-trends out of that dispersion.\footnote{Concretely, the dirty
+gap at $t=-6$ is $+0.047$ with a standard error of $0.014$ if the shares are treated as
+known ($p=0.001$) and of $0.048$ once their estimation is priced in ($p=0.34$). The
+cohort-specific estimates behind that number run from $-0.49$ (2006, Chile) and $-0.33$
+(2010, Peru) to $+0.14$ (2008, New Zealand) and $+0.10$ (2015, Australia): there is no
+common displacement of dirty exports ahead of the agreements, only destination-specific
+fluctuations of opposite sign, and the correct variance says so. Consistently, dropping
+the 2015 cohort flips the coefficient to $-0.051$ and dropping the 2014--15 cohorts to
+$-0.109$ --- a genuine pre-trend does not change sign when one destination is removed.
+The two-way fixed-effects event study of Figure~\ref{fig:es} shows nothing at $t=-6$
+either ($+0.027$, $p=0.53$).}
 
 \begin{figure}[htbp]
 \centering
@@ -1384,39 +1450,21 @@ destination-clustered 95\% bands; $t=-1$ is the reference period.}
 \label{fig:sunab}
 \end{figure}
 
-One coefficient in the pre-period deserves explicit discussion: the dirty gap at
-$t=-6$ is $+0.047$ with an asymptotic $p$-value of $0.001$. Taken at face value it
-would qualify the flat-pre-trend reading of Section~\ref{sec:results}. A cohort
-decomposition shows it should not be taken at face value, for four reasons.
+With those standard errors, no lead and no lag in the $[-10,+8]$ window is individually
+distinguishable from zero on either margin: the pre-period is flat, and nothing happens
+at entry into force. Two distant leads on the dirty gap ($t=-14$ and $t=-12$) and one
+distant lag on the green gap ($t=+10$) do clear the 5\% threshold, but they lie outside
+the window plotted in Figure~\ref{fig:sunab} and each rests on one or two destinations
+observed that far from their entry date; with 28 lead and lag coefficients estimated on
+23 treated clusters, two or three nominally significant ones are what sampling noise
+delivers under exactly flat pre-trends.
 
-First, distant leads are identified by very few units: the sample starts in 2000, so
-$t=-6$ exists only for the eight destinations that entered in 2006 or later (Chile,
-Pakistan, New Zealand, Peru, Costa Rica, Iceland, Switzerland, Australia); deeper
-leads rest on as few as a single destination.
-
-Second, the cohort-specific estimates underlying the aggregate are mutually
-contradictory: at $t=-6$ the 2006 cohort (Chile) deviates by $-0.49$ and the 2010
-cohort (Peru) by $-0.33$, against $+0.14$ for the 2008 cohort (New Zealand) and
-$+0.10$ for the 2015 cohort (Australia). There is no common displacement of dirty
-exports ahead of the agreements --- only destination-specific fluctuations of opposite
-sign, averaged into a single number with trade-size weights.
-
-Third, the aggregate is not robust to any single cohort: dropping the 2015 cohort
-(Australia alone, whose $t=-6$ falls in 2009) flips the coefficient to $-0.051$
-($p=0.11$); dropping the 2014--15 cohorts yields $-0.109$. A genuine pre-trend does
-not change sign when one destination is removed. Nor does it appear only at one
-isolated lead: the adjacent leads $t=-5$ through $t=-2$, where 17 to 23 destinations
-are observed, are all small and statistically indistinguishable from zero, and the
-two-way fixed-effects event study of Figure~\ref{fig:es} shows nothing at $t=-6$
-either ($+0.027$, $p=0.53$).
-
-Fourth, the design estimates roughly 28 lead and lag coefficients with 23 treated
-clusters, so the clustered variance matrix is rank-deficient and individual-lead
-$p$-values are unreliable by construction; with this many coefficients, one or two
-nominally significant leads are what sampling noise delivers under exactly flat
-pre-trends. The aggregated ATT --- the statistic with a valid interpretation ---
-remains null in every variant: $p=0.27$ in the baseline, $p=0.11$ restricting to the
-$[-6,+5]$ window, $p=0.29$ excluding the 2014--15 cohorts.
+The aggregated ATT --- the statistic with a valid interpretation under staggered
+timing --- is null in every variant: $p=0.28$ in the baseline, $p=0.11$ restricting to
+the $[-6,+5]$ window, $p=0.30$ excluding the 2014--15 cohorts. This is the sense in
+which the Sun--Abraham estimator is used here: as a check that the two-way
+fixed-effects dynamics of Figure~\ref{fig:es} are not an artifact of cohort
+heterogeneity under staggered entry, which they are not.
 
 \section{Collapsed-panel and full-panel equivalence}\label{app:pddt}
 

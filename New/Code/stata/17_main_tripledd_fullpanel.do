@@ -22,6 +22,7 @@
 
 clear all
 set more off
+set varabbrev off
 * --- Percorsi radice per sistema operativo ---------------------------------
 * Stessa convenzione di 01_wb_dataset_conversion.do: lo stesso file gira senza
 * modifiche su Windows/Mac/Unix. Adattare il ramo del proprio OS se il progetto

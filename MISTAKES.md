@@ -4,6 +4,81 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-25 — Due implementazioni dello stesso stimatore possono concordare sui coefficienti e NON sugli errori standard
+
+**Cosa e' successo.** La replica Stata del Sun-Abraham (`60_sunab_collapsed.do`,
+`eventstudyinteract`) ha riprodotto tutti i 58 coefficienti di `fixest::sunab` a ~1e-15 e
+le 22 diagnostiche a ~1e-13. Gli ERRORI STANDARD pero' non coincidono: sul lead t=-6 del
+divario sporco, 0,014 in R contro 0,048 in Stata, cioe' p=0,001 contro p=0,34. L'intera
+Appendice A del paper era costruita per difendere quell'anomalia (quattro argomenti su
+perche' il pre-trend a t=-6 non andava preso sul serio). Con la varianza corretta
+**l'anomalia non esiste** e l'appendice si riduce a poche righe.
+
+**Causa.** Lo stimatore IW aggrega gli effetti coorte-specifici con quote che sono
+**stimate** sui dati, non note. Sun & Abraham (2021) prescrivono di includere quella
+incertezza nella varianza: `eventstudyinteract` lo fa, `fixest::sunab` tratta le quote
+come pesi fissi. Il termine omesso e' proporzionale alla dispersione degli effetti fra
+coorti, quindi e' grande esattamente sui lead lontani (dove poche coorti discordi
+identificano il coefficiente) e trascurabile sui periodi post e sull'ATT.
+
+**Come e' stato verificato (e come verificarlo in generale).** La prova che non fosse un
+bug e' interna ai numeri: dove **una sola** coorte identifica il periodo (t=-15, +11, +12,
++13) il rapporto fra i due SE e' **esattamente 1,00** — non c'e' nessuna quota da stimare,
+quindi i due metodi devono coincidere, e coincidono. Dove le coorti sono molte e discordi
+il rapporto sale a 3-4. Un pattern di discrepanza che si spiega con la teoria e si annulla
+esattamente nel caso limite non e' un bug: e' la differenza vera fra i due stimatori.
+
+**Prevenzione.**
+1. **Una replica cross-software non e' completa se confronta solo i coefficienti.** Vanno
+   confrontati anche SE, p-value e intervalli, e ogni scarto va spiegato — non archiviato
+   come "arrotondamento". Qui gli scarti erano su un fattore 3.
+2. Quando due implementazioni divergono, **cercare il caso limite in cui la teoria impone
+   che coincidano** e verificarlo: distingue un bug da una differenza sostanziale meglio di
+   qualsiasi ispezione del codice.
+3. **Corollario Stata:** un `tempfile` creato dentro un `program` viene cancellato all'uscita
+   del program (non e' solo invisibile, come i `local`). I pezzi da assemblare vanno salvati
+   come `.dta` veri. Costato un rerun in questa sessione.
+
+---
+
+## 2026-08-23 — Un output ben formattato con colonna `source` non e' una verifica: S3 era spazzatura
+
+**Cosa e' successo.** `52_omnibus_collapsed.do` sezione S3 (WCB collassato via boottest) ha
+prodotto `wcb_collapsed_boottest.csv` con coefficienti dell'ordine di 1e-13 e colonna `p_boot`
+interamente vuota. Il file aveva la colonna `source="reghdfe_boottest_52"`, lo script terminava
+stampando "=== S3 FATTO ===", ed exit code 0. Il session-log della sessione 13 lo ha registrato
+come "COMPLETO". Nessuno se n'e' accorto per due giorni; l'audit del 23/08 l'ha trovato
+confrontando i numeri.
+
+**Causa — due bug indipendenti che si sono coperti a vicenda:**
+1. `foreach v in y ep_green ... { cap drop \`v' }` cancellava anche `y`, l'outcome. Con
+   `varabbrev` attivo (default), `reghdfe y ...` risolveva silenziosamente in `year`, che e'
+   assorbita dalla FE `dt` -> residui zero macchina -> coefficienti ~1e-13 con p~0,99.
+2. `boottest ep_green_dm_wb [aw=n], ...`: boottest eredita i pesi dal modello, e i pesi passati
+   esplicitamente vengono letti come constraint -> `r(111)` su tutte e 4 le chiamate -> `r(p)`
+   vuoto. L'errore era una `note:` nel log, non un errore fatale, quindi il do-file proseguiva.
+
+**Prevenzione:**
+1. **`set varabbrev off` in testa a ogni do-file del progetto.** Da solo avrebbe trasformato il
+   bug 1 in un errore visibile ("variable y not found"). Applicato a tutti gli script di analisi
+   in `New/Code/stata/` il 23/08.
+2. **Guardia di riproduzione in ogni blocco FWL/demean**: dopo la regressione sui residui,
+   confrontare i coefficienti col baseline noto e `exit 9` se non coincidono entro 1e-4.
+   Applicata in 52 (S3) e 56b. E' lo stesso principio della guardia Frisch-Waugh gia' in uso
+   negli script R, portato su Stata.
+3. **REGOLA DI PROCESSO — un task di verifica non e' chiuso finche' il confronto numerico col
+   gemello non e' agli atti.** "Lo script e' girato", "l'output esiste", "exit code 0" e "il log
+   dice OK" non sono criteri di chiusura: in questo progetto sono gia' stati tutti falsificati
+   almeno una volta (15/08 CSV vuoti, 21/08 corruzione TREND, 23/08 S3 e S5). Il criterio e':
+   il numero prodotto e' stato confrontato con la sua controparte e lo scarto e' agli atti nel
+   session-log. NB: questa e' la 4a-5a voce con la stessa radice (fiducia nel log invece che nel
+   numero) -> promuovere a regola hard nel CLAUDE.md di progetto alla prossima occorrenza.
+4. **Corollario per Stata batch:** l'exit code di `StataSE-64.exe /e` non riflette gli errori del
+   do-file, e il processo puo' proseguire in background dopo che PowerShell e' tornato. Dopo ogni
+   run cercare nel `.log`: `r(1`, `r(2`, `caused error`, `not found`.
+
+---
+
 ## 2026-08-21 — REGOLA PERMANENTE: tutti i risultati full-panel devono essere verificati in Stata
 
 **Cosa e' successo.** R crasha in modo deterministico sul full panel (44M osservazioni) per

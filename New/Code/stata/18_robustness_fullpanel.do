@@ -20,6 +20,7 @@
 
 clear all
 set more off
+set varabbrev off
 * --- Percorsi radice per sistema operativo ---------------------------------
 * Stessa convenzione di 01_wb_dataset_conversion.do: lo stesso file gira senza
 * modifiche su Windows/Mac/Unix. Adattare il ramo del proprio OS se il progetto
@@ -44,8 +45,13 @@ if c(os) == "Unix" {
 *  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
 *  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 *  ##########################################################################
-global PTA_SAMPLE "incl"
-global PTA_DEPTH  "desta"
+* DEFAULT = specifica principale del paper (excl HK/Macao, controllo TotalDepth),
+* allineato a _sample_config.R. Cambiare qui per rigenerare le varianti di
+* robustezza (i cui output esistono gia': suffissi _inclHKMO / _desta).
+* Riportato al default il 2026-08-23: era rimasto su "incl"/"desta" dall'ultima
+* variante eseguita, quindi un rerun non riproduceva il baseline.
+global PTA_SAMPLE "excl"
+global PTA_DEPTH  "totaldepth"
 
 * Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {

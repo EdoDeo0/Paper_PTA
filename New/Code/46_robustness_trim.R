@@ -39,6 +39,20 @@ WORK_DIR   <- here("New/Data/Collapsed")
 dir.create(OUT_DIR, recursive = TRUE, showWarnings = FALSE)
 dir.create(WORK_DIR, recursive = TRUE, showWarnings = FALSE)
 
+## Guardia: non sovrascrivere CSV verificati cross-software (regola M8).
+## Per rigenerarli davvero: FORCE_OVERWRITE_VERIFIED <- TRUE (e poi ri-arbitrare con Stata).
+FORCE_OVERWRITE_VERIFIED <- FALSE
+.protected <- c("tripledd_trimmed_collapsed.csv", "tripledd_decomp_collapsed.csv",
+                "wcb_trimmed_collapsed.csv", "wcb_decomp_collapsed.csv",
+                "wcb_trimmed_fullpanel.csv")
+for (.f in file.path(OUT_DIR, .protected)) {
+  if (file.exists(.f) && !FORCE_OVERWRITE_VERIFIED) {
+    .src <- tryCatch(names(fread(.f)), error = function(e) character())
+    if ("source" %in% .src)
+      stop(sprintf("%s ha colonna 'source' (verificato Stata). Questo script lo sovrascriverebbe con output R non verificato. Usare 49/50/48e, o FORCE_OVERWRITE_VERIFIED=TRUE.", basename(.f)))
+  }
+}
+
 green_set <- unique(fread(GREEN_FILE, colClasses = list(character = "hs6_final"))$hs6_final)
 dirty <- fread(DIRTY_FILE)[, .(hs6 = as.integer(hs6), dirty_p = dirty)]
 dep   <- fread(DEPTH_FILE)[, .(country_code, year, dep_val__ = get(DEPTH_VAR))]

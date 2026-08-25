@@ -14,6 +14,7 @@
 
 clear all
 set more off
+set varabbrev off
 
 ** Cartella progetto = working directory al momento del lancio.
 ** Se si lancia da fuori, impostare qui il percorso assoluto:

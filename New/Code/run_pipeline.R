@@ -324,9 +324,101 @@ stata_manual(
 
 stata_manual(
   "19b", "Saturation ladder, full panel",
-  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables"),
+  artifacts = file.path(ROOT, "New/Output/OLS/Tables_Stata/OLS_Ladder_FE_reghdfe.csv"),
   cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\19b_saturation_ladder_fullpanel.do"'
 )
+
+########################################################
+## CAMPAGNA DI VERIFICA CROSS-SOFTWARE (S2-S8)
+## Ogni risultato citato dal paper ha un gemello Stata. Pattern fisso:
+## uno script R esporta un .dta (nessuna stima), Stata stima e scrive il CSV
+## con colonna `source`. Vedi correspondence/audit/2026-08-21d_censimento_stata.md
+## per la mappa completa, e 2026-08-23_audit_report.md per gli esiti.
+########################################################
+
+run_rscript("52-export", "Export panel collassato -> .dta per Stata",
+  script = "New/Code/52_export_collapsed_dta.R",
+  artifacts = file.path(ROOT, "New/Data/Collapsed/collapsed_omnibus.dta"))
+
+stata_manual(
+  "52", "Omnibus collassato (S2) + WCB boottest (S3)",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/omnibus_collapsed_reghdfe.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/wcb_collapsed_boottest.csv")
+  ),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\52_omnibus_collapsed.do"'
+)
+
+stata_manual(
+  "54", "Event study collassato (S4)",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/eventstudy_twfe_stata.csv"),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\54_eventstudy_collapsed.do"'
+)
+
+run_rscript("55-export", "Export griglia zero-fill -> .dta per Stata",
+  script = "New/Code/55_export_ppml_dta.R",
+  artifacts = file.path(ROOT, "New/Data/Collapsed/ppml_zerofill_export.dta"))
+
+stata_manual(
+  "55", "PPML margine estensivo via ppmlhdfe (S5)",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/ppml_extensive_stata.csv"),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\55_ppml_collapsed.do"'
+)
+
+## 56: permutazione all-countries (~24h). NB: design DIVERSO da 22_permutation_
+## inference.R, che permuta i profili fra i soli 23 trattati (il test citato dal
+## paper). I due p-value non sono confrontabili: vedi audit 2026-08-23 §C3.
+stata_manual(
+  "56", "Permutazione collassata all-countries (S6, ~24h)",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/permutation_collapsed.csv"),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\56_permutation_collapsed.do"'
+)
+
+## 56b: permutazione treated-only (~25h). E' QUESTO il design del paper (replica
+## di 22_permutation_inference.R: profili rimescolati fra i soli 23 trattati).
+## I p-value citati nel draft vengono da qui, non da 56.
+stata_manual(
+  "56b", "Permutazione collassata treated-only (design del paper, ~25h)",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/permutation_draws_treatedonly.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/permutation_collapsed_treatedonly.csv")
+  ),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\56b_permutation_treatedonly.do"'
+)
+
+stata_manual(
+  "57", "WCB saturation ladder full panel (S7)",
+  artifacts = file.path(ROOT, "New/Output/OLS/Tables_Stata/wcb_ladder_fullpanel.csv"),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\57_wcb_ladder_fullpanel.do"'
+)
+
+stata_manual(
+  "58", "Stability sui sotto-campioni, full panel (batch notturno)",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/stability_fullpanel_reghdfe.csv"),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\58_stability_fullpanel.do"'
+)
+
+## 60: Sun-Abraham in Stata. Costruisce il gap panel dal .dta collassato (nessun
+## passaggio R richiesto) e stima lo stimatore IW con eventstudyinteract. E' la
+## fonte dei numeri Sun-Abraham del paper: i coefficienti coincidono con
+## fixest::sunab a ~1e-15, gli ERRORI STANDARD no (fixest tratta le quote di
+## coorte come pesi noti, qui sono stimate come prescrivono Sun-Abraham).
+stata_manual(
+  "60", "Sun-Abraham sul gap di composizione (eventstudyinteract, ~5 min)",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/sunab_stata.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables_Stata/sunab_diag_stata.csv")
+  ),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\60_sunab_collapsed.do"'
+)
+
+run_rscript("58c", "CSV depthbounds riscritti dai .dta Stata (solo I/O)",
+  script = "New/Code/58c_build_verified_depthbounds.R",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_collapsed_nodepth.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_collapsed_targeted.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_epshare_treatedonly.csv")
+  ))
 
 ########################################################
 ## TABELLE FINALI
@@ -352,8 +444,52 @@ run_rscript("47", "Decomposizione outcome: quantita' + valore unitario (Windows-
   script = "New/Code/47_outcome_decomposition.R",
   artifacts = c(
     file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_decomp_collapsed.csv"),
-    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_decomp_fullpanel.csv"),
-    file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_decomp_collapsed.csv"),
-    file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_decomp_fullpanel.csv")))
+    file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_decomp_collapsed.csv")))
+
+########################################################
+## CATENA VERIFICATA CROSS-SOFTWARE (trim + decomp)
+## NB (2026-08-21): i CSV trim/decomp citabili NON escono da 46/47 ma dalla catena
+## verificata cross-software: 48_trim_export_dta.R -> stata/48_trim_check.do ->
+## 48c_build_verified_csvs.R -> 49_wcb_trim_verified.R -> 50_wcb_decomp_verified.R;
+## full panel: 48e_export_fullpanel_dta.R -> stata/48e_fullpanel_boottest.do.
+## 46/47 restano come generatori dei dataset intermedi e dei CSV non-verified,
+## e sono protetti da guardia anti-sovrascrittura (P3a).
+########################################################
+
+run_rscript("48", "Export dataset trimmato a .dta per verifica Stata",
+  script = "New/Code/48_trim_export_dta.R",
+  artifacts = file.path(ROOT, "New/Data/Collapsed/tmp_check_trim.dta"))
+
+stata_manual(
+  "48-check", "Verifica trim/decomp contro Stata (reghdfe)",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables/stata_check_46_47_collapsed.csv"),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\48_trim_check.do"'
+)
+
+run_rscript("48c", "Costruzione CSV verified da valori Stata (trim + decomp collassato)",
+  script = "New/Code/48c_build_verified_csvs.R",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_trimmed_collapsed.csv"),
+    file.path(ROOT, "New/Output/TripleDiff/Tables/tripledd_decomp_collapsed.csv")))
+
+run_rscript("49", "WCB trim collassato (layer-2 vs Stata)",
+  script = "New/Code/49_wcb_trim_verified.R",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_trimmed_collapsed.csv"))
+
+run_rscript("50", "WCB decomp collassato (layer-2 vs Stata)",
+  script = "New/Code/50_wcb_decomp_verified.R",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables/wcb_decomp_collapsed.csv"))
+
+run_rscript("48e", "Export full panel trimmato a .dta per boottest Stata",
+  script = "New/Code/48e_export_fullpanel_dta.R",
+  artifacts = file.path(ROOT, "New/Data/Collapsed/tmp_trim_fullpanel.fst"))
+
+stata_manual(
+  "48e-boottest", "WCB full panel trim (reghdfe FWL + boottest)",
+  artifacts = c(
+    file.path(ROOT, "New/Output/TripleDiff/Tables/stata_check_trim_fullpanel.csv"),
+    file.path(ROOT, "New/Output/OLS/Bootstrap/wcb_trimmed_fullpanel.csv")),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\48e_fullpanel_boottest.do"'
+)
 
 cat("\n[run_pipeline] Fine. Ogni step eseguito e' stato verificato su disco.\n")

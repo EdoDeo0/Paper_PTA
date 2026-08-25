@@ -10,6 +10,7 @@
 
 clear all
 set more off
+set varabbrev off
 
 local dta      "New/Data/Collapsed/tmp_check_trim_fullpanel.dta"
 local dta_dm   "New/Data/Collapsed/tmp_trim_fullpanel_demeaned.dta"

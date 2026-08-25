@@ -1,0 +1,23 @@
+[1] collapsed_omnibus_inclHKMO.dta gia' presente, salto.
+
+=== 64 - export griglia PPML (tutte le varianti) ===
+Celle zerofill (griglia piena): 8,310,464 
+Quota zeri: 53.5% 
+celle HK/Macao: 130,560 (1.57%)
+env_good: 7.4% celle green
+dirty_p: 16.6% celle dirty
+DESTA NA su celle trattate: 22,625
+celle escl. HK/Macao: 8,179,904 (baseline atteso: 8,310,464 -> il .dta di 55)
+Colonne nel .dta: agg_export, hs6, country_code, year, WB_EP_Depth, TREND_EP_Count, pd, dt, pt, hkmo, env_good, dirty_p, TotalDepth_nonEnv, DESTA_depth_index 
+OK: C:/Work/projects/Paper_PTA/New/Data/Collapsed/ppml_zerofill_all.dta — 8,310,464 celle
+
+=== 63 - batteria collassata: BASELINE ===
+    19:37:15  C:\Work\projects\Paper_PTA\New\Code\stata\63_variants_collapsed.do excl totaldepth
+    fine: 20:29:14
+
+=== 63 - batteria collassata: incl HK/Macao ===
+    20:29:14  C:\Work\projects\Paper_PTA\New\Code\stata\63_variants_collapsed.do incl totaldepth
+    fine: 21:21:03
+
+=== 63 - batteria collassata: DESTA ===
+    21:21:03  C:\Work\projects\Paper_PTA\New\Code\stata\63_variants_collapsed.do excl desta

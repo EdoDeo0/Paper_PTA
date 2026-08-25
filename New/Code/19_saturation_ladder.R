@@ -21,6 +21,20 @@
 ## senza controlli tariffs+ln_hhi_baci) e produce una "ladder table" che
 ## mostra come il coefficiente EP si comporta al saturare la struttura FE.
 ##
+## ATTENZIONE — env_good (audit 2026-08-23, W3): questo script usa la colonna
+## `env_good` COME STA NEL .fst (definizione congelata alla costruzione del
+## dataset), mentre tutto il resto della pipeline (16, stata/17, stata/18,
+## stata/19b, stata/57) la RICALCOLA dalla lista green_codes_hs1996.csv.
+## Conseguenze:
+##   - blocco "NI" (livello, senza interazione): non dipende da env_good ed e'
+##     verificato IDENTICO a stata/19b. E' l'unico blocco citato dal paper
+##     (tab:ladder / OLS_Ladder_FE.tex) -> nessun problema.
+##   - blocco "Int" (interazione EP x env_good): NON confrontabile con 19b/57,
+##     che stimano la stessa spec con la definizione green ricalcolata
+##     (es. fpt+fpd: -0.00223 qui, -0.00271 in 19b, a parita' di N).
+## Se in futuro si vorra' pubblicare il blocco Int, la fonte da usare e'
+## 19b/57 (definizione coerente col resto del paper), non questo script.
+##
 ## NOTA STABILITA': le strutture fpd+pt e fpt+fpd hanno gruppi ad altissima
 ## cardinalita' (fpd: 26M+ gruppi) - il multi-thread OpenMP di fixest causa
 ## il crash "recursive gc invocation" anche con lean=TRUE; per queste due

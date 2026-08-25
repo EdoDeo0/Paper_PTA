@@ -30,6 +30,11 @@
 
 ROOT <- tryCatch(here::here(), error = function(e) getwd())
 DIR_T <- file.path(ROOT, "New/Output/TripleDiff/Tables")
+## Output Stata (reghdfe/boottest/ppmlhdfe/eventstudyinteract). Dove R e Stata
+## danno numeri DIVERSI per ragioni legittime (Monte Carlo nella permutazione,
+## varianza delle quote di coorte in Sun-Abraham) il paper cita STATA: i .do
+## sono la via di riproduzione piu' diretta per i collaboratori.
+DIR_TS <- file.path(ROOT, "New/Output/TripleDiff/Tables_Stata")
 DIR_D <- file.path(ROOT, "New/Output/TripleDiff/Diagnostics")
 DIR_G <- file.path(ROOT, "New/Output/Diagnostics")
 OUT   <- file.path(ROOT, "New/Paper/Tabelle")
@@ -74,6 +79,65 @@ esc <- function(s) {
 rd <- function(path) {
   if (!file.exists(path)) { message("[manca] ", basename(path)); return(NULL) }
   utils::read.csv(path, stringsAsFactors = FALSE)
+}
+
+## ─────────────────────────────────────────────────────────────────────
+## PROVENIENZA: Stata prima, R come ripiego
+## ─────────────────────────────────────────────────────────────────────
+## Obiettivo dichiarato del progetto: ogni numero delle tabelle deve essere
+## riproducibile in Stata. `rd_pref()` cerca il gemello in Tables_Stata e lo
+## usa; se non c'e', ripiega su R e lo REGISTRA. Il rapporto stampato in fondo
+## elenca cosa e' ancora solo-R: e' la lista di lavoro, non una nota a margine.
+##
+## Alcuni file sono prodotti da Stata ma vivono in Tables/ per ragioni storiche
+## (li scrivono 17/18 via regsave): vanno contati come Stata.
+STATA_NATIVE_IN_DIR_T <- c(
+  "tripledd_full_reghdfe.csv", "tripledd_full_reghdfe_inclHKMO.csv",
+  "tripledd_full_reghdfe_desta.csv", "tripledd_full_reghdfe_inclHKMO_desta.csv",
+  "tripledd_robustness_reghdfe.csv", "tripledd_full_pddt.csv",
+  "joint_F_fullpanel.csv", "tripledd_stability.csv",
+  "tripledd_collapsed_nodepth.csv", "tripledd_collapsed_targeted.csv",
+  "tripledd_epshare_treatedonly.csv", "tripledd_trimmed_collapsed.csv",
+  "tripledd_trimmed_fullpanel.csv", "tripledd_decomp_collapsed.csv"
+)
+
+PROV <- new.env(parent = emptyenv())
+PROV$stata <- character(0)
+PROV$ronly <- character(0)
+
+## `dir_fallback`: dove cercare la versione R. Di norma Tables/, ma qualche
+## output descrittivo vive altrove (es. Diagnostics/).
+rd_pref <- function(name, dir_fallback = DIR_T) {
+  p_s <- file.path(DIR_TS, name)
+  if (file.exists(p_s)) {
+    PROV$stata <- c(PROV$stata, name)
+    return(rd(p_s))
+  }
+  if (name %in% STATA_NATIVE_IN_DIR_T) {
+    PROV$stata <- c(PROV$stata, name)
+  } else if (file.exists(file.path(dir_fallback, name))) {
+    PROV$ronly <- c(PROV$ronly, name)
+  }
+  rd(file.path(dir_fallback, name))
+}
+
+## Event study: il gemello Stata (54_eventstudy_collapsed.do) ha lo stesso
+## contenuto ma nomi di colonna diversi (`coef` invece di `b`) e in piu' le due
+## righe di riferimento a t=-1, che R non scrive perche' le aggiunge il grafico.
+## Si adatta qui invece di duplicare il file: e' una differenza di schema, non
+## di numeri.
+rd_eventstudy <- function() {
+  p <- file.path(DIR_TS, "eventstudy_twfe_stata.csv")
+  if (file.exists(p)) {
+    d <- rd(p)
+    if (!is.null(d) && all(c("coef", "se", "t", "quale") %in% names(d))) {
+      PROV$stata <- c(PROV$stata, "eventstudy_twfe_stata.csv")
+      if ("source" %in% names(d)) d <- d[d$source != "reference", , drop = FALSE]
+      d$b <- d$coef
+      return(d)
+    }
+  }
+  rd_pref("eventstudy_collapsed.csv", DIR_D)
 }
 
 ## ─────────────────────────────────────────────────────────────────────
@@ -220,7 +284,7 @@ LAB["dirty_p:DEPTH"]  <- "Profondit\\`a accordo $\\times$ Sporco"
 
 ## ── getter per le due unita' di analisi ──────────────────────────────
 get_full <- function(sfx, tr) {
-  d <- rd(file.path(DIR_T, paste0("tripledd_full_reghdfe", sfx, ".csv")))
+  d <- rd_pref(paste0("tripledd_full_reghdfe", sfx, ".csv"))
   if (is.null(d)) return(NULL)
   d <- d[d$treat == tr & d$var != "_cons", , drop = FALSE]
   if (!nrow(d)) return(NULL)
@@ -228,7 +292,7 @@ get_full <- function(sfx, tr) {
              pval = d$pval, nobs = d$N, r2 = d$r2, stringsAsFactors = FALSE)
 }
 get_coll <- function(sfx, tr) {
-  d <- rd(file.path(DIR_T, paste0("tripledd_collapsed", sfx, ".csv")))
+  d <- rd_pref(paste0("tripledd_collapsed", sfx, ".csv"))
   if (is.null(d)) return(NULL)
   d <- d[d$treat == tr, , drop = FALSE]
   if (!nrow(d)) return(NULL)
@@ -240,7 +304,7 @@ get_coll <- function(sfx, tr) {
 ## T1 — Mappa del trattamento
 ########################################################################
 {
-  d <- rd(file.path(DIR_G, "B_treatment_entry.csv"))
+  d <- rd_pref("B_treatment_entry.csv", DIR_G)
   d <- d[order(d$entry_year, d$country), ]
   L <- c("\\begin{table}[htbp]", "\\centering", "\\footnotesize",
     "\\caption{Le destinazioni trattate: quando l'accordo entra in vigore e quanto contenuto ambientale contiene}",
@@ -399,7 +463,7 @@ get_coll <- function(sfx, tr) {
 ########################################################################
 {
   gc_ <- function(sfx, tr) {
-    d <- rd(file.path(DIR_T, paste0("wcb_collapsed", sfx, ".csv")))
+    d <- rd_pref(paste0("wcb_collapsed", sfx, ".csv"))
     if (is.null(d)) return(NULL); d[d$treat == tr, , drop = FALSE]
   }
   gf_ <- function(sfx) {
@@ -468,7 +532,7 @@ get_coll <- function(sfx, tr) {
     paste0("\\begin{tabular}{l", strrep("c", NVAR), "}"), "\\toprule",
     paste0(" & ", paste(sapply(VAR, function(v) v$lab), collapse = " & "), " \\\\"), "\\midrule")
   get_perm <- function(sfx, tr) {
-    d <- rd(file.path(DIR_T, paste0("r710_permutation_summary", sfx, ".csv")))
+    d <- rd_pref(paste0("r710_permutation_summary", sfx, ".csv"))
     if (is.null(d)) return(NULL); r <- d[d$treat == tr, , drop = FALSE]
     if (!nrow(r)) NULL else r
   }
@@ -491,6 +555,7 @@ get_coll <- function(sfx, tr) {
     "\\item \\textbf{Come funziona.} Si prende il profilo di contenuto ambientale di ciascun accordo (quanto \\`e profondo e in quali anni) e lo si riassegna a caso fra le destinazioni gi\\`a trattate, 1.000 volte. Ogni volta si ristima il modello. Il $p$-value \\`e la quota di riassegnazioni casuali che produce un coefficiente pi\\`u grande in valore assoluto di quello vero.",
     "\\item \\textbf{Come si legge.} Un $p$-value alto significa: ``lo stesso numero si sarebbe ottenuto etichettando a caso questi paesi'', cio\\`e il risultato non dipende dal contenuto ambientale. Un $p$-value basso significa che il numero osservato spicca fra i mille finti.",
     "\\item \\`E il test pi\\`u severo dei tre usati nel lavoro, perch\\'e non assume nulla sulla distribuzione degli errori.",
+    "\\item \\textbf{Replica in Stata della colonna baseline} (\\texttt{56b\\_permutation\\_treatedonly.do}, stesso disegno, 1.000 estrazioni): coefficienti osservati identici fino alla dodicesima cifra; $p$-value 0,597 (WB verde), 0,278 (WB sporco), 0,160 (TREND verde), 0,817 (TREND sporco). Gli scarti di qualche punto rispetto a R sono attesi: i profili ambientali realmente distinti sono circa nove (gli undici paesi ASEAN condividono lo stesso accordo), quindi la distribuzione di permutazione \\`e granulare e il $p$ non \\`e riproducibile all'ultima cifra fra implementazioni diverse. Il paper cita i valori Stata.",
     "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
   wr(L, "tab_06_permutation.tex")
 }
@@ -501,7 +566,7 @@ get_coll <- function(sfx, tr) {
 {
   getb <- function(sfx, unita) {
     if (unita == "coll") {
-      d <- rd(file.path(DIR_T, paste0("wcb_collapsed", sfx, ".csv")))
+      d <- rd_pref(paste0("wcb_collapsed", sfx, ".csv"))
       if (is.null(d)) return(c("", ""))
       r <- d[d$treat == "WB" & d$term == "ep_dirty", , drop = FALSE]
     } else {
@@ -539,7 +604,7 @@ get_coll <- function(sfx, tr) {
 ## T8 — Event study (pannello collassato)
 ########################################################################
 {
-  d <- rd(file.path(DIR_D, "eventstudy_collapsed.csv"))
+  d <- rd_eventstudy()
   if (!is.null(d)) {
     tt <- sort(unique(d$t))
     L <- c("\\begin{table}[htbp]", "\\centering", "\\footnotesize",
@@ -573,9 +638,20 @@ get_coll <- function(sfx, tr) {
 ## T9 — Sun-Abraham sul divario verde/sporco vs neutri
 ########################################################################
 {
-  d <- rd(file.path(DIR_T, "sunab_gap.csv"))
+  ## FONTE: Stata/eventstudyinteract (60_sunab_collapsed.do). I coefficienti
+  ## coincidono con fixest::sunab a ~1e-15; gli ERRORI STANDARD no, ed e' il
+  ## motivo per cui si cita Stata: eventstudyinteract include nella varianza
+  ## l'incertezza di STIMA delle quote di coorte (Sun-Abraham 2021), che
+  ## fixest tratta come pesi noti. Prova interna: dove un solo gruppo di
+  ## ingresso identifica il periodo il rapporto fra i due SE e' esattamente
+  ## 1.00; dove i gruppi sono molti e discordi arriva a 3-4x.
+  d <- rd_pref("sunab_stata.csv")
   if (!is.null(d)) {
-    d$k <- suppressWarnings(as.integer(gsub(".*year::(-?[0-9]+).*", "\\1", d$term)))
+    d$outcome <- d$spec
+    d$k <- suppressWarnings(ifelse(
+      grepl("^g_m", d$term), -as.integer(sub("^g_m", "", d$term)),
+      ifelse(grepl("^g_p", d$term), as.integer(sub("^g_p", "", d$term)), NA)))
+    att <- d[d$term == "ATT_aggregato", , drop = FALSE]
     d <- d[!is.na(d$k), ]
     kk <- sort(unique(d$k)); kk <- kk[kk >= -10 & kk <= 8]
     L <- c("\\begin{table}[htbp]", "\\centering", "\\footnotesize",
@@ -593,9 +669,18 @@ get_coll <- function(sfx, tr) {
         if (nrow(g)) cst(g$coef[1], g$pval[1], 4) else "", if (nrow(g)) fmt_p(g$pval[1]) else "",
         if (nrow(b)) cst(b$coef[1], b$pval[1], 4) else "", if (nrow(b)) fmt_p(b$pval[1]) else ""))
     }
+    ## riga dell'ATT aggregato (media dei periodi post, pesata per n_tot)
+    ag <- att[att$outcome == "gap_green", , drop = FALSE]
+    ab <- att[att$outcome == "gap_dirty", , drop = FALSE]
+    L <- c(L, "\\midrule",
+      sprintf("ATT aggregato & %s & %s & %s & %s \\\\",
+        if (nrow(ag)) cst(ag$coef[1], ag$pval[1], 4) else "", if (nrow(ag)) fmt_p(ag$pval[1]) else "",
+        if (nrow(ab)) cst(ab$coef[1], ab$pval[1], 4) else "", if (nrow(ab)) fmt_p(ab$pval[1]) else ""))
     L <- c(L, "\\bottomrule", "\\end{tabular}",
       "\\begin{tablenotes}[flushleft]\\footnotesize",
       "\\item Variante baseline. Finestra mostrata: da $-10$ a $+8$ anni; il file completo copre un intervallo pi\\`u ampio.",
+      "\\item \\textbf{Fonte: Stata} (\\texttt{eventstudyinteract}, \\texttt{60\\_sunab\\_collapsed.do}). I coefficienti coincidono con quelli di R (\\texttt{fixest::sunab}) fino alla quindicesima cifra; gli errori standard no. Quelli riportati qui includono l'incertezza con cui sono \\emph{stimate} le quote di ciascun gruppo di ingresso, come prescrive Sun e Abraham (2021); R le tratta invece come pesi noti e sottostima la variabilit\\`a dei coefficienti lontani dall'entrata. Verifica interna: dove un solo gruppo identifica il periodo i due errori standard coincidono esattamente; dove i gruppi sono molti e discordi quello corretto \\`e fino a 3-4 volte pi\\`u grande.",
+      "\\item L'ATT aggregato \\`e la media dei periodi successivi all'entrata, pesata per la dimensione delle celle.",
       "\\item \\textbf{Perch\\'e serve.} Quando gli accordi entrano in vigore in anni diversi (qui: dal 2002 al 2015), lo stimatore tradizionale pu\\`o confondere l'effetto vero con il confronto fra chi \\`e stato trattato prima e chi dopo. Sun e Abraham (2021) propongono una correzione che calcola l'effetto separatamente per ogni gruppo di ingresso e poi lo aggrega.",
       "\\item \\textbf{Come si legge.} La variabile dipendente qui non \\`e l'export ma il \\emph{divario}: media dei prodotti verdi meno media dei neutri, nella stessa destinazione e anno. Cos\\`i il disegno diventa un confronto scaglionato ordinario, a cui il metodo si applica direttamente.",
       "\\item Un coefficiente significativo \\emph{prima} dell'anno zero \\`e un segnale di allarme, non un risultato: va discusso apertamente.",
@@ -612,7 +697,7 @@ get_coll <- function(sfx, tr) {
   grp_lab <- c(prodHS4 = "Solo prodotti della stessa famiglia merceologica",
                deepshallow = "Solo partner con accordo: profondi vs superficiali",
                cem_v1 = "Solo destinazioni appaiate per caratteristiche")
-  d0 <- rd(file.path(DIR_T, "tripledd_stability.csv"))
+  d0 <- rd_pref("tripledd_stability.csv")
   if (!is.null(d0)) {
     L <- c("\\begin{table}[htbp]", "\\centering", "\\footnotesize",
       "\\caption{Gruppi di controllo alternativi: il risultato cambia se cambia il termine di paragone?}",
@@ -655,7 +740,7 @@ get_coll <- function(sfx, tr) {
 ## T11 — Robustezza sul full panel (varianti di campione e controlli)
 ########################################################################
 {
-  d <- rd(file.path(DIR_T, "tripledd_robustness_reghdfe.csv"))
+  d <- rd_pref("tripledd_robustness_reghdfe.csv")
   if (!is.null(d)) {
     mod_lab <- c(
       A_WB_controls      = "Con controlli aggiuntivi (dazi, concentrazione, antidumping)",
@@ -710,18 +795,18 @@ get_coll <- function(sfx, tr) {
 ########################################################################
 {
   gtr <- function(sfx, tr) {
-    d <- rd(file.path(DIR_T, paste0("r79_desttrends", sfx, ".csv")))
+    d <- rd_pref(paste0("r79_desttrends", sfx, ".csv"))
     if (is.null(d)) return(NULL)
     key <- if (tr == "WB") "WB_EP_Depth" else "TREND_EP_Count"
     s <- d[d$treat == key, , drop = FALSE]; if (!nrow(s)) NULL else s
   }
   gwcb <- function(sfx, tr) {
-    d <- rd(file.path(DIR_T, paste0("r79b_wcb_trends", sfx, ".csv")))
+    d <- rd_pref(paste0("r79b_wcb_trends", sfx, ".csv"))
     if (is.null(d)) return(NULL)
     s <- d[d$treat == tr, , drop = FALSE]; if (!nrow(s)) NULL else s
   }
   gpre <- function(sfx, tr) {
-    d <- rd(file.path(DIR_T, paste0("r79c_pretrends", sfx, ".csv")))
+    d <- rd_pref(paste0("r79c_pretrends", sfx, ".csv"))
     if (is.null(d)) return(NULL)
     s <- d[d$treat == tr, , drop = FALSE]; if (!nrow(s)) NULL else s
   }
@@ -822,7 +907,7 @@ get_coll <- function(sfx, tr) {
 ## T13 — Sotto-indici: quali disposizioni avrebbero un meccanismo?
 ########################################################################
 {
-  d <- rd(file.path(DIR_T, "subindices_collapsed.csv"))
+  d <- rd_pref("subindices_collapsed.csv")
   if (!is.null(d)) {
     sub_lab <- c(
       WB_GreenLiberalization  = "Liberalizzazione dei beni verdi (WB)",
@@ -869,7 +954,7 @@ get_coll <- function(sfx, tr) {
 ########################################################################
 {
   gp <- function(sfx, tr) {
-    d <- rd(file.path(DIR_T, paste0("ppml_extensive", sfx, ".csv")))
+    d <- rd_pref(paste0("ppml_extensive", sfx, ".csv"))
     if (is.null(d)) return(NULL)
     s <- d[d$treat == tr, , drop = FALSE]; if (!nrow(s)) NULL else s
   }
@@ -919,7 +1004,7 @@ get_coll <- function(sfx, tr) {
 ########################################################################
 {
   gco <- function(sfx, tr) {
-    d <- rd(file.path(DIR_T, paste0("r711_shapiro_intensity", sfx, ".csv")))
+    d <- rd_pref(paste0("r711_shapiro_intensity", sfx, ".csv"))
     if (is.null(d)) return(NULL)
     s <- d[d$treat == tr, , drop = FALSE]; if (!nrow(s)) NULL else s
   }
@@ -967,9 +1052,9 @@ get_coll <- function(sfx, tr) {
 ## T16 — Leave-one-out: il risultato dipende da un solo paese?
 ########################################################################
 {
-  nm <- rd(file.path(DIR_G, "B_treatment_entry.csv"))
+  nm <- rd_pref("B_treatment_entry.csv", DIR_G)
   cname <- if (is.null(nm)) NULL else setNames(nm$country, as.character(nm$country_code))
-  dats <- lapply(VAR, function(v) rd(file.path(DIR_T, paste0("dirty_leaveoneout", v$sfx, ".csv"))))
+  dats <- lapply(VAR, function(v) rd_pref(paste0("dirty_leaveoneout", v$sfx, ".csv")))
   base <- dats[[1]]
   if (!is.null(base)) {
     ## unione delle specifiche su tutte le varianti: le colonne che includono
@@ -1016,10 +1101,10 @@ get_coll <- function(sfx, tr) {
 ## T17 — Come si controlla la profondita' dell'accordo
 ########################################################################
 {
-  nod <- rd(file.path(DIR_T, "tripledd_collapsed_nodepth.csv"))
-  tgt <- rd(file.path(DIR_T, "tripledd_collapsed_targeted.csv"))
-  eps <- rd(file.path(DIR_T, "tripledd_epshare_treatedonly.csv"))
-  bas <- rd(file.path(DIR_T, "tripledd_collapsed.csv"))
+  nod <- rd_pref("tripledd_collapsed_nodepth.csv")
+  tgt <- rd_pref("tripledd_collapsed_targeted.csv")
+  eps <- rd_pref("tripledd_epshare_treatedonly.csv")
+  bas <- rd_pref("tripledd_collapsed.csv")
   cell3 <- function(d, tr, tm) {
     if (is.null(d)) return(c("", "", ""))
     s <- if ("treat" %in% names(d)) d[d$treat == tr & d$term == tm, , drop = FALSE] else d[d$term == tm, , drop = FALSE]
@@ -1062,8 +1147,8 @@ get_coll <- function(sfx, tr) {
 ## T18 — Definizione alternativa di "bene verde" (lista APEC)
 ########################################################################
 {
-  d <- rd(file.path(DIR_T, "tripledd_collapsed_apecgreen.csv"))
-  bas <- rd(file.path(DIR_T, "tripledd_collapsed.csv"))
+  d <- rd_pref("tripledd_collapsed_apecgreen.csv")
+  bas <- rd_pref("tripledd_collapsed.csv")
   if (!is.null(d)) {
     cc <- function(dd, tr, tm) {
       s <- dd[dd$treat == tr & dd$term == tm, , drop = FALSE]
@@ -1176,12 +1261,16 @@ pst <- function(p) {
 ## PTAB 1 — tab:main  (triple-diff main results)
 ########################################################################
 {
-  coll <- rd(file.path(DIR_T, "tripledd_collapsed.csv"))
-  full <- rd(file.path(DIR_T, "tripledd_full_reghdfe.csv"))
-  wcb_c <- rd(file.path(DIR_T, "wcb_collapsed.csv"))
+  coll <- rd_pref("tripledd_collapsed.csv")
+  full <- rd_pref("tripledd_full_reghdfe.csv")
+  wcb_c <- rd_pref("wcb_collapsed.csv")
   wcb_f <- rd(file.path(ROOT, "New/Output/OLS/Bootstrap/wcb_fullpanel.csv"))
-  perm  <- rd(file.path(DIR_T, "r710_permutation_summary.csv"))
-  jf    <- rd(file.path(DIR_T, "joint_F_fullpanel.csv"))
+  ## Permutazione: fonte STATA (56b_permutation_treatedonly.do), stesso disegno
+  ## di 22_permutation_inference.R (rimescolo fra i soli 23 trattati). I
+  ## coefficienti osservati coincidono a 12 cifre; i p differiscono di qualche
+  ## punto perche' con ~9 profili distinti la distribuzione e' granulare.
+  perm  <- rd_pref("permutation_collapsed_treatedonly.csv")
+  jf    <- rd_pref("joint_F_fullpanel.csv")
 
   gf <- function(var_name, treat) {
     r <- full[full$var == var_name & full$treat == treat, ]
@@ -1203,10 +1292,13 @@ pst <- function(p) {
     if (!nrow(r)) return(list(p=NA, lo=NA, hi=NA))
     list(p=r$p_wcb[1], lo=r$conf_low[1], hi=r$conf_high[1])
   }
+  ## il CSV Stata e' in formato lungo (una riga per margine), non largo come R
   gpm <- function(treat) {
-    r <- perm[perm$treat == treat, ]
-    if (!nrow(r)) return(list(pg=NA, pd=NA))
-    list(pg=r$p_perm_green[1], pd=r$p_perm_dirty[1])
+    if (is.null(perm)) return(list(pg=NA, pd=NA))
+    g <- perm[perm$treat == treat & perm$var == "ep_green", , drop = FALSE]
+    b <- perm[perm$treat == treat & perm$var == "ep_dirty", , drop = FALSE]
+    list(pg = if (nrow(g)) g$p_perm[1] else NA,
+         pd = if (nrow(b)) b$p_perm[1] else NA)
   }
 
   f_wg <- gf("wb_green","WB"); f_wd <- gf("wb_dirty","WB")
@@ -1295,7 +1387,7 @@ pst <- function(p) {
 ## PTAB 2 — tab:stability  (EP×green across designs)
 ########################################################################
 {
-  stab <- rd(file.path(DIR_T, "tripledd_stability.csv"))
+  stab <- rd_pref("tripledd_stability.csv")
   full_wb <- full[full$var == "wb_green" & full$treat == "WB", ]
 
   rows <- list(
@@ -1323,7 +1415,7 @@ pst <- function(p) {
     }
   }
 
-  rob <- rd(file.path(DIR_T, "tripledd_robustness_reghdfe.csv"))
+  rob <- rd_pref("tripledd_robustness_reghdfe.csv")
   rob_overlap <- rob[rob$model == "D_WB_overlap" & rob$var == "wb_green", ]
   rob_ctrl    <- rob[rob$model == "A_WB_controls" & rob$var == "wb_green", ]
   rob_noasean <- rob[rob$model == "B_WB_noASEAN"  & rob$var == "wb_green", ]
@@ -1368,10 +1460,10 @@ pst <- function(p) {
 ## PTAB 3 — tab:depthbounds  (EP×green under alternative depth controls)
 ########################################################################
 {
-  nodepth  <- rd(file.path(DIR_T, "tripledd_collapsed_nodepth.csv"))
+  nodepth  <- rd_pref("tripledd_collapsed_nodepth.csv")
   baseline <- coll
-  targeted <- rd(file.path(DIR_T, "tripledd_collapsed_targeted.csv"))
-  desta    <- rd(file.path(DIR_T, "tripledd_collapsed_desta.csv"))
+  targeted <- rd_pref("tripledd_collapsed_targeted.csv")
+  desta    <- rd_pref("tripledd_collapsed_desta.csv")
 
   get_wb_green <- function(d, term_name) {
     r <- d[d$treat == "WB" & d$term == term_name, ]
@@ -1418,7 +1510,7 @@ pst <- function(p) {
 ## PTAB 4 — tab:robust  (sample robustness, full panel)
 ########################################################################
 {
-  ppml <- rd(file.path(DIR_T, "ppml_extensive.csv"))
+  ppml <- rd_pref("ppml_extensive.csv")
   ppml_wg <- ppml[ppml$treat=="WB" & ppml$term=="WB_EP_Depth:env_good", ]
   ppml_wd <- ppml[ppml$treat=="WB" & ppml$term=="WB_EP_Depth:dirty_p", ]
   rob_wf  <- rob[rob$model=="G_WB_withinfirm" & rob$var=="WB_EP_Depth", ]
@@ -1478,7 +1570,7 @@ pst <- function(p) {
 ## PTAB 5 — tab:pddt  (pd+dt+pt equivalence diagnostic, appendix)
 ########################################################################
 {
-  pddt <- rd(file.path(DIR_T, "tripledd_full_pddt.csv"))
+  pddt <- rd_pref("tripledd_full_pddt.csv")
   if (!is.null(pddt)) {
     pddt_wg <- pddt[pddt$var=="wb_green" & pddt$treat=="WB_pddt", ]
     pddt_wd <- pddt[pddt$var=="wb_dirty"  & pddt$treat=="WB_pddt", ]
@@ -1506,3 +1598,31 @@ pst <- function(p) {
 }
 
 cat("\n=== Fatto. File generati in", OUT, "e", FRAG, "===\n")
+
+## ─────────────────────────────────────────────────────────────────────
+## RAPPORTO DI PROVENIENZA
+## ─────────────────────────────────────────────────────────────────────
+## L'obiettivo del progetto e' che ogni numero delle tabelle sia riproducibile
+## in Stata. Questo rapporto dice a che punto siamo, contando le sorgenti
+## effettivamente lette in questa esecuzione.
+st <- sort(unique(PROV$stata))
+ro <- sort(unique(PROV$ronly))
+tot <- length(st) + length(ro)
+cat("\n=== PROVENIENZA DELLE SORGENTI ===\n")
+cat(sprintf("Stata: %d/%d file (%.0f%%)\n", length(st), tot,
+            if (tot > 0) 100 * length(st) / tot else 0))
+if (length(ro)) {
+  cat("\nANCORA SOLO R (da replicare in Stata):\n")
+  for (f in ro) cat("  -", f, "\n")
+} else {
+  cat("\nNessuna sorgente solo-R: tutte le tabelle sono riproducibili in Stata.\n")
+}
+prov_df <- data.frame(
+  file   = c(st, ro),
+  source = c(rep("stata", length(st)), rep("r_only", length(ro))),
+  stringsAsFactors = FALSE
+)
+prov_path <- file.path(ROOT, "New/Output/Diagnostics/tables_provenance.csv")
+dir.create(dirname(prov_path), recursive = TRUE, showWarnings = FALSE)
+utils::write.csv(prov_df, prov_path, row.names = FALSE)
+cat("\nDettaglio in:", prov_path, "\n")

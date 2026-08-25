@@ -35,6 +35,7 @@ Profondit\`a EP $\times$ Sporco: coefficiente osservato & 0.00035 & -0.00001 & -
 \item \textbf{Come funziona.} Si prende il profilo di contenuto ambientale di ciascun accordo (quanto \`e profondo e in quali anni) e lo si riassegna a caso fra le destinazioni gi\`a trattate, 1.000 volte. Ogni volta si ristima il modello. Il $p$-value \`e la quota di riassegnazioni casuali che produce un coefficiente pi\`u grande in valore assoluto di quello vero.
 \item \textbf{Come si legge.} Un $p$-value alto significa: ``lo stesso numero si sarebbe ottenuto etichettando a caso questi paesi'', cio\`e il risultato non dipende dal contenuto ambientale. Un $p$-value basso significa che il numero osservato spicca fra i mille finti.
 \item \`E il test pi\`u severo dei tre usati nel lavoro, perch\'e non assume nulla sulla distribuzione degli errori.
+\item \textbf{Replica in Stata della colonna baseline} (\texttt{56b\_permutation\_treatedonly.do}, stesso disegno, 1.000 estrazioni): coefficienti osservati identici fino alla dodicesima cifra; $p$-value 0,597 (WB verde), 0,278 (WB sporco), 0,160 (TREND verde), 0,817 (TREND sporco). Gli scarti di qualche punto rispetto a R sono attesi: i profili ambientali realmente distinti sono circa nove (gli undici paesi ASEAN condividono lo stesso accordo), quindi la distribuzione di permutazione \`e granulare e il $p$ non \`e riproducibile all'ultima cifra fra implementazioni diverse. Il paper cita i valori Stata.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
