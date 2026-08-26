@@ -71,6 +71,29 @@ fa, `fixest::sunab` (R) no — tratta le quote come pesi fissi.
   **Il pre-trend anomalo non esiste.** L'appendice del draft è già stata riscritta di
   conseguenza: non difendere più un'anomalia che non c'è.
 
+### 0.5 Il leave-one-out parla attraverso gli errori standard, non i coefficienti
+
+Stessa morale di §0.4, in un altro punto del paper: guardare solo il coefficiente porta a
+scrivere una cosa falsa.
+
+- Il coefficiente sporco è **stabile** su tutte e 23 le esclusioni (−0,0097 … −0,0133).
+- Quello che salta è la **precisione**: togliendo l'Australia l'errore standard quasi
+  triplica (0,0030 → 0,0087) e porta il p a 0,24; togliendo la Corea raddoppia.
+- Quindi Australia e Corea **non sono outlier con leva sulla stima**: forniscono la
+  variazione che la identifica.
+- E **quale sia il paese decisivo dipende dal controllo di profondità** (Australia con
+  TotalDepth, Corea con DESTA).
+
+⚠️ **Formulazione da non usare:** "il risultato è portato da una singola destinazione".
+Descrive il meccanismo sbagliato e invita l'obiezione "escludetela e vedete". Dettaglio
+operativo in §6.4.
+
+> **Il filo che unisce §0.4 e §0.5**, e che vale la pena rendere esplicito nel paper: in un
+> disegno con ventitré cluster trattati e circa nove profili distinti, **quasi tutte le
+> conclusioni si giocano sulla varianza, non sul punto stimato**. Vale per il bootstrap
+> contro l'asintotica, per Sun-Abraham, e per il leave-one-out. È lo stesso argomento
+> ripetuto in tre forme, ed è il contributo metodologico del lavoro.
+
 ---
 
 ## 1. Abstract (150-200 parole)
@@ -87,7 +110,8 @@ partire da lì. Deve contenere, in quest'ordine:
 - [ ] Verde: **null delimitato**, stabile su sei disegni, regge bootstrap e permutazione;
       i limiti bootstrap escludono effetti sopra ~¼ del benchmark aggregato.
 - [ ] Sporco: **falso positivo da manuale** — p<0,001 asintotico, bootstrap p=0,07,
-      permutazione p=0,28, e un solo paese lo porta.
+      permutazione p=0,28, e basta togliere una di due destinazioni perché l'errore
+      standard triplichi.
 - [ ] La lettura: è una questione di **contenuto, non di capitoli**. I due sotto-indici WB
       con meccanismo commerciale sono perfettamente collineari e diversi da zero in soli 3
       country-year.
@@ -147,8 +171,10 @@ la spiegazione lunga di Brandi. Quelli stanno nell'introduzione.
 | … bootstrap | **p=0,07** | `wcb_collapsed_boottest.csv` |
 | … permutazione | **p=0,28** | `permutation_collapsed_treatedonly.csv` |
 | … permutazione aggregata grossolana | segno invertito, +0,005, **p=0,49** | `Diagnostics/permutation_collapsed_dirty.csv` (solo R, è un disegno diverso) |
-| … leave-one-out, Australia esclusa | −0,0103, **p=0,24** | `dirty_leaveoneout_stata.csv` |
-| … Corea esclusa | −0,0097, **p=0,09** | idem |
+| … leave-one-out, Australia esclusa | −0,0103, **p=0,24** — ma il salto è nell'**errore standard**: 0,0030 → 0,0087 (**2,94×**) | `dirty_leaveoneout.csv` (Tables_Stata) |
+| … Corea esclusa | −0,0097, **p=0,09**, errore standard **1,97×** | idem |
+| … India / Pakistan esclusi | coefficiente ±1–4%, errore standard invariato → **non pivotali** | idem |
+| … lo stesso con controllo DESTA | il paese pivotale **cambia**: Australia lascia p=0,001, è la Corea a triplicare l'SE (p=0,14) | `dirty_leaveoneout_desta.csv` |
 
 ---
 
@@ -463,9 +489,27 @@ Questa è la sottosezione metodologicamente più forte del paper. Sequenza:
       domanda (l'aggregazione collassa l'eterogeneità within-cell che il coefficiente
       disaggregato sfrutta) — ma arrivano allo stesso verdetto, e l'instabilità di segno è
       essa stessa prova di fragilità.
-- [ ] Leave-one-out sui 23 trattati: stabile a ~−0,012 **tranne** escludendo l'**Australia**,
-      dove scende a **−0,0103 con p=0,24**. La Corea, che guidava il risultato in una
-      versione precedente, non è più pivotale da sola: **−0,0097, p=0,09**.
+- [ ] **Leave-one-out — attenzione, qui il meccanismo non è quello che sembra.** ⚠️ La
+      formulazione "il risultato è portato da un solo paese" è la lettura sbagliata e va
+      evitata: suggerisce che ci sia una destinazione anomala che tira la stima, e invita
+      l'obiezione "allora escludetela e vedete". Non è così.
+      - Il **punto stimato è stabile**: sta fra **−0,0097 e −0,0133** su tutte e 23 le
+        esclusioni, senza mai cambiare segno. Togliendo India o Pakistan si muove dell'1–4%
+        e l'errore standard resta dov'era: **non sono pivotali**.
+      - A saltare è la **precisione**. Togliendo l'**Australia** il coefficiente si muove
+        del 13% (−0,0119 → −0,0103) ma l'errore standard passa da **0,0030 a 0,0087**, cioè
+        quasi triplica: è questo, non lo spostamento della stima, a portare il p a **0,24**.
+        Togliendo la **Corea** l'errore standard raddoppia (p=0,09).
+      - Lettura corretta: quelle destinazioni **non hanno leva sulla stima, forniscono la
+        variazione che la identifica**. Rimuoverle non dà una risposta diversa, lascia il
+        disegno senza abbastanza informazione per darne una. È coerente con i ~9 profili di
+        trattamento realmente distinti dichiarati in §Method.
+      - **Il paese pivotale cambia col controllo di profondità**: con `TotalDepth` è
+        l'Australia; con **DESTA** l'Australia lascia il coefficiente a −0,0110 con
+        **p=0,001**, ed è la **Corea** a triplicare l'errore standard (p=0,14). Da che cosa
+        dipende il risultato è a sua volta funzione di una scelta di modellazione che non
+        c'entra col contenuto ambientale. **È l'argomento più forte della sottosezione**:
+        un effetto identificato non si comporta così.
 - [ ] TREND non mostra mai l'effetto (bootstrap **p=0,86**).
 - [ ] Full panel: **−0,0044**, asintotico **p=0,052**, bootstrap **p=0,18**, IC 95%
       **[−0,043; +0,011]** → il segnale marginale è cancellato dall'inferenza robusta su
@@ -566,8 +610,9 @@ stima è zero.
 
 - [ ] **Riassunto in due frasi**, con le etichette di §0.1: verde = null delimitato,
       stabile e robusto, con i limiti bootstrap che escludono effetti sopra ~¼ del benchmark
-      aggregato e non dicono nulla sotto; sporco = non-risultato, portato da una sola
-      destinazione.
+      aggregato e non dicono nulla sotto; sporco = non-risultato, che perde ogni precisione
+      appena si toglie dal campione una qualsiasi di due destinazioni (§6.4: è l'errore
+      standard a triplicare, non la stima a spostarsi).
 - [ ] **La lettura sostantiva**: non che le EP non contino mai — Abman et al. mostrano che
       possono, sugli esiti ambientali, quando sono specifiche e vincolanti. Ma che i capitoli
       ambientali firmati dalla Cina nel 2000-2015 — **sottili, bundled, dominati da linguaggio

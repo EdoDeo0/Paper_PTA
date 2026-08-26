@@ -28,8 +28,36 @@ clear all
 set more off
 set varabbrev off
 global ROOT "C:\Work\projects\Paper_PTA"
-global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+*-- VARIANTE (campione x controllo di profondita') --------------------------
+* Override da riga di comando:  ... /e do "54_...do" incl desta
+* NB: fra i regressori dell event study NON c e un controllo di profondita.
+* La variante "desta" agisce comunque, ma SOLO sul campione: elimina le celle
+* trattate senza copertura DESTA (Timor-Leste). Verificato che R fa lo stesso
+* (eventstudy_collapsed_desta.csv differisce dal baseline di 2,3e-4).
+* ATTENZIONE: il Sun-Abraham di 60 si comporta DIVERSAMENTE - li R non applica
+* il filtro e i file `_desta` sono copie identiche. I due script replicano
+* comportamenti diversi ed e voluto: ognuno replica il proprio gemello R.
+global VSAMPLE "excl"
+global VDEPTH  "totaldepth"
+if "`1'" != "" global VSAMPLE "`1'"
+if "`2'" != "" global VDEPTH  "`2'"
+if !inlist("$VSAMPLE", "excl", "incl") | !inlist("$VDEPTH", "totaldepth", "desta") {
+    di as error "Parametri non validi: $VSAMPLE / $VDEPTH"
+    exit 198
+}
+if "$VSAMPLE" == "excl" {
+    global DTA "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
+    local s1 ""
+}
+else {
+    global DTA "$ROOT\New\Data\Collapsed\collapsed_omnibus_inclHKMO.dta"
+    local s1 "_inclHKMO"
+}
+local s2 = cond("$VDEPTH" == "desta", "_desta", "")
+global SFX "`s1'`s2'"
+di as text _n "=== Event study | campione=$VSAMPLE | depth=$VDEPTH | suffisso=$SFX ==="
 
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -46,6 +74,14 @@ su WB_EP_Depth, meanonly
 if r(max) != 17 {
     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio."
     exit 1
+}
+* filtro della variante DESTA: escono le celle TRATTATE senza copertura DESTA
+if "$VDEPTH" == "desta" {
+    qui count
+    local n0 = r(N)
+    drop if missing(DESTA_depth_index) & WB_EP_Depth > 0
+    qui count
+    di as text "[desta] celle trattate senza copertura eliminate: " `n0' - r(N)
 }
 count
 di as text "Celle: " r(N)
@@ -83,7 +119,7 @@ forvalues t = -6(1)5 {
 }
 
 di as text _n "=== TWFE event study ==="
-local out_twfe "$TAB/EVENTSTUDY_twfe.dta"
+local out_twfe "$TAB/EVENTSTUDY_twfe$SFX.dta"
 cap confirm file "`out_twfe'"
 if _rc {
     reghdfe y ieg_* idy_* [aw=n], ///
@@ -91,7 +127,7 @@ if _rc {
     di as text "N = " e(N) " | cluster = " e(N_clust)
 
     * Estrai coefficienti manualmente -> CSV
-    local csv_twfe "$TAB/eventstudy_twfe_stata.csv"
+    local csv_twfe "$TAB/eventstudy_twfe_stata$SFX.csv"
     capture erase "`csv_twfe'"
     file open fh using "`csv_twfe'", write replace text
     file write fh "t,quale,coef,se,pval,nobs,nclust,source" _n
@@ -130,15 +166,33 @@ if _rc {
 else di "  SKIP EVENTSTUDY_twfe.dta (gia' presente)"
 
 ********************************************************************************
-** (b) Sun-Abraham (2021) via eventstudyinteract (opzionale)
+** (b) Sun-Abraham — BLOCCO DISATTIVATO, e la ragione va letta
 ********************************************************************************
-cap which eventstudyinteract
-if _rc {
-    di as text _n "[SKIP] eventstudyinteract non installato."
-    di as text "       Per installare: net install eventstudyinteract, from(https://raw.githubusercontent.com/lsun20/EventStudyInteract/main/)"
-    di as text "       S4-SA skippato: la verifica TWFE sopra e' sufficiente per la prova cross-software."
-}
-else {
+* Questo blocco chiamava:
+*     eventstudyinteract y ieg_* idy_* [aw=n], ...
+* cioe' tentava di applicare lo stimatore di Sun-Abraham DIRETTAMENTE alla
+* tripla differenza, passandogli come "indicatori di tempo relativo" sia le
+* interazioni green (ieg_*) sia quelle dirty (idy_*). Non e' quello che
+* eventstudyinteract si aspetta, e infatti fallisce con r(101).
+*
+* Non e' un bug di sintassi da aggiustare: e' concettualmente sbagliato. Lo
+* stimatore vuole UN trattamento scaglionato, non un differenziale fra tre
+* categorie di prodotto. E' esattamente la ragione per cui 23_eventstudy_sunab.R
+* costruisce il GAP di composizione a livello destinazione-anno, e per cui la
+* replica corretta e' in 60_sunab_collapsed.do.
+*
+* PERCHE' NON SE N'ERA ACCORTO NESSUNO: finche' `eventstudyinteract' non era
+* installato, il ramo `if _rc' saltava tutto con un avviso e il codice morto non
+* veniva mai eseguito. Installando il pacchetto per lo script 60 (26/08/2026) il
+* blocco si e' risvegliato e ha iniziato a fallire. Non ha mai scritto file
+* (verificato: nessun eventstudy_sunab_stata*.csv esiste), quindi nessun output
+* e' stato contaminato.
+*
+* Disattivato con una condizione sempre falsa invece di cancellarlo: il codice
+* resta leggibile come documentazione di un tentativo che non poteva funzionare.
+di as text _n "[SKIP] Sun-Abraham non si applica direttamente alla tripla differenza."
+di as text "       La replica corretta e' in 60_sunab_collapsed.do (gap di composizione)."
+if 1 == 0 {
     local out_sa "$TAB/EVENTSTUDY_sunab.dta"
     cap confirm file "`out_sa'"
     if _rc {
@@ -150,7 +204,7 @@ else {
             absorb(pd dt pt) vce(cluster country_code)
 
         * Esporta come CSV (formato simile a TWFE)
-        local csv_sa "$TAB/eventstudy_sunab_stata.csv"
+        local csv_sa "$TAB/eventstudy_sunab_stata$SFX.csv"
         matrix b = e(b_iw)
         matrix V = e(V_iw)
         capture erase "`csv_sa'"

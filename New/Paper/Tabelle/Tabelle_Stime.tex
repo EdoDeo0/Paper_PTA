@@ -688,6 +688,25 @@ $-0{,}0133$ senza mai cambiare segno: nessun singolo partner genera il risultato
 pesano di pi\`u sono Corea e Australia nella colonna (1), e Hong Kong nella colonna (2). Le
 colonne (2) e (4) hanno due righe in pi\`u perch\'e includono Hong Kong e Macao.
 
+\textbf{In che modo ``pesano'', per\`o.} Non spostando la stima, ma distruggendone la
+precisione --- ed \`e una differenza sostanziale. Togliendo l'Australia dalla colonna (1) il
+coefficiente si muove del 13\% (da $-0{,}0119$ a $-0{,}0103$), ma il suo errore standard
+quasi \emph{triplica}, da $0{,}0030$ a $0{,}0087$: \`e questo, non lo spostamento del punto,
+a portare il $p$ a $0{,}24$. Togliendo la Corea l'errore standard raddoppia. Per confronto,
+togliendo India o Pakistan il coefficiente si muove dell'1--4\% e l'errore standard resta
+dov'era. Australia e Corea non sono quindi casi anomali che tirano la stima da una parte:
+sono i paesi che forniscono gran parte della variazione con cui il modello \`e identificato.
+Toglierli non d\`a una risposta diversa, lascia il disegno senza abbastanza informazione per
+darne una.
+
+\textbf{E quale paese sia decisivo dipende dal controllo di profondit\`a.} Nella colonna (1)
+\`e l'Australia; nella colonna (3), che usa DESTA al posto di \texttt{TotalDepth}, togliere
+l'Australia lascia il coefficiente a $-0{,}0110$ con $p=0{,}001$, mentre \`e la Corea a
+triplicare l'errore standard ($p=0{,}14$). Da che cosa dipenda il risultato \`e dunque a sua
+volta funzione di una scelta di modellazione che non ha niente a che vedere con il contenuto
+ambientale misurato. \`E un argomento in pi\`u a favore della lettura ``fragile'', non una
+contraddizione.
+
 \textbf{La colonna (4) merita attenzione a parte.} \`E la pi\`u instabile: togliere
 l'Australia sposta il coefficiente da $-0{,}0082$ a $-0{,}0048$ ($-41\%$); togliere
 il Pakistan lo porta a $-0{,}0056$. Chi usa questa colonna per argomentare dovrebbe
@@ -701,10 +720,12 @@ a $0{,}001$, ma il \emph{bootstrap} sullo stesso identico coefficiente d\`a $0{,
 (Tabella~\ref{tab:wcb}). Le stelle vanno quindi ignorate: sono un artefatto dello stesso
 problema di pochi cluster trattati che il resto del lavoro \`e costruito per gestire.
 
-\textbf{Una lacuna dichiarata.} I file esportati per questa prova contengono soltanto
-coefficiente e $p$-value: mancano errori standard e numerosit\`a. Non \`e un dato perduto ---
-si rigenera rilanciando lo script --- ma finch\'e non lo si fa, la tabella non pu\`o essere
-pi\`u completa di cos\`i.
+\textbf{Una lacuna che non c'\`e pi\`u.} Fino alla campagna di replica in Stata i file
+esportati per questa prova contenevano soltanto coefficiente e $p$-value, e la lettura sopra
+--- quella sugli errori standard --- non era nemmeno possibile. Ora
+\texttt{63\_variants\_collapsed.do} scrive anche errore standard, numerosit\`a e numero di
+cluster per ogni riga e per tutte e quattro le colonne. \`E il caso in cui completare un
+export ha cambiato che cosa si riesce a dire, non solo da dove viene il numero.
 
 \input{tab_16_leaveoneout}
 

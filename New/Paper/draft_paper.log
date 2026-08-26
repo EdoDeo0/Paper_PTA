@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.20)  25 AUG 2026 18:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.20)  26 AUG 2026 10:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -437,43 +437,43 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 {C:/Users/edodr/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2]
 [3] [4] [5]
-Overfull \hbox (27.30806pt too wide) in paragraph at lines 234--263
+Overfull \hbox (27.30806pt too wide) in paragraph at lines 237--266
  [] 
  []
 
 
-Overfull \hbox (5.83908pt too wide) in paragraph at lines 278--306
+Overfull \hbox (5.83908pt too wide) in paragraph at lines 281--309
  [] 
  []
 
 [6] [7] [8]
-Underfull \hbox (badness 10000) in paragraph at lines 415--415
+Underfull \hbox (badness 10000) in paragraph at lines 418--418
 []\T1/cmr/m/n/10.95 Effective
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 418--420
+Underfull \hbox (badness 10000) in paragraph at lines 421--423
 []\T1/cmr/m/n/10.95 unlike com-par-i-son
  []
 
 
-Underfull \hbox (badness 2443) in paragraph at lines 421--422
+Underfull \hbox (badness 2443) in paragraph at lines 424--425
 \T1/cmr/m/n/10.95 des-ti-na-tions ($\OMS/cmsy/m/n/10.95 ^^Y$\T1/cmr/m/n/10.95 9
 8.5% of prod-
  []
 
 
-Underfull \hbox (badness 1033) in paragraph at lines 425--426
+Underfull \hbox (badness 1033) in paragraph at lines 428--429
 []\T1/cmr/m/n/10.95 destinations matched by coars-
  []
 
 
-Underfull \hbox (badness 2573) in paragraph at lines 427--428
+Underfull \hbox (badness 2573) in paragraph at lines 430--431
 []\T1/cmr/m/n/10.95 selection of part-ner
  []
 
 [9]
-Overfull \hbox (6.40479pt too wide) detected at line 505
+Overfull \hbox (6.40479pt too wide) detected at line 508
 [][][][] \OML/cmm/m/it/12 x[]  \OT1/cmr/m/n/12 =  \OML/cmm/m/it/12 ^^L[] EP[] \
 OMS/cmsy/m/n/12 ^^B \OML/cmm/m/it/12 g[]  \OT1/cmr/m/n/12 +  \OML/cmm/m/it/12 ^
 ^L[] EP[] \OMS/cmsy/m/n/12 ^^B \OML/cmm/m/it/12 b[]  \OT1/cmr/m/n/12 +  \OML/cm
@@ -485,7 +485,7 @@ m/m/it/12 ^^M[] TD[] \OMS/cmsy/m/n/12 ^^B \OML/cmm/m/it/12 g[]  \OT1/cmr/m/n/12
  []
 
 [10] [11] [12]
-Underfull \hbox (badness 1694) in paragraph at lines 627--627
+Underfull \hbox (badness 1694) in paragraph at lines 630--630
 [][][]\T1/cmr/m/n/10 Every es-ti-mate in the pa-per was pro-duced twice, in \T1
 /cmr/m/sc/10 Stata \T1/cmr/m/n/10 (\T1/cmtt/m/n/10 reghdfe\T1/cmr/m/n/10 , \T1/
 cmtt/m/n/10 boottest\T1/cmr/m/n/10 , \T1/cmtt/m/n/10 ppmlhdfe\T1/cmr/m/n/10 ,
@@ -497,41 +497,41 @@ Overfull \hbox (38.50471pt too wide) in paragraph at lines 8--16
  []
 
 ) (fragments/ptab_main.tex) [15] [16] (fragments/ptab_stability.tex) [17]
-<figures/eventstudy_collapsed_v2.png, id=450, 794.97pt x 346.896pt>
+<figures/eventstudy_collapsed_v2.png, id=449, 794.97pt x 346.896pt>
 File: figures/eventstudy_collapsed_v2.png Graphic file (type png)
 <use figures/eventstudy_collapsed_v2.png>
 Package pdftex.def Info: figures/eventstudy_collapsed_v2.png  used on input lin
-e 764.
+e 767.
 (pdftex.def)             Requested size: 472.03123pt x 205.98486pt.
 
 [18 <./figures/eventstudy_collapsed_v2.png>] [19] [20]
-Overfull \hbox (70.02657pt too wide) in paragraph at lines 885--907
+Overfull \hbox (70.02657pt too wide) in paragraph at lines 903--925
  [] 
  []
 
-[21] [22] (fragments/ptab_depthbounds.tex) [23] [24] (fragments/ptab_robust.tex
+[21] [22] [23] (fragments/ptab_depthbounds.tex) [24] (fragments/ptab_robust.tex
 ) [25] [26]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\mathsurround' on input line 1115.
+(hyperref)                removing `\mathsurround' on input line 1133.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\z@' on input line 1115.
+(hyperref)                removing `\z@' on input line 1133.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 1115.
+(hyperref)                removing `subscript' on input line 1133.
 
-[27] [28] [29] [30] [31]
-<figures/eventstudy_sunab.png, id=572, 650.43pt x 361.35pt>
+[27] [28] [29] [30] [31] [32]
+<figures/eventstudy_sunab.png, id=576, 650.43pt x 361.35pt>
 File: figures/eventstudy_sunab.png Graphic file (type png)
 <use figures/eventstudy_sunab.png>
-Package pdftex.def Info: figures/eventstudy_sunab.png  used on input line 1446.
+Package pdftex.def Info: figures/eventstudy_sunab.png  used on input line 1465.
 
 (pdftex.def)             Requested size: 472.03123pt x 262.24496pt.
- [32] (fragments/ptab_pddt.tex) [33 <./figures/eventstudy_sunab.png>] [34] (dra
-ft_paper.aux)
+ [33 <./figures/eventstudy_sunab.png>]
+(fragments/ptab_pddt.tex) [34] (draft_paper.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -546,7 +546,7 @@ Here is how much of TeX's memory you used:
  39900 multiletter control sequences out of 15000+600000
  651506 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,79p,567b,624s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,79p,567b,610s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc
 1200.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
 0\ecbx1000.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
@@ -579,9 +579,9 @@ edodr/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C
 msfonts/cm/cmsy10.pfb><C:/Users/edodr/AppData/Local/Programs/MiKTeX/fonts/type1
 /public/amsfonts/cm/cmsy7.pfb><C:/Users/edodr/AppData/Local/Programs/MiKTeX/fon
 ts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on draft_paper.pdf (34 pages, 758106 bytes).
+Output written on draft_paper.pdf (34 pages, 759312 bytes).
 PDF statistics:
- 1319 PDF objects out of 1440 (max. 8388607)
+ 1318 PDF objects out of 1440 (max. 8388607)
  118 named destinations out of 1000 (max. 500000)
  235 words of extra memory for PDF output out of 10000 (max. 10000000)
 

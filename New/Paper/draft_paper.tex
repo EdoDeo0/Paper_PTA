@@ -41,7 +41,8 @@ permutation inference, with bootstrap bounds that rule out effects larger than r
 quarter of the benchmark estimate in the aggregate literature. The dirty margin is a
 textbook false positive --- overwhelming asymptotically ($p<0.001$), it survives neither
 the bootstrap ($p=0.07$) nor permutation inference ($p=0.28$), and a leave-one-out exercise
-shows a single destination carries it. The central reading is about content, not chapters:
+shows that removing any one of two destinations triples its standard error. The central
+reading is about content, not chapters:
 the two World Bank sub-indices with a direct trade mechanism are perfectly collinear
 in-sample and non-zero in only three treated country--years. China's chapters were thin and
 cooperation-only, which makes the null consistent with --- not contrary to ---
@@ -136,9 +137,11 @@ negative coefficient on EP$\times$dirty (asymptotic $p<0.001$ in the collapsed
 panel) illustrates exactly why this discipline matters: its wild-bootstrap p-value is
 0.07, permutation inference on the exact estimating equation gives $p=0.28$, a coarser
 aggregate version of the same permutation flips its sign ($p=0.49$), the TREND index never
-confirms it, and a leave-one-out exercise shows it is carried by a single destination
-(Australia, $p=0.24$ once excluded); South Korea, the destination whose removal
-previously killed the result, now leaves it borderline ($p=0.09$). No form of robust
+confirms it, and a leave-one-out exercise shows that the estimate survives only as long as
+two particular destinations are in the sample: dropping Australia nearly triples its
+standard error ($p=0.24$), dropping South Korea doubles it ($p=0.09$), while the point
+estimate itself barely moves. Those destinations do not exert leverage on the estimate;
+they supply the variation that identifies it. No form of robust
 inference sustains it. The joint
 F-test on all four composition interactions in the full firm-level panel is $p=0.31$ (WB
 index) and $p=0.71$ (TREND index).
@@ -784,11 +787,26 @@ destination--year--product-type collapses the within-cell heterogeneity across f
 product varieties that the disaggregated coefficient exploits, so the two permutation
 tests are not answering quite the same question --- but they reach the same verdict, and
 the sign instability under aggregation is further evidence of fragility. A leave-one-out
-exercise across the 23 treated destinations points the same way: the coefficient is
-stable ($\approx -0.012$) except when Australia is dropped, in which case it falls to
-$-0.0103$ with $p=0.24$. South Korea, the destination that drove the equivalent result in
-an earlier version of this analysis, is no longer pivotal on its own: dropping it leaves
-the coefficient at $-0.0097$ with $p=0.09$. The TREND index
+exercise across the 23 treated destinations points the same way, and how it does so is
+worth stating precisely, because the mechanism is not the one the phrase
+``driven by one country'' usually denotes. The point estimate is remarkably stable: it
+sits between $-0.0097$ and $-0.0133$ in all 23 leave-one-out samples, and dropping large
+treated destinations such as India or Pakistan moves it by 1 to 4\% while leaving its
+standard error essentially unchanged. What is not stable is the \emph{precision}. Dropping
+Australia moves the coefficient by 13\% (to $-0.0103$) but nearly triples its standard
+error, from $0.0030$ to $0.0087$, which is what carries the p-value to 0.24; dropping
+South Korea doubles it, giving $-0.0097$ with $p=0.09$. Those destinations are therefore
+not outliers exerting leverage on the estimate --- they supply a large share of the
+variation that identifies it, and removing them leaves the design with too little
+information to speak, rather than with a different answer.
+
+The same exercise run with the DESTA depth control in place of \texttt{TotalDepth} makes
+the point sharper still: there the pivotal destination is no longer Australia, whose
+removal leaves the coefficient at $-0.0110$ with $p=0.001$, but South Korea, whose removal
+triples the standard error and gives $p=0.14$. Which destination the result depends on is
+thus itself a function of a modelling choice that has nothing to do with the environmental
+content being measured. An identified effect does not behave this way; an estimate resting
+on roughly nine distinct treatment profiles does. The TREND index
 never shows the effect (bootstrap $p=0.86$). In
 the full firm-level panel the coefficient is $-0.0044$ with an asymptotic $p$ of 0.052
 --- just above conventional significance, the same order of magnitude as in the CEM
@@ -1200,7 +1218,8 @@ points the same way, though the level specification it requires is not separatel
 identified here (Section~\ref{sec:robust}). The dirty margin is the one apparent
 exception, and it is a \emph{non-result} rather than a second bounded null: a negative
 coefficient that is overwhelming under asymptotic standard errors, clears none of the same
-battery, and is carried by a single destination (Section~\ref{sec:dirty}) --- a false
+battery, and loses all precision as soon as any one of two destinations is removed from the
+sample (Section~\ref{sec:dirty}) --- a false
 positive of the kind few-treated-cluster designs manufacture, reported here as a
 descriptive pattern and a cautionary case rather than an identified effect.
 

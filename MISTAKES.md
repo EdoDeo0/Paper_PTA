@@ -4,6 +4,44 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-26 — La corruzione silenziosa di R colpisce ancora: 2 righe su 25, trovate contando le righe
+
+**Cosa e' successo.** La replica Stata del leave-one-out nella variante DESTA
+(`63_variants_collapsed.do` blocco E) ha trovato due righe su 25 in disaccordo con il CSV R
+`dirty_leaveoneout_desta.csv`: `senza_111` (R -0,0142183 contro Stata -0,0114545) e
+`senza_127` (R -0,0125894 contro -0,0106275). Le altre 23 coincidevano a meno di 1e-9.
+
+**Chi aveva ragione.** Ristimando le due spec in R **in processi isolati** (uno per spec,
+`nthreads(1)`, colonne potate, `lean=TRUE`), due volte ciascuna: R ha prodotto
+-0,011454549642 e -0,010627464057, cioe' **esattamente i valori Stata a 12 cifre**. Il CSV
+archiviato era sbagliato. Aveva sbagliato anche il conteggio: `nobs` 3.630.712 invece di
+3.630.711. Durante il primo tentativo di verifica (tutte le spec in un solo processo) R e'
+crashato con `*** recursive gc invocation` proprio su `senza_111`: la spec corrotta e' la
+stessa su cui l'allocatore cede.
+
+**Perche' non e' stato peggio.** La variante DESTA compare solo in una colonna di
+`Tabelle_Stime.pdf`. Il paper cita il leave-one-out della variante baseline, che era
+corretto (25/25 righe coincidenti). Nessun numero pubblicato era coinvolto.
+
+**Cosa ha funzionato, e va riusato.**
+1. **Contare le righe attese.** Il problema e' emerso da un controllo di integrita' banale
+   (`67_verify_stata_coverage.R`): il file aveva 25 righe invece di 26. Quel controllo ha
+   poi fatto emergere anche i due coefficienti divergenti. Una verifica strutturale stupida
+   ha trovato quello che nessuna ispezione del codice avrebbe trovato.
+2. **Un processo per stima.** Se una spec crasha, crasha solo quella: si isola il colpevole
+   invece di perdere l'intero run. E' anche l'unico modo in cui la verifica e' arrivata in
+   fondo.
+3. **Stimare due volte.** R che riproduce se stesso fra due run indipendenti e' la prova che
+   il valore nuovo e' buono; R che non lo fa e' la firma della corruzione.
+
+**Prevenzione.** Quando un confronto cross-software mostra disaccordo su POCHE righe e
+accordo su tutte le altre, **non e' un bug di codice**: un bug sistematico sbaglierebbe
+tutte le righe allo stesso modo. La selettivita' e' la firma della corruzione sporadica.
+L'arbitrato e' sempre lo stesso: ristimare la riga sospetta in un processo pulito, due
+volte, e credere al valore che si riproduce.
+
+---
+
 ## 2026-08-25 — Due implementazioni dello stesso stimatore possono concordare sui coefficienti e NON sugli errori standard
 
 **Cosa e' successo.** La replica Stata del Sun-Abraham (`60_sunab_collapsed.do`,

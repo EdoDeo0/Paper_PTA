@@ -21,3 +21,11 @@ OK: C:/Work/projects/Paper_PTA/New/Data/Collapsed/ppml_zerofill_all.dta — 8,31
 
 === 63 - batteria collassata: DESTA ===
     21:21:03  C:\Work\projects\Paper_PTA\New\Code\stata\63_variants_collapsed.do excl desta
+    fine: 22:10:31
+
+=== 63 - batteria collassata: incl HK/Macao + DESTA ===
+    22:10:31  C:\Work\projects\Paper_PTA\New\Code\stata\63_variants_collapsed.do incl desta
+    fine: 23:00:17
+
+=== 65 - PPML margine estensivo, 3 varianti ===
+    23:00:17  C:\Work\projects\Paper_PTA\New\Code\stata\65_ppml_variants.do 

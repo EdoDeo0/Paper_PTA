@@ -46,8 +46,44 @@ clear all
 set more off
 set varabbrev off
 global ROOT "C:\Work\projects\Paper_PTA"
-global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+*── VARIANTE ─────────────────────────────────────────────────────────────────
+* Default: baseline. Override da riga di comando:
+*     ... /e do "60_sunab_collapsed.do" incl
+*
+* NB: qui NON esiste un parametro per il controllo di profondita', e la ragione
+* e' sostanziale: la variabile dipendente e' il GAP di composizione (media dei
+* verdi meno media dei neutri) e la regressione non contiene alcun controllo di
+* profondita'. La "variante DESTA" di questo esercizio non esiste come oggetto
+* distinto. Verificato sui file R: `sunab_gap_desta.csv` e' identico a
+* `sunab_gap.csv` a zero cifre, e `sunab_gap_inclHKMO_desta.csv` e' identico a
+* `sunab_gap_inclHKMO.csv`. R ha semplicemente riscritto lo stesso calcolo sotto
+* un altro nome. Qui si fa lo stesso, in modo esplicito (vedi in fondo).
+* ATTENZIONE: l'event study TWFE di 54 si comporta DIVERSAMENTE — li' R applica
+* il filtro DESTA sul campione (esclude Timor-Leste) e le quattro varianti sono
+* davvero distinte. Non uniformare i due script: replicano comportamenti diversi.
+global VSAMPLE "excl"
+if "`1'" != "" global VSAMPLE "`1'"
+if !inlist("$VSAMPLE", "excl", "incl") {
+    di as error "VSAMPLE deve essere excl o incl, trovato: $VSAMPLE"
+    exit 198
+}
+if "$VSAMPLE" == "excl" {
+    global DTA "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
+    global SFX ""
+    global NROW_ATT 3616
+    global NDEST_ATT 236
+    global NTRT_ATT 23
+}
+else {
+    global DTA "$ROOT\New\Data\Collapsed\collapsed_omnibus_inclHKMO.dta"
+    global SFX "_inclHKMO"
+    global NROW_ATT .
+    global NDEST_ATT .
+    global NTRT_ATT 25
+}
+di as text _n "=== Sun-Abraham | campione=$VSAMPLE | suffisso='$SFX' ==="
 
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -123,14 +159,20 @@ local ndest : word count `dd'
 qui levelsof country_code if !nevertreated, local(tt)
 local ntreat : word count `tt'
 di as txt "[gap] righe=`nrow' destinazioni=`ndest' trattate=`ntreat'"
-if `nrow' != 3616 | `ndest' != 236 | `ntreat' != 23 {
-    di as error "Gap panel non conforme (atteso 3616 / 236 / 23). Interrompo."
+* Il numero di trattate e' la guardia che vale per entrambi i campioni; righe e
+* destinazioni si controllano solo dove il valore atteso e' noto (baseline).
+if `ntreat' != $NTRT_ATT {
+    di as error "Trattate=`ntreat', atteso $NTRT_ATT. Campione sbagliato. Interrompo."
+    exit 9
+}
+if !missing($NROW_ATT) & (`nrow' != $NROW_ATT | `ndest' != $NDEST_ATT) {
+    di as error "Gap panel non conforme (atteso $NROW_ATT / $NDEST_ATT). Interrompo."
     exit 9
 }
 qui count if missing(gap_green)
-di as txt "[gap] NA gap_green=" r(N) " (atteso 175)"
+di as txt "[gap] NA gap_green=" r(N) " (baseline: 175)"
 qui count if missing(gap_dirty)
-di as txt "[gap] NA gap_dirty=" r(N) " (atteso 327)"
+di as txt "[gap] NA gap_dirty=" r(N) " (baseline: 327)"
 
 * --- dummy di tempo relativo: -15..-2 e 0..13 (t=-1 riferimento) --------------
 local RELVARS ""
@@ -145,7 +187,7 @@ forvalues k = 0/13 {
 global RELVARS "`RELVARS'"
 
 * il gap panel e' un artefatto riusabile (e ispezionabile): lo si salva su disco
-save "$ROOT\New\Data\Collapsed\sunab_gap_panel.dta", replace
+save "$ROOT\New\Data\Collapsed\sunab_gap_panel$SFX.dta", replace
 tempfile gappanel
 save `gappanel'
 
@@ -217,7 +259,7 @@ program define sunab_run
         gen str32  source = "eventstudyinteract_stata_60"
         * NB: un `tempfile' creato dentro un program viene CANCELLATO all'uscita
         * del program -> i pezzi si salvano come .dta veri (stile cache del progetto).
-        save "$TAB\SUNAB_`tag'.dta", replace
+        save "$TAB\SUNAB_`tag'$SFX.dta", replace
     restore
 end
 
@@ -228,10 +270,10 @@ use `gappanel', clear
 sunab_run gap_dirty "$RELVARS" gap_dirty
 
 * assemblaggio
-use "$TAB\SUNAB_gap_green.dta", clear
-append using "$TAB\SUNAB_gap_dirty.dta"
+use "$TAB\SUNAB_gap_green$SFX.dta", clear
+append using "$TAB\SUNAB_gap_dirty$SFX.dta"
 order spec term coef se pval nobs nclust source
-export delimited using "$TAB\sunab_stata.csv", replace
+export delimited using "$TAB\sunab_stata$SFX.csv", replace
 di as res "=== sunab_stata.csv scritto (" _N " righe) ==="
 
 ********************************************************************************
@@ -277,7 +319,7 @@ preserve
     qui drop if coef == 0 & (se == 0 | missing(se))
     gen long nobs   = `NN_C1'
     gen int  nclust = `NCL'
-    save "$TAB\SUNABDIAG_per_coorte.dta", replace
+    save "$TAB\SUNABDIAG_per_coorte$SFX.dta", replace
 restore
 global DIAGTAGS "per_coorte"
 
@@ -340,7 +382,7 @@ program define sunab_diag
         qui drop if missing(coef)
         gen long  nobs   = `NN'
         gen int   nclust = `NCL'
-        save "$TAB\SUNABDIAG_`tag'.dta", replace
+        save "$TAB\SUNABDIAG_`tag'$SFX.dta", replace
     restore
     global DIAGTAGS "$DIAGTAGS `tag'"
 end
@@ -372,10 +414,24 @@ foreach cy of local cohorts {
 * assemblaggio diagnostica
 clear
 foreach t of global DIAGTAGS {
-    append using "$TAB\SUNABDIAG_`t'.dta"
+    append using "$TAB\SUNABDIAG_`t'$SFX.dta"
 }
 gen str32 source = "eventstudyinteract_stata_60"
 order spec term coorte coef se pval nobs nclust source
-export delimited using "$TAB\sunab_diag_stata.csv", replace
+export delimited using "$TAB\sunab_diag_stata$SFX.csv", replace
 di as res "=== sunab_diag_stata.csv scritto (" _N " righe) ==="
-di as res "=== 60 FATTO ==="
+********************************************************************************
+* D. La "variante DESTA": copia dichiarata, non una stima nuova
+********************************************************************************
+* Questo esercizio non ha un controllo di profondita' (la dipendente e' gia' un
+* divario), quindi passare da TotalDepth a DESTA non cambia NIENTE nel calcolo.
+* R lo conferma: i suoi file `_desta` sono identici ai corrispondenti senza
+* suffisso a zero cifre. Si scrivono quindi come copie, dicendolo: e' preferibile
+* a rifare la stessa stima e far credere che siano due risultati indipendenti.
+* (L'event study TWFE di 54 e' un caso diverso: li' il filtro DESTA sul campione
+* si applica davvero e le quattro varianti vanno stimate una per una.)
+copy "$TAB\sunab_stata$SFX.csv"      "$TAB\sunab_stata${SFX}_desta.csv", replace
+copy "$TAB\sunab_diag_stata$SFX.csv" "$TAB\sunab_diag_stata${SFX}_desta.csv", replace
+di as res "[D] variante DESTA scritta come COPIA di '$SFX' (identica per costruzione)"
+
+di as res "=== 60 FATTO (variante '$SFX' + copia _desta) ==="

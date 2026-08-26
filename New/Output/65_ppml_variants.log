@@ -1,0 +1,226 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\stata\65_ppml_variants.do 
+
+. *****************************************************************************
+> ***
+. ****** 65 - PPML margine estensivo: VARIANTI di campione/profondita'       **
+> ****
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisiti: Rscript New/Code/64_export_ppml_variants_dta.R
+. *                 -> New/Data/Collapsed/ppml_zerofill_all.dta
+. *               ssc install ppmlhdfe
+. *
+. * Completa la matrice 2x2 di `Tabelle_Stime.pdf` per il PPML sul margine
+. * estensivo. La variante baseline (escl. HK/Macao + TotalDepth) e' gia'
+. * prodotta da 55_ppml_collapsed.do e NON viene rifatta.
+. *
+. * La griglia zero-fill non va ricostruita per campione: contiene gia' Hong Ko
+> ng
+. * e Macao, e gli ID delle FE sono calcolati sulla griglia piena. Qui si
+. * seleziona il campione con il flag `hkmo` e si sceglie la colonna di
+. * profondita'; tutte e tre le varianti mancanti escono da un solo file.
+. *
+. * Output (schema identico ai CSV R, per 44_make_tables_tex.R):
+. *   New/Output/TripleDiff/Tables_Stata/ppml_extensive{sfx}.csv
+. *   con sfx in _inclHKMO, _desta, _inclHKMO_desta
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto - ~1-2 h in totale):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\65_p
+> pml_variants.do"
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. global DTA  "$ROOT\New\Data\Collapsed\ppml_zerofill_all.dta"
+
+. global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. 
+. cap which ppmlhdfe
+
+. if _rc {
+.     di as error "ppmlhdfe non installato. Eseguire: ssc install ppmlhdfe"
+.     exit 1
+. }
+
+. cap mkdir "$TAB"
+
+. confirm file "$DTA"
+
+. 
+. *****************************************************************************
+> ***
+. * Programma: stima le 2 spec (WB, TREND) per una variante e scrive il CSV
+. *   `1' sfx      suffisso di output ("_inclHKMO", "_desta", "_inclHKMO_desta"
+> )
+. *   `2' sample   excl | incl
+. *   `3' depthvar TotalDepth_nonEnv | DESTA_depth_index
+. *****************************************************************************
+> ***
+. capture program drop ppml_variant
+
+. program define ppml_variant
+  1.     args sfx sample depthvar
+  2. 
+.     local out "$TAB\ppml_extensive`sfx'.csv"
+  3.     capture confirm file "`out'"
+  4.     if !_rc {
+  5.         di as text "[`sfx'] gia' presente, salto."
+  6.         exit 0
+  7.     }
+  8. 
+.     di as text _n "==========================================================
+> ===="
+  9.     di as text "  PPML variante '`sfx'' | campione=`sample' | profondita'=
+> `depthvar'"
+ 10.     di as text "==========================================================
+> ===="
+ 11. 
+.     use "$DTA", clear
+ 12.     if "`sample'" == "excl" {
+ 13.         drop if hkmo == 1
+ 14.     }
+ 15.     * DESTA: le celle TRATTATE senza copertura si eliminano, le altre -> 0
+.     * (stessa regola di 52 blocco 7, 28.R e 63)
+.     if "`depthvar'" == "DESTA_depth_index" {
+ 16.         qui count
+ 17.         local n0 = r(N)
+ 18.         drop if missing(DESTA_depth_index) & WB_EP_Depth > 0
+ 19.         qui count
+ 20.         di as text "  [desta] celle trattate senza copertura eliminate: " 
+> `n0' - r(N)
+ 21.         replace DESTA_depth_index = 0 if missing(DESTA_depth_index)
+ 22.     }
+ 23.     qui count
+ 24.     di as text "  celle in stima (pre-ppmlhdfe): " r(N)
+ 25. 
+.     file open fh using "`out'", write replace text
+ 26.     file write fh "treat,term,coef,se,pval,nobs" _n
+ 27.     file close fh
+ 28. 
+.     foreach treat in WB TREND {
+ 29.         if "`treat'" == "WB"    local xv "WB_EP_Depth"
+ 30.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+ 31. 
+.         cap drop ep_green ep_dirty td_green td_dirty
+ 32.         qui gen double ep_green = `xv' * env_good
+ 33.         qui gen double ep_dirty = `xv' * dirty_p
+ 34.         qui gen double td_green = `depthvar' * env_good
+ 35.         qui gen double td_dirty = `depthvar' * dirty_p
+ 36. 
+.         di as text "  [`treat'] ppmlhdfe..."
+ 37.         cap ppmlhdfe agg_export ep_green ep_dirty td_green td_dirty, ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 38.         if _rc {
+ 39.             di as error "  [`treat'] ppmlhdfe fallito (rc=" _rc ")"
+ 40.             continue
+ 41.         }
+ 42.         local NN = e(N)
+ 43.         di as res "    ep_green=" %10.7f _b[ep_green] "  ep_dirty=" %10.7f
+>  _b[ep_dirty] "  N=" `NN'
+ 44. 
+.         local i = 1
+ 45.         foreach v in ep_green ep_dirty td_green td_dirty {
+ 46.             if `i' == 1 local tn "`xv':env_good"
+ 47.             if `i' == 2 local tn "`xv':dirty_p"
+ 48.             if `i' == 3 local tn "env_good:`depthvar'"
+ 49.             if `i' == 4 local tn "dirty_p:`depthvar'"
+ 50.             local b  = _b[`v']
+ 51.             local se = _se[`v']
+ 52.             local p  = 2 * normal(-abs(`b'/`se'))
+ 53.             file open fh using "`out'", write append text
+ 54.             file write fh "`treat',`tn',`b',`se',`p',`NN'" _n
+ 55.             file close fh
+ 56.             local ++i
+ 57.         }
+ 58.     }
+ 59.     di as result "[`sfx'] scritto `out'"
+ 60. end
+
+. 
+. * Baseline incluso di proposito. 55_ppml_collapsed.do lo produce gia', ma sot
+> to
+. * il nome `ppml_extensive_stata.csv` e con schema regsave; qui serve anche so
+> tto
+. * il nome canonico `ppml_extensive.csv` e nello schema dei file R, perche'
+. * 44_make_tables_tex.R possa leggere le quattro varianti da una fonte uniform
+> e.
+. * Non sovrascrive nulla: i due file hanno nomi diversi, e il confronto fra i 
+> due
+. * percorsi e' un controllo di coerenza in piu' (67_verify_stata_coverage.R).
+. ppml_variant ""                excl TotalDepth_nonEnv
+
+==============================================================
+  PPML variante '' | campione=excl | profondita'=TotalDepth_nonEnv
+==============================================================
+(130,560 observations deleted)
+  celle in stima (pre-ppmlhdfe): 8179904
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\ppml_extens
+    > ive.csv not found)
+  [WB] ppmlhdfe...
+    ep_green= 0.0015271  ep_dirty=-0.0301390  N=7895543
+  [TREND] ppmlhdfe...
+    ep_green= 0.0001174  ep_dirty= 0.0027795  N=7895543
+[] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\ppml_e
+> xtensive.csv
+
+. ppml_variant "_inclHKMO"       incl TotalDepth_nonEnv
+
+==============================================================
+  PPML variante '_inclHKMO' | campione=incl | profondita'=TotalDepth_nonEnv
+==============================================================
+  celle in stima (pre-ppmlhdfe): 8310464
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\ppml_extens
+    > ive_inclHKMO.csv not found)
+  [WB] ppmlhdfe...
+    ep_green= 0.0029376  ep_dirty=-0.0267507  N=8030137
+  [TREND] ppmlhdfe...
+    ep_green=-0.0000733  ep_dirty= 0.0048405  N=8030137
+[_inclHKMO] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Sta
+> ta\ppml_extensive_inclHKMO.csv
+
+. ppml_variant "_desta"          excl DESTA_depth_index
+
+==============================================================
+  PPML variante '_desta' | campione=excl | profondita'=DESTA_depth_index
+==============================================================
+(130,560 observations deleted)
+(14,465 observations deleted)
+  [desta] celle trattate senza copertura eliminate: 14465
+(7,361,693 real changes made)
+  celle in stima (pre-ppmlhdfe): 8165439
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\ppml_extens
+    > ive_desta.csv not found)
+  [WB] ppmlhdfe...

@@ -1,5 +1,33 @@
 # Session Log — Paper_PTA
 
+## 2026-08-26 (22) — T8/T9 chiusi, permutazione parallelizzata a blocchi (Windows, Opus 5)
+
+**T8 e T9 completati su tutte e 4 le colonne.** `stata/54_eventstudy_collapsed.do` e
+`stata/60_sunab_collapsed.do` parametrizzati per campione/profondita'; 8 file verificati vs R
+(scarto max 9,5e-14). Differenza voluta fra i due, documentata negli header: 54 **applica** il
+filtro DESTA (esclude Timor-Leste), 60 **no** (nessun controllo di profondita' nel gap) e i
+suoi file `_desta` sono copie dichiarate. Non uniformarli. Blocco Sun-Abraham dormiente in 54
+disattivato con `if 1 == 0`: si era risvegliato installando `eventstudyinteract` per 60 e
+tentava di applicare SA alla tripla differenza (concettualmente sbagliato, mai scritto file).
+Bug corretto in `67_verify_stata_coverage.R`: `d$source` su file senza quella colonna e' NULL,
+e `NULL %in% "x"` da' `logical(0)` che azzera il data frame invece di non filtrare.
+
+**Permutazione: da 3 a 9 processi paralleli.** Macchina a 12 core con 4 in uso (ppmlhdfe e'
+monothread). Nuovi `stata/66b_permutation_chunk.do` (intervallo di repliche) e
+`66c_merge_permutation_chunks.R` (fusione + 3 controlli bloccanti). `66` non toccato, resta il
+riferimento. Il taglio e' lecito perche' **il seed dipende solo dal numero di replica**; la
+prova e' in `New/Output/TripleDiff/Diagnostics/permutation_collaudo66*.csv` (8-9 repliche
+prodotte da 66 in sequenza continua, che il blocco 1-334 deve riprodurre **identiche** o 66c
+non scrive nulla). Misurato: ~24 h invece di 33 (+27%, non 3x: reghdfe e' limitato dalla banda
+di memoria). Collaudo a 5 repliche fatto prima del lancio, come lo script stesso prevedeva.
+
+**Stato:** paper CHIUSO, nessun numero del testo dipende dalle stime in corso — la riscrittura
+manuale puo' partire subito. In esecuzione: PPML `_desta` (~19:30) e `_inclHKMO_desta` (~02:20),
+3 permutazioni ×3 blocchi (~gio mattina). **Aperto:** T10 (`tripledd_stability_*`, 3 stime full
+panel, sorgente da 17 GB — solo Windows); pezza `.part` per il resume-safe. **ATTENZIONE:** il
+guard di `65` controlla solo l'esistenza del CSV — dopo un crash va cancellato
+`ppml_extensive_desta.csv` (30 byte, sola intestazione) o la variante viene saltata. **Nessun commit.**
+
 ## 2026-08-25 (21) — Copertura Stata totale: il paper e' chiuso, varianti in corso (Windows, Opus 5)
 
 Richiesta utente: **ogni numero** (paper e `Tabelle_Stime.pdf`) riproducibile in Stata.
@@ -34,8 +62,80 @@ raggiunto. Nuovo documento di tracciamento: `New/COPERTURA_STATA.md`.
 
 **Aperto:** permutazione ×3 varianti, **~25 h ciascuna (~75 h)**. Non ottimizzata di
 proposito: `56b` e' codice provato e questo progetto ha una storia di scorciatoie che hanno
-corrotto numeri in silenzio. Resta fuori anche T1 (mappa del trattamento, descrittiva, zero
-stime). **Nessun commit.**
+corrotto numeri in silenzio. **Nessun commit.**
+
+**AGGIORNAMENTO notte 25-26/08 — la replica ha trovato due numeri sbagliati.**
+- Coda: tutte e 4 le varianti di `63` completate e verificate (baseline 52 min, incl 52 min,
+  desta 49 min, incl+desta 50 min); `65` PPML baseline+incl fatti, desta in corso.
+- **T1 CHIUSO**: nuovo `stata/68_treatment_map.do`, 25 righe **identiche** a
+  `B_treatment_entry.csv` (anni di entrata, dosi massime, nomi). Non resta piu' nessuna
+  tabella solo-R per costruzione.
+- **SCOPERTA: `dirty_leaveoneout_desta.csv` (R) ha 2 righe su 25 corrotte** — `senza_111`
+  (-0,0142183 invece di -0,0114545) e `senza_127` (-0,0125894 invece di -0,0106275), piu'
+  `nobs` sbagliato di 1. Arbitrato: R ristimato in **processi isolati**, due volte per spec,
+  riproduce **esattamente i valori Stata a 12 cifre**. Al primo tentativo (tutte le spec in
+  un processo) R e' crashato con `recursive gc invocation` proprio su `senza_111`.
+  **Il paper non e' toccato** (cita la variante baseline, 25/25 corrette). Voce in
+  `MISTAKES.md`: il disaccordo SELETTIVO e' la firma della corruzione, non di un bug.
+- Nuovo `67_verify_stata_coverage.R`: controlla righe attese + accordo con R su ogni CSV.
+  E' lo strumento che ha trovato la corruzione (contando le righe). Affinato due volte:
+  distingue "in corso di scrittura" da "troncato" (Stata attivo + mtime < 30 min) ed esclude
+  le 2 righe R dimostrate corrotte invece di sopprimere l'allarme.
+- **Difetto latente trovato nel disegno resume-safe**: i do-file scrivono l'intestazione del
+  CSV all'inizio del blocco, quindi un'interruzione lascia un file troncato che al rilancio
+  verrebbe saltato. Mitigato (`67` lo intercetta); fix vero (scrivere su `.part` e rinominare)
+  da applicare **a coda ferma** — modificare un `.do` in esecuzione lo corrompe.
+- Paper: corretto un terzo refuso, la griglia PPML dichiarata "HK e Macao esclusi" riportava
+  **8.310.464** (griglia piena) invece di **8.179.904**; sistemato in 3 punti.
+- `tab_16_leaveoneout.tex` era stato generato alle 21:23, PRIMA che esistesse la versione
+  Stata: conteneva ancora i valori corrotti. Rigenerato. La corruzione toccava anche le
+  **stelle**: India da `*` a `***`, Pakistan da nessuna a `***` — cioe' faceva sembrare il
+  margine sporco piu' fragile di quanto sia in quella variante.
+- `69_assemble_stata_csvs.R` (solo I/O): recupera sotto il nome canonico la permutazione
+  baseline e la variante APEC, che erano gia' in Stata con un altro nome. **Provenienza:
+  48/53 sorgenti da Stata (91%)**; restano 2 PPML DESTA (in coda) e i 3 file della
+  permutazione delle varianti.
+
+**T8/T9 CHIUSI + un'etichetta sbagliata smascherata dall'utente.** L'utente ha chiesto perche'
+`COPERTURA_STATA.md` marcasse "non pertinente" le colonne 2-4 di T8/T9/T10. Era sbagliata:
+quelle tabelle mostrano solo il baseline, ma i **file R delle altre 3 varianti esistono su
+disco** senza gemello Stata (9 file). Le altre righe ➖ (T1, T2, T17, T18) ricontrollate: li'
+l'etichetta regge, non esiste alcun file di variante.
+- `54` e `60` **parametrizzati** per campione/profondita' come 17/18/63. Verificati contro R:
+  event study 22 coef per variante (2,6e-14 … 9,5e-14), Sun-Abraham 58 per variante
+  (5,1e-15 … 3,0e-14). **T8 e T9 chiusi su tutte e 4 le colonne.**
+- Due comportamenti DIVERSI fra i due script, voluti e verificati sui file R: l'event study
+  applica il filtro DESTA sul campione (esclude Timor-Leste, baseline vs desta = 2,3e-4); il
+  Sun-Abraham no (nessun controllo di profondita', la dipendente e' gia' un divario) e in R i
+  file `_desta` sono identici a **zero cifre** -> `60` li scrive come copie dichiarate.
+  Annotato in entrambi gli header: non uniformarli credendoli bug.
+- **Effetto collaterale che ho causato io:** installare `eventstudyinteract` per `60` ha
+  risvegliato un blocco dormiente in `54` che chiamava
+  `eventstudyinteract y ieg_* idy_*`, cioe' Sun-Abraham applicato DIRETTAMENTE alla tripla
+  differenza — concettualmente impossibile, e' la ragione per cui esiste il gap. Falliva con
+  `r(101)`, **nessun file scritto** (verificato). Disattivato con `if 1 == 0` + spiegazione.
+  Lezione: dopo un `ssc install`, rileggere i rami `if _rc` che quel pacchetto sblocca.
+- `67` esteso alle famiglie con nomi non allineati fra R e Stata (event study, Sun-Abraham).
+  Bug mio trovato e corretto nel farlo: `d$source` su un file senza quella colonna da' NULL,
+  e `NULL %in% "x"` restituisce `logical(0)`, che nel subset **azzera l'intero data frame**
+  invece di non filtrare — sintomo: "chiavi non appaiate" su tutte le righe.
+- **Resta aperto** solo `tripledd_stability_*` (3 file, **full panel**, quindi la categoria a
+  rischio piu' alto secondo la regola hard di `MISTAKES.md`): parametrizzare `58` costa ore
+  per variante. Nessun numero pubblicato e' coinvolto — il baseline di T10 e' gia' Stata (`58`).
+
+**RILETTURA SOSTANTIVA DEL MARGINE SPORCO (richiesta utente).** Guardando coefficiente ED
+errore standard insieme, il leave-one-out dice una cosa diversa da quella scritta finora.
+Il punto stimato e' **stabile** (fra -0,0097 e -0,0133 su tutte e 23 le esclusioni); a
+saltare e' la **precisione**: togliendo l'Australia l'errore standard passa da 0,0030 a
+0,0087 (**2,94x**) e il coefficiente si muove solo del 13% — e' l'SE, non la stima, a
+portare p a 0,24. Togliendo la Corea l'SE raddoppia. India e Pakistan: coefficiente ±1-4%,
+SE invariato. Quindi Australia e Corea **non sono outlier con leva sulla stima: forniscono
+la variazione che la identifica**. In piu' **quale sia il paese decisivo dipende dal
+controllo di profondita'** (Australia con TotalDepth, Corea con DESTA, dove l'Australia
+lascia p=0,001). Riscritti di conseguenza: §sec:dirty del paper (passaggio leave-one-out +
+nuovo paragrafo sul cambio di paese pivotale), abstract, introduzione, conclusione, e il
+commento di `Tabelle_Stime` (dove la "lacuna dichiarata" sugli errori standard mancanti e'
+ora chiusa: `63` li esporta per tutte e 4 le colonne). PDF ricompilati: 34 pp e 32 pp, 0 errori.
 
 ---
 
