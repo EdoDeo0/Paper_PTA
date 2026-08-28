@@ -224,3 +224,36 @@ Notes:
     C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\ppml_extens
     > ive_desta.csv not found)
   [WB] ppmlhdfe...
+    ep_green= 0.0053126  ep_dirty=-0.0186170  N=7878784
+  [TREND] ppmlhdfe...
+    ep_green= 0.0010228  ep_dirty= 0.0026757  N=7878784
+[_desta] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\
+> ppml_extensive_desta.csv
+
+. ppml_variant "_inclHKMO_desta" incl DESTA_depth_index
+
+==============================================================
+  PPML variante '_inclHKMO_desta' | campione=incl | profondita'=DESTA_depth_ind
+> ex
+==============================================================
+(22,625 observations deleted)
+  [desta] celle trattate senza copertura eliminate: 22625
+(7,386,173 real changes made)
+  celle in stima (pre-ppmlhdfe): 8287839
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\ppml_extens
+    > ive_inclHKMO_desta.csv not found)
+  [WB] ppmlhdfe...
+    ep_green= 0.0063582  ep_dirty=-0.0108290  N=8003772
+  [TREND] ppmlhdfe...
+    ep_green= 0.0008341  ep_dirty= 0.0045657  N=8003772
+[_inclHKMO_desta] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tabl
+> es_Stata\ppml_extensive_inclHKMO_desta.csv
+
+. 
+. di as result _n "=== 65 FATTO ==="
+
+=== 65 FATTO ===
+
+. 
+end of do-file

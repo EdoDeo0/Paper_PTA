@@ -15,17 +15,39 @@ codice pronto). Lungo la strada la replica **ha trovato due numeri sbagliati** i
 | Batteria collassata, 4 varianti (`63`) | ✅ tutte e 4 complete e verificate |
 | Mappa del trattamento (`68`) | ✅ 25 righe identiche a R |
 | Assemblaggio nomi canonici (`69`) | ✅ permutazione baseline + APEC |
-| PPML, 4 varianti (`65`) | 🔄 baseline e incl fatti, DESTA in corso |
-| Permutazione, 3 varianti (`66`) | ⏳ codice pronto, ~75 h da lanciare |
+| PPML, 4 varianti (`65`) | ✅ tutte e 4, chiuse il 27/08 alle 16:47 |
+| Permutazione, 3 varianti (`66b`+`66c`) | ✅ tutte e 3, 1000 estrazioni, fuse e verificate |
 
-**Provenienza al 2026-08-26, 00:45: 48 sorgenti su 53 da Stata (91%).** Le 5 che mancano:
-`ppml_extensive_desta`, `ppml_extensive_inclHKMO_desta` (in coda ora) e le tre
-`r710_permutation_summary_*` delle varianti (le ~75 h).
+**Provenienza al 2026-08-27, 16:50: 53 sorgenti su 53 da Stata (100%).** La riga
+"ANCORA SOLO R" di `44_make_tables_tex.R` è vuota, e `67_verify_stata_coverage.R` a macchina
+ferma dà 44 file completi e in accordo con R (scarti da 2e-15 a 4e-13, cioè arrotondamento).
 
-⚠️ Quel 91% conta **le sorgenti che le tabelle leggono davvero**. Restano fuori dal conteggio
-9 file R di varianti che nessuna tabella mostra — fra cui **tre stime full-panel** — e che
-non hanno gemello Stata: vedi **§2-quater**, è il buco che fino al 26/08 era mascherato da
-un'etichetta "non pertinente".
+✅ **T10 chiuso il 27/08 (19:13).** Le 3 varianti full panel sono state calcolate in Stata
+(`58` parametrizzato, 29+24+29 minuti). Era l'ultimo insieme di numeri esistente solo in R.
+**Non c'è più nessuna stima priva di gemello Stata.** Resta da aggiungere le colonne 2-4 alla
+tabella T10, che oggi mostra solo il baseline: i numeri ci sono, la tabella non li espone.
+
+⚠️ **Ed è servito, non era un esercizio formale.** La replica ha trovato due cose che nessuno
+avrebbe visto:
+1. **Otto coefficienti R corrotti**: i 4 termini della cella `deepshallow TREND` in *ciascuna*
+   delle due varianti DESTA (4+4, non 4 in totale — conteggio verificato a macchina).
+   R rieseguito in un processo isolato riproduce i valori Stata a 9 cifre, non i propri.
+   A tradirlo è stato il conteggio delle osservazioni: R dichiarava due `nobs` diversi per WB e
+   TREND *sullo stesso campione*, cosa impossibile per costruzione. Vedi `MISTAKES.md` (27/08).
+2. **Il gruppo `cem_v1` mancava del tutto** nei tre file R delle varianti (16 coefficienti
+   invece di 24). Non essendo mostrato da nessuna tabella, il buco era invisibile.
+
+In entrambi i casi **Stata è l'autorità** e i file R vanno considerati superati.
+
+> **Permutazione, nota sul metodo (27/08).** Le 3 varianti non sono state prodotte da `66` in
+> sequenza ma da `66b` in 3 blocchi paralleli l'una (1-334 / 335-667 / 668-1000), riuniti da
+> `66c`. E' lecito perche' il seed dipende solo dal numero di replica; ed e' **verificato**, non
+> assunto: `66c` rifiuta di fondere se i blocchi non riproducono, a scarto esattamente nullo, le
+> repliche che `66` aveva calcolato in sequenza continua (conservate in
+> `Output/TripleDiff/Diagnostics/permutation_collaudo66*.csv`). Esito: |d|max = 0.0e+00 su tutte
+> e tre. Attenzione: rieseguire `66` su una variante gia' fusa ne riscrive il sommario con
+> l'etichetta `..._66` invece di `..._66b+66c` — i numeri non cambiano, la provenienza si
+> falsifica. Rimedio: rilanciare `66c`.
 
 > **Come si verifica senza fidarsi di questo file.** `44_make_tables_tex.R` ora legge le
 > sorgenti con `rd_pref()`: cerca il gemello in `Output/TripleDiff/Tables_Stata/` e, se non
@@ -74,15 +96,15 @@ Legenda: ✅ Stata · 🔄 codice scritto, run da fare · ⏳ lungo (giorni) ·
 | T4 | Spec principale, collassato | ✅ | ✅ | ✅ | ✅ | `52`, `63` blocco A |
 | T5 | Wild cluster bootstrap | ✅ | ✅ | ✅ | ✅ | `52` S3, `63` blocco B |
 | — | *pre-trend detrendizzati* | ✅ | ✅ | ✅ | ✅ | `63` blocco G |
-| T6 | Test di permutazione | ✅ | ⏳ | ⏳ | ⏳ | `56b`, `66` |
+| T6 | Test di permutazione | ✅ | ✅ | ✅ | ✅ | `56b`, `66b`+`66c` |
 | T7 | Matrice di sintesi | *derivata da T3–T6* | | | | |
 | T8 | Event study | ✅ | ✅ | ✅ | ✅ | `54` (parametrizzato) |
 | T9 | Sun-Abraham | ✅ | ✅ | ✅ | ✅ | `60` (parametrizzato) |
-| T10 | Stability sui controlli | ✅ | ⚪ | ⚪ | ⚪ | `58` — **full panel** |
+| T10 | Stability sui controlli | ✅ | ✅ | ✅ | ✅ | `58` (parametrizzato) — **full panel** |
 | T11 | Robustezze full panel | ✅ | ✅ | ✅ | ✅ | `18` |
 | T12 | Trend destinazione | ✅ | ✅ | ✅ | ✅ | `61`, `63` blocchi F/G |
 | T13 | Sotto-indici | ✅ | ✅ | ✅ | ✅ | `52`, `63` blocco C |
-| T14 | PPML margine estensivo | ✅ | 🔄 | 🔄 | 🔄 | `55`, `65` |
+| T14 | PPML margine estensivo | ✅ | ✅ | ✅ | ✅ | `55`, `65` |
 | T15 | Intensità CO₂ | ✅ | ✅ | ✅ | ✅ | `61`, `63` blocco D |
 | T16 | Leave-one-out | ✅ | ✅ | ✅ | ✅ | `59`, `63` blocco E |
 | T17 | Bound sul controllo profondità | ✅ | ➖ | ➖ | ➖ | `52`, `58c` |
