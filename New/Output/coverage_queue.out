@@ -29,3 +29,24 @@ OK: C:/Work/projects/Paper_PTA/New/Data/Collapsed/ppml_zerofill_all.dta — 8,31
 
 === 65 - PPML margine estensivo, 3 varianti ===
     23:00:17  C:\Work\projects\Paper_PTA\New\Code\stata\65_ppml_variants.do 
+    fine: 16:47:29
+
+=== COLLAUDO permutazione (5 estrazioni per variante) ===
+
+=== 66 - collaudo incl ===
+    16:47:29  C:\Work\projects\Paper_PTA\New\Code\stata\66_permutation_variants.do incl totaldepth 5
+    fine: 16:48:44
+
+=============================================================
+ Passi 1-8 completati.
+ Il passo 9 (permutazione di produzione) e' ~75 h: va lanciato
+ a parte, DOPO aver controllato l'esito del collaudo.
+
+ Prima di lanciarlo, cancellare i draws di collaudo:
+   Remove-Item 'C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\permutation_draws_treatedonly_inclHKMO.csv'
+
+ Poi:
+   66_permutation_variants.do incl totaldepth 1000
+   66_permutation_variants.do excl desta      1000
+   66_permutation_variants.do incl desta      1000
+=============================================================

@@ -4,6 +4,106 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-27 — Terza corruzione R, e stavolta a tradirla e' il numero di OSSERVAZIONI
+
+**Cosa e' successo.** La replica Stata di T10 (`58_stability_fullpanel.do` parametrizzato) ha
+trovato 4 righe su 16 in disaccordo con `tripledd_stability_desta.csv`, tutte nella stessa
+cella `deepshallow TREND` — e **altrettante** in `tripledd_stability_inclHKMO_desta.csv`, cioe'
+**8 valori**, non 4. Scarti enormi in termini relativi: `td_green` 0,0032 (Stata) contro 0,0204
+(R), un fattore 6.
+
+> **Errore di conteggio commesso nel riferire questo risultato (28/08).** Per diversi messaggi
+> ho riportato "6 valori discordanti in tutto" invece di 10 (8 qui + 2 del leave-one-out DESTA):
+> il confronto stampa un blocco per variante, e avevo sommato le 4 righe di UN blocco invece
+> che di entrambi. I dati non sono mai cambiati, la descrizione si'. **Regola: un conteggio che
+> finisce in un documento o in un report si fa produrre allo script, non si somma a mente
+> leggendo un output a blocchi.** Lo script di conteggio definitivo e' in `/tmp/conta.R` (da
+> stabilizzare in `New/Code/` se serve di nuovo).
+
+**Come si e' capito chi avesse ragione.** R rieseguito in un processo isolato ha prodotto
+**esattamente i numeri Stata** (9 cifre) e non i propri: il valore archiviato era corrotto. E'
+la terza occorrenza dopo il leave-one-out DESTA (26/08) e i casi del 21/08.
+
+**Il segnale nuovo, piu' utile dei coefficienti.** R dichiarava `nobs = 5.260.400` per la
+regressione TREND e `5.260.451` per la WB **sullo stesso campione**. Il campione non dipende
+da quale indice di trattamento si stima: due N diversi nella stessa cella sono impossibili per
+costruzione. R rieseguito ne conta 5.260.451, come Stata. **Il conteggio delle osservazioni e'
+un canarino migliore del coefficiente**, perche' un valore plausibile non si distingue a occhio
+mentre un N incoerente si', e non richiede un secondo motore per essere visto.
+
+**Due ipotesi scartate lungo la strada, entrambe ragionevoli.** (1) Cache `.rds` stantia: `24.R`
+riusa i modelli salvati con `if (file.exists(rds))` senza verificare che il campione sia lo
+stesso — ma i timestamp mostravano file scritti di seguito nella stessa run. (2) Differenza
+metodologica `reghdfe` vs `fixest` sulla rimozione dei singleton: il log di fixest mostra
+6.499.645 singleton rimossi e lo stesso campione finale di reghdfe. Nessuna delle due
+spiegava, ed e' bene averle escluse con prove invece che per esclusione.
+
+**La conferma e' arrivata da un fallimento.** Lo stesso controllo sulla seconda variante
+(`_inclHKMO_desta`, la piu' grande: 15 milioni di righe prima dei filtri) e' **crashato** con
+`*** recursive gc invocation`, cioe' la firma dell'allocatore R instabile su questa macchina —
+la causa gia' documentata delle corruzioni precedenti. Non e' stato rilanciato: la regola nota
+dice che un ritentativo dopo un crash puo' restituire un coefficiente sbagliato **senza
+errore**, quindi il suo output sarebbe l'unico non credibile. Il crash invece non produce
+nulla e non inquina. Quella cella resta arbitrata **per via indiretta** — firma identica alla
+prima, e l'impossibilita' di verificarla in R e' essa stessa la prova che quel numero nacque in
+condizioni non affidabili. `reghdfe` non ha questo difetto.
+
+**Prevenzione.** In ogni confronto fra pipeline, verificare **N prima dei coefficienti**: e'
+piu' veloce, non richiede tolleranze, e un'incoerenza interna (due N diversi dove il campione
+e' per costruzione lo stesso) e' diagnostica da sola. `67_verify_stata_coverage.R` gia' conta
+le righe; il confronto di T10 ora confronta anche `nobs`.
+
+---
+
+## 2026-08-27 — La replica ha scoperto che le tabelle R delle varianti erano incomplete
+
+**Cosa e' successo.** Confrontando T10, Stata produce 24 coefficienti per variante (3 gruppi x
+2 indici x 4 termini) e R soltanto 16: **il gruppo `cem_v1` manca del tutto** nei tre file
+`tripledd_stability_{inclHKMO,desta,inclHKMO_desta}.csv`, mentre nel baseline c'e'.
+
+**Perche' non se n'era accorto nessuno.** Quelle colonne non sono mai state mostrate in una
+tabella, quindi l'assenza non produceva un buco visibile da nessuna parte. Stesso schema
+dell'errore "non pertinente" del 26/08: **non comparire non e' la stessa cosa che non esistere**,
+e in questo caso non esisteva davvero.
+
+**Prevenzione.** Quando si replica una tabella, confrontare prima il **numero di celle attese**
+(gruppi x indici x termini) e solo dopo i valori. Un confronto che appaia solo le chiavi comuni
+dichiara "tutto ok" su un sottoinsieme e tace sul resto: va sempre stampato anche cosa esiste
+da un lato solo.
+
+---
+
+## 2026-08-26 — Due confronti che degradano in silenzio invece di fallire: allineare per POSIZIONE e' il difetto
+
+**Cosa e' successo.** Due volte nella stessa sessione un controllo di uguaglianza ha dato
+l'esito sbagliato senza segnalare nulla.
+
+1. In `67_verify_stata_coverage.R`, il filtro `d[d$source != "reference", ]` su un file R privo
+   della colonna `source`: `d$source` e' `NULL`, `NULL %in% "reference"` restituisce
+   `logical(0)`, e un subset con `logical(0)` **azzera il data frame** invece di non filtrare.
+   Sintomo: "chiavi non appaiate" su tutto, cioe' un allarme generico al posto di un confronto.
+2. In un monitor di controllo dei blocchi di permutazione, il confronto blocco-vs-riferimento
+   tagliava il file del blocco alla lunghezza del riferimento (`head -n`) invece di appaiare
+   per numero di replica. Blocco a 8 repliche, riferimento a 9: confrontava 9 righe contro 8 e
+   dichiarava **"DIFFERENZE -> non fondere"** su dati in realta' identici bit per bit.
+
+**Causa comune.** Entrambi allineano due insiemi per **posizione o per lunghezza**, non per
+chiave. Quando i due insiemi non hanno la stessa forma, l'operazione non fallisce: restituisce
+un confronto diverso da quello voluto, e l'esito sbagliato sembra un risultato legittimo. Il
+caso 2 e' il piu' insidioso perche' il falso allarme era *pessimista*: avrebbe portato a
+scartare dati buoni, o a cercare per ore un bug inesistente nella parallelizzazione.
+
+**Prevenzione.** Un confronto fra due insiemi si appaia SEMPRE su una chiave esplicita
+(`match()` sul numero di replica, `intersect()` sulle chiavi comuni) e **dichiara quante
+unita' ha effettivamente confrontato**. Se il conteggio non e' quello atteso, e' un errore, non
+un risultato. Corollario in R: prima di filtrare su una colonna, verificare che esista
+(`"col" %in% names(d)`) — l'indicizzazione con `NULL` non protesta.
+Nota: `66c_merge_permutation_chunks.R` fa gia' cosi' (appaia su `rep` e stampa il numero di
+repliche confrontate); il difetto era solo negli strumenti di controllo usa-e-getta, che vanno
+scritti con lo stesso rigore del codice che producono numeri.
+
+---
+
 ## 2026-08-26 — La corruzione silenziosa di R colpisce ancora: 2 righe su 25, trovate contando le righe
 
 **Cosa e' successo.** La replica Stata del leave-one-out nella variante DESTA

@@ -1,5 +1,62 @@
 # Session Log — Paper_PTA
 
+## 2026-08-28 (24) — Decisione ufficiale: Stata e' la fonte. Output R corrotti marcati e isolati
+
+**Decisione dell'utente: i numeri ufficiali sono quelli Stata.** Gli output R NON sono un
+backup — contengono 10 valori dimostrabilmente sbagliati e su una cella R non riesce nemmeno
+a ricalcolare. Resta prezioso il **codice** R, come seconda implementazione indipendente per
+il controllo incrociato: e' cio' che ha reso possibile stabilire che Stata avesse ragione.
+
+**Conteggio corretto: i valori discordanti sono 10, non 6** (mio errore aritmetico riportato
+per piu' messaggi; i dati non sono mai cambiati). Ripartizione verificata a macchina:
+`dirty_leaveoneout_desta` 2 + `tripledd_stability_desta` 4 + `tripledd_stability_inclHKMO_desta`
+4. Tutti nelle varianti DESTA, tutti in colonne di robustezza, **nessuno citato nel paper**.
+
+**Marcati `.SUPERSEDED`** (rinominati, non cancellati: restano come reperto): i 3 CSV R sopra
+e — piu' importante — le 2 cache `Models_Output/STAB_deepshallow_TREND_{,inclHKMO_}desta.rds`,
+che `24_stability_controlgroups.R` avrebbe ricaricato con `if (file.exists(rds))` invece di
+ricalcolare, riproducendo la corruzione a ogni rilancio. E' cosi' che era sopravvissuta.
+Nuovo `New/Output/TripleDiff/Tables/LEGGIMI_SUPERSEDED.md`: cosa e' sbagliato, le due prove,
+dove sono i numeri giusti, perche' non li abbiamo ricalcolati (6 su 10 si potrebbero rifare in
+~30 min, ma un file corretto a meta' e' piu' pericoloso di uno dichiaratamente superato).
+
+**Verificato dopo il rename:** `44_make_tables_tex.R` rigenera tutto, **53/53 sorgenti da
+Stata (100%)**. Nessuna tabella dipendeva dai file rinominati.
+
+**Aperto:** esporre le colonne 2-4 di T10 in tabella (numeri pronti, tabella mostra solo il
+baseline); pezza `.part` per il resume-safe; riscrittura manuale del paper. **Nessun commit.**
+
+## 2026-08-27 (23) — Copertura Stata COMPLETA: T6, T14, T10 chiusi; terza corruzione R trovata
+
+**Non esiste piu' nessuna stima priva di gemello Stata.** `44_make_tables_tex.R` riporta
+**53/53 sorgenti da Stata (100%)** e `67_verify_stata_coverage.R` a macchina ferma da 44 file
+completi e in accordo con R (scarti 2e-15..4e-13).
+
+- **T6** permutazione: 3 varianti x 1000 estrazioni, prodotte da `66b` in 3 blocchi paralleli
+  e riunite da `66c`. I 3 controlli bloccanti sono passati, incluso il decisivo: i blocchi
+  riproducono a **scarto esattamente nullo** le repliche calcolate da `66` in sequenza
+  continua. Nessun p sotto 0,15: le varianti confermano il baseline.
+- **T14** PPML: 4/4 varianti, ultima chiusa alle 16:47. Nessun effetto significativo.
+- **T10** stability full panel: `58` parametrizzato (29+24+29 min). Due trappole disinnescate,
+  entrambe silenziose: i `.dta` di cache senza suffisso (la 2a variante si sarebbe dichiarata
+  completa senza stimare) e l'assemblaggio con glob `STAB_*.dta` (avrebbe impilato tutte le
+  varianti). Test di regressione gratuito sul baseline: stesse 31 righe.
+
+**La replica di T10 ha trovato due cose** (dettaglio in `MISTAKES.md` 27/08): (1) **8
+coefficienti R corrotti** — i 4 termini di `deepshallow TREND` in *ciascuna* delle due varianti
+DESTA. Con i 2 del leave-one-out DESTA fanno **10 valori discordanti in tutto** su tutta la
+copertura (conteggio verificato a macchina, non a occhio). R rieseguito
+isolato da i valori Stata a 9 cifre; a tradirlo e' stato `nobs`, diverso fra WB e TREND sullo
+stesso campione, cosa impossibile per costruzione. (2) Il gruppo **`cem_v1` mancava del tutto**
+nei 3 file R delle varianti (16 coefficienti invece di 24), invisibile perche' nessuna tabella
+lo mostra. Il controllo sulla 2a cella e' **crashato** con `recursive gc invocation`: non
+rilanciato di proposito (un retry post-crash puo' dare numeri sbagliati senza errore), cella
+arbitrata per via indiretta. **Stata e' l'autorita', i file R sono superati.**
+
+**Aperto:** esporre le colonne 2-4 di T10 in tabella (i numeri ci sono, la tabella mostra solo
+il baseline); pezza `.part` per il resume-safe; riscrittura manuale del paper, che **non
+aspetta nulla** — nessun numero del testo dipendeva da queste stime. **Nessun commit.**
+
 ## 2026-08-27 — Paper cards + BibTeX: Gutsch/Felbermayr/Berger (Mac, Sonnet 4.6)
 
 **Task:** Write paper cards for 3 newly-added Zotero papers, add their BibTeX to `references.bib`, and advise on citation suitability.
