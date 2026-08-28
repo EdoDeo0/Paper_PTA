@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Sintesi: il coefficiente sui prodotti sporchi nelle quattro varianti, con lo stesso metodo di inferenza}
+\label{tab:matrice}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+Pannello collassato: coefficiente & -0.01187 & -0.01887 & -0.01134 & -0.00820 \\
+\quad $p$-value bootstrap & 0.072 & 0.005 & 0.047 & 0.195 \\
+\addlinespace
+\emph{Full panel}: coefficiente & -0.00435 & -0.00409 & -0.00559 & -0.00574 \\
+\quad $p$-value bootstrap & 0.185 & 0.176 & 0.049 & 0.035 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item Coefficiente dell'interazione fra profondit\`a ambientale (indice WB) e prodotti sporchi. \`E l'unico coefficiente del lavoro che si muove: quello sui prodotti verdi \`e nullo ovunque.
+\item \textbf{Tutti i $p$-value in questa tabella vengono dal \emph{wild cluster bootstrap}}, cos\`i le otto celle sono confrontabili fra loro. \`E una precisazione necessaria: altrove nel progetto le colonne (1) e (2) erano state riassunte con il $p$-value ordinario, che \`e molto pi\`u basso e non \`e paragonabile.
+\item \textbf{Come si legge.} Sul \emph{full panel} il risultato dipende da quale controllo di profondit\`a si usa: con il controllo della Banca Mondiale il $p$-value resta sopra 0.17, con il controllo DESTA scende sotto 0.05. I due controlli hanno correlazione diversa con la profondit\`a ambientale al netto degli effetti fissi (0.959 il primo, 0.891 il secondo): pi\`u un controllo \`e sovrapposto alla variabile di interesse, meno variazione indipendente resta e pi\`u grande diventa l'errore standard.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

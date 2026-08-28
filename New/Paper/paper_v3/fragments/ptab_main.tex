@@ -1,0 +1,42 @@
+\small
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB EP depth} & \multicolumn{2}{c}{TREND EP count} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & (1) & (2) & (3) & (4) \\
+ & $\times$green & $\times$dirty & $\times$green & $\times$dirty \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A. Full firm-level panel}} \\
+\addlinespace
+EP interaction & $-0.0023$ & $-0.0044$ & $-0.0001$ & $-0.0009$ \\
+ & $(0.0039)$ & $(0.0022)$ & $(0.0010)$ & $(0.0006)$ \\
+\quad Asymptotic $p$ & 0.57 & 0.052 & 0.92 & 0.15 \\
+\quad Bootstrap $p$ & 0.69 & 0.18 & 0.93 & 0.18 \\
+\addlinespace
+Firm--product--dest FE & Yes & Yes & Yes & Yes \\
+Firm--dest--year FE & Yes & Yes & Yes & Yes \\
+Product--year FE & Yes & Yes & Yes & Yes \\
+Observations & \multicolumn{4}{c}{21,519,511} \\
+Clusters & \multicolumn{4}{c}{225 destinations} \\
+Joint $F$ ($p$-value) & \multicolumn{2}{c}{0.31} & \multicolumn{2}{c}{0.71} \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel B. Collapsed panel (HS6--dest--year cells)}} \\
+\addlinespace
+EP interaction & $-0.0046$ & $-0.0119$\sym{***} & $+0.0018$ & $+0.0004$ \\
+ & $(0.0070)$ & $(0.0030)$ & $(0.0018)$ & $(0.0016)$ \\
+\quad Asymptotic $p$ & 0.51 & $<$0.001 & 0.32 & 0.83 \\
+\quad Bootstrap $p$ & 0.65 & 0.07 & 0.39 & 0.86 \\
+\quad Permutation $p$ & 0.60 & 0.28 & 0.16 & 0.82 \\
+\addlinespace
+Product--dest FE & Yes & Yes & Yes & Yes \\
+Dest--year FE & Yes & Yes & Yes & Yes \\
+Product--year FE & Yes & Yes & Yes & Yes \\
+Cells & \multicolumn{4}{c}{3,681,023} \\
+Clusters & \multicolumn{4}{c}{228 destinations} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item All specifications include TotalDepth$\times$green and TotalDepth$\times$dirty controls (not shown). Wild cluster bootstrap: $B = 9{,}999$ \citep{cameron2008,roodman2019}. Permutation: 1{,}000 reassignments of entire EP profiles across treated destinations. Bootstrap 95\% CIs --- Panel A (1)--(4): $[-0.035,+0.036]$, $[-0.043,+0.011]$, $[-0.0037,+0.0025]$, $[-0.0027,+0.0007]$; Panel B: $[-0.018,+0.032]$, $[-0.018,+0.002]$, $[-0.0017,+0.0071]$, $[-0.0031,+0.0056]$. \sym{***} $p<0.001$ (asymptotic only; does not survive bootstrap or permutation --- see Section~\ref{sec:dirty}).
+\end{tablenotes}
+\end{threeparttable}

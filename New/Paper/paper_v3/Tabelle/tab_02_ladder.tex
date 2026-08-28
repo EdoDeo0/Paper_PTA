@@ -1,0 +1,33 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Why the level effect is not identified: saturation ladder}
+\label{tab:ladder}
+\begin{threeparttable}
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{\textit{WB EP depth}} & \multicolumn{2}{c}{\textit{TREND EP count}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Fixed effects & (1) Baseline & (2) Controls & (3) Baseline & (4) Controls \\
+\midrule
+\textit{fpd} + \textit{t} & 0.00311 & 0.00354 & 0.00040 & 0.00046 \\
+ & (0.00251) & (0.00260) & (0.00047) & (0.00048) \\
+\addlinespace
+\textit{fpt} + \textit{pd} & 0.00463\sym{*} & 0.00476\sym{*} & 0.00101\sym{**} & 0.00105\sym{**} \\
+ & (0.00270) & (0.00274) & (0.00051) & (0.00052) \\
+\addlinespace
+\textit{fpt} + \textit{fpd} & 0.00010 & 0.00010 & 0.00016 & 0.00016 \\
+ & (0.00326) & (0.00329) & (0.00061) & (0.00060) \\
+\addlinespace
+\textit{fpd} + \textit{pt} & 0.00087 & 0.00103 & 0.00028 & 0.00030 \\
+ & (0.00225) & (0.00221) & (0.00044) & (0.00044) \\
+\bottomrule
+\end{tabular}
+}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Dependent variable: log export value. Each row adds richer fixed effects, progressively eliminating less credible variation. The EP depth coefficient is small throughout and nominally significant only at intermediate structures, disappearing once firm--dest--year absorption is included --- the signature of selection into agreements rather than a treatment effect. \textit{f}: firm, \textit{p}: product, \textit{d}: destination, \textit{t}: year. Standard errors clustered by destination. Controls in columns (2) and (4): non-environmental TotalDepth. \sym{*} $p<0.10$, \sym{**} $p<0.05$, \sym{***} $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

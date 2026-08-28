@@ -1,0 +1,26 @@
+\small
+\begin{threeparttable}
+\begin{tabular}{lrcccc}
+\toprule
+ & & \multicolumn{2}{c}{EP$\times$green} & \multicolumn{2}{c}{EP$\times$dirty} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Sample variation & Obs. & Coeff. & $p$ & Coeff. & $p$ \\
+\midrule
+Baseline & 21.5M & $-0.0023$ & 0.57 & $-0.0044$ & 0.052 \\
+With controls & 19.3M & $-0.0002$ & 0.94 & $-0.0060$ & 0.022 \\
+Excluding ASEAN & 19.2M & $-0.0025$ & 0.48 & $-0.0044$ & 0.051 \\
+Including HK--Macao & 23.6M & $-0.0009$ & 0.80 & $-0.0041$ & 0.094 \\
+Common support & 21.5M & $-0.0022$ & 0.57 & $-0.0044$ & 0.052 \\
+\midrule
+PPML, zero-filled grid & 7.9M & $+0.0015$ & 0.74 & $-0.0301$ & 0.06 \\
+Within-firm green share & 13.3M & $-0.0001$ & 0.50 & \multicolumn{2}{c}{---} \\
+\midrule
+Firm--product--dest FE & \multicolumn{5}{c}{Yes (all rows)} \\
+Firm--dest--year FE & \multicolumn{5}{c}{Yes (all rows)} \\
+Product--year FE & \multicolumn{5}{c}{Yes (all rows)} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item WB index throughout. Asymptotic destination-clustered $p$-values; the dirty column's marginal significance does not survive wild cluster bootstrap, permutation, or leave-one-out inference (Section~\ref{sec:dirty}). Controls: $\ln(1+\text{MFN tariff})$, $\ln\text{HHI}$, antidumping indicator. PPML estimated on a zero-filled HS6--dest--year grid (8.2M cells, excl.\ HK--Macao). Within-firm green share specification uses firm--destination and year FE (not triple-difference); see Section~\ref{sec:results} for interpretation.
+\end{tablenotes}
+\end{threeparttable}

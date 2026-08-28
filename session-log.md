@@ -1,5 +1,51 @@
 # Session Log — Paper_PTA
 
+## 2026-08-28 (25) — Sesto audit (PASS 8/10, coerenza esterna) + paper_v3 (Windows, Fable 5)
+
+Audit `/audit` completo su `./New/`, con verifica anche di **coerenza esterna** (bibliografia
+controllata sulle fonti, letteratura 2024-2026 via web/OpenAlex). Nessun file di `./New/`
+modificato salvo la creazione di `./New/Paper/paper_v3/`.
+
+**Verificato dal vivo:** `67_verify_stata_coverage.R` rieseguito → 44/44 file in accordo;
+provenienza 53/53 Stata; tutti i numeri principali del paper ricontrollati sui CSV: ≡.
+D1 e W2 dell'audit 25/08 risultano chiusi in paper_v2.
+
+**Rilievi nuovi (tutti di confezione, nessuno sui numeri):** C1 — `eventstudy_sunab.png` era
+generato con gli SE di fixest e mostrava CI che escludono zero dove il testo (SE
+eventstudyinteract) dice il contrario; min p in finestra [-10,+8] = 0,107. W1 — errori bib
+reali: `abman2024` e' JEEA 22(6) 2507-2548 (non JIE), `morin2018` e' 2017, `correia2017`
+conteneva il paper ppmlhdfe (SJ 2020), 2 citazioni fuori biblatex. W2 — figure in italiano.
+W3 — refusi in abstract/intro. N — copie stantie di tab_06/tab_14 in `paper_v2/Tabelle`
+(le canoniche in `./New/Paper/Tabelle/` sono aggiornate).
+
+**Prodotti:** in `./correspondence/audit/`: `2026-08-28_audit_report.md` (**PASS, 8/10**),
+`_roadmap_soluzioni.md`, `_piano_riordino.md` (piano copy-only per cartella pulita
+`Paper_PTA_pkg`, da far eseguire a Sonnet). **`./New/Paper/paper_v3/`**: refusi e bib
+sistemati, figure rigenerate in inglese da `make_figures_v3.R` (Sun-Abraham con gli SE
+Stata → chiude C1), paragrafo di riconciliazione con Zhu-Sun. Compila pulito: 39 pp,
+0 errori, 0 citazioni indefinite.
+
+**Nota ambiente (Windows):** Rscript non e' nel PATH di PowerShell, va invocato col path
+completo del binario R.
+
+**IDEA DA VALUTARE — Zhu-Sun (non implementata; l'utente ha deciso di non toccare il paper
+ora).** Rafforzare il confronto trasformando il fattore **2,7** fra collassato (-0,0119) e
+full panel (-0,0044) in una **scomposizione esplicita**: ~3/5 dell'associazione aggregata e'
+composizione *fra* imprese, ~2/5 riallocazione *dentro* l'impresa. Formulazione corretta:
+**non** "il loro e' un trend generale" (non abbiamo testato se la quota verde cinese sia
+salita, e il nostro disegno non lo vede), ma "il loro e' composizione fra imprese/prodotti
+e/o selezione nell'accordo; il nostro dice che il canale within-firm delle clausole non
+c'e'". Due meccanismi da non confondere: churn di imprese/prodotti, e l'indice EP che fa da
+proxy per "accordo profondo" (il punto della ladder). **Mai** dire che i loro numeri sono
+sbagliati — non abbiamo replicato la loro spec sul loro campione; l'affermazione difendibile
+e' che quella spec non identifica cio' che sostiene, e lo mostriamo sui nostri dati (ladder +
+modulo quota within-firm, di fatto la loro spec, che da' -0,0001 p=0,50). **Caveat:** il full
+text e' a pagamento, il loro disegno e' dedotto da abstract/metadati — da leggere davvero
+prima di scriverne nel paper.
+
+**Aperti:** S2 (lett. 2026 marginale, opzionale); H2 (colonne 2-4 di T10 in Tabelle_Stime);
+riordino da eseguire; revisione manuale dell'utente su paper_v3. **Nessun commit.**
+
 ## 2026-08-28 (24) — Decisione ufficiale: Stata e' la fonte. Output R corrotti marcati e isolati
 
 **Decisione dell'utente: i numeri ufficiali sono quelli Stata.** Gli output R NON sono un

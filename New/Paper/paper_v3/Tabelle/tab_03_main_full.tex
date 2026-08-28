@@ -1,0 +1,65 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Specificazione principale --- dati a livello di singola transazione (\emph{full panel})}
+\label{tab:main-full}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Pannello A --- profondit\`a ambientale misurata dalla Banca Mondiale}} \\
+\addlinespace
+Profondit\`a EP (WB) $\times$ Verde & -0.00226 & -0.00090 & -0.00185 & -0.00196 \\
+ & (0.00393) & (0.00360) & (0.00366) & (0.00347) \\
+ & [0.566] & [0.804] & [0.613] & [0.572] \\
+\addlinespace
+Profondit\`a EP (WB) $\times$ Sporco & -0.00435$^{*}$ & -0.00409$^{*}$ & -0.00559$^{**}$ & -0.00574$^{**}$ \\
+ & (0.00223) & (0.00243) & (0.00269) & (0.00269) \\
+ & [0.052] & [0.094] & [0.039] & [0.034] \\
+\addlinespace
+Profondit\`a accordo $\times$ Verde & 0.00006 & 0.00001 & 0.00239 & 0.00321 \\
+ & (0.00010) & (0.00011) & (0.00628) & (0.00570) \\
+ & [0.560] & [0.938] & [0.704] & [0.574] \\
+\addlinespace
+Profondit\`a accordo $\times$ Sporco & 0.00019$^{*}$ & 0.00019$^{**}$ & 0.01394$^{**}$ & 0.01498$^{**}$ \\
+ & (0.00010) & (0.00010) & (0.00696) & (0.00725) \\
+ & [0.053] & [0.044] & [0.046] & [0.040] \\
+\addlinespace
+\midrule
+\multicolumn{5}{l}{\textit{Pannello B --- profondit\`a ambientale misurata da TREND}} \\
+\addlinespace
+Conteggio EP (TREND) $\times$ Verde & -0.00010 & -0.00011 & -0.00012 & -0.00039 \\
+ & (0.00100) & (0.00100) & (0.00099) & (0.00093) \\
+ & [0.924] & [0.913] & [0.904] & [0.675] \\
+\addlinespace
+Conteggio EP (TREND) $\times$ Sporco & -0.00089 & -0.00101 & -0.00140$^{**}$ & -0.00140$^{*}$ \\
+ & (0.00062) & (0.00063) & (0.00071) & (0.00072) \\
+ & [0.153] & [0.112] & [0.048] & [0.052] \\
+\addlinespace
+Profondit\`a accordo $\times$ Verde & -0.00000 & -0.00001 & 0.00005 & 0.00271 \\
+ & (0.00016) & (0.00016) & (0.00937) & (0.00758) \\
+ & [0.982] & [0.966] & [0.996] & [0.721] \\
+\addlinespace
+Profondit\`a accordo $\times$ Sporco & 0.00017 & 0.00020 & 0.01500$^{**}$ & 0.01519$^{*}$ \\
+ & (0.00013) & (0.00013) & (0.00756) & (0.00780) \\
+ & [0.191] & [0.129] & [0.049] & [0.053] \\
+\addlinespace
+\midrule
+Osservazioni & 21,519,511 & 23,560,110 & 21,517,666 & 23,381,204 \\
+$R^2$ & 0.8734 & 0.8706 & 0.8734 & 0.8710 \\
+Effetti fissi & \multicolumn{4}{c}{impresa$\times$prod.$\times$dest.; impresa$\times$dest.$\times$anno; prod.$\times$anno} \\
+Raggruppamento errori & \multicolumn{4}{c}{destinazione} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item Variabile dipendente: logaritmo del valore esportato dall'impresa \textit{f} del prodotto \textit{p} verso la destinazione \textit{d} nell'anno \textit{t}.
+\item L'effetto fisso impresa$\times$destinazione$\times$anno assorbe \emph{tutto} ci\`o che accade a quell'impresa su quel mercato in quell'anno --- compreso l'accordo commerciale stesso, i tagli tariffari e gli shock di domanda. Resta identificato solo il confronto fra prodotti verdi, sporchi e neutri all'interno della stessa cella.
+\item I coefficienti sono in punti logaritmici per unit\`a di profondit\`a: $-0.005$ significa circa $-0.5\%$ di esportazioni per ogni disposizione ambientale in pi\`u, rispetto ai prodotti neutri.
+\item \textbf{Attenzione alle scale.} Le righe \emph{Profondit\`a accordo} non sono confrontabili fra le colonne (1)--(2) e (3)--(4): nelle prime due il controllo \`e un conteggio di disposizioni della Banca Mondiale, nelle altre due \`e l'indice DESTA, costruito su una scala del tutto diversa. Le righe della profondit\`a \emph{ambientale}, che sono quelle di interesse, usano invece la stessa misura in tutte e quattro le colonne e restano quindi pienamente confrontabili.
+\item Stima con \texttt{reghdfe} (Stata), rimozione iterativa dei singleton.
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

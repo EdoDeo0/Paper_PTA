@@ -1,0 +1,39 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Sun--Abraham interaction-weighted event study: composition gap estimates}
+\label{tab:sunab}
+\begin{threeparttable}
+\begin{tabular}{rcccc}
+\toprule
+Years since & \multicolumn{2}{c}{Green $-$ neutral gap} & \multicolumn{2}{c}{Dirty $-$ neutral gap} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+entry & Coeff. & $p$ & Coeff. & $p$ \\
+\midrule
+$-10$ & $-0.0500$ & 0.419 & $-0.0356$ & 0.598 \\
+$-9$  & $-0.0128$ & 0.881 & $\phantom{-}0.0641$  & 0.424 \\
+$-8$  & $-0.0001$ & 0.999 & $-0.0478$ & 0.436 \\
+$-7$  & $-0.0392$ & 0.422 & $-0.0186$ & 0.561 \\
+$-6$  & $\phantom{-}0.0027$  & 0.959 & $\phantom{-}0.0466$  & 0.335 \\
+$-5$  & $\phantom{-}0.0022$  & 0.961 & $-0.0447$ & 0.378 \\
+$-4$  & $\phantom{-}0.0345$  & 0.359 & $-0.0210$ & 0.538 \\
+$-3$  & $\phantom{-}0.0021$  & 0.938 & $-0.0451$ & 0.189 \\
+$-2$  & $\phantom{-}0.0034$  & 0.861 & $-0.0080$ & 0.832 \\
+$+0$  & $\phantom{-}0.0116$  & 0.504 & $\phantom{-}0.0579$  & 0.107 \\
+$+1$  & $\phantom{-}0.0191$  & 0.470 & $\phantom{-}0.0661$  & 0.192 \\
+$+2$  & $-0.0049$ & 0.881 & $\phantom{-}0.0765$  & 0.241 \\
+$+3$  & $-0.0244$ & 0.501 & $\phantom{-}0.0921$  & 0.156 \\
+$+4$  & $-0.0187$ & 0.711 & $\phantom{-}0.0906$  & 0.181 \\
+$+5$  & $-0.0233$ & 0.661 & $\phantom{-}0.1153$  & 0.117 \\
+$+6$  & $\phantom{-}0.0027$  & 0.959 & $\phantom{-}0.1264$  & 0.165 \\
+$+7$  & $-0.0320$ & 0.541 & $\phantom{-}0.1083$  & 0.223 \\
+$+8$  & $-0.0779$ & 0.181 & $\phantom{-}0.0983$  & 0.235 \\
+\midrule
+Aggregated ATT & $-0.0421$ & 0.269 & $\phantom{-}0.0729$ & 0.276 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Estimated via \texttt{eventstudyinteract} in \textsc{Stata} \citep{sun2021}. Dependent variable: destination--year composition gap (mean log exports of green or dirty products minus mean log exports of neutral products, within destination--year cells). Standard errors propagate estimation uncertainty in cohort shares, as prescribed by \citet{sun2021}; \texttt{fixest::sunab} in \textsc{R} treats the shares as known weights and yields narrower standard errors --- the ratio reaches 3--4 in periods identified by many discordant cohorts. Coefficients agree to 15 significant figures across implementations. Endpoint bins at $t\leq -10$ and $t\geq +8$ accumulate all observations beyond those thresholds. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
