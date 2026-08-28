@@ -1,5 +1,57 @@
 # Session Log — Paper_PTA
 
+## 2026-08-27 — Paper cards + BibTeX: Gutsch/Felbermayr/Berger (Mac, Sonnet 4.6)
+
+**Task:** Write paper cards for 3 newly-added Zotero papers, add their BibTeX to `references.bib`, and advise on citation suitability.
+
+**Cards written:**
+- `wiki/Gutsch2024_EPsSystematicReview.md` — systematic review of 44 EP studies; explicitly calls the literature "fragmented and controversial." Best cite for "EP effectiveness is an open empirical question."
+- `wiki/Felbermayr2025_TradeEnvironmentSurvey.md` — broad JES survey on trade & environment interactions. Useful for general framing, not specific to EP-in-PTA question.
+- `wiki/Berger2020_TradeEffectsEPPTAs.md` — gravity panel finding EPs reduce South-North exports; PPML results insignificant. Useful as "mixed evidence" reference.
+
+**All three cards copied to** `$RESEARCH_HOME/research-wiki/papers/`.
+
+**BibTeX added** to `New/Paper/paper_v2/references.bib`: citekeys `gutsch2024`, `felbermayr2025`, `berger2020`.
+
+**Session also covered (previous session, summarized at compaction):** introduction rewrite, `.bib` file creation, folder reorganization into `New/Paper/paper_v2/`, abstract simplification, copeland2022 citation placement.
+
+**Current state:** `New/Paper/paper_v2/paper_v2.tex` compiles cleanly (33 pages). Introduction is flowing prose (~2.5 pages), no subparagraph titles. `references.bib` has 39 entries.
+
+
+
+## 2026-08-26 (23) — Riscrittura paper: `New/Paper/paper_v2.tex` (Mac, Sonnet 4.6)
+
+Su richiesta utente: riscrivere il paper da zero seguendo `New/Paper/GUIDA_RISCRITTURA.md`,
+senza toccare `draft_paper.tex`.
+
+**Struttura nuova vs draft:** Abstract invariato (~195 parole). §1 Introduzione
+ristrutturata (letteratura spostata in §2, mantenuti solo Brandi/Abman come ganci).
+§2 Literature Review nuova sezione (3 blocchi: contenuto accordi, commercio-ambiente,
+efficacia clausole). §3 Data (= §2 del draft, riorganizzata). §4 Empirical Strategy (= §3
+del draft, leggermente riformulata). §5 Results (= §4+§5 del draft fusi, robustezze come
+sottosezioni). §6 Conclusion (= §5 del draft). Appendici A-D (equivalenza panel, ladder,
+Sun-Abraham aggiornato, sub-indici).
+
+**Aggiornamenti sostantivi principali:**
+- Sun-Abraham (Appendix C): reframing completo. Con `eventstudyinteract` nessun lead/lag
+  in [-10,+8] è distinguibile da zero. Il lead a t=-6 che con R/fixest dava p=0,001 sale
+  a p=0,34 con gli SE corretti — l'anomalia non esiste, l'appendice non la difende più.
+- Leave-one-out (§5.4 dirty): reframing dal "portato da un paese" al meccanismo reale.
+  Il PUNTO STIMATO è stabile (-0,0097 → -0,0133 su 23 esclusioni). A saltare è la
+  PRECISIONE: Australia triplica quasi l'SE (0,0030 → 0,0087), il coefficiente si muove
+  del 13%. Australia e Corea non hanno leva sulla stima: forniscono la variazione
+  identificante. Quale sia il paese decisivo dipende dal controllo di profondità.
+- Tabella PPML griglia: 8.179.904 (HK/MO esclusi, valore corretto).
+- Struttura Results: robustezze integrate come sottosezioni (§5.5 – §5.12), non sezione
+  separata.
+
+**Stile:** riscritto cercando prosa il più possibile non-LLM. Utente farà ulteriori
+correzioni manuali.
+
+**Nessun commit.**
+
+---
+
 ## 2026-08-26 (22) — T8/T9 chiusi, permutazione parallelizzata a blocchi (Windows, Opus 5)
 
 **T8 e T9 completati su tutte e 4 le colonne.** `stata/54_eventstudy_collapsed.do` e

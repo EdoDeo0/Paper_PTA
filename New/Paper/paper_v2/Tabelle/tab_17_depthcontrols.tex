@@ -1,0 +1,36 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Quanto conta il modo in cui si controlla la profondit\`a complessiva dell'accordo}
+\label{tab:depthctrl}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+Specificazione & $\times$ Verde & $\times$ Sporco \\
+\midrule
+(a) Baseline: controllo TotalDepth & -0.00457 & -0.01187$^{***}$ \\
+ & (0.00696) & (0.00295) \\
+ & [0.512] & [$<$0.001] \\
+\addlinespace
+(b) Senza alcun controllo di profondit\`a & -0.00572$^{*}$ & -0.00368 \\
+ & (0.00309) & (0.00254) \\
+ & [0.066] & [0.149] \\
+\addlinespace
+(c) Controllo mirato alle sole aree rilevanti & -0.00327 & -0.01212$^{***}$ \\
+ & (0.00793) & (0.00351) \\
+ & [0.680] & [$<$0.001] \\
+\addlinespace
+(d) Quota ambientale sul totale, solo trattati & -2.25244$^{*}$ & -1.59573 \\
+ & (1.14751) & (1.55161) \\
+ & [0.063] & [0.315] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Indice WB, variante baseline, pannello collassato.
+\item \textbf{Il problema.} Gli accordi con molte clausole ambientali sono spesso accordi profondi \emph{in tutto}. Se non si tiene conto della profondit\`a complessiva, si rischia di attribuire al contenuto ambientale un effetto che appartiene all'accordo nel suo insieme. Ma il controllo \`e a sua volta molto correlato con la variabile di interesse (0.959 al netto degli effetti fissi), quindi ne assorbe parte della variazione.
+\item Le righe mostrano quanto il risultato dipenda da questa scelta: (b) toglie del tutto il controllo, (c) lo restringe alle sole aree dell'accordo che potrebbero plausibilmente interagire con la composizione, (d) cambia impostazione e misura la \emph{quota} ambientale sul totale, stimata solo fra i partner che hanno gi\`a un accordo.
+\item In (d) i coefficienti sono su una scala diversa (la quota varia fra 0 e 1) e non sono confrontabili in valore assoluto con le altre righe.
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

@@ -1,0 +1,53 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Prova di esclusione: che cosa resta del risultato togliendo un paese alla volta}
+\label{tab:loo}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+Paese escluso & (1) & (2) & (3) & (4) \\
+\midrule
+\textit{Nessuno (riferimento)} & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0113$^{***}$ & -0.0082$^{*}$ \\
+\textit{Nessuno, lista sporchi estesa} & -0.0121$^{***}$ & -0.0191$^{***}$ & -0.0107$^{***}$ & -0.0071 \\
+\midrule
+alta\_dose & -0.0271$^{**}$ & -0.0456$^{***}$ & -0.0161 & -0.0164 \\
+Bangladesh & -0.0118$^{***}$ & -0.0188$^{***}$ & -0.0113$^{***}$ & -0.0082$^{*}$ \\
+Brunei & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0114$^{***}$ & -0.0082$^{*}$ \\
+Myanmar & -0.0118$^{***}$ & -0.0188$^{***}$ & -0.0112$^{***}$ & -0.0081$^{*}$ \\
+Cambodia & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0112$^{***}$ & -0.0081$^{*}$ \\
+India & -0.0120$^{***}$ & -0.0190$^{***}$ & -0.0115$^{***}$ & -0.0084$^{**}$ \\
+Indonesia & -0.0119$^{***}$ & -0.0190$^{***}$ & -0.0119$^{***}$ & -0.0087$^{**}$ \\
+Laos,PDR & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0113$^{***}$ & -0.0082$^{*}$ \\
+Malaysia & -0.0124$^{***}$ & -0.0195$^{***}$ & -0.0110$^{***}$ & -0.0076$^{*}$ \\
+Pakistan & -0.0114$^{***}$ & -0.0183$^{***}$ & -0.0106$^{***}$ & -0.0056 \\
+Philippines & -0.0118$^{***}$ & -0.0189$^{***}$ & -0.0115$^{***}$ & -0.0083$^{*}$ \\
+Singapore & -0.0098$^{**}$ & -0.0166$^{***}$ & -0.0128$^{***}$ & -0.0100$^{**}$ \\
+Korea Rep. & -0.0097$^{*}$ & -0.0225$^{**}$ & -0.0104 & -0.0085 \\
+Sri Lanka & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0114$^{***}$ & -0.0082$^{*}$ \\
+Thailand & -0.0120$^{***}$ & -0.0189$^{***}$ & -0.0115$^{***}$ & -0.0083$^{*}$ \\
+Vietnam & -0.0122$^{***}$ & -0.0192$^{***}$ & -0.0112$^{***}$ & -0.0080$^{*}$ \\
+East Timor & -0.0119$^{***}$ & -0.0189$^{***}$ &  &  \\
+Iceland & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0112$^{***}$ & -0.0081$^{*}$ \\
+Switzerland & -0.0133$^{***}$ & -0.0209$^{***}$ & -0.0115$^{***}$ & -0.0084$^{*}$ \\
+Chile & -0.0121$^{***}$ & -0.0191$^{***}$ & -0.0104$^{***}$ & -0.0071 \\
+Costa Rica & -0.0114$^{***}$ & -0.0185$^{***}$ & -0.0109$^{***}$ & -0.0076$^{*}$ \\
+Peru & -0.0133$^{***}$ & -0.0204$^{***}$ & -0.0121$^{***}$ & -0.0092$^{**}$ \\
+Australia & -0.0103 & -0.0245$^{**}$ & -0.0110$^{***}$ & -0.0048 \\
+New Zealand & -0.0119$^{***}$ & -0.0190$^{***}$ & -0.0113$^{***}$ & -0.0081$^{*}$ \\
+HongKong &  & -0.0129$^{***}$ &  & -0.0112$^{***}$ \\
+Macau &  & -0.0183$^{***}$ &  & -0.0082$^{*}$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item Coefficiente dell'interazione fra profondit\`a ambientale (WB) e prodotti sporchi, pannello collassato, ristimato escludendo ogni volta una destinazione trattata.
+\item \textbf{A cosa serve.} Con pochi accordi, un singolo partner molto grande pu\`o generare da solo tutto il risultato. Se il coefficiente crolla togliendo un paese, la conclusione poggia su quel paese e non sul fenomeno generale.
+\item \textbf{Come si legge.} Questa \`e una prova di \emph{stabilit\`a del coefficiente}, non di significativit\`a: si guarda di quanto si sposta il numero, non quante stelle ha. Righe in cui il coefficiente si dimezza o cambia segno segnalano i paesi da cui il risultato dipende di pi\`u.
+\item \textbf{Avvertenza sulle stelle.} Gli asterischi derivano dai $p$-value asintotici con cluster per destinazione prodotti dallo stimatore, non dal \emph{wild cluster bootstrap} usato altrove. Con circa 23 destinazioni trattate quei $p$-value sono fortemente sottostimati: lo stesso coefficiente di riferimento della colonna (1) ha $p$ asintotico $<$0.001 ma $p$ bootstrap 0.070 (Tabella~\ref{tab:wcb}). Le stelle di questa tabella non sono quindi confrontabili con quelle del resto del documento e non vanno lette come evidenza di significativit\`a.
+\item Le righe di Hong Kong e Macao sono vuote nelle colonne (1) e (3) perch\'e in quelle varianti i due territori sono gi\`a esclusi dal campione: non si possono togliere due volte.
+\item Gli errori standard e il numero di osservazioni non sono presenti nei file esportati per questa prova: \`e una lacuna nota degli export, non un dato mancante.
+\item $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

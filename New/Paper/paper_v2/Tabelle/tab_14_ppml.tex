@@ -1,0 +1,42 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Margine estensivo: nascono flussi commerciali che prima non c'erano?}
+\label{tab:ppml}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Pannello A --- indice WB}} \\
+\addlinespace
+Profondit\`a EP $\times$ Verde & 0.0015 & 0.0029 & 0.0053 & 0.0064 \\
+ & (0.0046) & (0.0061) & (0.0045) & (0.0050) \\
+ & [0.738] & [0.630] & [0.234] & [0.207] \\
+\addlinespace
+Profondit\`a EP $\times$ Sporco & -0.0301$^{*}$ & -0.0268 & -0.0186 & -0.0108 \\
+ & (0.0158) & (0.0178) & (0.0170) & (0.0199) \\
+ & [0.057] & [0.133] & [0.273] & [0.586] \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Pannello B --- indice TREND}} \\
+\addlinespace
+Conteggio EP $\times$ Verde & 0.0001 &  & 0.0010 & 0.0008 \\
+ & (0.0019) &  & (0.0013) & (0.0015) \\
+ & [0.951] &  & [0.444] & [0.567] \\
+\addlinespace
+Conteggio EP $\times$ Sporco & 0.0028 &  & 0.0027 & 0.0046 \\
+ & (0.0047) &  & (0.0053) & (0.0050) \\
+ & [0.550] &  & [0.614] & [0.360] \\
+\midrule
+Celle (con zeri) & 7,895,543 & 8,030,137 & 7,878,784 & 8,003,772 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item Stima Poisson pseudo-massima verosimiglianza (PPML) su una griglia prodotto--destinazione--anno completata con gli zeri; effetti fissi prod.$\times$dest., dest.$\times$anno, prod.$\times$anno; errori raggruppati per destinazione.
+\item \textbf{Perch\'e serve.} Le stime in logaritmo usano solo i flussi gi\`a esistenti: se una clausola ambientale facesse \emph{nascere} esportazioni verdi verso un mercato dove prima non ce n'erano, quelle stime non lo vedrebbero. Il PPML tiene dentro anche gli zeri e quindi coglie questo margine.
+\item I coefficienti PPML si leggono come variazioni percentuali approssimate.
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

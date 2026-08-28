@@ -1,0 +1,63 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Specificazione principale --- dati aggregati per prodotto, destinazione e anno (\emph{pannello collassato})}
+\label{tab:main-coll}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Pannello A --- profondit\`a ambientale misurata dalla Banca Mondiale}} \\
+\addlinespace
+Profondit\`a EP (WB) $\times$ Verde & -0.00457 & 0.00173 & -0.00433 & -0.00675 \\
+ & (0.00696) & (0.00907) & (0.00435) & (0.00475) \\
+ & [0.512] & [0.849] & [0.320] & [0.157] \\
+\addlinespace
+Profondit\`a EP (WB) $\times$ Sporco & -0.01187$^{***}$ & -0.01887$^{***}$ & -0.01134$^{***}$ & -0.00820$^{*}$ \\
+ & (0.00295) & (0.00610) & (0.00223) & (0.00425) \\
+ & [$<$0.001] & [0.002] & [$<$0.001] & [0.055] \\
+\addlinespace
+Profondit\`a accordo $\times$ Verde & -0.00005 & -0.00028 & -0.00336 & 0.00527 \\
+ & (0.00024) & (0.00033) & (0.00863) & (0.00975) \\
+ & [0.832] & [0.396] & [0.697] & [0.590] \\
+\addlinespace
+Profondit\`a accordo $\times$ Sporco & 0.00037$^{**}$ & 0.00067$^{**}$ & 0.01927$^{***}$ & 0.00886 \\
+ & (0.00018) & (0.00030) & (0.00541) & (0.01113) \\
+ & [0.039] & [0.027] & [$<$0.001] & [0.427] \\
+\addlinespace
+\midrule
+\multicolumn{5}{l}{\textit{Pannello B --- profondit\`a ambientale misurata da TREND}} \\
+\addlinespace
+Conteggio EP (TREND) $\times$ Verde & 0.00181 & 0.00178 & 0.00161 & 0.00017 \\
+ & (0.00182) & (0.00185) & (0.00203) & (0.00199) \\
+ & [0.320] & [0.337] & [0.428] & [0.931] \\
+\addlinespace
+Conteggio EP (TREND) $\times$ Sporco & 0.00035 & -0.00001 & -0.00025 & 0.00084 \\
+ & (0.00160) & (0.00154) & (0.00138) & (0.00149) \\
+ & [0.826] & [0.995] & [0.858] & [0.575] \\
+\addlinespace
+Profondit\`a accordo $\times$ Verde & -0.00047$^{*}$ & -0.00047$^{*}$ & -0.02303 & -0.00771 \\
+ & (0.00026) & (0.00025) & (0.01437) & (0.01556) \\
+ & [0.066] & [0.060] & [0.110] & [0.621] \\
+\addlinespace
+Profondit\`a accordo $\times$ Sporco & -0.00013 & -0.00004 & -0.00006 & -0.01198 \\
+ & (0.00030) & (0.00031) & (0.01291) & (0.01408) \\
+ & [0.674] & [0.898] & [0.996] & [0.396] \\
+\addlinespace
+\midrule
+Celle & 3,681,023 & 3,769,187 & 3,677,333 & 3,759,733 \\
+Effetti fissi & \multicolumn{4}{c}{prod.$\times$dest.; dest.$\times$anno; prod.$\times$anno} \\
+Ponderazione & \multicolumn{4}{c}{numero di osservazioni impresa nella cella} \\
+Raggruppamento errori & \multicolumn{4}{c}{destinazione} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
+\item Stessa logica della Tabella \ref{tab:main-full}, ma l'unit\`a di osservazione \`e la cella prodotto--destinazione--anno anzich\'e la singola transazione d'impresa. Serve a verificare che il risultato non dipenda dal livello di aggregazione e rende eseguibili stime altrimenti troppo pesanti.
+\item Il $R^2$ non \`e stato esportato per questa specificazione (i CSV non lo contengono).
+\item Ogni cella \`e pesata per il numero di osservazioni impresa che contiene: le celle pi\`u grandi contano di pi\`u. \`E la differenza chiave rispetto al \emph{full panel}, dove ogni osservazione pesa uno.
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

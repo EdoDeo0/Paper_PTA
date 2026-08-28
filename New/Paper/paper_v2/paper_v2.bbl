@@ -1,0 +1,2364 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{abadie2023}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=da499bff747c5f6cd0ec9185c820ba4d}{%
+           family={Abadie},
+           familyi={A\bibinitperiod},
+           given={Alberto},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cab7b4f39472e6c01dc0fc30a32c6d89}{%
+           family={Athey},
+           familyi={A\bibinitperiod},
+           given={Susan},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9f4fa8d00c0311b9cdad0f20ad429e57}{%
+           family={Imbens},
+           familyi={I\bibinitperiod},
+           given={Guido\bibnamedelima W.},
+           giveni={G\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c93aeef4998e670d5343b7e632c431dc}{%
+           family={Wooldridge},
+           familyi={W\bibinitperiod},
+           given={Jeffrey\bibnamedelima M.},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{bd5b50178614500025771572867fc86c}
+      \strng{fullhash}{08b158f899d90aca8118435e53a7ad33}
+      \strng{fullhashraw}{08b158f899d90aca8118435e53a7ad33}
+      \strng{bibnamehash}{bd5b50178614500025771572867fc86c}
+      \strng{authorbibnamehash}{bd5b50178614500025771572867fc86c}
+      \strng{authornamehash}{bd5b50178614500025771572867fc86c}
+      \strng{authorfullhash}{08b158f899d90aca8118435e53a7ad33}
+      \strng{authorfullhashraw}{08b158f899d90aca8118435e53a7ad33}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Quarterly Journal of Economics}
+      \field{number}{1}
+      \field{title}{When should you adjust standard errors for clustering?}
+      \field{volume}{138}
+      \field{year}{2023}
+      \field{pages}{1\bibrangedash 35}
+      \range{pages}{35}
+      \verb{doi}
+      \verb 10.1093/qje/qjac038
+      \endverb
+    \endentry
+    \entry{abman2024}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=ffa8dca0b94e0190311041321de37615}{%
+           family={Abman},
+           familyi={A\bibinitperiod},
+           given={Ryan},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=19346830a0fd77f1e864a7459f7f42f5}{%
+           family={Lundberg},
+           familyi={L\bibinitperiod},
+           given={Clark},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7a6dd1c81a788af0e94d6ace9e71f956}{%
+           family={Ruta},
+           familyi={R\bibinitperiod},
+           given={Michele},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{44481e1e780834be12e805e6c2c42fee}
+      \strng{fullhash}{44481e1e780834be12e805e6c2c42fee}
+      \strng{fullhashraw}{44481e1e780834be12e805e6c2c42fee}
+      \strng{bibnamehash}{44481e1e780834be12e805e6c2c42fee}
+      \strng{authorbibnamehash}{44481e1e780834be12e805e6c2c42fee}
+      \strng{authornamehash}{44481e1e780834be12e805e6c2c42fee}
+      \strng{authorfullhash}{44481e1e780834be12e805e6c2c42fee}
+      \strng{authorfullhashraw}{44481e1e780834be12e805e6c2c42fee}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of International Economics}
+      \field{title}{The effectiveness of environmental provisions in regional trade agreements}
+      \field{volume}{148}
+      \field{year}{2024}
+      \field{pages}{103875}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.jinteco.2023.103875
+      \endverb
+    \endentry
+    \entry{antweiler2001}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=7f04093414e2c561e14f297a3df67490}{%
+           family={Antweiler},
+           familyi={A\bibinitperiod},
+           given={Werner},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6c2b108d52db7ab589a717a10920b06e}{%
+           family={Copeland},
+           familyi={C\bibinitperiod},
+           given={Brian\bibnamedelima R.},
+           giveni={B\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=47e5a1998acd78c55c94c6b548fea774}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={M.\bibnamedelimi Scott},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e308f5f275032e37c22460a09b7747ce}
+      \strng{fullhash}{e308f5f275032e37c22460a09b7747ce}
+      \strng{fullhashraw}{e308f5f275032e37c22460a09b7747ce}
+      \strng{bibnamehash}{e308f5f275032e37c22460a09b7747ce}
+      \strng{authorbibnamehash}{e308f5f275032e37c22460a09b7747ce}
+      \strng{authornamehash}{e308f5f275032e37c22460a09b7747ce}
+      \strng{authorfullhash}{e308f5f275032e37c22460a09b7747ce}
+      \strng{authorfullhashraw}{e308f5f275032e37c22460a09b7747ce}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{American Economic Review}
+      \field{number}{4}
+      \field{title}{Is free trade good for the environment?}
+      \field{volume}{91}
+      \field{year}{2001}
+      \field{pages}{877\bibrangedash 908}
+      \range{pages}{32}
+      \verb{doi}
+      \verb 10.1257/aer.91.4.877
+      \endverb
+    \endentry
+    \entry{baccini2017}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=0cedb72ee8d71d33d9ad162740cb747c}{%
+           family={Baccini},
+           familyi={B\bibinitperiod},
+           given={Leonardo},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6e2daa948a6154bb3fa198ab46bba534}{%
+           family={Pinto},
+           familyi={P\bibinitperiod},
+           given={Pablo\bibnamedelima M.},
+           giveni={P\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=52827601393581d3ea24745b5630dd97}{%
+           family={Weymouth},
+           familyi={W\bibinitperiod},
+           given={Stephen},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a43ad7d48e8135de95546fe34d7788c4}
+      \strng{fullhash}{a43ad7d48e8135de95546fe34d7788c4}
+      \strng{fullhashraw}{a43ad7d48e8135de95546fe34d7788c4}
+      \strng{bibnamehash}{a43ad7d48e8135de95546fe34d7788c4}
+      \strng{authorbibnamehash}{a43ad7d48e8135de95546fe34d7788c4}
+      \strng{authornamehash}{a43ad7d48e8135de95546fe34d7788c4}
+      \strng{authorfullhash}{a43ad7d48e8135de95546fe34d7788c4}
+      \strng{authorfullhashraw}{a43ad7d48e8135de95546fe34d7788c4}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{World Politics}
+      \field{number}{2}
+      \field{title}{The distributional consequences of preferential trade liberalization: Firm-level evidence}
+      \field{volume}{69}
+      \field{year}{2017}
+      \field{pages}{373\bibrangedash 408}
+      \range{pages}{36}
+      \verb{doi}
+      \verb 10.1017/S002081831700011X
+      \endverb
+    \endentry
+    \entry{baghdadi2013}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=0eb71b8b79d3664852a9018c4cc058ed}{%
+           family={Baghdadi},
+           familyi={B\bibinitperiod},
+           given={Leila},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cabdbaf022d217f09f22561c1d7f16f4}{%
+           family={Martinez-Zarzoso},
+           familyi={M\bibinithyphendelim Z\bibinitperiod},
+           given={Inmaculada},
+           giveni={I\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7f7840a3b0327685f7688ae62924bebf}{%
+           family={Zitouna},
+           familyi={Z\bibinitperiod},
+           given={Habib},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{9020e8b00551500901f1e36d7a20d726}
+      \strng{fullhash}{9020e8b00551500901f1e36d7a20d726}
+      \strng{fullhashraw}{9020e8b00551500901f1e36d7a20d726}
+      \strng{bibnamehash}{9020e8b00551500901f1e36d7a20d726}
+      \strng{authorbibnamehash}{9020e8b00551500901f1e36d7a20d726}
+      \strng{authornamehash}{9020e8b00551500901f1e36d7a20d726}
+      \strng{authorfullhash}{9020e8b00551500901f1e36d7a20d726}
+      \strng{authorfullhashraw}{9020e8b00551500901f1e36d7a20d726}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of International Economics}
+      \field{number}{2}
+      \field{title}{Are {RTA} agreements with environmental provisions reducing emissions?}
+      \field{volume}{90}
+      \field{year}{2013}
+      \field{pages}{378\bibrangedash 390}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1016/j.jinteco.2013.04.001
+      \endverb
+    \endentry
+    \entry{baier2007}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=02ee380cd3de8367dae3057eae6ee45b}{%
+           family={Baier},
+           familyi={B\bibinitperiod},
+           given={Scott\bibnamedelima L.},
+           giveni={S\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6dfa641f406a3ac46c2f1a8f7b3ce423}{%
+           family={Bergstrand},
+           familyi={B\bibinitperiod},
+           given={Jeffrey\bibnamedelima H.},
+           giveni={J\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{fullhash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{fullhashraw}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{bibnamehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authorbibnamehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authornamehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authorfullhash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authorfullhashraw}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \field{extraname}{1}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of International Economics}
+      \field{number}{1}
+      \field{title}{Do free trade agreements actually increase members' international trade?}
+      \field{volume}{71}
+      \field{year}{2007}
+      \field{pages}{72\bibrangedash 95}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.1016/j.jinteco.2006.02.005
+      \endverb
+    \endentry
+    \entry{baier2009}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=02ee380cd3de8367dae3057eae6ee45b}{%
+           family={Baier},
+           familyi={B\bibinitperiod},
+           given={Scott\bibnamedelima L.},
+           giveni={S\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6dfa641f406a3ac46c2f1a8f7b3ce423}{%
+           family={Bergstrand},
+           familyi={B\bibinitperiod},
+           given={Jeffrey\bibnamedelima H.},
+           giveni={J\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{fullhash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{fullhashraw}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{bibnamehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authorbibnamehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authornamehash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authorfullhash}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \strng{authorfullhashraw}{2a771ce516aa8e5f6a51bc8c5e03b81f}
+      \field{extraname}{2}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of International Economics}
+      \field{number}{1}
+      \field{title}{Estimating the effects of free trade agreements on international trade flows using matching econometrics}
+      \field{volume}{77}
+      \field{year}{2009}
+      \field{pages}{63\bibrangedash 76}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1016/j.jinteco.2008.09.006
+      \endverb
+    \endentry
+    \entry{berger2020}{incollection}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=90aa0b0aeaa6396e5a87f6686aa3372c}{%
+           family={Berger},
+           familyi={B\bibinitperiod},
+           given={Axel},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=26cf6793502c97e2a9e9c0a2b4114d55}{%
+           family={Brandi},
+           familyi={B\bibinitperiod},
+           given={Clara},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=25a6a1b2f189302c99eb0325cd86e314}{%
+           family={Morin},
+           familyi={M\bibinitperiod},
+           given={Jean-Frédéric},
+           giveni={J\bibinithyphendelim F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ccdfbfdaf5584363a20553bbe1ccdaf9}{%
+           family={Schwab},
+           familyi={S\bibinitperiod},
+           given={Jakob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=dd355a644d916c2fe8c6864b058ed1f5}{%
+           family={Cottier},
+           familyi={C\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+        {{hash=5b8d1210941ef51094cadfab277f58c9}{%
+           family={Elsig},
+           familyi={E\bibinitperiod},
+           given={Manfred},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{5a5a14a1b9e2425b6bfe6b9e17fb254e}
+      \strng{fullhash}{023e3f197fe75bcd34d721ff8ccbf9c2}
+      \strng{fullhashraw}{023e3f197fe75bcd34d721ff8ccbf9c2}
+      \strng{bibnamehash}{5a5a14a1b9e2425b6bfe6b9e17fb254e}
+      \strng{authorbibnamehash}{5a5a14a1b9e2425b6bfe6b9e17fb254e}
+      \strng{authornamehash}{5a5a14a1b9e2425b6bfe6b9e17fb254e}
+      \strng{authorfullhash}{023e3f197fe75bcd34d721ff8ccbf9c2}
+      \strng{authorfullhashraw}{023e3f197fe75bcd34d721ff8ccbf9c2}
+      \strng{editorbibnamehash}{4c34490cdfd657d350fb9ce8c4729e41}
+      \strng{editornamehash}{4c34490cdfd657d350fb9ce8c4729e41}
+      \strng{editorfullhash}{4c34490cdfd657d350fb9ce8c4729e41}
+      \strng{editorfullhashraw}{4c34490cdfd657d350fb9ce8c4729e41}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{International Trade, Investment, and the Sustainable Development Goals}
+      \field{title}{The trade effects of environmental provisions in preferential trade agreements}
+      \field{year}{2020}
+      \verb{doi}
+      \verb 10.1017/9781108881364.006
+      \endverb
+    \endentry
+    \entry{bertrand2004}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=a25cba6b139b5ccffa7a9dcf8252a692}{%
+           family={Bertrand},
+           familyi={B\bibinitperiod},
+           given={Marianne},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7e6b0ea4eee38822cdb0a4361e98752c}{%
+           family={Duflo},
+           familyi={D\bibinitperiod},
+           given={Esther},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0ad4a50fedec7f3fb2ce43f3f64e62d6}{%
+           family={Mullainathan},
+           familyi={M\bibinitperiod},
+           given={Sendhil},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4d7d70818587642f2b9ed6099fce50de}
+      \strng{fullhash}{4d7d70818587642f2b9ed6099fce50de}
+      \strng{fullhashraw}{4d7d70818587642f2b9ed6099fce50de}
+      \strng{bibnamehash}{4d7d70818587642f2b9ed6099fce50de}
+      \strng{authorbibnamehash}{4d7d70818587642f2b9ed6099fce50de}
+      \strng{authornamehash}{4d7d70818587642f2b9ed6099fce50de}
+      \strng{authorfullhash}{4d7d70818587642f2b9ed6099fce50de}
+      \strng{authorfullhashraw}{4d7d70818587642f2b9ed6099fce50de}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Quarterly Journal of Economics}
+      \field{number}{1}
+      \field{title}{How much should we trust differences-in-differences estimates?}
+      \field{volume}{119}
+      \field{year}{2004}
+      \field{pages}{249\bibrangedash 275}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1162/003355304772839588
+      \endverb
+    \endentry
+    \entry{brandi2020}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=26cf6793502c97e2a9e9c0a2b4114d55}{%
+           family={Brandi},
+           familyi={B\bibinitperiod},
+           given={Clara},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ccdfbfdaf5584363a20553bbe1ccdaf9}{%
+           family={Schwab},
+           familyi={S\bibinitperiod},
+           given={Jakob},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=90aa0b0aeaa6396e5a87f6686aa3372c}{%
+           family={Berger},
+           familyi={B\bibinitperiod},
+           given={Axel},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=25a6a1b2f189302c99eb0325cd86e314}{%
+           family={Morin},
+           familyi={M\bibinitperiod},
+           given={Jean-Frédéric},
+           giveni={J\bibinithyphendelim F\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{29cdee67c4acb1064db2ac6cd09a7529}
+      \strng{fullhash}{fb9ebb11c35348e281e6d0860512b296}
+      \strng{fullhashraw}{fb9ebb11c35348e281e6d0860512b296}
+      \strng{bibnamehash}{29cdee67c4acb1064db2ac6cd09a7529}
+      \strng{authorbibnamehash}{29cdee67c4acb1064db2ac6cd09a7529}
+      \strng{authornamehash}{29cdee67c4acb1064db2ac6cd09a7529}
+      \strng{authorfullhash}{fb9ebb11c35348e281e6d0860512b296}
+      \strng{authorfullhashraw}{fb9ebb11c35348e281e6d0860512b296}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{World Development}
+      \field{title}{Do environmental provisions in trade agreements make exports from developing countries greener?}
+      \field{volume}{129}
+      \field{year}{2020}
+      \field{pages}{104899}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.worlddev.2020.104899
+      \endverb
+    \endentry
+    \entry{brunnermeier2004}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=90bc480887cae7faa08bfb3b7e56cf81}{%
+           family={Brunnermeier},
+           familyi={B\bibinitperiod},
+           given={Smita\bibnamedelima B.},
+           giveni={S\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=578731b0ab4128d5a57e817dca740e7f}{%
+           family={Levinson},
+           familyi={L\bibinitperiod},
+           given={Arik},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{566c85c2777e02f9201829d76b1dcb7f}
+      \strng{fullhash}{566c85c2777e02f9201829d76b1dcb7f}
+      \strng{fullhashraw}{566c85c2777e02f9201829d76b1dcb7f}
+      \strng{bibnamehash}{566c85c2777e02f9201829d76b1dcb7f}
+      \strng{authorbibnamehash}{566c85c2777e02f9201829d76b1dcb7f}
+      \strng{authornamehash}{566c85c2777e02f9201829d76b1dcb7f}
+      \strng{authorfullhash}{566c85c2777e02f9201829d76b1dcb7f}
+      \strng{authorfullhashraw}{566c85c2777e02f9201829d76b1dcb7f}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Environment \& Development}
+      \field{number}{1}
+      \field{title}{Examining the evidence on environmental regulations and industry location}
+      \field{volume}{13}
+      \field{year}{2004}
+      \field{pages}{6\bibrangedash 41}
+      \range{pages}{36}
+      \verb{doi}
+      \verb 10.1177/1070496503256500
+      \endverb
+    \endentry
+    \entry{callaway2024}{report}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=4a5a67b3788b4a3653a14d9ab03fba0e}{%
+           family={Callaway},
+           familyi={C\bibinitperiod},
+           given={Brantly},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=437b3fad5b4a40d10f45b4fc16dd7730}{%
+           family={Goodman-Bacon},
+           familyi={G\bibinithyphendelim B\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f90144f1e670fa40bee88166593b00ea}{%
+           family={Sant'Anna},
+           familyi={S\bibinitperiod},
+           given={Pedro\bibnamedelimb H.\bibnamedelimi C.},
+           giveni={P\bibinitperiod\bibinitdelim H\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {National Bureau of Economic Research}%
+      }
+      \strng{namehash}{100b0960671e592b2885c4af9a18389d}
+      \strng{fullhash}{100b0960671e592b2885c4af9a18389d}
+      \strng{fullhashraw}{100b0960671e592b2885c4af9a18389d}
+      \strng{bibnamehash}{100b0960671e592b2885c4af9a18389d}
+      \strng{authorbibnamehash}{100b0960671e592b2885c4af9a18389d}
+      \strng{authornamehash}{100b0960671e592b2885c4af9a18389d}
+      \strng{authorfullhash}{100b0960671e592b2885c4af9a18389d}
+      \strng{authorfullhashraw}{100b0960671e592b2885c4af9a18389d}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{32117}
+      \field{title}{Difference-in-differences with a continuous treatment}
+      \field{type}{Working Paper}
+      \field{year}{2024}
+      \verb{doi}
+      \verb 10.3386/w32117
+      \endverb
+    \endentry
+    \entry{callaway2021}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4a5a67b3788b4a3653a14d9ab03fba0e}{%
+           family={Callaway},
+           familyi={C\bibinitperiod},
+           given={Brantly},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f90144f1e670fa40bee88166593b00ea}{%
+           family={Sant'Anna},
+           familyi={S\bibinitperiod},
+           given={Pedro\bibnamedelimb H.\bibnamedelimi C.},
+           giveni={P\bibinitperiod\bibinitdelim H\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{ad085d57563a91bbe53422c59ebffdd2}
+      \strng{fullhash}{ad085d57563a91bbe53422c59ebffdd2}
+      \strng{fullhashraw}{ad085d57563a91bbe53422c59ebffdd2}
+      \strng{bibnamehash}{ad085d57563a91bbe53422c59ebffdd2}
+      \strng{authorbibnamehash}{ad085d57563a91bbe53422c59ebffdd2}
+      \strng{authornamehash}{ad085d57563a91bbe53422c59ebffdd2}
+      \strng{authorfullhash}{ad085d57563a91bbe53422c59ebffdd2}
+      \strng{authorfullhashraw}{ad085d57563a91bbe53422c59ebffdd2}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Econometrics}
+      \field{number}{2}
+      \field{title}{Difference-in-differences with multiple time periods}
+      \field{volume}{225}
+      \field{year}{2021}
+      \field{pages}{200\bibrangedash 230}
+      \range{pages}{31}
+      \verb{doi}
+      \verb 10.1016/j.jeconom.2020.12.001
+      \endverb
+    \endentry
+    \entry{cameron2008}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=dab37900e0b3d1bbd6b945d99fef4b06}{%
+           family={Cameron},
+           familyi={C\bibinitperiod},
+           given={A.\bibnamedelimi Colin},
+           giveni={A\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d037e69d793c2bd3f19e61d52dd15337}{%
+           family={Gelbach},
+           familyi={G\bibinitperiod},
+           given={Jonah\bibnamedelima B.},
+           giveni={J\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=666ff5de6a44e31611322ad1b6ddf9d3}{%
+           family={Miller},
+           familyi={M\bibinitperiod},
+           given={Douglas\bibnamedelima L.},
+           giveni={D\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8ab93612723c51a9a5e7e7030929186a}
+      \strng{fullhash}{8ab93612723c51a9a5e7e7030929186a}
+      \strng{fullhashraw}{8ab93612723c51a9a5e7e7030929186a}
+      \strng{bibnamehash}{8ab93612723c51a9a5e7e7030929186a}
+      \strng{authorbibnamehash}{8ab93612723c51a9a5e7e7030929186a}
+      \strng{authornamehash}{8ab93612723c51a9a5e7e7030929186a}
+      \strng{authorfullhash}{8ab93612723c51a9a5e7e7030929186a}
+      \strng{authorfullhashraw}{8ab93612723c51a9a5e7e7030929186a}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Economics and Statistics}
+      \field{number}{3}
+      \field{title}{Bootstrap-based improvements for inference with clustered errors}
+      \field{volume}{90}
+      \field{year}{2008}
+      \field{pages}{414\bibrangedash 427}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1162/rest.90.3.414
+      \endverb
+    \endentry
+    \entry{dechaisemartin2020}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=e476426fa9151355cd09327277745a1c}{%
+           family={Chaisemartin},
+           familyi={C\bibinitperiod},
+           given={Clément},
+           giveni={C\bibinitperiod},
+           givenun=0,
+           prefix={de},
+           prefixi={d\bibinitperiod},
+           prefixun=0}}%
+        {{un=0,uniquepart=base,hash=411f64c7f01ee0e2a0fdc31e20535454}{%
+           family={D'Haultf{œ}uille},
+           familyi={D\bibinitperiod},
+           given={Xavier},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{48bc62d3b1de71e129248df511640093}
+      \strng{fullhash}{48bc62d3b1de71e129248df511640093}
+      \strng{fullhashraw}{48bc62d3b1de71e129248df511640093}
+      \strng{bibnamehash}{48bc62d3b1de71e129248df511640093}
+      \strng{authorbibnamehash}{48bc62d3b1de71e129248df511640093}
+      \strng{authornamehash}{48bc62d3b1de71e129248df511640093}
+      \strng{authorfullhash}{48bc62d3b1de71e129248df511640093}
+      \strng{authorfullhashraw}{48bc62d3b1de71e129248df511640093}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{American Economic Review}
+      \field{number}{9}
+      \field{title}{Two-way fixed effects estimators with heterogeneous treatment effects}
+      \field{volume}{110}
+      \field{year}{2020}
+      \field{pages}{2964\bibrangedash 2996}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.1257/aer.20181169
+      \endverb
+    \endentry
+    \entry{cherniwchan2017}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7866d342748a504fb43c2418a81522dd}{%
+           family={Cherniwchan},
+           familyi={C\bibinitperiod},
+           given={Jevan},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7866d342748a504fb43c2418a81522dd}
+      \strng{fullhash}{7866d342748a504fb43c2418a81522dd}
+      \strng{fullhashraw}{7866d342748a504fb43c2418a81522dd}
+      \strng{bibnamehash}{7866d342748a504fb43c2418a81522dd}
+      \strng{authorbibnamehash}{7866d342748a504fb43c2418a81522dd}
+      \strng{authornamehash}{7866d342748a504fb43c2418a81522dd}
+      \strng{authorfullhash}{7866d342748a504fb43c2418a81522dd}
+      \strng{authorfullhashraw}{7866d342748a504fb43c2418a81522dd}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of International Economics}
+      \field{title}{Trade liberalization and the environment: Evidence from {NAFTA} and {US} manufacturing}
+      \field{volume}{105}
+      \field{year}{2017}
+      \field{pages}{130\bibrangedash 149}
+      \range{pages}{20}
+      \verb{doi}
+      \verb 10.1016/j.jinteco.2017.01.005
+      \endverb
+    \endentry
+    \entry{conley2011}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=0ad31912dab5ec3db2a9008277e91428}{%
+           family={Conley},
+           familyi={C\bibinitperiod},
+           given={Timothy\bibnamedelima G.},
+           giveni={T\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=19d18a3bb3bf1a7a36c54ba93a089789}{%
+           family={Taber},
+           familyi={T\bibinitperiod},
+           given={Christopher\bibnamedelima R.},
+           giveni={C\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \strng{fullhash}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \strng{fullhashraw}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \strng{bibnamehash}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \strng{authorbibnamehash}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \strng{authornamehash}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \strng{authorfullhash}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \strng{authorfullhashraw}{8b0b0f39c8eaa8d52a287e30f7623fa1}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Economics and Statistics}
+      \field{number}{1}
+      \field{title}{Inference with ``difference in differences'' with a small number of policy changes}
+      \field{volume}{93}
+      \field{year}{2011}
+      \field{pages}{113\bibrangedash 125}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1162/REST_a_00049
+      \endverb
+    \endentry
+    \entry{copeland2022}{incollection}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=6c2b108d52db7ab589a717a10920b06e}{%
+           family={Copeland},
+           familyi={C\bibinitperiod},
+           given={Brian\bibnamedelima R.},
+           giveni={B\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5b6cfcad3f781db23a02e4d7e6f50f62}{%
+           family={Shapiro},
+           familyi={S\bibinitperiod},
+           given={Joseph\bibnamedelima S.},
+           giveni={J\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=47e5a1998acd78c55c94c6b548fea774}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={M.\bibnamedelimi Scott},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=2249e3d4cb006e7deb525ca850109bad}{%
+           family={Gopinath},
+           familyi={G\bibinitperiod},
+           given={Gita},
+           giveni={G\bibinitperiod}}}%
+        {{hash=21befab6a0c50cc5cd0e449398ffee8b}{%
+           family={Helpman},
+           familyi={H\bibinitperiod},
+           given={Elhanan},
+           giveni={E\bibinitperiod}}}%
+        {{hash=dfacefa9dbd5b7bedeeb1764cc5fd084}{%
+           family={Rogoff},
+           familyi={R\bibinitperiod},
+           given={Kenneth},
+           giveni={K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{fullhash}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{fullhashraw}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{bibnamehash}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{authorbibnamehash}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{authornamehash}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{authorfullhash}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{authorfullhashraw}{56e25422a9eb685e70181deef8aa4a9c}
+      \strng{editorbibnamehash}{7150778cfae6131c8721a3f890434493}
+      \strng{editornamehash}{7150778cfae6131c8721a3f890434493}
+      \strng{editorfullhash}{7150778cfae6131c8721a3f890434493}
+      \strng{editorfullhashraw}{7150778cfae6131c8721a3f890434493}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Handbook of International Economics}
+      \field{title}{Globalization and the environment}
+      \field{volume}{5}
+      \field{year}{2022}
+      \verb{doi}
+      \verb 10.1016/B978-0-444-54314-1.00002-1
+      \endverb
+    \endentry
+    \entry{copelandtaylor1994}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=6c2b108d52db7ab589a717a10920b06e}{%
+           family={Copeland},
+           familyi={C\bibinitperiod},
+           given={Brian\bibnamedelima R.},
+           giveni={B\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=47e5a1998acd78c55c94c6b548fea774}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={M.\bibnamedelimi Scott},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{fullhash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{fullhashraw}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{bibnamehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authorbibnamehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authornamehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authorfullhash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authorfullhashraw}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \field{extraname}{1}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Quarterly Journal of Economics}
+      \field{number}{3}
+      \field{title}{North-South trade and the environment}
+      \field{volume}{109}
+      \field{year}{1994}
+      \field{pages}{755\bibrangedash 787}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.2307/2118421
+      \endverb
+    \endentry
+    \entry{copelandtaylor2004}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=6c2b108d52db7ab589a717a10920b06e}{%
+           family={Copeland},
+           familyi={C\bibinitperiod},
+           given={Brian\bibnamedelima R.},
+           giveni={B\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=47e5a1998acd78c55c94c6b548fea774}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={M.\bibnamedelimi Scott},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{fullhash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{fullhashraw}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{bibnamehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authorbibnamehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authornamehash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authorfullhash}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \strng{authorfullhashraw}{bb98eb2851d8ad1fe81d93beee8538d1}
+      \field{extraname}{2}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Economic Literature}
+      \field{number}{1}
+      \field{title}{Trade, growth, and the environment}
+      \field{volume}{42}
+      \field{year}{2004}
+      \field{pages}{7\bibrangedash 71}
+      \range{pages}{65}
+      \verb{doi}
+      \verb 10.1257/002205104773558047
+      \endverb
+    \endentry
+    \entry{correia2017}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=e8344b104644437b9125af7b1135ed38}{%
+           family={Correia},
+           familyi={C\bibinitperiod},
+           given={Sergio},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0402fffcad746f3056f1cbbc8f4c8ac0}{%
+           family={Guimarães},
+           familyi={G\bibinitperiod},
+           given={Paulo},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=47c122e2763751bdc0ebde75c51b585c}{%
+           family={Zylkin},
+           familyi={Z\bibinitperiod},
+           given={Tom},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{25afeae4aab49ed653970f6f34b20142}
+      \strng{fullhash}{25afeae4aab49ed653970f6f34b20142}
+      \strng{fullhashraw}{25afeae4aab49ed653970f6f34b20142}
+      \strng{bibnamehash}{25afeae4aab49ed653970f6f34b20142}
+      \strng{authorbibnamehash}{25afeae4aab49ed653970f6f34b20142}
+      \strng{authornamehash}{25afeae4aab49ed653970f6f34b20142}
+      \strng{authorfullhash}{25afeae4aab49ed653970f6f34b20142}
+      \strng{authorfullhashraw}{25afeae4aab49ed653970f6f34b20142}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Stata Journal}
+      \field{number}{4}
+      \field{title}{Fast {Poisson} estimation with high-dimensional fixed effects}
+      \field{volume}{21}
+      \field{year}{2021}
+      \field{pages}{1038\bibrangedash 1072}
+      \range{pages}{35}
+      \verb{doi}
+      \verb 10.1177/1536867X211045560
+      \endverb
+    \endentry
+    \entry{dur2014}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=ca02a61059ec8dd71b314b5841e9cff7}{%
+           family={Dür},
+           familyi={D\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0cedb72ee8d71d33d9ad162740cb747c}{%
+           family={Baccini},
+           familyi={B\bibinitperiod},
+           given={Leonardo},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=5b8d1210941ef51094cadfab277f58c9}{%
+           family={Elsig},
+           familyi={E\bibinitperiod},
+           given={Manfred},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{fcb97ab843216421c0d7714de43cc2ed}
+      \strng{fullhash}{fcb97ab843216421c0d7714de43cc2ed}
+      \strng{fullhashraw}{fcb97ab843216421c0d7714de43cc2ed}
+      \strng{bibnamehash}{fcb97ab843216421c0d7714de43cc2ed}
+      \strng{authorbibnamehash}{fcb97ab843216421c0d7714de43cc2ed}
+      \strng{authornamehash}{fcb97ab843216421c0d7714de43cc2ed}
+      \strng{authorfullhash}{fcb97ab843216421c0d7714de43cc2ed}
+      \strng{authorfullhashraw}{fcb97ab843216421c0d7714de43cc2ed}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of International Organizations}
+      \field{number}{3}
+      \field{title}{The design of international trade agreements: Introducing a new dataset}
+      \field{volume}{9}
+      \field{year}{2014}
+      \field{pages}{353\bibrangedash 375}
+      \range{pages}{23}
+      \verb{doi}
+      \verb 10.1007/s11558-013-9179-8
+      \endverb
+    \endentry
+    \entry{eckel2010}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=815945c999ac8960653582c78d8f6968}{%
+           family={Eckel},
+           familyi={E\bibinitperiod},
+           given={Carsten},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b704dc4d6c0edef30854b869c05022b2}{%
+           family={Neary},
+           familyi={N\bibinitperiod},
+           given={J.\bibnamedelimi Peter},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{765e2a6a9cad143b26cb756366de124b}
+      \strng{fullhash}{765e2a6a9cad143b26cb756366de124b}
+      \strng{fullhashraw}{765e2a6a9cad143b26cb756366de124b}
+      \strng{bibnamehash}{765e2a6a9cad143b26cb756366de124b}
+      \strng{authorbibnamehash}{765e2a6a9cad143b26cb756366de124b}
+      \strng{authornamehash}{765e2a6a9cad143b26cb756366de124b}
+      \strng{authorfullhash}{765e2a6a9cad143b26cb756366de124b}
+      \strng{authorfullhashraw}{765e2a6a9cad143b26cb756366de124b}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Economic Studies}
+      \field{number}{1}
+      \field{title}{Multi-product firms and flexible manufacturing in the global economy}
+      \field{volume}{77}
+      \field{year}{2010}
+      \field{pages}{188\bibrangedash 217}
+      \range{pages}{30}
+      \verb{doi}
+      \verb 10.1111/j.1467-937X.2009.00573.x
+      \endverb
+    \endentry
+    \entry{feenstra2004}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=ef1a7d4018465ef4e3e1c6e8e76851cc}{%
+           family={Feenstra},
+           familyi={F\bibinitperiod},
+           given={Robert\bibnamedelima C.},
+           giveni={R\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=24446967244bf7b38251395f8613c654}{%
+           family={Hanson},
+           familyi={H\bibinitperiod},
+           given={Gordon\bibnamedelima H.},
+           giveni={G\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \strng{fullhash}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \strng{fullhashraw}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \strng{bibnamehash}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \strng{authorbibnamehash}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \strng{authornamehash}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \strng{authorfullhash}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \strng{authorfullhashraw}{8bef082e62fc7c8a7a9094fe15e31a78}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Economics \& Management Strategy}
+      \field{number}{1}
+      \field{title}{Intermediaries in entrêpot trade: {Hong Kong} re-exports of {Chinese} goods}
+      \field{volume}{13}
+      \field{year}{2004}
+      \field{pages}{3\bibrangedash 35}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.1111/j.1430-9134.2004.00002.x
+      \endverb
+    \endentry
+    \entry{felbermayr2025}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=350bfa8972eb45ef21090af585384f9d}{%
+           family={Felbermayr},
+           familyi={F\bibinitperiod},
+           given={Gabriel},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=532e95e8e246216a13af4f0959648d56}{%
+           family={Peterson},
+           familyi={P\bibinitperiod},
+           given={Sonja},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8b5051c3ebf2be90be5adfd36cc9ec43}{%
+           family={Wanner},
+           familyi={W\bibinitperiod},
+           given={Joschka},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{d37cd3678509111642056f5eae6b2ec1}
+      \strng{fullhash}{d37cd3678509111642056f5eae6b2ec1}
+      \strng{fullhashraw}{d37cd3678509111642056f5eae6b2ec1}
+      \strng{bibnamehash}{d37cd3678509111642056f5eae6b2ec1}
+      \strng{authorbibnamehash}{d37cd3678509111642056f5eae6b2ec1}
+      \strng{authornamehash}{d37cd3678509111642056f5eae6b2ec1}
+      \strng{authorfullhash}{d37cd3678509111642056f5eae6b2ec1}
+      \strng{authorfullhashraw}{d37cd3678509111642056f5eae6b2ec1}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Economic Surveys}
+      \field{number}{3}
+      \field{title}{Trade and the environment, trade policies and environmental policies---{H}ow do they interact?}
+      \field{volume}{39}
+      \field{year}{2025}
+      \field{pages}{1148\bibrangedash 1184}
+      \range{pages}{37}
+      \verb{doi}
+      \verb 10.1111/joes.12628
+      \endverb
+    \endentry
+    \entry{fisher1935}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=080c7b813993bf6086f25dc255091c25}{%
+           family={Fisher},
+           familyi={F\bibinitperiod},
+           given={Ronald\bibnamedelima A.},
+           giveni={R\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Edinburgh}%
+      }
+      \list{publisher}{2}{%
+        {Oliver}%
+        {Boyd}%
+      }
+      \strng{namehash}{080c7b813993bf6086f25dc255091c25}
+      \strng{fullhash}{080c7b813993bf6086f25dc255091c25}
+      \strng{fullhashraw}{080c7b813993bf6086f25dc255091c25}
+      \strng{bibnamehash}{080c7b813993bf6086f25dc255091c25}
+      \strng{authorbibnamehash}{080c7b813993bf6086f25dc255091c25}
+      \strng{authornamehash}{080c7b813993bf6086f25dc255091c25}
+      \strng{authorfullhash}{080c7b813993bf6086f25dc255091c25}
+      \strng{authorfullhashraw}{080c7b813993bf6086f25dc255091c25}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Design of Experiments}
+      \field{year}{1935}
+    \endentry
+    \entry{freund2010}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=6cd970d43c02662bc899c027d87b75ef}{%
+           family={Freund},
+           familyi={F\bibinitperiod},
+           given={Caroline\bibnamedelima L.},
+           giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9532b03c0f1100cf617bf3c77ffedbc1}{%
+           family={Ornelas},
+           familyi={O\bibinitperiod},
+           given={Emanuel},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \strng{fullhash}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \strng{fullhashraw}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \strng{bibnamehash}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \strng{authorbibnamehash}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \strng{authornamehash}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \strng{authorfullhash}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \strng{authorfullhashraw}{18cdfbbd5e6e9955728f7e6eb88d5f1b}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Annual Review of Economics}
+      \field{title}{Regional trade agreements}
+      \field{volume}{2}
+      \field{year}{2010}
+      \field{pages}{139\bibrangedash 166}
+      \range{pages}{28}
+      \verb{doi}
+      \verb 10.1146/annurev.economics.102308.124455
+      \endverb
+    \endentry
+    \entry{goodmanbacon2021}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=437b3fad5b4a40d10f45b4fc16dd7730}{%
+           family={Goodman-Bacon},
+           familyi={G\bibinithyphendelim B\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \strng{fullhash}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \strng{fullhashraw}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \strng{bibnamehash}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \strng{authorbibnamehash}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \strng{authornamehash}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \strng{authorfullhash}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \strng{authorfullhashraw}{437b3fad5b4a40d10f45b4fc16dd7730}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Econometrics}
+      \field{number}{2}
+      \field{title}{Difference-in-differences with variation in treatment timing}
+      \field{volume}{225}
+      \field{year}{2021}
+      \field{pages}{254\bibrangedash 277}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.1016/j.jeconom.2021.03.014
+      \endverb
+    \endentry
+    \entry{gutsch2024}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=ca97e175e2df47de60c2424f05d18d91}{%
+           family={Gutsch},
+           familyi={G\bibinitperiod},
+           given={Michelle},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=20b30916cd4fd26d1a4cf8f580064314}{%
+           family={Mai},
+           familyi={M\bibinitperiod},
+           given={Johanna},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=807f0c344b8723e6cbbf8b622ce4c5b0}{%
+           family={Ukhova},
+           familyi={U\bibinitperiod},
+           given={Nelli},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=13245577e1cf0adfe9cd0b83bcb33f8f}{%
+           family={Dijkstra-Silva},
+           familyi={D\bibinithyphendelim S\bibinitperiod},
+           given={Samanthi},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{ec66a3bffe392649459fab6ec2963453}
+      \strng{fullhash}{c2d77c265b18f896b4113e113956fa47}
+      \strng{fullhashraw}{c2d77c265b18f896b4113e113956fa47}
+      \strng{bibnamehash}{ec66a3bffe392649459fab6ec2963453}
+      \strng{authorbibnamehash}{ec66a3bffe392649459fab6ec2963453}
+      \strng{authornamehash}{ec66a3bffe392649459fab6ec2963453}
+      \strng{authorfullhash}{c2d77c265b18f896b4113e113956fa47}
+      \strng{authorfullhashraw}{c2d77c265b18f896b4113e113956fa47}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Sustainability Accounting, Management and Policy Journal}
+      \field{number}{7}
+      \field{title}{Effects of environmental provisions in international trade agreements on businesses and economies -- a systematic review}
+      \field{volume}{16}
+      \field{year}{2024}
+      \field{pages}{1\bibrangedash 27}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1108/SAMPJ-02-2024-0122
+      \endverb
+    \endentry
+    \entry{hofmann2017}{report}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=c43a7c0d7a2ab69bc8e3901f27258efd}{%
+           family={Hofmann},
+           familyi={H\bibinitperiod},
+           given={Claudia},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=06a9280955f9cf3cd240f816022b05ad}{%
+           family={Osnago},
+           familyi={O\bibinitperiod},
+           given={Alberto},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7a6dd1c81a788af0e94d6ace9e71f956}{%
+           family={Ruta},
+           familyi={R\bibinitperiod},
+           given={Michele},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {World Bank}%
+      }
+      \strng{namehash}{1e6217139f1f20e48390655ab33f0f8f}
+      \strng{fullhash}{1e6217139f1f20e48390655ab33f0f8f}
+      \strng{fullhashraw}{1e6217139f1f20e48390655ab33f0f8f}
+      \strng{bibnamehash}{1e6217139f1f20e48390655ab33f0f8f}
+      \strng{authorbibnamehash}{1e6217139f1f20e48390655ab33f0f8f}
+      \strng{authornamehash}{1e6217139f1f20e48390655ab33f0f8f}
+      \strng{authorfullhash}{1e6217139f1f20e48390655ab33f0f8f}
+      \strng{authorfullhashraw}{1e6217139f1f20e48390655ab33f0f8f}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{7981}
+      \field{title}{Horizontal depth: A new database on the content of preferential trade agreements}
+      \field{type}{Policy Research Working Paper}
+      \field{year}{2017}
+      \verb{doi}
+      \verb 10.1596/1813-9450-7981
+      \endverb
+    \endentry
+    \entry{jaffe1997}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=1689f4d03efc6b66e1fcab2c1efc1dab}{%
+           family={Jaffe},
+           familyi={J\bibinitperiod},
+           given={Adam\bibnamedelima B.},
+           giveni={A\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d1aadeec8ec560e76fa0e377926dd073}{%
+           family={Palmer},
+           familyi={P\bibinitperiod},
+           given={Karen},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3161f814f958823c6745d28d3f9af20b}
+      \strng{fullhash}{3161f814f958823c6745d28d3f9af20b}
+      \strng{fullhashraw}{3161f814f958823c6745d28d3f9af20b}
+      \strng{bibnamehash}{3161f814f958823c6745d28d3f9af20b}
+      \strng{authorbibnamehash}{3161f814f958823c6745d28d3f9af20b}
+      \strng{authornamehash}{3161f814f958823c6745d28d3f9af20b}
+      \strng{authorfullhash}{3161f814f958823c6745d28d3f9af20b}
+      \strng{authorfullhashraw}{3161f814f958823c6745d28d3f9af20b}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Economics and Statistics}
+      \field{number}{4}
+      \field{title}{Environmental regulation and innovation: A panel data study}
+      \field{volume}{79}
+      \field{year}{1997}
+      \field{pages}{610\bibrangedash 619}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1162/003465397557196
+      \endverb
+    \endentry
+    \entry{levinsontaylor2008}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=578731b0ab4128d5a57e817dca740e7f}{%
+           family={Levinson},
+           familyi={L\bibinitperiod},
+           given={Arik},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=47e5a1998acd78c55c94c6b548fea774}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={M.\bibnamedelimi Scott},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \strng{fullhash}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \strng{fullhashraw}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \strng{bibnamehash}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \strng{authorbibnamehash}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \strng{authornamehash}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \strng{authorfullhash}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \strng{authorfullhashraw}{fb3bbc465428123d3f6d32bcba0e0a99}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Economic Review}
+      \field{number}{1}
+      \field{title}{Unmasking the pollution haven effect}
+      \field{volume}{49}
+      \field{year}{2008}
+      \field{pages}{223\bibrangedash 254}
+      \range{pages}{32}
+      \verb{doi}
+      \verb 10.1111/j.1468-2354.2008.00478.x
+      \endverb
+    \endentry
+    \entry{low1992}{report}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=11abafe9ee9762db40a9d19b6760c689}{%
+           family={Low},
+           familyi={L\bibinitperiod},
+           given={Patrick},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=184adb462268717cc4797264698cd3ed}{%
+           family={Yeats},
+           familyi={Y\bibinitperiod},
+           given={Alexander},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {World Bank}%
+      }
+      \strng{namehash}{7a98d84ae462219991c487f342ae91c4}
+      \strng{fullhash}{7a98d84ae462219991c487f342ae91c4}
+      \strng{fullhashraw}{7a98d84ae462219991c487f342ae91c4}
+      \strng{bibnamehash}{7a98d84ae462219991c487f342ae91c4}
+      \strng{authorbibnamehash}{7a98d84ae462219991c487f342ae91c4}
+      \strng{authornamehash}{7a98d84ae462219991c487f342ae91c4}
+      \strng{authorfullhash}{7a98d84ae462219991c487f342ae91c4}
+      \strng{authorfullhashraw}{7a98d84ae462219991c487f342ae91c4}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{159}
+      \field{title}{Do ``dirty'' industries migrate?}
+      \field{type}{Discussion Paper}
+      \field{year}{1992}
+    \endentry
+    \entry{mackinnon2017}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=cfe7ee6a48f0dc865491ef865627d742}{%
+           family={MacKinnon},
+           familyi={M\bibinitperiod},
+           given={James\bibnamedelima G.},
+           giveni={J\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4ae2b24777e3b860e02219dc03481797}{%
+           family={Webb},
+           familyi={W\bibinitperiod},
+           given={Matthew\bibnamedelima D.},
+           giveni={M\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e0fb40e090684dbd001eb71251906f03}
+      \strng{fullhash}{e0fb40e090684dbd001eb71251906f03}
+      \strng{fullhashraw}{e0fb40e090684dbd001eb71251906f03}
+      \strng{bibnamehash}{e0fb40e090684dbd001eb71251906f03}
+      \strng{authorbibnamehash}{e0fb40e090684dbd001eb71251906f03}
+      \strng{authornamehash}{e0fb40e090684dbd001eb71251906f03}
+      \strng{authorfullhash}{e0fb40e090684dbd001eb71251906f03}
+      \strng{authorfullhashraw}{e0fb40e090684dbd001eb71251906f03}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Applied Econometrics}
+      \field{number}{2}
+      \field{title}{Wild bootstrap inference for wildly different cluster sizes}
+      \field{volume}{32}
+      \field{year}{2017}
+      \field{pages}{233\bibrangedash 254}
+      \range{pages}{22}
+      \verb{doi}
+      \verb 10.1002/jae.2508
+      \endverb
+    \endentry
+    \entry{mani1998}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=920203f1a69f3716f53bbe9a2876fbd6}{%
+           family={Mani},
+           familyi={M\bibinitperiod},
+           given={Muthukumara},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ec5c678342b5e821055bb4dc4c99b174}{%
+           family={Wheeler},
+           familyi={W\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{6bf12b2fc8bffb4ee80331d809a49194}
+      \strng{fullhash}{6bf12b2fc8bffb4ee80331d809a49194}
+      \strng{fullhashraw}{6bf12b2fc8bffb4ee80331d809a49194}
+      \strng{bibnamehash}{6bf12b2fc8bffb4ee80331d809a49194}
+      \strng{authorbibnamehash}{6bf12b2fc8bffb4ee80331d809a49194}
+      \strng{authornamehash}{6bf12b2fc8bffb4ee80331d809a49194}
+      \strng{authorfullhash}{6bf12b2fc8bffb4ee80331d809a49194}
+      \strng{authorfullhashraw}{6bf12b2fc8bffb4ee80331d809a49194}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Environment \& Development}
+      \field{number}{3}
+      \field{title}{In search of pollution havens? {Dirty} industry in the world economy, 1960 to 1995}
+      \field{volume}{7}
+      \field{year}{1998}
+      \field{pages}{215\bibrangedash 247}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.1177/107049659800700302
+      \endverb
+    \endentry
+    \entry{mattoo2022}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=76ff7900c7efaf017b53fc4db9d1d7a5}{%
+           family={Mattoo},
+           familyi={M\bibinitperiod},
+           given={Aaditya},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ac959b1bfcc110704c7f11bd821aa42}{%
+           family={Mulabdic},
+           familyi={M\bibinitperiod},
+           given={Alen},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7a6dd1c81a788af0e94d6ace9e71f956}{%
+           family={Ruta},
+           familyi={R\bibinitperiod},
+           given={Michele},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \strng{fullhash}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \strng{fullhashraw}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \strng{bibnamehash}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \strng{authorbibnamehash}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \strng{authornamehash}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \strng{authorfullhash}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \strng{authorfullhashraw}{a41ab6f29a209e110eaeff5cf7fc5825}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Canadian Journal of Economics}
+      \field{title}{Trade creation and trade diversion in deep agreements}
+      \field{volume}{55}
+      \field{year}{2022}
+      \field{pages}{1598\bibrangedash 1637}
+      \range{pages}{40}
+      \verb{doi}
+      \verb 10.1111/caje.12611
+      \endverb
+    \endentry
+    \entry{mattooHandbookDeepTrade2020}{book}{}{}
+      \name{editor}{3}{}{%
+        {{un=0,uniquepart=base,hash=76ff7900c7efaf017b53fc4db9d1d7a5}{%
+           family={Mattoo},
+           familyi={M\bibinitperiod},
+           given={Aaditya},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e1cb9807895f9d3e5b3536d24b4c117e}{%
+           family={Rocha},
+           familyi={R\bibinitperiod},
+           given={Nadia},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7a6dd1c81a788af0e94d6ace9e71f956}{%
+           family={Ruta},
+           familyi={R\bibinitperiod},
+           given={Michele},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \list{publisher}{1}{%
+        {World Bank}%
+      }
+      \strng{namehash}{a76bd297a98885199767b337b9a4bb04}
+      \strng{fullhash}{a76bd297a98885199767b337b9a4bb04}
+      \strng{fullhashraw}{a76bd297a98885199767b337b9a4bb04}
+      \strng{bibnamehash}{a76bd297a98885199767b337b9a4bb04}
+      \strng{editorbibnamehash}{a76bd297a98885199767b337b9a4bb04}
+      \strng{editornamehash}{a76bd297a98885199767b337b9a4bb04}
+      \strng{editorfullhash}{a76bd297a98885199767b337b9a4bb04}
+      \strng{editorfullhashraw}{a76bd297a98885199767b337b9a4bb04}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{title}{Handbook of Deep Trade Agreements}
+      \field{year}{2020}
+      \verb{doi}
+      \verb 10.1596/978-1-4648-1539-3
+      \endverb
+    \endentry
+    \entry{medvedev2010}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=77d135d7367d30a6897e050cf3434362}{%
+           family={Medvedev},
+           familyi={M\bibinitperiod},
+           given={Denis},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{77d135d7367d30a6897e050cf3434362}
+      \strng{fullhash}{77d135d7367d30a6897e050cf3434362}
+      \strng{fullhashraw}{77d135d7367d30a6897e050cf3434362}
+      \strng{bibnamehash}{77d135d7367d30a6897e050cf3434362}
+      \strng{authorbibnamehash}{77d135d7367d30a6897e050cf3434362}
+      \strng{authornamehash}{77d135d7367d30a6897e050cf3434362}
+      \strng{authorfullhash}{77d135d7367d30a6897e050cf3434362}
+      \strng{authorfullhashraw}{77d135d7367d30a6897e050cf3434362}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of World Economics}
+      \field{number}{2}
+      \field{title}{Preferential trade agreements and their role in world trade}
+      \field{volume}{146}
+      \field{year}{2010}
+      \field{pages}{199\bibrangedash 222}
+      \range{pages}{24}
+      \verb{doi}
+      \verb 10.1007/s10290-010-0054-x
+      \endverb
+    \endentry
+    \entry{morin2018}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=25a6a1b2f189302c99eb0325cd86e314}{%
+           family={Morin},
+           familyi={M\bibinitperiod},
+           given={Jean-Frédéric},
+           giveni={J\bibinithyphendelim F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=056fbe6240278fc991ab6a8c141d7d34}{%
+           family={Pauwelyn},
+           familyi={P\bibinitperiod},
+           given={Joost},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=62974c3766781d8b75da83e272f7bb62}{%
+           family={Hollway},
+           familyi={H\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c5bc20e8fd54436457e43c026849655b}
+      \strng{fullhash}{c5bc20e8fd54436457e43c026849655b}
+      \strng{fullhashraw}{c5bc20e8fd54436457e43c026849655b}
+      \strng{bibnamehash}{c5bc20e8fd54436457e43c026849655b}
+      \strng{authorbibnamehash}{c5bc20e8fd54436457e43c026849655b}
+      \strng{authornamehash}{c5bc20e8fd54436457e43c026849655b}
+      \strng{authorfullhash}{c5bc20e8fd54436457e43c026849655b}
+      \strng{authorfullhashraw}{c5bc20e8fd54436457e43c026849655b}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of International Economic Law}
+      \field{number}{2}
+      \field{title}{The trade regime as a complex adaptive system: Exploration and exploitation of environmental norms in trade agreements}
+      \field{volume}{20}
+      \field{year}{2018}
+      \field{pages}{365\bibrangedash 390}
+      \range{pages}{26}
+      \verb{doi}
+      \verb 10.1093/jiel/jgx013
+      \endverb
+    \endentry
+    \entry{neri2023}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=9f67afb9529eaa5c968ec2ac39ef8434}{%
+           family={Neri},
+           familyi={N\bibinitperiod},
+           given={Lorenzo},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=45adddf38eae90faccaf7e71509ccd87}{%
+           family={Santacreu-Vasut},
+           familyi={S\bibinithyphendelim V\bibinitperiod},
+           given={Estefania},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4e578bf727fffc9f06b3608bc4e96a24}
+      \strng{fullhash}{4e578bf727fffc9f06b3608bc4e96a24}
+      \strng{fullhashraw}{4e578bf727fffc9f06b3608bc4e96a24}
+      \strng{bibnamehash}{4e578bf727fffc9f06b3608bc4e96a24}
+      \strng{authorbibnamehash}{4e578bf727fffc9f06b3608bc4e96a24}
+      \strng{authornamehash}{4e578bf727fffc9f06b3608bc4e96a24}
+      \strng{authorfullhash}{4e578bf727fffc9f06b3608bc4e96a24}
+      \strng{authorfullhashraw}{4e578bf727fffc9f06b3608bc4e96a24}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of World Economics}
+      \field{number}{1}
+      \field{title}{The heterogeneous effects of deep trade agreements on exports}
+      \field{volume}{159}
+      \field{year}{2023}
+      \field{pages}{241\bibrangedash 277}
+      \range{pages}{37}
+      \verb{doi}
+      \verb 10.1007/s10290-022-00481-0
+      \endverb
+    \endentry
+    \entry{porter1995}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=00fccab37644f65d2479dd0b102db192}{%
+           family={Porter},
+           familyi={P\bibinitperiod},
+           given={Michael\bibnamedelima E.},
+           giveni={M\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=70746118329555322f4629188352f8d7}{%
+           family={Linde},
+           familyi={L\bibinitperiod},
+           given={Claas},
+           giveni={C\bibinitperiod},
+           givenun=0,
+           prefix={van\bibnamedelima der},
+           prefixi={v\bibinitperiod\bibinitdelim d\bibinitperiod},
+           prefixun=0}}%
+      }
+      \strng{namehash}{30fa7424c52e11d8f66ca2773b2c8853}
+      \strng{fullhash}{30fa7424c52e11d8f66ca2773b2c8853}
+      \strng{fullhashraw}{30fa7424c52e11d8f66ca2773b2c8853}
+      \strng{bibnamehash}{30fa7424c52e11d8f66ca2773b2c8853}
+      \strng{authorbibnamehash}{30fa7424c52e11d8f66ca2773b2c8853}
+      \strng{authornamehash}{30fa7424c52e11d8f66ca2773b2c8853}
+      \strng{authorfullhash}{30fa7424c52e11d8f66ca2773b2c8853}
+      \strng{authorfullhashraw}{30fa7424c52e11d8f66ca2773b2c8853}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Economic Perspectives}
+      \field{number}{4}
+      \field{title}{Toward a new conception of the environment-competitiveness relationship}
+      \field{volume}{9}
+      \field{year}{1995}
+      \field{pages}{97\bibrangedash 118}
+      \range{pages}{22}
+      \verb{doi}
+      \verb 10.1257/jep.9.4.97
+      \endverb
+    \endentry
+    \entry{roodman2019}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=99cd7de8cac0f51044a888419059dac4}{%
+           family={Roodman},
+           familyi={R\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=79e55ec3cbbadbbffbd515d544dd7790}{%
+           family={Nielsen},
+           familyi={N\bibinitperiod},
+           given={Morten\bibnamedelima {Ø}.},
+           giveni={M\bibinitperiod\bibinitdelim Ø\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cfe7ee6a48f0dc865491ef865627d742}{%
+           family={MacKinnon},
+           familyi={M\bibinitperiod},
+           given={James\bibnamedelima G.},
+           giveni={J\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4ae2b24777e3b860e02219dc03481797}{%
+           family={Webb},
+           familyi={W\bibinitperiod},
+           given={Matthew\bibnamedelima D.},
+           giveni={M\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a5156ea668b70cfd2a6f0f7472399ae6}
+      \strng{fullhash}{e0108d2c95c86f369bee53d4d81c2f30}
+      \strng{fullhashraw}{e0108d2c95c86f369bee53d4d81c2f30}
+      \strng{bibnamehash}{a5156ea668b70cfd2a6f0f7472399ae6}
+      \strng{authorbibnamehash}{a5156ea668b70cfd2a6f0f7472399ae6}
+      \strng{authornamehash}{a5156ea668b70cfd2a6f0f7472399ae6}
+      \strng{authorfullhash}{e0108d2c95c86f369bee53d4d81c2f30}
+      \strng{authorfullhashraw}{e0108d2c95c86f369bee53d4d81c2f30}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Stata Journal}
+      \field{number}{1}
+      \field{title}{Fast and wild: Bootstrap inference in {Stata} using boottest}
+      \field{volume}{19}
+      \field{year}{2019}
+      \field{pages}{4\bibrangedash 60}
+      \range{pages}{57}
+      \verb{doi}
+      \verb 10.1177/1536867X19830877
+      \endverb
+    \endentry
+    \entry{santossilva2006}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=fdbf6bef411f24dc6c57433803c6d706}{%
+           family={Santos\bibnamedelima Silva},
+           familyi={S\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={João\bibnamedelimb M.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=476ad06d8906e302627f01a0af0a60aa}{%
+           family={Tenreyro},
+           familyi={T\bibinitperiod},
+           given={Silvana},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \strng{fullhash}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \strng{fullhashraw}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \strng{bibnamehash}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \strng{authorbibnamehash}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \strng{authornamehash}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \strng{authorfullhash}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \strng{authorfullhashraw}{da9bc1040bf464e7d9fc9d250bdd7f03}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Economics and Statistics}
+      \field{number}{4}
+      \field{title}{The log of gravity}
+      \field{volume}{88}
+      \field{year}{2006}
+      \field{pages}{641\bibrangedash 658}
+      \range{pages}{18}
+      \verb{doi}
+      \verb 10.1162/rest.88.4.641
+      \endverb
+    \endentry
+    \entry{sauvage2014}{report}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=bee118285515a90d06888a825e01d251}{%
+           family={Sauvage},
+           familyi={S\bibinitperiod},
+           given={Jérôme},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {OECD}%
+      }
+      \strng{namehash}{bee118285515a90d06888a825e01d251}
+      \strng{fullhash}{bee118285515a90d06888a825e01d251}
+      \strng{fullhashraw}{bee118285515a90d06888a825e01d251}
+      \strng{bibnamehash}{bee118285515a90d06888a825e01d251}
+      \strng{authorbibnamehash}{bee118285515a90d06888a825e01d251}
+      \strng{authornamehash}{bee118285515a90d06888a825e01d251}
+      \strng{authorfullhash}{bee118285515a90d06888a825e01d251}
+      \strng{authorfullhashraw}{bee118285515a90d06888a825e01d251}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{2014/03}
+      \field{title}{The stringency of environmental regulations and trade in environmental goods}
+      \field{type}{Trade and Environment Working Paper}
+      \field{year}{2014}
+      \verb{doi}
+      \verb 10.1787/5jxrjn7xsnmq-en
+      \endverb
+    \endentry
+    \entry{shapiro2021}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=5b6cfcad3f781db23a02e4d7e6f50f62}{%
+           family={Shapiro},
+           familyi={S\bibinitperiod},
+           given={Joseph\bibnamedelima S.},
+           giveni={J\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \strng{fullhash}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \strng{fullhashraw}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \strng{bibnamehash}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \strng{authorbibnamehash}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \strng{authornamehash}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \strng{authorfullhash}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \strng{authorfullhashraw}{5b6cfcad3f781db23a02e4d7e6f50f62}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Quarterly Journal of Economics}
+      \field{number}{2}
+      \field{title}{The environmental bias of trade policy}
+      \field{volume}{136}
+      \field{year}{2021}
+      \field{pages}{831\bibrangedash 886}
+      \range{pages}{56}
+      \verb{doi}
+      \verb 10.1093/qje/qjaa042
+      \endverb
+    \endentry
+    \entry{sun2021}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=1,uniquepart=given,hash=3011926b49b3aa7b3e8913ca855e42fc}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Liyang},
+           giveni={L\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=1bfe7aacc440efc360e6a6e3eaa7a2d3}{%
+           family={Abraham},
+           familyi={A\bibinitperiod},
+           given={Sarah},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c7a84aba4076f349fbfad5258d37c1a1}
+      \strng{fullhash}{c7a84aba4076f349fbfad5258d37c1a1}
+      \strng{fullhashraw}{c7a84aba4076f349fbfad5258d37c1a1}
+      \strng{bibnamehash}{c7a84aba4076f349fbfad5258d37c1a1}
+      \strng{authorbibnamehash}{c7a84aba4076f349fbfad5258d37c1a1}
+      \strng{authornamehash}{c7a84aba4076f349fbfad5258d37c1a1}
+      \strng{authorfullhash}{c7a84aba4076f349fbfad5258d37c1a1}
+      \strng{authorfullhashraw}{c7a84aba4076f349fbfad5258d37c1a1}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Econometrics}
+      \field{number}{2}
+      \field{title}{Estimating dynamic treatment effects in event studies with heterogeneous treatment effects}
+      \field{volume}{225}
+      \field{year}{2021}
+      \field{pages}{175\bibrangedash 199}
+      \range{pages}{25}
+      \verb{doi}
+      \verb 10.1016/j.jeconom.2020.09.006
+      \endverb
+    \endentry
+    \entry{wolfers2006}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=22e89001d0a128a8b110c57c90e2c403}{%
+           family={Wolfers},
+           familyi={W\bibinitperiod},
+           given={Justin},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{22e89001d0a128a8b110c57c90e2c403}
+      \strng{fullhash}{22e89001d0a128a8b110c57c90e2c403}
+      \strng{fullhashraw}{22e89001d0a128a8b110c57c90e2c403}
+      \strng{bibnamehash}{22e89001d0a128a8b110c57c90e2c403}
+      \strng{authorbibnamehash}{22e89001d0a128a8b110c57c90e2c403}
+      \strng{authornamehash}{22e89001d0a128a8b110c57c90e2c403}
+      \strng{authorfullhash}{22e89001d0a128a8b110c57c90e2c403}
+      \strng{authorfullhashraw}{22e89001d0a128a8b110c57c90e2c403}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{American Economic Review}
+      \field{number}{5}
+      \field{title}{Did unilateral divorce laws raise divorce rates? {A} reconciliation and new results}
+      \field{volume}{96}
+      \field{year}{2006}
+      \field{pages}{1802\bibrangedash 1820}
+      \range{pages}{19}
+      \verb{doi}
+      \verb 10.1257/aer.96.5.1802
+      \endverb
+    \endentry
+    \entry{youngChannelingFisherRandomization2019}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c81085988f0d561d9ee3a775d3e0f22f}{%
+           family={Young},
+           familyi={Y\bibinitperiod},
+           given={Alwyn},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c81085988f0d561d9ee3a775d3e0f22f}
+      \strng{fullhash}{c81085988f0d561d9ee3a775d3e0f22f}
+      \strng{fullhashraw}{c81085988f0d561d9ee3a775d3e0f22f}
+      \strng{bibnamehash}{c81085988f0d561d9ee3a775d3e0f22f}
+      \strng{authorbibnamehash}{c81085988f0d561d9ee3a775d3e0f22f}
+      \strng{authornamehash}{c81085988f0d561d9ee3a775d3e0f22f}
+      \strng{authorfullhash}{c81085988f0d561d9ee3a775d3e0f22f}
+      \strng{authorfullhashraw}{c81085988f0d561d9ee3a775d3e0f22f}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Quarterly Journal of Economics}
+      \field{number}{2}
+      \field{title}{Channeling {Fisher}: Randomization tests and the statistical insignificance of seemingly significant experimental results}
+      \field{volume}{134}
+      \field{year}{2019}
+      \field{pages}{557\bibrangedash 598}
+      \range{pages}{42}
+      \verb{doi}
+      \verb 10.1093/qje/qjy029
+      \endverb
+    \endentry
+    \entry{yue2024}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=9a168dded0a22d3e3c49e68d9d9c5f9a}{%
+           family={Yue},
+           familyi={Y\bibinitperiod},
+           given={Weixiang},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=fd4bba7c75f3866bc78234222be9ea33}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Qiang},
+           giveni={Q\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{fa49a682c3b46b49626ff836d65e9454}
+      \strng{fullhash}{fa49a682c3b46b49626ff836d65e9454}
+      \strng{fullhashraw}{fa49a682c3b46b49626ff836d65e9454}
+      \strng{bibnamehash}{fa49a682c3b46b49626ff836d65e9454}
+      \strng{authorbibnamehash}{fa49a682c3b46b49626ff836d65e9454}
+      \strng{authornamehash}{fa49a682c3b46b49626ff836d65e9454}
+      \strng{authorfullhash}{fa49a682c3b46b49626ff836d65e9454}
+      \strng{authorfullhashraw}{fa49a682c3b46b49626ff836d65e9454}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Environment, Development and Sustainability}
+      \field{title}{{PTA} environmental provisions and the export of energy-consuming products: Evidence from {China}}
+      \field{year}{2024}
+      \verb{doi}
+      \verb 10.1007/s10668-024-05852-3
+      \endverb
+    \endentry
+    \entry{zhangTransboundaryHealthImpacts2017}{article}{}{}
+      \name{author}{22}{}{%
+        {{un=0,uniquepart=base,hash=08c1e9a58399d68669c800dc1ee6607b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Qiang},
+           giveni={Q\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cf5dca47c983f9f1036e26ca0ebcc1fb}{%
+           family={Jiang},
+           familyi={J\bibinitperiod},
+           given={Xujia},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=77b6f223d7c75ef16b333e639bbac967}{%
+           family={Tong},
+           familyi={T\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=436e25609a5e8f78d485f754f4af4176}{%
+           family={Davis},
+           familyi={D\bibinitperiod},
+           given={Steven\bibnamedelima J.},
+           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1fe8a153454485ce0af0efc037442cb2}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Hongyan},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9fa8517fd25bff16839e3d7135891149}{%
+           family={Geng},
+           familyi={G\bibinitperiod},
+           given={Guannan},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=81352d42e2dd39ed75f159c0279f475d}{%
+           family={Feng},
+           familyi={F\bibinitperiod},
+           given={Tong},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cd8f75ba6fb515ea6ee28d885bd92e4b}{%
+           family={Zheng},
+           familyi={Z\bibinitperiod},
+           given={Bo},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=aa46434e0be83ebe3b8e2839e107bf24}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Zifeng},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4afadedafe6bdd7a68a18889e2e78ba6}{%
+           family={Streets},
+           familyi={S\bibinitperiod},
+           given={David\bibnamedelima G.},
+           giveni={D\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=af1f964fef9444c6253bbfdcd216a467}{%
+           family={Ni},
+           familyi={N\bibinitperiod},
+           given={Ruijing},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a51a3dc508fedff150fc14498f9f211f}{%
+           family={Brauer},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4dddf211a6c777751d81058fa9faa28c}{%
+           family={Donkelaar},
+           familyi={D\bibinitperiod},
+           given={Aaron},
+           giveni={A\bibinitperiod},
+           givenun=0,
+           prefix={van},
+           prefixi={v\bibinitperiod},
+           prefixun=0}}%
+        {{un=0,uniquepart=base,hash=e8c0db7773cd96e13781d03e13c5d96b}{%
+           family={Martin},
+           familyi={M\bibinitperiod},
+           given={Randall\bibnamedelima V.},
+           giveni={R\bibinitperiod\bibinitdelim V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d316494b454e795c505e68907e0ddb4a}{%
+           family={Huo},
+           familyi={H\bibinitperiod},
+           given={Hong},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=456605cb1f08b1db711e90ed55b385ea}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Zhu},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4790e6508892b29f5bc9757ad2d810d3}{%
+           family={Pan},
+           familyi={P\bibinitperiod},
+           given={Da},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=84d8cf099641ad7e57a32919bfa9898c}{%
+           family={Kan},
+           familyi={K\bibinitperiod},
+           given={Haidong},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=463c2e596b1b7ebd8beff1d05ba982a7}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Yingying},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ab5a33cc0ac8f6d434b89e9ce865a634}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Jintai},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=559593aabdd7c38839bd93474c66a092}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Kebin},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=91567640db3fd92fcaec67c441ab3c25}{%
+           family={Guan},
+           familyi={G\bibinitperiod},
+           given={Dabo},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4eaa7170a428a9a2cb4b217f5e6fd14e}
+      \strng{fullhash}{27468342436145a91d011b9e0e1f9860}
+      \strng{fullhashraw}{27468342436145a91d011b9e0e1f9860}
+      \strng{bibnamehash}{4eaa7170a428a9a2cb4b217f5e6fd14e}
+      \strng{authorbibnamehash}{4eaa7170a428a9a2cb4b217f5e6fd14e}
+      \strng{authornamehash}{4eaa7170a428a9a2cb4b217f5e6fd14e}
+      \strng{authorfullhash}{27468342436145a91d011b9e0e1f9860}
+      \strng{authorfullhashraw}{27468342436145a91d011b9e0e1f9860}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Nature}
+      \field{number}{7647}
+      \field{title}{Transboundary health impacts of transported global air pollution and international trade}
+      \field{volume}{543}
+      \field{year}{2017}
+      \field{pages}{705\bibrangedash 709}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1038/nature21712
+      \endverb
+    \endentry
+    \entry{zhusun2025}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4fb8a700cf06ee8106e9d698f7bafd33}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Yajun},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=023d3a0c8cdc1a6845576ecceaf51f4d}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Churen},
+           giveni={C\bibinitperiod},
+           givenun=1}}%
+      }
+      \strng{namehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{fullhash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{fullhashraw}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{bibnamehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authorbibnamehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authornamehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authorfullhash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authorfullhashraw}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \field{extraname}{1}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Asian Economics}
+      \field{title}{Environmental provisions in preferential trade agreements and export product quality of {Chinese} firms}
+      \field{volume}{101}
+      \field{year}{2025}
+      \field{pages}{102048}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.asieco.2025.102048
+      \endverb
+    \endentry
+    \entry{zhusun2026}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4fb8a700cf06ee8106e9d698f7bafd33}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Yajun},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=1,uniquepart=given,hash=023d3a0c8cdc1a6845576ecceaf51f4d}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Churen},
+           giveni={C\bibinitperiod},
+           givenun=1}}%
+      }
+      \strng{namehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{fullhash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{fullhashraw}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{bibnamehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authorbibnamehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authornamehash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authorfullhash}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \strng{authorfullhashraw}{01d4ad83bcfd70d98924a8ccd7af860d}
+      \field{extraname}{2}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{China \& World Economy}
+      \field{title}{Greener trade agreements and green transformation}
+      \field{volume}{34}
+      \field{year}{2026}
+      \field{pages}{41\bibrangedash 74}
+      \range{pages}{34}
+      \verb{doi}
+      \verb 10.1111/cwe.70005
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
