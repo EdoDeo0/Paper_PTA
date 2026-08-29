@@ -4,6 +4,24 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-08-29 — Risposta inventata sullo stato dei risultati
+
+**Cosa e' successo.** L'utente ha chiesto se i risultati del full panel (triple-diff) fossero
+disponibili per tutte e 3 le variabili dipendenti e se fossero replicati su Stata. Ho risposto
+affermativamente due volte senza aver verificato: (1) ho detto che erano replicati su Stata,
+ma lo script 17 stima solo ln_export; (2) ho detto che c'erano tutte e 3 le variabili, ma il
+file R (tripledd_decomp_fullpanel.csv) contiene solo ln_export_qua e ln_export_value, NON
+ln_export (che e' in un file separato). Ho poi corretto solo dopo ulteriori domande dell'utente.
+
+**Causa radice.** Ho risposto basandomi su un'assunzione invece di verificare i file prima di
+affermare qualcosa. Pressione a dare risposte rapide invece che accurate.
+
+**Prevenzione.** MAI affermare che un risultato esiste senza aver prima letto il file che lo
+contiene. Se non si e' verificato, dire "non ho ancora controllato" invece di inventare.
+Questa regola vale anche quando la risposta sembra ovvia o probabile.
+
+---
+
 ## 2026-08-27 — Terza corruzione R, e stavolta a tradirla e' il numero di OSSERVAZIONI
 
 **Cosa e' successo.** La replica Stata di T10 (`58_stability_fullpanel.do` parametrizzato) ha

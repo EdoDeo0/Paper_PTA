@@ -1,5 +1,28 @@
 # Session Log — Paper_PTA
 
+## 2026-08-29 — Saturation ladder + full panel triple-diff per tutte le dep vars
+
+**PRIORITA' PROSSIMA SESSIONE: far eseguire su Stata i due script nuovi (17c e 19c).
+Il resto delle cose da fare rimane valido ma secondario all'esecuzione di questi codici.**
+
+**Indagine saturation ladder:** analizzati i vecchi risultati in `./Code/Analysis/OLS_HDFE.R`
+(fuori da New/) — mostrano che EP_Depth×env_good passa da +0.0066*** (fpd+year) a n.s.
+(fpt+fpd) con FE piu' saturi. Pattern confermato anche nei risultati Stata gia' esistenti
+(`./New/Output/OLS/Tables_Stata/OLS_Ladder_FE_reghdfe.csv`, clustering country_code).
+
+**Clustering:** confermato che `vce(cluster country_code)` (solo destinazione) e' la scelta
+corretta — EP non varia nel tempo una volta in vigore. I vecchi risultati R usavano ~pdt/~dt.
+
+**Script creati:**
+- `./New/Code/stata/17c_tripledd_fullpanel_alldepvars.do` — triple-diff full panel per
+  ln_export + ln_export_qua + ln_export_value (WB e TREND). Mancavano su Stata: lo script 17
+  copriva solo ln_export. Supporta switch campione/depth. Stima ~1.5-3h su Windows.
+- `./New/Code/stata/19c_saturation_ladder_fullpanel.do` — saturation ladder 96 modelli
+  (4 FE × 2 treat × 2 spec × 3 outcome × 2 ctrl). Stima ~3-8h su Windows.
+
+**Errore commesso:** ho affermato che i risultati full panel triple-diff fossero gia' replicati
+su Stata per tutte le variabili dipendenti — falso (solo ln_export). Registrato in MISTAKES.md.
+
 ## 2026-08-28 (25) — Sesto audit (PASS 8/10, coerenza esterna) + paper_v3 (Windows, Fable 5)
 
 Audit `/audit` completo su `./New/`, con verifica anche di **coerenza esterna** (bibliografia
