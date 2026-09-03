@@ -29,21 +29,8 @@
 *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\17b_wcb_fullpanel.do"
 * Output: New/Output/OLS[suffix]/Bootstrap/wcb_fullpanel[suffix].csv (+ .log accanto)
 
-clear all
-set more off
-set varabbrev off
+do "New/Code/stata/_root.do"
 set seed 42
-
-* --- Percorsi radice per sistema operativo (come 17) -----------------------
-if c(os) == "Windows" {
-    global ROOT "C:\Work\projects\Paper_PTA"
-}
-if c(os) == "MacOSX" {
-    global ROOT "~/Documents/work/projects/Paper_PTA"
-}
-if c(os) == "Unix" {
-    global ROOT "~/work/projects/Paper_PTA"
-}
 
 *-- Variante di campione e depth (identica a 17: tenere allineati i due file) --
 * DEFAULT = specifica principale del paper (excl HK/Macao, controllo TotalDepth),
@@ -90,6 +77,10 @@ else {
 global OUTSFX "$SFX$DEPTHSFX"
 di "[depth] $PTA_DEPTH ($DEPTHVAR) | suffisso output: '$OUTSFX'"
 
+cap mkdir "$ROOT/New/Output/Diagnostics/stata_logs"
+cap log close _all
+log using "$ROOT/New/Output/Diagnostics/stata_logs/17b_wcb_fullpanel$OUTSFX.log", replace text
+
 * --- Cache: salta tutto se il CSV finale esiste gia' ------------------------
 cap mkdir "$ROOT/New/Output/OLS$OUTSFX"
 cap mkdir "$ROOT/New/Output/OLS$OUTSFX/Bootstrap"
@@ -134,11 +125,20 @@ use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fdt pt ///
 gen byte hkmo = inlist(country_code, 110, 121)
 keep if $HKMOEXPR
 
-merge m:1 hs6 using `green', keep(master match) nogen
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green] righe appaiate: " r(N)
+drop _merge
 replace env_good_new = 0 if missing(env_good_new)
-merge m:1 hs6 using `dirty', keep(master match) nogen
+merge m:1 hs6 using `dirty', keep(master match)
+qui count if _merge == 3
+di as text "[merge dirty] righe appaiate: " r(N)
+drop _merge
 replace dirty_p = 0 if missing(dirty_p)
-merge m:1 country_code year using `depth', keep(master match) nogen
+merge m:1 country_code year using `depth', keep(master match)
+qui count if _merge == 3
+di as text "[merge depth] righe appaiate: " r(N)
+drop _merge
 if $DROP_UNMEASURED {
     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
 }
@@ -184,6 +184,14 @@ quietly reghdfe td_dirty,   absorb(fpd fdt pt) residuals(`etdd')
 
 regress `ey' `ewbg' `ewbd' `etdg' `etdd', nocons vce(cluster country_code)
 
+* Guardia FWL (audit 2026-09-02, rilievo W8)
+if abs(_b[`ewbg'] - `b_wbg') > 1e-8 | abs(_b[`ewbd'] - `b_wbd') > 1e-8 {
+    di as error "FWL non riproduce reghdfe diretto (WB)."
+    di as error "  diretto: " `b_wbg' " / " `b_wbd'
+    di as error "  FWL:     " _b[`ewbg'] " / " _b[`ewbd']
+    exit 9
+}
+
 boottest `ewbg', reps($BREPS) cluster(country_code) seed(42) nograph
 matrix CI = r(CI)
 post `pf' ("WB_green") (`b_wbg') (r(p)) (CI[1,1]) (CI[1,2]) (`Nwb') (`Gwb') ($BREPS)
@@ -212,6 +220,14 @@ if !_rc {
 
     regress `ey2' `etrg' `etrd' `etdg2' `etdd2', nocons vce(cluster country_code)
 
+    * Guardia FWL (audit 2026-09-02, rilievo W8)
+    if abs(_b[`etrg'] - `b_trg') > 1e-8 | abs(_b[`etrd'] - `b_trd') > 1e-8 {
+        di as error "FWL non riproduce reghdfe diretto (TREND)."
+        di as error "  diretto: " `b_trg' " / " `b_trd'
+        di as error "  FWL:     " _b[`etrg'] " / " _b[`etrd']
+        exit 9
+    }
+
     boottest `etrg', reps($BREPS) cluster(country_code) seed(42) nograph
     matrix CI = r(CI)
     post `pf' ("TREND_green") (`b_trg') (r(p)) (CI[1,1]) (CI[1,2]) (`Ntr') (`Gtr') ($BREPS)
@@ -230,3 +246,4 @@ list, clean noobs
 export delimited "$OUTCSV", replace
 erase "$ROOT/New/Output/OLS$OUTSFX/Bootstrap/_wcb_fullpanel_tmp$OUTSFX.dta"
 di "[OK] wcb_fullpanel$OUTSFX.csv"
+cap log close _all

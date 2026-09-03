@@ -36,10 +36,7 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto — ~20-30 min):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\59_leaveoneout_collapsed.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT  "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA   "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
 global DIRTY "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv"
 global TAB   "$ROOT\New\Output\TripleDiff\Tables_Stata"

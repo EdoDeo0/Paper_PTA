@@ -270,17 +270,26 @@ run_block <- function(formulas,
             models_dir,
             sprintf("%s_%s_%d.rds", prefix, gsub(" ", "_", block_name), i)
         )
+            formula_hash <- paste(deparse(formulas[[i]]), collapse = "")
             if (file.exists(save_path)) {
+                cached <- readRDS(save_path)
+                cached_hash <- attr(cached, "formula_hash")
+                if (!is.null(cached_hash) && cached_hash != formula_hash) {
+                    warning("Cache ", save_path, " was computed with a DIFFERENT formula. Delete it to re-estimate.")
+                }
                 cat(sprintf("    [SKIP] File already exists: %s\n", save_path))
-                return(readRDS(save_path))
+                return(cached)
             } else {
-            estimate_model(
+            result <- estimate_model(
                 formulas[[i]], estimator, data_file, vcov, lean,
                 save_path, save_mode, requested_stats, n_clust_method,
                 n_clust_override = NULL,
                 preloaded_data = block_data,
                 extra_fitstats = extra_fitstats
             )
+            attr(result, "formula_hash") <- formula_hash
+            saveRDS(result, save_path)
+            result
         }
     })
 

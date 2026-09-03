@@ -32,9 +32,7 @@
 * ESECUZIONE BATCH (una variante per volta, da PowerShell, root progetto):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\66_permutation_variants.do"
 
-clear all
-set more off
-set varabbrev off
+do "New/Code/stata/_root.do"
 
 *── PARAMETRI ─────────────────────────────────────────────────────────────────
 * Default (usati se non si passa nulla da riga di comando)
@@ -49,7 +47,6 @@ if "`2'" != "" global VDEPTH  "`2'"
 if "`3'" != "" global NREPS   `3'
 *──────────────────────────────────────────────────────────────────────────────
 
-global ROOT "C:\Work\projects\Paper_PTA"
 global COLL "$ROOT\New\Data\Collapsed"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 
@@ -98,6 +95,10 @@ di as text "  Permutazione variante '$SFX' | campione=$VSAMPLE | depth=$VDEPTH"
 di as text "  Estrazioni richieste: $NREPS"
 if $NREPS < 1000 di as error "  ATTENZIONE: run di COLLAUDO, non di produzione."
 di as text "=============================================================="
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\66_permutation_variants$SFX.log", replace text
 
 confirm file "$VDTA"
 
@@ -325,3 +326,5 @@ file write fh "Completato: `c(current_date)' `c(current_time)' -- `nreps' draws,
 file close fh
 
 di as result _n "=== 66 FATTO per variante '$SFX' ==="
+
+cap log close _all

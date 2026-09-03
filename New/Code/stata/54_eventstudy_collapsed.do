@@ -24,10 +24,7 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\54_eventstudy_collapsed.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 
 *-- VARIANTE (campione x controllo di profondita') --------------------------
@@ -58,6 +55,10 @@ else {
 local s2 = cond("$VDEPTH" == "desta", "_desta", "")
 global SFX "`s1'`s2'"
 di as text _n "=== Event study | campione=$VSAMPLE | depth=$VDEPTH | suffisso=$SFX ==="
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\54_eventstudy_collapsed$SFX.log", replace text
 
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -233,3 +234,5 @@ if 1 == 0 {
 }
 
 di as result _n "=== S4 COMPLETATO ==="
+
+cap log close _all

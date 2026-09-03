@@ -20,22 +20,7 @@
 *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\17_main_tripledd_fullpanel.do"
 * Output: New/Output/TripleDiff/Tables/tripledd_full_reghdfe.csv (+ .log accanto)
 
-clear all
-set more off
-set varabbrev off
-* --- Percorsi radice per sistema operativo ---------------------------------
-* Stessa convenzione di 01_wb_dataset_conversion.do: lo stesso file gira senza
-* modifiche su Windows/Mac/Unix. Adattare il ramo del proprio OS se il progetto
-* vive altrove sulla macchina.
-if c(os) == "Windows" {
-    global ROOT "C:\Work\projects\Paper_PTA"
-}
-if c(os) == "MacOSX" {
-    global ROOT "~/Documents/work/projects/Paper_PTA"
-}
-if c(os) == "Unix" {
-    global ROOT "~/work/projects/Paper_PTA"
-}
+do "New/Code/stata/_root.do"
 
 *-- Variante di campione e depth (analogo Stata di New/Code/_sample_config.R) --
 *  ##########################################################################
@@ -85,6 +70,10 @@ else {
 global OUTSFX "$SFX$DEPTHSFX"
 di "[depth] $PTA_DEPTH ($DEPTHVAR) | suffisso output: '$OUTSFX'"
 
+cap mkdir "$ROOT/New/Output/Diagnostics/stata_logs"
+cap log close _all
+log using "$ROOT/New/Output/Diagnostics/stata_logs/17_main_tripledd_fullpanel$OUTSFX.log", replace text
+
 * dipendenze
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -122,11 +111,20 @@ use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fdt pt ///
 gen byte hkmo = inlist(country_code, 110, 121)   // Hong Kong + Macao (entrepot)
 keep if $HKMOEXPR
 
-merge m:1 hs6 using `green', keep(master match) nogen
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green] righe appaiate: " r(N)
+drop _merge
 replace env_good_new = 0 if missing(env_good_new)
-merge m:1 hs6 using `dirty', keep(master match) nogen
+merge m:1 hs6 using `dirty', keep(master match)
+qui count if _merge == 3
+di as text "[merge dirty] righe appaiate: " r(N)
+drop _merge
 replace dirty_p = 0 if missing(dirty_p)
-merge m:1 country_code year using `depth', keep(master match) nogen
+merge m:1 country_code year using `depth', keep(master match)
+qui count if _merge == 3
+di as text "[merge depth] righe appaiate: " r(N)
+drop _merge
 if $DROP_UNMEASURED {
     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
 }
@@ -183,7 +181,7 @@ if !`wb_cached' | !`wb_fdone' {
         absorb(fpd fdt pt) vce(cluster country_code) compact
     local ncl = e(N_clust)
     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB$OUTSFX.dta", ///
-        tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", nclust, `ncl')
+        tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", nclust, `ncl', source, reghdfe_stata_17)
     test wb_green wb_dirty td_green td_dirty
     file open fh using "`FFILE'", write append
     file write fh "WB,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) "," (r(p)) _n
@@ -205,7 +203,7 @@ if !`tr_cached' | !`tr_fdone' {
     if !_rc {
         local ncl = e(N_clust)
         regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_TREND$OUTSFX.dta", ///
-            tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt", nclust, `ncl')
+            tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt", nclust, `ncl', source, reghdfe_stata_17)
         test tr_green tr_dirty td_green td_dirty
         file open fh using "`FFILE'", write append
         file write fh "TREND,fpd+fdt+pt,4," (r(F)) "," (r(df)) "," (r(df_r)) "," (r(p)) _n
@@ -227,7 +225,7 @@ if _rc {
         absorb(pd_diag dt_diag pt) vce(cluster country_code) compact
     local ncl = e(N_clust)
     regsave using "$ROOT/New/Output/TripleDiff/Tables/_full_WB_pddt$OUTSFX.dta", ///
-        tstat pval ci replace addlabel(treat, WB_pddt, fe, "pd+dt+pt", nclust, `ncl')
+        tstat pval ci replace addlabel(treat, WB_pddt, fe, "pd+dt+pt", nclust, `ncl', source, reghdfe_stata_17)
 }
 
 *── 4. Esporta CSV riassuntivo ─────────────────────────────────────────────────
@@ -243,3 +241,4 @@ if !_rc {
     export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_pddt$OUTSFX.csv", replace
     di "[C6] tripledd_full_pddt$OUTSFX.csv"
 }
+cap log close _all

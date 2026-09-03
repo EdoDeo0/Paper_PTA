@@ -1,0 +1,10 @@
+{
+  "key": "cherniwchan2017",
+  "verdict": "WRONG",
+  "source_url": "https://www.sciencedirect.com/science/article/pii/S0022199617300077",
+  "issues": [
+    "title: {US} → should be {U.S.} (publisher title uses 'U.S.' with periods)"
+  ],
+  "corrected_entry": "@article{cherniwchan2017,\n  author  = {Cherniwchan, Jevan},\n  title   = {Trade liberalization and the environment: Evidence from {NAFTA} and {U.S.} manufacturing},\n  journal = {Journal of International Economics},\n  year    = {2017},\n  volume  = {105},\n  pages   = {130--149},\n  doi     = {10.1016/j.jinteco.2017.01.005}\n}",
+  "notes": "ScienceDirect canonical title is 'Trade liberalization and the environment: Evidence from NAFTA and U.S. manufacturing'; the bib entry uses {US} instead of {U.S.}, omitting the periods."
+}

@@ -34,7 +34,7 @@ DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 FLAG_FILE  <- here("New/Data/Subsamples/flag_deepshallow.csv")
 OUT_TAB    <- here("New/Output/TripleDiff/Tables")
-OUT_MD     <- here("New/Output/Diagnostics/39_epshare_treatedonly.md")
+OUT_MD     <- out_path(here("New/Output/Diagnostics/39_epshare_treatedonly.md"))
 dir.create(OUT_TAB, recursive = TRUE, showWarnings = FALSE)
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 

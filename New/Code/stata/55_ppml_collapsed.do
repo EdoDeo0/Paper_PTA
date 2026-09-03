@@ -16,10 +16,7 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\55_ppml_collapsed.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA  "$ROOT\New\Data\Collapsed\ppml_zerofill_export.dta"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 

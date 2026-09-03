@@ -23,7 +23,7 @@ source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 
 CACHE_FST <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
-OUT_MD    <- here("New/Output/Diagnostics/34_power_diagnostics.md")
+OUT_MD    <- out_path(here("New/Output/Diagnostics/34_power_diagnostics.md"))
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 
 cell <- as.data.table(read_fst(CACHE_FST, columns = c("country_code", "year", "n", "WB_EP_Depth")))

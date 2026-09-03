@@ -97,6 +97,7 @@ estimate_group <- function(data_file, green_file, dirty_file, depth_file, out_di
     f <- sprintf("ln_export ~ %s:env_good + %s:dirty_p + %s:env_good + %s:dirty_p | fpd + fdt + pt",
                  tr, tr, depth_var, depth_var)
     m <- feols(as.formula(f), data = d, cluster = ~country_code, lean = TRUE, mem.clean = TRUE)
+    if (anyNA(coef(m))) stop(sprintf("feols non converge (%s, %s): coefficienti NA", group_name, tr_name))
     st <- list(group = group_name, treat = tr_name, coefs = coef(m), se = se(m),
                pval = pvalue(m), nobs = m$nobs)
     saveRDS(st, rds)

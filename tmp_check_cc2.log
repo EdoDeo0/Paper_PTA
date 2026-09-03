@@ -1,0 +1,56 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\tmp_check_cc2.do 
+
+. clear all
+
+. set more off
+
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. global DTA "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed
+> .dta"
+
+. use country_code using "$DTA" in 1/1000000, clear
+
+. tab country_code if inlist(country_code, 36, 76, 344, 410, 601, 643), missing
+>  nolabel
+
+     export |
+destination |
+ country or |
+     import |
+     origin |
+    country |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        344 |     21,028       40.98       40.98
+        410 |      5,422       10.57       51.55
+        601 |     24,864       48.45      100.00
+------------+-----------------------------------
+      Total |     51,314      100.00
+
+. 
+end of do-file

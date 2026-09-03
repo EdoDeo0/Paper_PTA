@@ -41,9 +41,7 @@
 * altrimenti i log si sovrascrivono a vicenda):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\66b_permutation_chunk.do" incl desta 1 334
 
-clear all
-set more off
-set varabbrev off
+do "New/Code/stata/_root.do"
 
 *-- PARAMETRI ----------------------------------------------------------------
 global VSAMPLE "incl"
@@ -55,7 +53,6 @@ if "`2'" != "" global VDEPTH  "`2'"
 if "`3'" != "" global REPFROM `3'
 if "`4'" != "" global REPTO   `4'
 
-global ROOT "C:\Work\projects\Paper_PTA"
 global COLL "$ROOT\New\Data\Collapsed"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 

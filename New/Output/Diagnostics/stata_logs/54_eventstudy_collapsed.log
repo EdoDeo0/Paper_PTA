@@ -1,0 +1,295 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\stata\54_eventstudy_collapsed.do 
+
+. *****************************************************************************
+> ***
+. ****** 54 — Event study Stata: panel collassato (S4)                      ***
+> ***
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisito: Rscript New/Code/52_export_collapsed_dta.R
+. *
+. * Replica in Stata di 16_main_tripledd_collapsed.R (sezione event study) e
+. * 23_eventstudy_sunab.R. Produce due output:
+. *
+. *   (a) TWFE differenziale (green/dirty vs neutri) con leads/lags espliciti:
+. *       y ~ sum_t { delta_g(t) * I(rel_time==t) * env_good +
+. *                   delta_d(t) * I(rel_time==t) * dirty_p }
+. *          | pd + dt + pt, [aw=n], cluster(country_code)
+. *       Riferimento: rel_time = -1 (anno pre-entrata, omesso).
+. *       Identico a feols con i(rel_time, env_good, ref=-1) in R.
+. *
+. *   (b) Sun-Abraham (2021) via eventstudyinteract, se il pacchetto e' install
+> ato.
+. *       Skip automatico con avviso se non disponibile.
+. *
+. * Output:
+. *   New/Output/TripleDiff/Tables_Stata/eventstudy_twfe_stata.csv   (TWFE)
+. *   New/Output/TripleDiff/Tables_Stata/eventstudy_sunab_stata.csv  (SA, se di
+> sponibile)
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\54_e
+> ventstudy_collapsed.do"
+. 
+. clear all
+
+. set more off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
+
+. global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. 
+. cap mkdir "$ROOT\New\Output\TripleDiff"
+
+. cap mkdir "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. cap mkdir "$TAB"
+
+. 
+. * -- Caricamento dati --
+. use "$DTA", clear
+
+. su WB_EP_Depth, meanonly
+
+. if r(max) != 17 {
+.     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio."
+.     exit 1
+. }
+
+. count
+  3,773,498
+
+. di as text "Celle: " r(N)
+Celle: 3773498
+
+. 
+. * -- Entry year e rel_time --
+. * entry_year = primo anno in cui il paese ha EP > 0
+. bysort country_code: egen entry_year = min(cond(WB_EP_Depth > 0, year, .))
+(2,989,286 missing values generated)
+
+. gen int rel_time = year - entry_year
+(2,989,286 missing values generated)
+
+. * Never-treated (nessun PTA verde): rel_time = -1 prima del clip (Stata: miss
+> ing > qualsiasi numero)
+. replace rel_time = -1 if missing(entry_year)
+(2,989,286 real changes made)
+
+. * Clip: [-6, 5] come in fixest i(rel_time, ...) con ref=-1
+. replace rel_time = -6 if rel_time < -6
+(53,079 real changes made)
+
+. replace rel_time =  5 if rel_time >  5
+(257,869 real changes made)
+
+. 
+. di as text "rel_time: min=" string(rel_time[1]) "... valori:"
+rel_time: min=-1... valori:
+
+. tab rel_time, missing
+
+   rel_time |      Freq.     Percent        Cum.
+------------+-----------------------------------
+         -6 |     65,831        1.74        1.74
+         -5 |     29,106        0.77        2.52
+         -4 |     31,438        0.83        3.35
+         -3 |     33,982        0.90        4.25
+         -2 |     43,297        1.15        5.40
+         -1 |  3,034,998       80.43       85.83
+          0 |     47,767        1.27       87.09
+          1 |     46,161        1.22       88.32
+          2 |     44,370        1.18       89.49
+          3 |     45,420        1.20       90.69
+          4 |     47,021        1.25       91.94
+          5 |    304,107        8.06      100.00
+------------+-----------------------------------
+      Total |  3,773,498      100.00
+
+. 
+. *****************************************************************************
+> ***
+. ** (a) TWFE con leads/lags espliciti
+. *****************************************************************************
+> ***
+. * Genera dummies I(rel_time==t) * env_good e * dirty_p per t in {-6..5}, t!=-
+> 1
+. * Nomi: ieg_m6..ieg_p5 (m=minus, p=plus) e idy_m6..idy_p5
+. 
+. forvalues t = -6(1)5 {
+  2.     if `t' == -1 continue
+  3.     if `t' < 0 {
+  4.         local abs_t = abs(`t')
+  5.         local tl m`abs_t'
+  6.     }
+  7.     else {
+  8.         local tl p`t'
+  9.     }
+ 10.     gen double ieg_`tl' = (rel_time == `t') * env_good
+ 11.     gen double idy_`tl' = (rel_time == `t') * dirty_p
+ 12. }
+
+. 
+. di as text _n "=== TWFE event study ==="
+
+=== TWFE event study ===
+
+. local out_twfe "$TAB/EVENTSTUDY_twfe.dta"
+
+. cap confirm file "`out_twfe'"
+
+. if _rc {
+.     reghdfe y ieg_* idy_* [aw=n], ///
+>         absorb(pd dt pt) vce(cluster country_code)
+.     di as text "N = " e(N) " | cluster = " e(N_clust)
+. 
+.     * Estrai coefficienti manualmente -> CSV
+.     local csv_twfe "$TAB/eventstudy_twfe_stata.csv"
+.     capture erase "`csv_twfe'"
+.     file open fh using "`csv_twfe'", write replace text
+.     file write fh "t,quale,coef,se,pval,nobs,nclust,source" _n
+.     local nobs   = e(N)
+.     local nclust = e(N_clust)
+. 
+.     forvalues t = -6(1)5 {
+  2.         if `t' == -1 continue
+  3.         if `t' < 0 {
+  4.             local abs_t = abs(`t')
+  5.             local tl m`abs_t'
+  6.         }
+  7.         else {
+  8.             local tl p`t'
+  9.         }
+ 10.         foreach quale in g d {
+ 11.             if "`quale'" == "g" local vname "ieg_`tl'"
+ 12.             else                local vname "idy_`tl'"
+ 13.             local cf  = _b[`vname']
+ 14.             local se  = _se[`vname']
+ 15.             local pv  = 2 * ttail(e(df_r), abs(`cf' / `se'))
+ 16.             local qlabel = cond("`quale'" == "g", "green", "dirty")
+ 17.             file write fh "`t',`qlabel',`cf',`se',`pv',`nobs',`nclust',reg
+> hdfe_stata_54" _n
+ 18.         }
+ 19.     }
+.     * t=-1 reference (coef=0 per definizione)
+.     file write fh "-1,green,0,0,.,`nobs',`nclust',reference" _n
+.     file write fh "-1,dirty,0,0,.,`nobs',`nclust',reference" _n
+.     file close fh
+. 
+.     * Salva anche come .dta per eventuale uso successivo
+.     regsave using "`out_twfe'", tstat pval ci replace ///
+>         addlabel(spec, eventstudy_twfe, source, reghdfe_stata_54)
+.     di "[OK] eventstudy_twfe_stata.csv + EVENTSTUDY_twfe.dta"
+. }
+
+. else di "  SKIP EVENTSTUDY_twfe.dta (gia' presente)"
+  SKIP EVENTSTUDY_twfe.dta (gia' presente)
+
+. 
+. *****************************************************************************
+> ***
+. ** (b) Sun-Abraham (2021) via eventstudyinteract (opzionale)
+. *****************************************************************************
+> ***
+. cap which eventstudyinteract
+
+. if _rc {
+.     di as text _n "[SKIP] eventstudyinteract non installato."
+
+[SKIP] eventstudyinteract non installato.
+.     di as text "       Per installare: net install eventstudyinteract, from(h
+> ttps://raw.githubusercontent.com/lsun20/EventStudyInteract/main/)"
+       Per installare: net install eventstudyinteract, from(https://raw.githubu
+> sercontent.com/lsun20/EventStudyInteract/main/)
+.     di as text "       S4-SA skippato: la verifica TWFE sopra e' sufficiente 
+> per la prova cross-software."
+       S4-SA skippato: la verifica TWFE sopra e' sufficiente per la prova cross
+> -software.
+. }
+
+. else {
+.     local out_sa "$TAB/EVENTSTUDY_sunab.dta"
+.     cap confirm file "`out_sa'"
+.     if _rc {
+.         di as text _n "=== Sun-Abraham ==="
+.         * eventstudyinteract richiede: entry_year (never_treated = .) gia' co
+> dificato
+.         * Qui entry_year = . per never-treated (gia' corretto nel dataset)
+.         eventstudyinteract y ieg_* idy_* [aw=n], ///
+>             cohort(entry_year) control_cohort(missing(entry_year)) ///
+>             absorb(pd dt pt) vce(cluster country_code)
+. 
+.         * Esporta come CSV (formato simile a TWFE)
+.         local csv_sa "$TAB/eventstudy_sunab_stata.csv"
+.         matrix b = e(b_iw)
+.         matrix V = e(V_iw)
+.         capture erase "`csv_sa'"
+.         file open fh using "`csv_sa'", write replace text
+.         file write fh "t,quale,coef,se,source" _n
+.         local nnames : colnames b
+.         local k = colsof(b)
+.         forvalues j = 1/`k' {
+  2.             local nm : word `j' of `nnames'
+  3.             local cf = b[1, `j']
+  4.             local se_ = sqrt(V[`j', `j'])
+  5.             * Estrai t e quale dal nome (ieg_m3 -> t=-3, green; idy_p2 -> 
+> t=2, dirty)
+.             local quale = substr("`nm'", 1, 1)
+  6.             local qlabel = cond("`quale'" == "g", "green", "dirty")
+  7.             local tpart = substr("`nm'", 5, .)
+  8.             local sign = substr("`tpart'", 1, 1)
+  9.             local tval = substr("`tpart'", 2, .)
+ 10.             if "`sign'" == "m" local t = -`tval'
+ 11.             else               local t = `tval'
+ 12.             file write fh "`t',`qlabel',`cf',`se_',reghdfe_sunab_stata_54"
+>  _n
+ 13.         }
+.         file close fh
+.         di "[OK] eventstudy_sunab_stata.csv"
+.     }
+.     else di "  SKIP EVENTSTUDY_sunab.dta (gia' presente)"
+. }
+
+. 
+. di as result _n "=== S4 COMPLETATO ==="
+
+=== S4 COMPLETATO ===
+
+. 
+end of do-file

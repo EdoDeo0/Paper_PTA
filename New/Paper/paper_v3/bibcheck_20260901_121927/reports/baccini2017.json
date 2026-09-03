@@ -1,0 +1,12 @@
+{
+  "key": "baccini2017",
+  "verdict": "WRONG",
+  "source_url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/F6EA7B2C1B9AE830340182166253C3D3/S002081831700011Xa.pdf/the-distributional-consequences-of-preferential-trade-liberalization-firm-level-evidence.pdf",
+  "issues": [
+    "journal: entry lists 'World Politics' but the paper was published in 'International Organization'",
+    "volume: entry lists 69 but the correct volume is 71",
+    "pages: entry lists 373--408 but the correct pages are 373--395"
+  ],
+  "corrected_entry": "@article{baccini2017,\n  author  = {Baccini, Leonardo and Pinto, Pablo M. and Weymouth, Stephen},\n  title   = {The distributional consequences of preferential trade liberalization: Firm-level evidence},\n  journal = {International Organization},\n  year    = {2017},\n  volume  = {71},\n  number  = {2},\n  pages   = {373--395},\n  doi     = {10.1017/S002081831700011X}\n}",
+  "notes": "DOI, authors, title, year, and number are correct, but journal, volume, and pages are wrong per Cambridge Core/JSTOR/EconPapers, which all list this as International Organization 71(2): 373-395."
+}

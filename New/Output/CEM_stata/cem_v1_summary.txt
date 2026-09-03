@@ -1,0 +1,81 @@
+-------------------------------------------------------------------------------
+      name:  summary
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ opened on:   2 Sep 2026, 18:58:35
+
+. list iso3c country_code treated weights, clean noobs
+
+    iso3c   countr~e   treated     weights  
+      AUT        315         0   .30075188  
+      BEL        301         0   .30075188  
+      BHR        102         0   4.2105263  
+      BRA        410         0   .42105263  
+      CAN        501         0   .30075188  
+      COL        413         0   .35087719  
+      CUB        416         0   .42105263  
+      CYP        108         0   .30075188  
+      CZE        352         0   1.4035088  
+      DEU        304         0   2.1052632  
+      DMA        414         0   .35087719  
+      DNK        302         0   .30075188  
+      ESP        312         0   .30075188  
+      FIN        318         0   .30075188  
+      FRA        305         0   .30075188  
+      GBR        303         0   .30075188  
+      GRC        310         0   .30075188  
+      GRD        421         0   .42105263  
+      GTM        423         0   4.2105263  
+      HND        426         0   2.1052632  
+      IRL        306         0   4.2105263  
+      IRN        113         0   1.4035088  
+      ISR        115         0   2.1052632  
+      ITA        307         0   .30075188  
+      JOR        117         0   1.4035088  
+      LBN        120         0   .35087719  
+      LCA        437         0   .35087719  
+      MDG        227         0   1.0526316  
+      MEX        429         0   .42105263  
+      NGA        236         0   1.4035088  
+      NLD        309         0   .30075188  
+      PAN        432         0   1.4035088  
+      PRT        311         0   .30075188  
+      SUR        441         0   .35087719  
+      SWE        330         0   .30075188  
+      UGA        250         0   1.0526316  
+      USA        502         0   2.1052632  
+      VCT        439         0   .35087719  
+      VEN        445         0   .42105263  
+      ZAF        244         0   1.4035088  
+      AUS        601         1           1  
+      BRN        105         1           1  
+      CHE        331         1           1  
+      CHL        412         1           1  
+      CRI        415         1           1  
+      HKG        110         1           1  
+      IDN        112         1           1  
+      IND        111         1           1  
+      ISL        322         1           1  
+      KOR        133         1           1  
+      LAO        119         1           1  
+      LKA        134         1           1  
+      MAC        121         1           1  
+      NZL        609         1           1  
+      PAK        127         1           1  
+      PER        434         1           1  
+      PHL        129         1           1  
+      SGP        132         1           1  
+      THA        136         1           1  
+
+. di as text _n "Paesi senza country_code (non nel dataset di trade):"
+
+Paesi senza country_code (non nel dataset di trade):
+
+. list iso3c if missing(country_code), clean noobs
+
+. log close summary
+      name:  summary
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ closed on:   2 Sep 2026, 18:58:35
+-------------------------------------------------------------------------------

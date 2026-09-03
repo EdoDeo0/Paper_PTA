@@ -1,0 +1,483 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\stata\57_wcb_ladder_fullpanel.do 
+
+. *****************************************************************************
+> ***
+. ****** 57 — WCB saturation ladder full panel (S7, 17b-pattern)            ***
+> ***
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisito: 19b deve aver girato con successo (OMNI_Ladder_FE_reghdfe.csv
+> )
+. *
+. * Produce i p-value bootstrap (WCB via FWL + boottest) per il coefficiente
+. * WB_EP_Depth:env_good nelle 4 strutture FE del saturation ladder (§3.2):
+. *   fpd+year  |  fpt+pd  |  fpt+fpd  |  fpd+pt
+. * Spec: ln_export ~ WB_EP_Depth + env_good + wb_x_env | FE
+. *       (blocco "Int", no controlli, WB) — la spec che produce il coefficient
+> e
+. *       "main claim null" citato in §3.2 con p 0.91/0.89/0.64/0.62 in R.
+. *
+. * Pattern (identico a 17b/48e): per ogni struttura FE in un passata separata:
+. *   1. Carica SOLO le variabili necessarie per quell'FE
+. *   2. reghdfe demean di y, WB_EP_Depth, env_good, wb_x_env
+. *   3. reg su residui (senza costante) + boottest su wb_x_env
+. * Una struttura per volta: ogni passata libera la RAM prima della successiva.
+. *
+. * Output:
+. *   New/Output/OLS/Tables_Stata/wcb_ladder_fullpanel.csv
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto — 2-4 ore di calcolo):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\57_w
+> cb_ladder_fullpanel.do"
+. 
+. clear all
+
+. set more off
+
+. global ROOT  "C:\Work\projects\Paper_PTA"
+
+. global DTA   "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compress
+> ed.dta"
+
+. global GREEN "$ROOT\New\Data\Classifications\green_codes_hs1996.csv"
+
+. global TAB   "$ROOT\New\Output\OLS\Tables_Stata"
+
+. global CSV   "$TAB\wcb_ladder_fullpanel.csv"
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which boottest
+
+. if _rc {
+.     di as error "boottest non installato."
+.     exit 1
+. }
+
+. 
+. cap mkdir "$ROOT\New\Output\OLS"
+
+. cap mkdir "$TAB"
+
+. 
+. *── Green list ──────────────────────────────────────────────────────────────
+> ───
+. import delimited "$GREEN", clear
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. destring hs6, replace
+hs6 already numeric; no replace
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_c128_000001.tmp saved as .dta
+    format
+
+. 
+. *── Intestazione CSV output ─────────────────────────────────────────────────
+> ────
+. capture erase "$CSV"
+
+. file open fh using "$CSV", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Stata\wcb_ladder_fullpan
+    > el.csv not found)
+
+. file write fh "fe,var,coef,se,pval_asy,p_boot,B,nobs,nclust,source" _n
+
+. file close fh
+
+. 
+. capture program drop write_wcb
+
+. program define write_wcb
+  1.     args fe var coef se pval p_boot B nobs nclust csv
+  2.     file open fh using "`csv'", write append text
+  3.     file write fh "`fe',`var',`coef',`se',`pval',`p_boot',`B',`nobs',`nclu
+> st',reghdfe_boottest_57" _n
+  4.     file close fh
+  5. end
+
+. 
+. *****************************************************************************
+> ***
+. ** Loop su 4 strutture FE: ogni iterazione carica il panel, demea, testa
+. *****************************************************************************
+> ***
+. local fe_n = 0
+
+. local fe_labels  fpd_year   fpt_pd   fpt_fpd   fpd_pt
+
+. 
+. foreach fe_label of local fe_labels {
+  2.     local fe_n = `fe_n' + 1
+  3.     if `fe_n' == 1 {
+  4.         local absorb_vars "fpd year"
+  5.         local load_vars   "ln_export WB_EP_Depth hs6 country_code year fpd
+> "
+  6.     }
+  7.     if `fe_n' == 2 {
+  8.         local absorb_vars "fpt pd"
+  9.         local load_vars   "ln_export WB_EP_Depth hs6 country_code year fpt
+>  pd"
+ 10.     }
+ 11.     if `fe_n' == 3 {
+ 12.         local absorb_vars "fpt fpd"
+ 13.         local load_vars   "ln_export WB_EP_Depth hs6 country_code year fpt
+>  fpd"
+ 14.     }
+ 15.     if `fe_n' == 4 {
+ 16.         local absorb_vars "fpd pt"
+ 17.         local load_vars   "ln_export WB_EP_Depth hs6 country_code year fpd
+>  pt"
+ 18.     }
+ 19. 
+.     local dm_file "$ROOT\New\Data\Collapsed\tmp_wcb_ladder_`fe_label'_demeane
+> d.dta"
+ 20.     local csv_fe  "$TAB\wcb_ladder_`fe_label'_done.txt"
+ 21. 
+.     cap confirm file "`csv_fe'"
+ 22.     if !_rc {
+ 23.         di as text "  SKIP `fe_label' (gia' completato)"
+ 24.         continue
+ 25.     }
+ 26. 
+.     di as text _n "########## PASSATA `fe_n'/4: `fe_label' [abs: `absorb_vars
+> '] ##########"
+ 27. 
+.     *── Carica e prepara ────────────────────────────────────────────────────
+> ────
+.     use `load_vars' using "$DTA", clear
+ 28.     gen byte hkmo = inlist(country_code, 110, 121)
+ 29.     keep if !hkmo
+ 30.     drop hkmo
+ 31.     merge m:1 hs6 using `green', keep(master match) nogen
+ 32.     replace env_good_new = 0 if missing(env_good_new)
+ 33.     drop hs6
+ 34.     gen double wb_x_env = WB_EP_Depth * env_good_new
+ 35.     count
+ 36.     di as text "Righe: " r(N)
+ 37. 
+.     *── Fase 1: demean delle 4 variabili ────────────────────────────────────
+> ────
+.     di as text "  Demeaning..."
+ 38.     foreach v in ln_export WB_EP_Depth env_good_new wb_x_env {
+ 39.         qui reghdfe `v', absorb(`absorb_vars') residuals(`v'_dm) tol(1e-8)
+>  compact
+ 40.     }
+ 41.     keep ln_export_dm WB_EP_Depth_dm env_good_new_dm wb_x_env_dm country_c
+> ode
+ 42.     save "`dm_file'", replace
+ 43.     di as text "  Dataset demeaned salvato."
+ 44. 
+.     *── Fase 2: reg OLS sui residui + boottest ──────────────────────────────
+> ────
+.     use "`dm_file'", clear
+ 45.     reg ln_export_dm WB_EP_Depth_dm env_good_new_dm wb_x_env_dm, ///
+>         cluster(country_code) nocons
+ 46.     local nobs   = e(N)
+ 47.     local nclust = e(N_clust)
+ 48. 
+.     foreach v in WB_EP_Depth env_good_new wb_x_env {
+ 49.         local coef_`v' = _b[`v'_dm]
+ 50.         local se_`v'   = _se[`v'_dm]
+ 51.         local t_`v'    = _b[`v'_dm] / _se[`v'_dm]
+ 52.         local p_`v'    = 2 * ttail(e(df_r), abs(`t_`v''))
+ 53.     }
+ 54.     di as text "  OLS wb_x_env: b=" `coef_wb_x_env' " p=" `p_wb_x_env'
+ 55. 
+.     di as text "  boottest wb_x_env_dm..."
+ 56.     boottest wb_x_env_dm, boottype(wild) reps(9999) seed(42) noci
+ 57.     local p_boot = r(p)
+ 58.     di as text "  p_boot = " `p_boot'
+ 59. 
+.     * Scrivi tutte e 4 le variabili (le 3 + l'interazione)
+.     write_wcb "`fe_label'" "WB_EP_Depth"   `coef_WB_EP_Depth'   `se_WB_EP_Dep
+> th'   `p_WB_EP_Depth'   . 9999 `nobs' `nclust' "$CSV"
+ 60.     write_wcb "`fe_label'" "env_good"      `coef_env_good_new'  `se_env_go
+> od_new'  `p_env_good_new'  . 9999 `nobs' `nclust' "$CSV"
+ 61.     write_wcb "`fe_label'" "wb_x_env"      `coef_wb_x_env'      `se_wb_x_e
+> nv'      `p_wb_x_env'      `p_boot' 9999 `nobs' `nclust' "$CSV"
+ 62. 
+.     * File sentinella: marca questa FE come completata
+.     file open fh using "`csv_fe'", write replace text
+ 63.     file write fh "`fe_label' completato. p_boot wb_x_env = `p_boot'" _n
+ 64.     file close fh
+ 65. 
+.     capture erase "`dm_file'"
+ 66.     di as text "  [OK] `fe_label' -> CSV"
+ 67. }
+
+########## PASSATA 1/4: fpd_year [abs: fpd year] ##########
+(3,464,093 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+(40,499,383 real changes made)
+  45,781,211
+Righe: 45781211
+  Demeaning...
+(file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpd_year_dem
+    > eaned.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpd_year_dem
+    > eaned.dta saved
+  Dataset demeaned salvato.
+note: env_good_new_dm omitted because of collinearity.
+
+Linear regression                               Number of obs     =   29477365
+                                                F(2, 230)         =       2.18
+                                                Prob > F          =     0.1150
+                                                R-squared         =     0.0000
+                                                Root MSE          =     1.1443
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+WB_EP_Dept~m |   .0027005   .0025473     1.06   0.290    -.0023186    .0077196
+env_good_n~m |          0  (omitted)
+ wb_x_env_dm |   .0031828   .0020523     1.55   0.122    -.0008609    .0072264
+------------------------------------------------------------------------------
+  OLS wb_x_env: b=.00318277 p=.12230951
+  boottest wb_x_env_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_x_env_dm
+
+                          t(230) =     1.5509
+                        Prob>|t| =     0.1078
+  p_boot = .10781078
+(file
+    C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Stata\wcb_ladder_fpd_yea
+    > r_done.txt not found)
+  [OK] fpd_year -> CSV
+
+########## PASSATA 2/4: fpt_pd [abs: fpt pd] ##########
+(3,464,093 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+(40,499,383 real changes made)
+  45,781,211
+Righe: 45781211
+  Demeaning...
+(file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpt_pd_demea
+    > ned.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpt_pd_demea
+    > ned.dta saved
+  Dataset demeaned salvato.
+note: env_good_new_dm omitted because of collinearity.
+
+Linear regression                               Number of obs     =   35607036
+                                                F(2, 231)         =       2.12
+                                                Prob > F          =     0.1225
+                                                R-squared         =     0.0000
+                                                Root MSE          =     1.5453
+
+                         (Std. err. adjusted for 232 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+WB_EP_Dept~m |   .0049869   .0025796     1.93   0.054    -.0000956    .0100694
+env_good_n~m |          0  (omitted)
+ wb_x_env_dm |  -.0029409   .0016771    -1.75   0.081    -.0062452    .0003633
+------------------------------------------------------------------------------
+  OLS wb_x_env: b=-.00294095 p=.08081883
+  boottest wb_x_env_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_x_env_dm
+
+                          t(231) =    -1.7536
+                        Prob>|t| =     0.2056
+  p_boot = .20562056
+(file
+    C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Stata\wcb_ladder_fpt_pd_
+    > done.txt not found)
+  [OK] fpt_pd -> CSV
+
+########## PASSATA 3/4: fpt_fpd [abs: fpt fpd] ##########
+(3,464,093 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+(40,499,383 real changes made)
+  45,781,211
+Righe: 45781211
+  Demeaning...
+(file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpt_fpd_deme
+    > aned.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpt_fpd_deme
+    > aned.dta saved
+  Dataset demeaned salvato.
+note: env_good_new_dm omitted because of collinearity.
+
+Linear regression                               Number of obs     =   22927402
+                                                F(2, 230)         =       1.94
+                                                Prob > F          =     0.1466
+                                                R-squared         =     0.0000
+                                                Root MSE          =      .9437
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+WB_EP_Dept~m |   .0004537   .0030613     0.15   0.882     -.005578    .0064855
+env_good_n~m |          0  (omitted)
+ wb_x_env_dm |   -.002713   .0014708    -1.84   0.066     -.005611    .0001851
+------------------------------------------------------------------------------
+  OLS wb_x_env: b=-.00271297 p=.06639728
+  boottest wb_x_env_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_x_env_dm
+
+                          t(230) =    -1.8445
+                        Prob>|t| =     0.1123
+  p_boot = .11231123
+(file
+    C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Stata\wcb_ladder_fpt_fpd
+    > _done.txt not found)
+  [OK] fpt_fpd -> CSV
+
+########## PASSATA 4/4: fpd_pt [abs: fpd pt] ##########
+(3,464,093 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+(40,499,383 real changes made)
+  45,781,211
+Righe: 45781211
+  Demeaning...
+(file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpd_pt_demea
+    > ned.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\tmp_wcb_ladder_fpd_pt_demea
+    > ned.dta saved
+  Dataset demeaned salvato.
+note: env_good_new_dm omitted because of collinearity.
+
+Linear regression                               Number of obs     =   29473145
+                                                F(2, 230)         =       0.87
+                                                Prob > F          =     0.4214
+                                                R-squared         =     0.0000
+                                                Root MSE          =     1.1366
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+WB_EP_Dept~m |   .0011278   .0022771     0.50   0.621    -.0033589    .0056144
+env_good_n~m |          0  (omitted)
+ wb_x_env_dm |  -.0019895   .0015387    -1.29   0.197    -.0050213    .0010423
+------------------------------------------------------------------------------
+  OLS wb_x_env: b=-.00198948 p=.19732724
+  boottest wb_x_env_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_x_env_dm
+
+                          t(230) =    -1.2929
+                        Prob>|t| =     0.1164
+  p_boot = .11641164
+(file
+    C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Stata\wcb_ladder_fpd_pt_
+    > done.txt not found)
+  [OK] fpd_pt -> CSV
+
+. 
+. di as result _n "=== S7 COMPLETATO. Output: $CSV ==="
+
+=== S7 COMPLETATO. Output: C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Sta
+> ta\wcb_ladder_fullpanel.csv ===
+
+. di as text "Confronto con R: p attesi = 0.91 / 0.89 / 0.64 / 0.62 (FE in ordi
+> ne crescente)"
+Confronto con R: p attesi = 0.91 / 0.89 / 0.64 / 0.62 (FE in ordine crescente)
+
+. 
+end of do-file

@@ -31,10 +31,7 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto - ~30-45 min):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\61_secondary_wcb_collapsed.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
 global COLL "$ROOT\New\Data\Collapsed"
 global CO2  "$ROOT\New\Data\Classifications\co2_intensity_hs6.csv"
@@ -49,6 +46,10 @@ if _rc {
     exit 1
 }
 cap mkdir "$TAB"
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\61_secondary_wcb_collapsed.log", replace text
 
 global CSV "$TAB\secondary_wcb_stata.csv"
 capture erase "$CSV"
@@ -246,3 +247,5 @@ preserve
 restore
 
 di as result _n "=== 61 FATTO. Output: $CSV ==="
+
+cap log close _all

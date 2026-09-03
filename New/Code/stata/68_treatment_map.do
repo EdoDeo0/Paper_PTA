@@ -24,10 +24,7 @@
 * ESECUZIONE (da PowerShell, root progetto - pochi secondi):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\68_treatment_map.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus_inclHKMO.dta"
 global DEP  "$ROOT\New\Data\TotalDepth\wb_totaldepth_country_year.csv"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"

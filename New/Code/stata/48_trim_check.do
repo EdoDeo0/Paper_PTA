@@ -12,13 +12,7 @@
 **   stata-mp /e do "New/Code/stata/48_trim_check.do"
 ** o dal menu File > Do in Stata.
 
-clear all
-set more off
-set varabbrev off
-
-** Cartella progetto = working directory al momento del lancio.
-** Se si lancia da fuori, impostare qui il percorso assoluto:
-* cd "C:/Work/projects/Paper_PTA"
+do "New/Code/stata/_root.do"
 
 local out_dir "New/Output/TripleDiff/Tables"
 local in_dir  "New/Data/Collapsed"

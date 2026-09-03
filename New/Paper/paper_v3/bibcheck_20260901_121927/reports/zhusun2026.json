@@ -1,0 +1,8 @@
+{
+  "key": "zhusun2026",
+  "verdict": "VERIFIED",
+  "source_url": "https://onlinelibrary.wiley.com/doi/10.1111/cwe.70005",
+  "issues": [],
+  "corrected_entry": null,
+  "notes": "Title (\"Greener Trade Agreements and Green Transformation\"), authors, journal, year, volume 34, and pages 41-74 all match Crossref/Wiley metadata for 10.1111/cwe.70005; bib omits the issue number (1) but that is not an error, just an omitted optional field."
+}

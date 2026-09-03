@@ -1,0 +1,90 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\19b_assemble_only.do 
+
+. * Script monouso: assembla i 96 OLS_*.dta gia' presenti in un unico CSV.
+. * Eseguire SOLO se 19b_saturation_ladder_fullpanel.do ha fallito all'assembla
+> ggio
+. * ma tutti i 96 .dta sono gia' su disco.
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. global TAB "C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Stata"
+
+. 
+. di as text "=== Assemblaggio OLS_*.dta -> OLS_Ladder_FE_reghdfe.csv ==="
+=== Assemblaggio OLS_*.dta -> OLS_Ladder_FE_reghdfe.csv ===
+
+. clear
+
+. local files : dir "$TAB" files "OLS_*.dta"
+
+. local n = 0
+
+. local first = 1
+
+. foreach f of local files {
+  2.     if `first' {
+  3.         use "$TAB/`f'", clear
+  4.         local first = 0
+  5.     }
+  6.     else {
+  7.         append using "$TAB/`f'"
+  8.     }
+  9.     local n = `n' + 1
+ 10. }
+(variable outcome was str9, now str13 to accommodate using data's values)
+(variable outcome was str13, now str15 to accommodate using data's values)
+(variable fe was str6, now str8 to accommodate using data's values)
+
+. di as text "File .dta assemblati: `n'"
+File .dta assemblati: 96
+
+. di as text "Righe totali: " _N
+Righe totali: 384
+
+. 
+. * Colonna `source` richiesta dalla regola M8 (MISTAKES.md): un CSV full-panel
+. * senza provenienza dichiarata non e' citabile. I 96 .dta prodotti dal run de
+> l
+. * 2026-08-22 non la portano (19b non la passava a regsave), quindi la si aggi
+> unge
+. * qui in assemblaggio. Rieseguire questo script per allineare il CSV esistent
+> e.
+. gen str24 source = "reghdfe_stata_19b"
+
+. 
+. export delimited "$TAB\OLS_Ladder_FE_reghdfe.csv", replace
+file C:\Work\projects\Paper_PTA\New\Output\OLS\Tables_Stata\OLS_Ladder_FE_reghd
+> fe.csv saved
+
+. di as result "[OK] OLS_Ladder_FE_reghdfe.csv — " _N " righe (con colonna sour
+> ce)"
+[OK] OLS_Ladder_FE_reghdfe.csv — 384 righe (con colonna source)
+
+. 
+end of do-file

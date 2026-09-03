@@ -1,0 +1,10 @@
+{
+  "key": "mattoo2022",
+  "verdict": "WRONG",
+  "source_url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/caje.12611",
+  "issues": [
+    "number: missing → should be {3}"
+  ],
+  "corrected_entry": "@article{mattoo2022,\n  author  = {Mattoo, Aaditya and Mulabdic, Alen and Ruta, Michele},\n  title   = {Trade creation and trade diversion in deep agreements},\n  journal = {Canadian Journal of Economics},\n  year    = {2022},\n  volume  = {55},\n  number  = {3},\n  pages   = {1598--1637},\n  doi     = {10.1111/caje.12611}\n}",
+  "notes": "Missing issue number; the paper appeared in volume 55, issue 3 (August 2022) per the Wiley page and IDEAS/RePEc listing."
+}

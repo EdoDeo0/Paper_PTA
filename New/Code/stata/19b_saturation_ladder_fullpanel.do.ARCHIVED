@@ -1,0 +1,287 @@
+********************************************************************************
+****** 19b — Saturation ladder, FULL PANEL (Stata, reghdfe)               ******
+********************************************************************************
+* Author: Edoardo Vitella
+* NON ANCORA ESEGUITO - scritto su richiesta esplicita come alternativa a
+* 19_saturation_ladder.R, che su questa macchina crasha ripetutamente
+* l'allocatore R ("recursive gc invocation") sulle strutture FE ad alta
+* cardinalita' (fpt+pd, fpt+fpd, fpd+pt), anche forzando nthreads=1.
+*
+* FIX (2026-08-21 — ristrutturato in 3 passate separate):
+*   Il problema era il caricamento simultaneo di tutti e 3 gli outcome
+*   (ln_export, exp_qua, uv_exp) + 12 variabili comuni + variabili generate
+*   = ~20 colonne * 45M righe ~ 7 GB -> reghdfe crashava senza output.
+*   Soluzione: 3 passate distinte (A/B/C), una per outcome, ciascuna carica
+*   solo le variabili necessarie (~13 col, stesso footprint di 17.do).
+*   Il loop di stima e' fattorizzato in un program Stata (run_ladder_pass)
+*   per evitare duplicazione; ogni passata carica i dati, poi chiama il program.
+*
+* SPECIFICA (replica 19_saturation_ladder.R): per ciascuna delle 4 strutture
+* FE (fpd+year, fpt+pd, fpt+fpd, fpd+pt), 4 blocchi (WB/TREND x con/senza
+* interazione con env_good) di 6 formule ciascuno (3 outcome: ln_export,
+* ln_export_qua, ln_export_value; con/senza controlli tariffs+ln_hhi_baci).
+* env_good RICALCOLATO dalla lista green HS1996 (05), come in 17/18 - non la
+* colonna stantia del .dta originale. NON include dirty_p (la ladder R non
+* la usa: solo l'interazione con env_good).
+*
+* Totale: 4 FE x 4 blocchi x 6 formule = 96 stime, ciascuna cachata come .dta
+* separato (skip se gia' presente) - rilanciabile senza rifare nulla.
+*
+* ESECUZIONE BATCH (da PowerShell, non Git Bash):
+*   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\19b_saturation_ladder_fullpanel.do"
+* Output: New/Output/OLS/Tables_Stata/OLS_<treat>_<inter>_<fe>_<outcome>_<ctrl>.dta (96)
+*         New/Output/OLS/Tables_Stata/OLS_Ladder_FE_reghdfe.csv
+
+do "New/Code/stata/_root.do"
+global TAB  "$ROOT\New\Output\OLS\Tables_Stata"
+
+cap which reghdfe
+if _rc ssc install reghdfe
+cap which ftools
+if _rc ssc install ftools
+cap which regsave
+if _rc ssc install regsave
+
+cap mkdir "$ROOT\New\Output\OLS"
+cap mkdir "$TAB"
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\19b_saturation_ladder_fullpanel.log", replace text
+
+*── 1. Lista green HS1996 (tempfile: persiste per tutta la sessione .do) ────────
+import delimited "$ROOT\New\Data\Classifications\green_codes_hs1996.csv", clear
+keep hs6_final
+rename hs6_final hs6
+* hs6_final e' una stringa "010011" (sprintf %06d in R): destring -> numerico
+destring hs6, replace
+duplicates drop hs6, force
+gen byte env_good_new = 1
+tempfile green
+save `green'
+
+*── 2. Program: loop di stima su qualunque outcome gia' in memoria ──────────────
+* Assume in memoria: outcome_var, env_good_new, wb_x_env, tr_x_env,
+*                    tariffs, ln_hhi_baci, pd, fpd, fpt, pt, year, country_code
+capture program drop run_ladder_pass
+program define run_ladder_pass
+    args outcome_var outcome_lbl
+
+    local fe_labels  fpd_year   fpt_pd   fpt_fpd   fpd_pt
+    local fe_n = 1
+    foreach fe_label of local fe_labels {
+        if `fe_n' == 1 local absorb_vars "fpd year"
+        if `fe_n' == 2 local absorb_vars "fpt pd"
+        if `fe_n' == 3 local absorb_vars "fpt fpd"
+        if `fe_n' == 4 local absorb_vars "fpd pt"
+        di as text _n "=== [`outcome_lbl'] FE: `absorb_vars' (`fe_label') ==="
+        foreach treat in WB TREND {
+            local xvar   = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+            local xinter = cond("`treat'" == "WB", "wb_x_env",    "tr_x_env")
+            foreach inter in NI Int {
+                foreach ctrl in 0 1 {
+                    local tag "`treat'_`inter'_`fe_label'_`outcome_lbl'_ctrl`ctrl'"
+                    local out_file "$TAB\OLS_`tag'.dta"
+                    cap confirm file "`out_file'"
+                    if _rc {
+                        local ctrl_vars ""
+                        if `ctrl' == 1 local ctrl_vars "tariffs ln_hhi_baci"
+                        local rhs "`xvar'"
+                        if "`inter'" == "Int" local rhs "`xvar' env_good_new `xinter'"
+                        di as text "  [`tag'] `outcome_var' ~ `rhs' `ctrl_vars' | `absorb_vars'"
+                        cap noisily reghdfe `outcome_var' `rhs' `ctrl_vars', ///
+                            absorb(`absorb_vars') vce(cluster country_code) compact
+                        if !_rc {
+                            regsave using "`out_file'", tstat pval ci replace ///
+                                addlabel(treat, `treat', inter, `inter', ///
+                                         fe, `fe_label', outcome, `outcome_lbl', ctrl, `ctrl', source, reghdfe_stata_19b)
+                        }
+                        else di as error "  [FALLITO] `tag'"
+                    }
+                    else di as text "  SKIP `tag' (gia' presente)"
+                }
+            }
+        }
+        local fe_n = `fe_n' + 1
+    }
+end
+
+*── 3. PASSATA A: ln_export ─────────────────────────────────────────────────────
+di as text _n "########## PASSATA A: ln_export ##########"
+use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year ///
+    pd fpd fpt pt tariffs ln_hhi_baci ///
+    using "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed.dta", clear
+
+gen byte hkmo = inlist(country_code, 110, 121)
+keep if !hkmo
+drop hkmo
+
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green A] righe appaiate: " r(N)
+drop _merge
+replace env_good_new = 0 if missing(env_good_new)
+drop hs6
+
+gen double wb_x_env = WB_EP_Depth    * env_good_new
+gen double tr_x_env = TREND_EP_Count * env_good_new
+count
+di as text "Passata A: " r(N) " righe (attese ~44.8M)"
+
+run_ladder_pass ln_export ln_export
+
+*── 4. PASSATA B: ln_export_qua (da exp_qua) ────────────────────────────────────
+* Ridefinisce il program: use..clear su 45M righe puo' dropparlo dalla memoria
+capture program drop run_ladder_pass
+program define run_ladder_pass
+    args outcome_var outcome_lbl
+    local fe_labels  fpd_year   fpt_pd   fpt_fpd   fpd_pt
+    local fe_n = 1
+    foreach fe_label of local fe_labels {
+        if `fe_n' == 1 local absorb_vars "fpd year"
+        if `fe_n' == 2 local absorb_vars "fpt pd"
+        if `fe_n' == 3 local absorb_vars "fpt fpd"
+        if `fe_n' == 4 local absorb_vars "fpd pt"
+        di as text _n "=== [`outcome_lbl'] FE: `absorb_vars' (`fe_label') ==="
+        foreach treat in WB TREND {
+            local xvar   = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+            local xinter = cond("`treat'" == "WB", "wb_x_env",    "tr_x_env")
+            foreach inter in NI Int {
+                foreach ctrl in 0 1 {
+                    local tag "`treat'_`inter'_`fe_label'_`outcome_lbl'_ctrl`ctrl'"
+                    local out_file "$TAB\OLS_`tag'.dta"
+                    cap confirm file "`out_file'"
+                    if _rc {
+                        local ctrl_vars ""
+                        if `ctrl' == 1 local ctrl_vars "tariffs ln_hhi_baci"
+                        local rhs "`xvar'"
+                        if "`inter'" == "Int" local rhs "`xvar' env_good_new `xinter'"
+                        di as text "  [`tag'] `outcome_var' ~ `rhs' `ctrl_vars' | `absorb_vars'"
+                        cap noisily reghdfe `outcome_var' `rhs' `ctrl_vars', ///
+                            absorb(`absorb_vars') vce(cluster country_code) compact
+                        if !_rc {
+                            regsave using "`out_file'", tstat pval ci replace ///
+                                addlabel(treat, `treat', inter, `inter', ///
+                                         fe, `fe_label', outcome, `outcome_lbl', ctrl, `ctrl', source, reghdfe_stata_19b)
+                        }
+                        else di as error "  [FALLITO] `tag'"
+                    }
+                    else di as text "  SKIP `tag' (gia' presente)"
+                }
+            }
+        }
+        local fe_n = `fe_n' + 1
+    }
+end
+di as text _n "########## PASSATA B: ln_export_qua ##########"
+use exp_qua WB_EP_Depth TREND_EP_Count hs6 country_code year ///
+    pd fpd fpt pt tariffs ln_hhi_baci ///
+    using "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed.dta", clear
+
+gen byte hkmo = inlist(country_code, 110, 121)
+keep if !hkmo
+drop hkmo
+
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green B] righe appaiate: " r(N)
+drop _merge
+replace env_good_new = 0 if missing(env_good_new)
+drop hs6
+
+gen double ln_export_qua = ln(exp_qua)
+drop exp_qua
+
+gen double wb_x_env = WB_EP_Depth    * env_good_new
+gen double tr_x_env = TREND_EP_Count * env_good_new
+count
+di as text "Passata B: " r(N) " righe"
+
+run_ladder_pass ln_export_qua ln_export_qua
+
+*── 5. PASSATA C: ln_export_value (da uv_exp) ───────────────────────────────────
+capture program drop run_ladder_pass
+program define run_ladder_pass
+    args outcome_var outcome_lbl
+    local fe_labels  fpd_year   fpt_pd   fpt_fpd   fpd_pt
+    local fe_n = 1
+    foreach fe_label of local fe_labels {
+        if `fe_n' == 1 local absorb_vars "fpd year"
+        if `fe_n' == 2 local absorb_vars "fpt pd"
+        if `fe_n' == 3 local absorb_vars "fpt fpd"
+        if `fe_n' == 4 local absorb_vars "fpd pt"
+        di as text _n "=== [`outcome_lbl'] FE: `absorb_vars' (`fe_label') ==="
+        foreach treat in WB TREND {
+            local xvar   = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+            local xinter = cond("`treat'" == "WB", "wb_x_env",    "tr_x_env")
+            foreach inter in NI Int {
+                foreach ctrl in 0 1 {
+                    local tag "`treat'_`inter'_`fe_label'_`outcome_lbl'_ctrl`ctrl'"
+                    local out_file "$TAB\OLS_`tag'.dta"
+                    cap confirm file "`out_file'"
+                    if _rc {
+                        local ctrl_vars ""
+                        if `ctrl' == 1 local ctrl_vars "tariffs ln_hhi_baci"
+                        local rhs "`xvar'"
+                        if "`inter'" == "Int" local rhs "`xvar' env_good_new `xinter'"
+                        di as text "  [`tag'] `outcome_var' ~ `rhs' `ctrl_vars' | `absorb_vars'"
+                        cap noisily reghdfe `outcome_var' `rhs' `ctrl_vars', ///
+                            absorb(`absorb_vars') vce(cluster country_code) compact
+                        if !_rc {
+                            regsave using "`out_file'", tstat pval ci replace ///
+                                addlabel(treat, `treat', inter, `inter', ///
+                                         fe, `fe_label', outcome, `outcome_lbl', ctrl, `ctrl', source, reghdfe_stata_19b)
+                        }
+                        else di as error "  [FALLITO] `tag'"
+                    }
+                    else di as text "  SKIP `tag' (gia' presente)"
+                }
+            }
+        }
+        local fe_n = `fe_n' + 1
+    }
+end
+di as text _n "########## PASSATA C: ln_export_value ##########"
+use uv_exp WB_EP_Depth TREND_EP_Count hs6 country_code year ///
+    pd fpd fpt pt tariffs ln_hhi_baci ///
+    using "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed.dta", clear
+
+gen byte hkmo = inlist(country_code, 110, 121)
+keep if !hkmo
+drop hkmo
+
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green C] righe appaiate: " r(N)
+drop _merge
+replace env_good_new = 0 if missing(env_good_new)
+drop hs6
+
+gen double ln_export_value = ln(uv_exp)
+drop uv_exp
+
+gen double wb_x_env = WB_EP_Depth    * env_good_new
+gen double tr_x_env = TREND_EP_Count * env_good_new
+count
+di as text "Passata C: " r(N) " righe"
+
+run_ladder_pass ln_export_value ln_export_value
+
+*── 6. Assemblaggio tabella finale ──────────────────────────────────────────────
+di as text _n "########## ASSEMBLAGGIO FINALE ##########"
+clear
+local files : dir "$TAB" files "OLS_*.dta"
+local first = 1
+foreach f of local files {
+    if `first' {
+        use "$TAB/`f'", clear
+        local first = 0
+    }
+    else {
+        append using "$TAB/`f'"
+    }
+}
+export delimited "$TAB\OLS_Ladder_FE_reghdfe.csv", replace
+di as result "[OK] OLS_Ladder_FE_reghdfe.csv — " _N " righe (attese: 96 modelli x coeff stimati)"
+
+cap log close _all

@@ -22,24 +22,15 @@
 * ESECUZIONE BATCH:
 *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\19c_saturation_ladder_fullpanel.do"
 
-clear all
-set more off
-set varabbrev off
-
-* --- Percorsi radice ---------------------------------------------------------
-if c(os) == "Windows" {
-    global ROOT "C:\Work\projects\Paper_PTA"
-}
-if c(os) == "MacOSX" {
-    global ROOT "~/Documents/work/projects/Paper_PTA"
-}
-if c(os) == "Unix" {
-    global ROOT "~/work/projects/Paper_PTA"
-}
+do "New/Code/stata/_root.do"
 
 * --- Variante campione/depth -------------------------------------------------
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+local env_sample : env PTA_SAMPLE
+local env_depth  : env PTA_DEPTH
+if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+else                    global PTA_SAMPLE "excl"
+if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+else                    global PTA_DEPTH  "totaldepth"
 
 if !inlist("$PTA_SAMPLE", "excl", "incl") {
     di as error "PTA_SAMPLE deve essere excl o incl, trovato: $PTA_SAMPLE"
@@ -60,6 +51,10 @@ if !inlist("$PTA_DEPTH", "totaldepth", "desta") {
 }
 global OUTSFX "$SFX"
 di "[campione] $PTA_SAMPLE | suffisso: '$OUTSFX'"
+
+cap mkdir "$ROOT/New/Output/Diagnostics/stata_logs"
+cap log close _all
+log using "$ROOT/New/Output/Diagnostics/stata_logs/19c_saturation_ladder_fullpanel$OUTSFX.log", replace text
 
 * --- Dipendenze --------------------------------------------------------------
 cap which reghdfe
@@ -123,7 +118,7 @@ program define run_ladder_pass
                         if !_rc {
                             regsave using "`out_file'", tstat pval ci replace ///
                                 addlabel(treat, `treat', inter, `inter', ///
-                                         fe, `fe_label', outcome, `outcome_lbl', ctrl, `ctrl')
+                                         fe, `fe_label', outcome, `outcome_lbl', ctrl, `ctrl', source, reghdfe_stata_19c)
                         }
                         else di as error "  [FALLITO] `tag'"
                     }
@@ -147,7 +142,10 @@ gen byte hkmo = inlist(country_code, 110, 121)
 keep if $HKMOEXPR
 drop hkmo
 
-merge m:1 hs6 using `green', keep(master match) nogen
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green A] righe appaiate: " r(N)
+drop _merge
 replace env_good_new = 0 if missing(env_good_new)
 drop hs6
 
@@ -170,7 +168,10 @@ gen byte hkmo = inlist(country_code, 110, 121)
 keep if $HKMOEXPR
 drop hkmo
 
-merge m:1 hs6 using `green', keep(master match) nogen
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green B] righe appaiate: " r(N)
+drop _merge
 replace env_good_new = 0 if missing(env_good_new)
 drop hs6
 
@@ -196,7 +197,10 @@ gen byte hkmo = inlist(country_code, 110, 121)
 keep if $HKMOEXPR
 drop hkmo
 
-merge m:1 hs6 using `green', keep(master match) nogen
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green C] righe appaiate: " r(N)
+drop _merge
 replace env_good_new = 0 if missing(env_good_new)
 drop hs6
 
@@ -247,3 +251,5 @@ if !`first' {
 else {
     di as error "Nessun risultato trovato"
 }
+
+cap log close _all

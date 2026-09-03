@@ -1,0 +1,8 @@
+{
+  "key": "eckel2010",
+  "verdict": "VERIFIED",
+  "source_url": "https://academic.oup.com/restud/article-abstract/77/1/188/1544513",
+  "issues": [],
+  "corrected_entry": null,
+  "notes": "All fields confirmed against Oxford Academic: authors, title, volume (77), number (1), pages (188--217), year (2010), and DOI match; the official journal name is 'The Review of Economic Studies' but dropping 'The' is standard BibTeX convention and not an error."
+}

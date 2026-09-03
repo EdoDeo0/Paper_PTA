@@ -1,0 +1,10 @@
+{
+  "key": "yue2024",
+  "verdict": "WRONG",
+  "source_url": "https://link.springer.com/article/10.1007/s10668-024-05852-3",
+  "issues": [
+    "author: bib has \"Yue, Weixiang and Lin, Qiang\" but Crossref/Springer metadata for this DOI gives \"Yue, Wen and Lin, Qingxia\""
+  ],
+  "corrected_entry": "@article{yue2024,\n  author  = {Yue, Wen and Lin, Qingxia},\n  title   = {{PTA} environmental provisions and the export of energy-consuming products: Evidence from {China}},\n  journal = {Environment, Development and Sustainability},\n  year    = {2024},\n  doi     = {10.1007/s10668-024-05852-3}\n}",
+  "notes": "Title, journal, year, and DOI all check out via Crossref, but both author first names are wrong (Weixiang/Qiang instead of Wen/Qingxia)."
+}

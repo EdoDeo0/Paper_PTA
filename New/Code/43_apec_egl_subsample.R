@@ -40,7 +40,7 @@ DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 OUT_TAB    <- here("New/Output/TripleDiff/Tables")
-OUT_MD     <- here("New/Output/Diagnostics/43_apec_egl_subsample.md")
+OUT_MD     <- out_path(here("New/Output/Diagnostics/43_apec_egl_subsample.md"))
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 stopifnot("Eseguire prima l'estrazione dei codici APEC EGL" = file.exists(APEC_TXT))
 

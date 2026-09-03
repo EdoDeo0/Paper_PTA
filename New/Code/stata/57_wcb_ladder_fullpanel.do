@@ -23,10 +23,11 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto — 2-4 ore di calcolo):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\57_wcb_ladder_fullpanel.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT  "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\57_wcb_ladder_fullpanel.log", replace text
 global DTA   "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed.dta"
 global GREEN "$ROOT\New\Data\Classifications\green_codes_hs1996.csv"
 global TAB   "$ROOT\New\Output\OLS\Tables_Stata"
@@ -110,12 +111,21 @@ foreach fe_label of local fe_labels {
     gen byte hkmo = inlist(country_code, 110, 121)
     keep if !hkmo
     drop hkmo
-    merge m:1 hs6 using `green', keep(master match) nogen
+    merge m:1 hs6 using `green', keep(master match)
+    qui count if _merge == 3
+    di as text "  [merge green] righe appaiate: " r(N)
+    drop _merge
     replace env_good_new = 0 if missing(env_good_new)
     drop hs6
     gen double wb_x_env = WB_EP_Depth * env_good_new
     count
     di as text "Righe: " r(N)
+
+    *── Fase 0: reghdfe diretto (per verifica FWL) ──────────────────────────────
+    qui reghdfe ln_export WB_EP_Depth env_good_new wb_x_env, absorb(`absorb_vars') tol(1e-8) compact
+    local b_direct_WB_EP_Depth  = _b[WB_EP_Depth]
+    local b_direct_env_good_new = _b[env_good_new]
+    local b_direct_wb_x_env     = _b[wb_x_env]
 
     *── Fase 1: demean delle 4 variabili ────────────────────────────────────────
     di as text "  Demeaning..."
@@ -132,6 +142,11 @@ foreach fe_label of local fe_labels {
         cluster(country_code) nocons
     local nobs   = e(N)
     local nclust = e(N_clust)
+
+    * Verifica manuale: i coefficienti FWL devono coincidere con il reghdfe diretto
+    assert abs(_b[WB_EP_Depth_dm] - `b_direct_WB_EP_Depth') < 1e-6
+    assert abs(_b[env_good_new_dm] - `b_direct_env_good_new') < 1e-6
+    assert abs(_b[wb_x_env_dm] - `b_direct_wb_x_env') < 1e-6
 
     foreach v in WB_EP_Depth env_good_new wb_x_env {
         local coef_`v' = _b[`v'_dm]
@@ -161,6 +176,7 @@ foreach fe_label of local fe_labels {
 }
 
 di as result _n "=== S7 COMPLETATO. Output: $CSV ==="
+cap log close _all
 * NB (audit 2026-08-23, W4): NON esiste un artefatto R gemello di questa spec.
 * I valori "p attesi 0.91/0.89/0.64/0.62" citati nelle prime stesure vengono da
 * una nota di session-log e non sono riscontrabili in nessun file su disco; in

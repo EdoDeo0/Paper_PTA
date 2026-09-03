@@ -1,0 +1,10 @@
+{
+  "key": "gutsch2024",
+  "verdict": "WRONG",
+  "source_url": "https://www.emerald.com/sampj/article/16/7/1/1267625/Effects-of-environmental-provisions-in",
+  "issues": [
+    "year: 2024 → should be 2025 (SAMPJ volume 15 = 2024, volume 16 = 2025; the article is in volume 16 issue 7)"
+  ],
+  "corrected_entry": "@article{gutsch2024,\n  author    = {Gutsch, Michelle and Mai, Johanna and Ukhova, Nelli and Dijkstra-Silva, Samanthi},\n  title     = {Effects of environmental provisions in international trade agreements on businesses and economies -- a systematic review},\n  journal   = {Sustainability Accounting, Management and Policy Journal},\n  year      = {2025},\n  volume    = {16},\n  number    = {7},\n  pages     = {1--27},\n  doi       = {10.1108/SAMPJ-02-2024-0122}\n}",
+  "notes": "Volume 15 is the 2024 volume and volume 16 is the 2025 volume of SAMPJ; the entry cites volume 16 issue 7 but lists year as 2024, which is inconsistent."
+}

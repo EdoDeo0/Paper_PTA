@@ -28,10 +28,8 @@
 * ESECUZIONE BATCH (da PowerShell, non Git Bash: il flag /e viene manglato):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\03_build_dataset_customs_merge.do"
 
-clear all
-set more off
+do "New/Code/stata/_root.do"
 
-global ROOT "C:\Work\projects\Paper_PTA"
 * percorso dei dati doganali grezzi - FUORI dal repository, locale a questa
 * macchina; su un'altra macchina va aggiornato qui (unico punto hardcoded
 * rimasto, per necessita': il file non e' portabile ne' versionabile)
@@ -41,16 +39,17 @@ use "$RAW_CUSTOMS\final_dataset_pta.dta", clear
 
 * --- Merge indici EP (da 02) -------------------------------------------
 merge m:1 country_code year using "$ROOT\Data\Merged\Merged_TREND_WB_Indices_Only.dta"
-* Not matched atteso: non tutti i country-year hanno un PTA attivo con la
-* Cina, quindi e' corretto che gran parte del master non trovi match.
+tab _merge
+count if _merge == 2
+assert r(N) == 0
 drop _merge
 
 * --- Merge lista green goods --------------------------------------------
 merge m:1 hs6 using "$ROOT\Data\Env_Codes_HS.dta"
-* Not matched da master = prodotti non classificati come green (attesi in
-* maggioranza); not matched da using = codici green non presenti nel
-* master (pochissimi attesi); matched = i green goods effettivamente
-* scambiati nel campione.
+tab _merge
+count if _merge == 2
+local unmatched_green = r(N)
+di "Green codes senza match nel panel: `unmatched_green'"
 drop _merge
 
 * --- Variabili derivate usate in tutta l'analisi a valle ------------------

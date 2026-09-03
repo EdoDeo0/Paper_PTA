@@ -1,0 +1,814 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA\New\Output\Diagnostics\stata_logs\52_om
+> nibus_collapsed.log
+  log type:  text
+ opened on:   2 Sep 2026, 18:58:37
+
+. 
+. *── Caricamento dati --------------------------------------------------------
+> ---
+. use "$DTA", clear
+
+. su WB_EP_Depth, meanonly
+
+. if r(max) != 17 {
+.     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio: rig
+> enerare da 10."
+.     exit 1
+. }
+
+. count
+  3,773,498
+
+. di as text "Celle caricate: " r(N)
+Celle caricate: 3773498
+
+. 
+. *****************************************************************************
+> ***
+. ** S2 — Loop di verifica: ogni spec -> OMNI_<spec>_<treat>.dta
+. *****************************************************************************
+> ***
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 1. BASELINE (WB + TREND, spec principale)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_baseline_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         gen double ep_green = `xvar' * env_good
+  8.         gen double ep_dirty = `xvar' * dirty_p
+  9.         gen double td_green = TotalDepth_nonEnv * env_good
+ 10.         gen double td_dirty = TotalDepth_nonEnv * dirty_p
+ 11.         di as text "  [baseline `treat'] reghdfe..."
+ 12.         reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 13.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, baseline, treat, `treat', source, reghdfe_stata_52
+> )
+ 14.         restore
+ 15.         di "[OK] OMNI_baseline_`treat'.dta"
+ 16.     }
+ 17.     else di "  SKIP baseline_`treat' (gia' presente)"
+ 18. }
+  SKIP baseline_WB (gia' presente)
+  SKIP baseline_TREND (gia' presente)
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 2. STABILITY — prodHS4 (solo hs6 con non-verdi nella stessa HS4)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_prodHS4_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         keep if in_HS4match == 1
+  8.         gen double ep_green = `xvar' * env_good
+  9.         gen double ep_dirty = `xvar' * dirty_p
+ 10.         gen double td_green = TotalDepth_nonEnv * env_good
+ 11.         gen double td_dirty = TotalDepth_nonEnv * dirty_p
+ 12.         di as text "  [prodHS4 `treat'] N=" _N
+ 13.         reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 14.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, prodHS4, treat, `treat', source, reghdfe_stata_52)
+ 15.         restore
+ 16.         di "[OK] OMNI_prodHS4_`treat'.dta"
+ 17.     }
+ 18.     else di "  SKIP prodHS4_`treat'"
+ 19. }
+  SKIP prodHS4_WB
+  SKIP prodHS4_TREND
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 3. STABILITY — deepshallow (solo paesi PTA, deep=1 o shallow=2)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_deepshallow_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         keep if deepshallow == 1 | deepshallow == 2
+  8.         gen double ep_green = `xvar' * env_good
+  9.         gen double ep_dirty = `xvar' * dirty_p
+ 10.         gen double td_green = TotalDepth_nonEnv * env_good
+ 11.         gen double td_dirty = TotalDepth_nonEnv * dirty_p
+ 12.         di as text "  [deepshallow `treat'] N=" _N
+ 13.         cap reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 14.         if !_rc {
+ 15.             regsave using "`out'", tstat pval ci replace ///
+>                 addlabel(spec, deepshallow, treat, `treat', source, reghdfe_s
+> tata_52)
+ 16.         }
+ 17.         else di as error "  [FALLITO] deepshallow_`treat'"
+ 18.         restore
+ 19.         di "[OK] OMNI_deepshallow_`treat'.dta"
+ 20.     }
+ 21.     else di "  SKIP deepshallow_`treat'"
+ 22. }
+  SKIP deepshallow_WB
+  SKIP deepshallow_TREND
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 4. STABILITY — CEM (paesi nel campione CEM v1)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_cem_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         merge m:1 country_code using "$ROOT/New/Output/CEM_stata/cem_v1_cc
+> .dta", keep(match) nogen
+  8.         gen double ep_green = `xvar' * env_good
+  9.         gen double ep_dirty = `xvar' * dirty_p
+ 10.         gen double td_green = TotalDepth_nonEnv * env_good
+ 11.         gen double td_dirty = TotalDepth_nonEnv * dirty_p
+ 12.         di as text "  [cem `treat'] N=" _N
+ 13.         cap reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 14.         if !_rc {
+ 15.             regsave using "`out'", tstat pval ci replace ///
+>                 addlabel(spec, cem, treat, `treat', source, reghdfe_stata_52)
+ 16.         }
+ 17.         else di as error "  [FALLITO] cem_`treat'"
+ 18.         restore
+ 19.         di "[OK] OMNI_cem_`treat'.dta"
+ 20.     }
+ 21.     else di "  SKIP cem_`treat'"
+ 22. }
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                         1,728,226  
+    -----------------------------------------
+  [cem WB] N=1728226
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/OMNI_cem_WB
+    > .dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/OMNI_cem_WB
+    > .dta saved
+[OK] OMNI_cem_WB.dta
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                         1,728,226  
+    -----------------------------------------
+  [cem TREND] N=1728226
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/OMNI_cem_TR
+    > END.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/OMNI_cem_TR
+    > END.dta saved
+[OK] OMNI_cem_TREND.dta
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 5. DEPTHBOUNDS — nodepth (senza controllo di profondita')
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_nodepth_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         gen double ep_green = `xvar' * env_good
+  8.         gen double ep_dirty = `xvar' * dirty_p
+  9.         reghdfe y ep_green ep_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 10.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, nodepth, treat, `treat', source, reghdfe_stata_52)
+ 11.         restore
+ 12.         di "[OK] OMNI_nodepth_`treat'.dta"
+ 13.     }
+ 14.     else di "  SKIP nodepth_`treat'"
+ 15. }
+  SKIP nodepth_WB
+  SKIP nodepth_TREND
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 6. DEPTHBOUNDS — targeted (14 aree alta-corr, escl. 3 aree bassa-corr)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_targeted_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         gen double ep_green = `xvar' * env_good
+  8.         gen double ep_dirty = `xvar' * dirty_p
+  9.         gen double td_green = TotalDepth_targeted * env_good
+ 10.         gen double td_dirty = TotalDepth_targeted * dirty_p
+ 11.         reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 12.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, targeted, treat, `treat', source, reghdfe_stata_52
+> )
+ 13.         restore
+ 14.         di "[OK] OMNI_targeted_`treat'.dta"
+ 15.     }
+ 16.     else di "  SKIP targeted_`treat'"
+ 17. }
+  SKIP targeted_WB
+  SKIP targeted_TREND
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 7. DEPTHBOUNDS — desta (DESTA_depth_index, drop se NA su trattati)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_desta_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         * Drop righe dove DESTA manca e il paese e' trattato (Timor Est, ~
+> 4181 celle, 0.11%)
+.         drop if missing(DESTA_depth_index) & `xvar' > 0
+  8.         replace DESTA_depth_index = 0 if missing(DESTA_depth_index)
+  9.         gen double ep_green = `xvar' * env_good
+ 10.         gen double ep_dirty = `xvar' * dirty_p
+ 11.         gen double td_green = DESTA_depth_index * env_good
+ 12.         gen double td_dirty = DESTA_depth_index * dirty_p
+ 13.         di as text "  [desta `treat'] N=" _N
+ 14.         reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 15.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, desta, treat, `treat', source, reghdfe_stata_52)
+ 16.         restore
+ 17.         di "[OK] OMNI_desta_`treat'.dta"
+ 18.     }
+ 19.     else di "  SKIP desta_`treat'"
+ 20. }
+  SKIP desta_WB
+  SKIP desta_TREND
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 8. SOTTO-INDICI (7 sub-index, ciascuno sostituisce EP aggregato)
+. ** WB: WB_GreenLiberalization, WB_EnforcementDSM
+. ** TREND: TREND_GreenMarketAccess, TREND_EnforcementDSM, TREND_Hard,
+. **        TREND_Soft, TREND_RegulatorySpace
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. local subs WB_GreenLiberalization TREND_GreenMarketAccess ///
+>            WB_EnforcementDSM TREND_EnforcementDSM ///
+>            TREND_Hard TREND_Soft TREND_RegulatorySpace
+
+. foreach sub of local subs {
+  2.     local out "$TAB/OMNI_sub_`sub'.dta"
+  3.     cap confirm file "`out'"
+  4.     if _rc {
+  5.         preserve
+  6.         gen double ep_green = `sub' * env_good
+  7.         gen double ep_dirty = `sub' * dirty_p
+  8.         gen double td_green = TotalDepth_nonEnv * env_good
+  9.         gen double td_dirty = TotalDepth_nonEnv * dirty_p
+ 10.         di as text "  [sotto-indice `sub']"
+ 11.         reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 12.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, subindex, treat, `sub', source, reghdfe_stata_52)
+ 13.         restore
+ 14.         di "[OK] OMNI_sub_`sub'.dta"
+ 15.     }
+ 16.     else di "  SKIP sub_`sub'"
+ 17. }
+  SKIP sub_WB_GreenLiberalization
+  SKIP sub_TREND_GreenMarketAccess
+  SKIP sub_WB_EnforcementDSM
+  SKIP sub_TREND_EnforcementDSM
+  SKIP sub_TREND_Hard
+  SKIP sub_TREND_Soft
+  SKIP sub_TREND_RegulatorySpace
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 9. DESTINATION TRENDS (trend lineare per-dest del gap green/dirty)
+. ** y ~ EP:g + EP:d + TD:g + TD:d | pd + dt + pt + country_code[trend*env_good
+> ]
+. **                                                + country_code[trend*dirty_
+> p]
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_desttrends_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         gen double ep_green  = `xvar' * env_good
+  8.         gen double ep_dirty  = `xvar' * dirty_p
+  9.         gen double td_green  = TotalDepth_nonEnv * env_good
+ 10.         gen double td_dirty  = TotalDepth_nonEnv * dirty_p
+ 11.         gen double trend_g   = trend * env_good
+ 12.         gen double trend_d   = trend * dirty_p
+ 13.         di as text "  [dest-trends `treat']"
+ 14.         cap reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt country_code#c.trend_g country_code#c.trend_d) //
+> /
+>             vce(cluster country_code)
+ 15.         if !_rc {
+ 16.             regsave using "`out'", tstat pval ci replace ///
+>                 addlabel(spec, desttrends, treat, `treat', source, reghdfe_st
+> ata_52)
+ 17.         }
+ 18.         else di as error "  [FALLITO] desttrends_`treat'"
+ 19.         restore
+ 20.         di "[OK] OMNI_desttrends_`treat'.dta"
+ 21.     }
+ 22.     else di "  SKIP desttrends_`treat'"
+ 23. }
+  SKIP desttrends_WB
+  SKIP desttrends_TREND
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 10. APEC EGL subsample (usa apec_egl al posto di env_good per la green set
+> )
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. foreach treat in WB TREND {
+  2.     local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_Count")
+  3.     local out "$TAB/OMNI_apec_`treat'.dta"
+  4.     cap confirm file "`out'"
+  5.     if _rc {
+  6.         preserve
+  7.         * apec_egl al posto di env_good (54 codici su 248, sottoinsieme)
+.         gen double ep_green = `xvar' * apec_egl
+  8.         gen double ep_dirty = `xvar' * dirty_p
+  9.         gen double td_green = TotalDepth_nonEnv * apec_egl
+ 10.         gen double td_dirty = TotalDepth_nonEnv * dirty_p
+ 11.         di as text "  [APEC `treat']"
+ 12.         reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 13.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, apec, treat, `treat', source, reghdfe_stata_52)
+ 14.         restore
+ 15.         di "[OK] OMNI_apec_`treat'.dta"
+ 16.     }
+ 17.     else di "  SKIP apec_`treat'"
+ 18. }
+  SKIP apec_WB
+  SKIP apec_TREND
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 11. DOSE BINS (WB, 3 fasce: basso 1-5, medio 6-7, alto >=8)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. local out "$TAB/OMNI_dosebins_WB.dta"
+
+. cap confirm file "`out'"
+
+. if _rc {
+.     preserve
+.     gen double low_g  = (dose_bin == 1) * env_good
+.     gen double med_g  = (dose_bin == 2) * env_good
+.     gen double high_g = (dose_bin == 3) * env_good
+.     gen double low_d  = (dose_bin == 1) * dirty_p
+.     gen double med_d  = (dose_bin == 2) * dirty_p
+.     gen double high_d = (dose_bin == 3) * dirty_p
+.     gen double td_g   = TotalDepth_nonEnv * env_good
+.     gen double td_d   = TotalDepth_nonEnv * dirty_p
+.     di as text "  [dose bins WB] fasce: basso(1-5), medio(6-7), alto(>=8)"
+.     reghdfe y low_g med_g high_g low_d med_d high_d td_g td_d [aw=n], ///
+>         absorb(pd dt pt) vce(cluster country_code)
+.     regsave using "`out'", tstat pval ci replace ///
+>         addlabel(spec, dosebins, treat, WB, source, reghdfe_stata_52)
+.     restore
+.     di "[OK] OMNI_dosebins_WB.dta"
+. }
+
+. else di "  SKIP dosebins_WB"
+  SKIP dosebins_WB
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. ** 12. EP_SHARE (solo campione deepshallow=trattati, WB)
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. local out "$TAB/OMNI_epshare_WB.dta"
+
+. cap confirm file "`out'"
+
+. if _rc {
+.     preserve
+.     keep if deepshallow == 1 | deepshallow == 2
+.     keep if !missing(EP_share)   // TotalDepth>0 per costruzione, ma per sicu
+> rezza
+.     gen double sh_green = EP_share * env_good
+.     gen double sh_dirty = EP_share * dirty_p
+.     * EP_share esclude il controllo TotalDepth (la ratio lo assorbe implicita
+> mente)
+.     di as text "  [EP_share treated-only] N=" _N
+.     cap reghdfe y sh_green sh_dirty [aw=n], ///
+>         absorb(pd dt pt) vce(cluster country_code)
+.     if !_rc {
+.         regsave using "`out'", tstat pval ci replace ///
+>             addlabel(spec, epshare, treat, WB, source, reghdfe_stata_52)
+.     }
+.     else di as error "  [FALLITO] epshare_WB"
+.     restore
+.     di "[OK] OMNI_epshare_WB.dta"
+. }
+
+. else di "  SKIP epshare_WB"
+  SKIP epshare_WB
+
+. 
+. *****************************************************************************
+> ***
+. ** S2 — Assemblaggio tabella finale (tutti i OMNI_*.dta -> CSV)
+. *****************************************************************************
+> ***
+. di as text _n "========== Assemblaggio S2 =========="
+
+========== Assemblaggio S2 ==========
+
+. clear
+
+. local files : dir "$TAB" files "OMNI_*.dta"
+
+. local first = 1
+
+. foreach f of local files {
+  2.     if `first' {
+  3.         use "$TAB/`f'", clear
+  4.         local first = 0
+  5.     }
+  6.     else append using "$TAB/`f'"
+  7. }
+(variable spec was str4, now str8 to accommodate using data's values)
+(variable spec was str8, now str11 to accommodate using data's values)
+(variable treat was str5, now str20 to accommodate using data's values)
+(variable treat was str20, now str23 to accommodate using data's values)
+
+. export delimited "$TAB/omnibus_collapsed_reghdfe.csv", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/omnibus_col
+    > lapsed_reghdfe.csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/omnibus_coll
+> apsed_reghdfe.csv saved
+
+. di as result "[OK] omnibus_collapsed_reghdfe.csv — " _N " righe"
+[OK] omnibus_collapsed_reghdfe.csv — 143 righe
+
+. 
+. *****************************************************************************
+> ***
+. ** S3 — WCB baseline via FWL + boottest (WB + TREND)
+. ** Pattern: reghdfe demean con [aw=n] -> reg su residui -> boottest
+. ** Confronto con p_wcb R: atteso ~0.073 per WB_green
+. *****************************************************************************
+> ***
+. di as text _n "========== S3: WCB baseline via FWL + boottest =========="
+
+========== S3: WCB baseline via FWL + boottest ==========
+
+. 
+. cap which boottest
+
+. if _rc {
+.     di as error "boottest non disponibile - S3 saltato"
+.     exit 0
+. }
+
+. 
+. * Percorsi
+. local dta_dm   "$ROOT\New\Data\Collapsed\collapsed_baseline_demeaned.dta"
+
+. local csv_wcb  "$TAB\wcb_collapsed_boottest.csv"
+
+. 
+. * Intestazione CSV WCB
+. capture erase "`csv_wcb'"
+
+. file open fh using "`csv_wcb'", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\wcb_collaps
+    > ed_boottest.csv not found)
+
+. file write fh "treat,var,coef,se,pval_asy,p_boot,B,nobs,nclust,source" _n
+
+. file close fh
+
+. 
+. capture program drop write_wcb_row
+
+. program define write_wcb_row
+  1.     args treat var coef se pval p_boot B nobs nclust csv
+  2.     file open fh using "`csv'", write append text
+  3.     file write fh "`treat',`var',`coef',`se',`pval',`p_boot',`B',`nobs',`n
+> clust',reghdfe_boottest_52" _n
+  4.     file close fh
+  5. end
+
+. 
+. use "$DTA", clear
+
+. 
+. di as text "Fase 1: demeaning 8 variabili con [aw=n]..."
+Fase 1: demeaning 8 variabili con [aw=n]...
+
+. * NB: `y' NON va in questa lista - e' l'outcome del .dta, non una variabile
+. * derivata. (Bug 2026-08-22: droppandola, `reghdfe y' risolveva in `year' per
+. * abbreviazione -> assorbita da dt -> residui zero -> coefficienti ~1e-13.)
+. foreach v in ep_green ep_dirty td_green td_dirty {
+  2.     cap drop `v'
+  3. }
+
+. gen double ep_green = WB_EP_Depth * env_good
+
+. gen double ep_dirty = WB_EP_Depth * dirty_p
+
+. gen double td_green = TotalDepth_nonEnv * env_good
+
+. gen double td_dirty = TotalDepth_nonEnv * dirty_p
+
+. 
+. * WB: demean le 5 var WB
+. foreach v in y ep_green ep_dirty td_green td_dirty {
+  2.     di as text "  demeaning `v' (WB)..."
+  3.     qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm_wb) tol(1e-8
+> )
+  4. }
+  demeaning y (WB)...
+  demeaning ep_green (WB)...
+  demeaning ep_dirty (WB)...
+  demeaning td_green (WB)...
+  demeaning td_dirty (WB)...
+
+. * TREND: rimpiazza ep con TREND
+. foreach v in ep_green ep_dirty {
+  2.     cap drop `v'
+  3. }
+
+. gen double ep_green = TREND_EP_Count * env_good
+
+. gen double ep_dirty = TREND_EP_Count * dirty_p
+
+. foreach v in ep_green ep_dirty {
+  2.     di as text "  demeaning `v' (TREND)..."
+  3.     qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm_tr) tol(1e-8
+> )
+  4. }
+  demeaning ep_green (TREND)...
+  demeaning ep_dirty (TREND)...
+
+. * td_green_dm_wb e td_dirty_dm_wb gia' calcolati (stessi per WB e TREND)
+. 
+. keep y_dm_wb ep_green_dm_wb ep_dirty_dm_wb td_green_dm_wb td_dirty_dm_wb ///
+>      ep_green_dm_tr ep_dirty_dm_tr country_code n
+
+. save "`dta_dm'", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\collapsed_baseline_demeaned
+    > .dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Data\Collapsed\collapsed_baseline_demeaned
+    > .dta saved
+
+. di as text "Dataset demeaned salvato."
+Dataset demeaned salvato.
+
+. 
+. * WCB WB
+. di as text _n "Fase 2: WB reg + boottest..."
+
+Fase 2: WB reg + boottest...
+
+. use "`dta_dm'", clear
+
+. reg y_dm_wb ep_green_dm_wb ep_dirty_dm_wb td_green_dm_wb td_dirty_dm_wb ///
+>     [aw=n], cluster(country_code) nocons
+(sum of wgt is 45,679,002)
+
+Linear regression                               Number of obs     =  3,681,023
+                                                F(4, 227)         =       9.77
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .53826
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+     y_dm_wb | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ep_green_d~b |  -.0045685   .0068925    -0.66   0.508    -.0181499    .0090129
+ep_dirty_d~b |  -.0118734   .0029225    -4.06   0.000    -.0176322   -.0061146
+td_green_d~b |  -.0000508   .0002374    -0.21   0.831    -.0005187    .0004171
+td_dirty_d~b |   .0003663    .000175     2.09   0.037     .0000214    .0007112
+------------------------------------------------------------------------------
+
+. local nobs   = e(N)
+
+. local nclust = e(N_clust)
+
+. foreach v in ep_green_dm_wb ep_dirty_dm_wb td_green_dm_wb td_dirty_dm_wb {
+  2.     local coef_`v' = _b[`v']
+  3.     local se_`v'   = _se[`v']
+  4.     local t_`v'    = _b[`v'] / _se[`v']
+  5.     local p_`v'    = 2 * ttail(e(df_r), abs(`t_`v''))
+  6. }
+
+. * Guardia FWL: i coefficienti demeanati devono riprodurre il baseline di S2.
+. * Se non lo fanno, il demeaning e' andato storto: fermarsi invece di scrivere
+> .
+. if abs(`coef_ep_green_dm_wb' - (-0.0045685)) > 1e-4 | ///
+>    abs(`coef_ep_dirty_dm_wb' - (-0.0118734)) > 1e-4 {
+.     di as error "FWL non riproduce il baseline WB (-0.0045685 / -0.0118734)."
+.     di as error "  ottenuto: " `coef_ep_green_dm_wb' " / " `coef_ep_dirty_dm_
+> wb'
+.     exit 9
+. }
+
+. 
+. * NB: niente [aw=n] qui - boottest eredita i pesi dal modello stimato; passar
+> li
+. * esplicitamente li fa leggere come constraint (errore r(111), p_boot vuoto).
+. di as text "  boottest WB green..."
+  boottest WB green...
+
+. boottest ep_green_dm_wb, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  ep_green_dm_wb
+
+                          t(227) =    -0.6628
+                        Prob>|t| =     0.6495
+
+. local p_boot_wb_g = r(p)
+
+. di as text "  boottest WB dirty..."
+  boottest WB dirty...
+
+. boottest ep_dirty_dm_wb, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  ep_dirty_dm_wb
+
+                          t(227) =    -4.0627
+                        Prob>|t| =     0.0717
+
+. local p_boot_wb_d = r(p)
+
+. 
+. write_wcb_row WB ep_green `coef_ep_green_dm_wb' `se_ep_green_dm_wb' `p_ep_gre
+> en_dm_wb' `p_boot_wb_g' 9999 `nobs' `nclust' "`csv_wcb'"
+
+. write_wcb_row WB ep_dirty `coef_ep_dirty_dm_wb' `se_ep_dirty_dm_wb' `p_ep_dir
+> ty_dm_wb' `p_boot_wb_d' 9999 `nobs' `nclust' "`csv_wcb'"
+
+. write_wcb_row WB td_green `coef_td_green_dm_wb' `se_td_green_dm_wb' `p_td_gre
+> en_dm_wb' .           9999 `nobs' `nclust' "`csv_wcb'"
+
+. write_wcb_row WB td_dirty `coef_td_dirty_dm_wb' `se_td_dirty_dm_wb' `p_td_dir
+> ty_dm_wb' .           9999 `nobs' `nclust' "`csv_wcb'"
+
+. 
+. * WCB TREND
+. di as text _n "Fase 3: TREND reg + boottest..."
+
+Fase 3: TREND reg + boottest...
+
+. * td_dm = td_green_dm_wb, td_dirty_dm_wb (stesse variabili)
+. reg y_dm_wb ep_green_dm_tr ep_dirty_dm_tr td_green_dm_wb td_dirty_dm_wb ///
+>     [aw=n], cluster(country_code) nocons
+(sum of wgt is 45,679,002)
+
+Linear regression                               Number of obs     =  3,681,023
+                                                F(4, 227)         =       3.65
+                                                Prob > F          =     0.0067
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .53826
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+     y_dm_wb | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ep_green_d~r |   .0018115   .0018018     1.01   0.316    -.0017389     .005362
+ep_dirty_d~r |    .000351    .001583     0.22   0.825    -.0027682    .0034702
+td_green_d~b |  -.0004726   .0002532    -1.87   0.063    -.0009716    .0000263
+td_dirty_d~b |  -.0001258   .0002959    -0.43   0.671    -.0007089    .0004572
+------------------------------------------------------------------------------
+
+. local nobs   = e(N)
+
+. local nclust = e(N_clust)
+
+. foreach v in ep_green_dm_tr ep_dirty_dm_tr td_green_dm_wb td_dirty_dm_wb {
+  2.     local coef_`v' = _b[`v']
+  3.     local se_`v'   = _se[`v']
+  4.     local t_`v'    = _b[`v'] / _se[`v']
+  5.     local p_`v'    = 2 * ttail(e(df_r), abs(`t_`v''))
+  6. }
+
+. if abs(`coef_ep_green_dm_tr' - 0.0018115) > 1e-4 | ///
+>    abs(`coef_ep_dirty_dm_tr' - 0.0003510) > 1e-4 {
+.     di as error "FWL non riproduce il baseline TREND (0.0018115 / 0.0003510).
+> "
+.     di as error "  ottenuto: " `coef_ep_green_dm_tr' " / " `coef_ep_dirty_dm_
+> tr'
+.     exit 9
+. }
+
+. 
+. di as text "  boottest TREND green..."
+  boottest TREND green...
+
+. boottest ep_green_dm_tr, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  ep_green_dm_tr
+
+                          t(227) =     1.0054
+                        Prob>|t| =     0.3896
+
+. local p_boot_tr_g = r(p)
+
+. di as text "  boottest TREND dirty..."
+  boottest TREND dirty...
+
+. boottest ep_dirty_dm_tr, boottype(wild) reps(9999) seed(42) noci
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  ep_dirty_dm_tr
+
+                          t(227) =     0.2217
+                        Prob>|t| =     0.8569
+
+. local p_boot_tr_d = r(p)
+
+. 
+. write_wcb_row TREND ep_green `coef_ep_green_dm_tr' `se_ep_green_dm_tr' `p_ep_
+> green_dm_tr' `p_boot_tr_g' 9999 `nobs' `nclust' "`csv_wcb'"
+
+. write_wcb_row TREND ep_dirty `coef_ep_dirty_dm_tr' `se_ep_dirty_dm_tr' `p_ep_
+> dirty_dm_tr' `p_boot_tr_d' 9999 `nobs' `nclust' "`csv_wcb'"
+
+. write_wcb_row TREND td_green `coef_td_green_dm_wb' `se_td_green_dm_wb' `p_td_
+> green_dm_wb' .           9999 `nobs' `nclust' "`csv_wcb'"
+
+. write_wcb_row TREND td_dirty `coef_td_dirty_dm_wb' `se_td_dirty_dm_wb' `p_td_
+> dirty_dm_wb' .           9999 `nobs' `nclust' "`csv_wcb'"
+
+. 
+. * Pulizia
+. capture erase "`dta_dm'"
+
+. 
+. di as result _n "=== S3 FATTO. Output: `csv_wcb' ==="
+
+=== S3 FATTO. Output: C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_S
+> tata\wcb_collapsed_boottest.csv ===
+
+. di as text "Confronto: p_wcb attesi da R: WB_green ~0.073, TREND_green ~0.320
+> "
+Confronto: p_wcb attesi da R: WB_green ~0.073, TREND_green ~0.320
+
+. di as result _n "=== S2+S3 COMPLETATO ==="
+
+=== S2+S3 COMPLETATO ===
+
+. 
+. cap log close _all

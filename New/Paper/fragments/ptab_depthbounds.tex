@@ -1,22 +1,21 @@
 \small
 \begin{threeparttable}
-\begin{tabular}{lccc}
+\begin{tabular}{lcc}
 \toprule
-Depth control & EP$\times$green & Asymptotic 95\% CI & $p$ \\
+Depth control & EP$\times$green & 95\% CI \\
 \midrule
-None & $-0.0057$ & $[-0.0118,\ +0.0003]$ & 0.06 \\
-TotalDepth (17 areas) \hfill\textit{[baseline]} & $-0.0046$ & $[-0.0182,\ +0.0091]$ & 0.51 \\
-TotalDepth targeted (14 areas) & $-0.0033$ & $[-0.0188,\ +0.0123]$ & 0.64 \\
-DESTA index & $-0.0043$ & $[-0.0129,\ +0.0042]$ & 0.30 \\
-\midrule
-Product--dest FE & \multicolumn{3}{c}{Yes} \\
-Dest--year FE & \multicolumn{3}{c}{Yes} \\
-Product--year FE & \multicolumn{3}{c}{Yes} \\
-Cells & \multicolumn{3}{c}{3,681,023} \\
-Clusters & \multicolumn{3}{c}{228 destinations} \\
+None & $-0.0057$ & $[-0.0118,\ +0.0003]$ \\
+\texttt{TotalDepth} aggregate (17 areas) --- \emph{main specification} & $-0.0046$ & $[-0.0182,\ +0.0091]$ \\
+\texttt{TotalDepth} targeted (14 areas) & $-0.0033$ & $[-0.0188,\ +0.0123]$ \\
+DESTA index (independent source) & $-0.0043$ & $[-0.0129,\ +0.0042]$ \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
-\item Collapsed panel, weighted by cell size. Asymptotic intervals. The targeted control drops three WB areas with zero variance in Chinese agreements (labour-market regulation, visa and asylum, subsidies). DESTA covers seven policy areas coded independently of the World Bank instrument and excludes environmental provisions by construction, reducing the VIF from 5.7 to 1.9 and leaving the coefficient essentially unchanged.
+\item Collapsed panel, fixed effects $pd+dt+pt$, weighted by cell size, destination-clustered.
+Asymptotic intervals. The targeted control drops the three WB areas that do not correlate
+with EP depth (labour-market regulation, which has zero variance in Chinese agreements;
+visa and asylum; subsidies). DESTA covers seven policy areas coded independently of the
+World Bank instrument and excludes environmental provisions by construction, which is why
+it lowers the VIF from 5.7 to 1.9.
 \end{tablenotes}
 \end{threeparttable}

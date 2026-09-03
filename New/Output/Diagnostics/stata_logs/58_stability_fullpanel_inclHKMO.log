@@ -1,0 +1,527 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA\New\Output\Diagnostics\stata_logs\58_st
+> ability_fullpanel_inclHKMO.log
+  log type:  text
+ opened on:   2 Sep 2026, 19:16:57
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. cap mkdir "$ROOT\New\Output\TripleDiff"
+
+. cap mkdir "$TAB"
+
+. 
+. *── Liste ausiliarie (tempfile: persistono per tutta la sessione) ───────────
+> ───
+. import delimited "$ROOT\New\Data\Classifications\green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. capture destring hs6, replace
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f50_000001.tmp saved as .dta
+    format
+
+. global F_GREEN "`green'"
+
+. 
+. import delimited "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+
+. rename dirty dirty_p
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+. tempfile dirty
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f50_000002.tmp saved as .dta
+    format
+
+. global F_DIRTY "`dirty'"
+
+. 
+. * Controllo di profondita': WB TotalDepth (default) o DESTA. Stessa chiave
+. * paese-anno; il nome della colonna cambia, quindi lo si tiene in $DEPTHCOL e
+>  il
+. * resto del codice non nomina mai una delle due direttamente.
+. if "$VDEPTH" == "totaldepth" {
+.     import delimited "$ROOT\New\Data\TotalDepth\wb_totaldepth_country_year.cs
+> v", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 249 obs)
+.     keep country_code year totaldepth_nonenv
+.     global DEPTHCOL "totaldepth_nonenv"
+. }
+
+. else {
+.     import delimited "$ROOT\New\Data\TotalDepth\desta_depth_country_year.csv"
+> , clear
+.     keep country_code year desta_depth_index
+.     global DEPTHCOL "desta_depth_index"
+. }
+
+. count
+  249
+
+. di as text "profondita' ($DEPTHCOL): " r(N) " coppie paese-anno"
+profondita' (totaldepth_nonenv): 249 coppie paese-anno
+
+. tempfile depth
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f50_000003.tmp saved as .dta
+    format
+
+. global F_DEPTH "`depth'"
+
+. 
+. * prodHS4: hs6 da tenere
+. import delimited "$ROOT\New\Data\Subsamples\flag_prodHS4.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(5 vars, 5,008 obs)
+
+. keep if in_hs4match == "TRUE" | in_hs4match == "1"
+(4,410 observations deleted)
+
+. keep hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+. gen byte keep_hs4 = 1
+
+. count
+  598
+
+. di as text "prodHS4: " r(N) " hs6 da tenere"
+prodHS4: 598 hs6 da tenere
+
+. tempfile hs4
+
+. save `hs4'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f50_000004.tmp saved as .dta
+    format
+
+. global F_HS4 "`hs4'"
+
+. 
+. * deepshallow: country_code da tenere
+. import delimited "$ROOT\New\Data\Subsamples\flag_deepshallow.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(4 vars, 239 obs)
+
+. keep if inlist(group, "deep", "shallow")
+(214 observations deleted)
+
+. keep country_code
+
+. duplicates drop country_code, force
+
+Duplicates in terms of country_code
+
+(0 observations are duplicates)
+
+. gen byte keep_ds = 1
+
+. count
+  25
+
+. di as text "deepshallow: " r(N) " paesi da tenere"
+deepshallow: 25 paesi da tenere
+
+. tempfile ds
+
+. save `ds'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f50_000005.tmp saved as .dta
+    format
+
+. global F_DS "`ds'"
+
+. 
+. * CEM v1: country_code da tenere (da 12_cem_matching_stata.do)
+. use "$ROOT\New\Output\CEM_stata\cem_v1_cc.dta", clear
+
+. gen byte keep_cem = 1
+
+. count
+  59
+
+. di as text "cem_v1: " r(N) " paesi da tenere"
+cem_v1: 59 paesi da tenere
+
+. tempfile cem
+
+. save `cem'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f50_000006.tmp saved as .dta
+    format
+
+. global F_CEM "`cem'"
+
+. 
+. *****************************************************************************
+> ***
+. ** Program: carica il full panel, applica il filtro del gruppo, stima WB+TREN
+> D
+. *****************************************************************************
+> ***
+. capture program drop run_stability_group
+
+. program define run_stability_group
+  1.     args grp
+  2. 
+.     * Skip se entrambe le stime del gruppo sono gia' su disco.
+.     * $SFX e' indispensabile qui: senza, la variante 2 troverebbe i file del
+.     * baseline e si dichiarerebbe completa senza stimare (vedi trappola (a)).
+.     cap confirm file "$TAB\STAB_`grp'_WB$SFX.dta"
+  3.     local rc_wb = _rc
+  4.     cap confirm file "$TAB\STAB_`grp'_TREND$SFX.dta"
+  5.     local rc_tr = _rc
+  6.     if `rc_wb' == 0 & `rc_tr' == 0 {
+  7.         di as text "  SKIP `grp' (entrambe le stime presenti)"
+  8.         exit 0
+  9.     }
+ 10. 
+.     di as text _n "########## GRUPPO: `grp' ##########"
+ 11.     use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fdt
+>  pt ///
+>         using "$DTA", clear
+ 12. 
+.     * HK/Macao: esclusi nella spec principale, tenuti nella variante `incl'
+.     if "$VSAMPLE" == "excl" {
+ 13.         gen byte hkmo = inlist(country_code, 110, 121)
+ 14.         keep if !hkmo
+ 15.         drop hkmo
+ 16.     }
+ 17. 
+.     * Filtro del gruppo, applicato subito per contenere la RAM
+.     if "`grp'" == "prodHS4" {
+ 18.         merge m:1 hs6 using "$F_HS4", keep(master match) nogen
+ 19.         keep if keep_hs4 == 1
+ 20.         drop keep_hs4
+ 21.     }
+ 22.     if "`grp'" == "deepshallow" {
+ 23.         merge m:1 country_code using "$F_DS", keep(master match) nogen
+ 24.         keep if keep_ds == 1
+ 25.         drop keep_ds
+ 26.     }
+ 27.     if "`grp'" == "cem_v1" {
+ 28.         merge m:1 country_code using "$F_CEM", keep(master match) nogen
+ 29.         keep if keep_cem == 1
+ 30.         drop keep_cem
+ 31.     }
+ 32.     count
+ 33.     di as text "  righe dopo filtro: " r(N)
+ 34. 
+.     * Classificazioni ricalcolate (come 24.R, 17.do, 18.do)
+.     merge m:1 hs6 using "$F_GREEN", keep(master match)
+ 35.     qui count if _merge == 3
+ 36.     di as text "  [merge green] righe appaiate: " r(N)
+ 37.     drop _merge
+ 38.     replace env_good_new = 0 if missing(env_good_new)
+ 39.     merge m:1 hs6 using "$F_DIRTY", keep(master match)
+ 40.     qui count if _merge == 3
+ 41.     di as text "  [merge dirty] righe appaiate: " r(N)
+ 42.     drop _merge
+ 43.     replace dirty_p = 0 if missing(dirty_p)
+ 44.     merge m:1 country_code year using "$F_DEPTH", keep(master match)
+ 45.     qui count if _merge == 3
+ 46.     di as text "  [merge depth] righe appaiate: " r(N)
+ 47.     drop _merge
+ 48.     * DESTA: le celle TRATTATE senza copertura si eliminano, le altre vann
+> o a 0
+.     * (stessa regola di 52 blocco 7, 63 e 65)
+.     if "$VDEPTH" == "desta" {
+ 49.         qui count
+ 50.         local n0 = r(N)
+ 51.         drop if missing($DEPTHCOL) & WB_EP_Depth > 0
+ 52.         qui count
+ 53.         di as text "  [desta] celle trattate senza copertura eliminate: " 
+> `n0' - r(N)
+ 54.     }
+ 55.     replace $DEPTHCOL = 0 if missing($DEPTHCOL)
+ 56.     drop hs6
+ 57. 
+.     su env_good_new, meanonly
+ 58.     di as text "  green: " 100*r(mean) "%"
+ 59.     su dirty_p, meanonly
+ 60.     di as text "  dirty: " 100*r(mean) "%"
+ 61. 
+.     gen double td_green = $DEPTHCOL * env_good_new
+ 62.     gen double td_dirty = $DEPTHCOL * dirty_p
+ 63. 
+.     foreach treat in WB TREND {
+ 64.         local out_file "$TAB\STAB_`grp'_`treat'$SFX.dta"
+ 65.         cap confirm file "`out_file'"
+ 66.         if _rc {
+ 67.             local xvar = cond("`treat'" == "WB", "WB_EP_Depth", "TREND_EP_
+> Count")
+ 68.             cap drop ep_green ep_dirty
+ 69.             gen double ep_green = `xvar' * env_good_new
+ 70.             gen double ep_dirty = `xvar' * dirty_p
+ 71.             di as text "  [`grp' `treat'] reghdfe fpd+fdt+pt..."
+ 72.             cap noisily reghdfe ln_export ep_green ep_dirty td_green td_di
+> rty, ///
+>                 absorb(fpd fdt pt) vce(cluster country_code) compact
+ 73.             if !_rc {
+ 74.                 regsave using "`out_file'", tstat pval ci replace ///
+>                     addlabel(spec, stability, groupname, `grp', treat, `treat
+> ', ///
+>                              sample, $VSAMPLE, depth, $VDEPTH, ///
+>                              source, reghdfe_stata_58)
+ 75.                 di as text "  [OK] STAB_`grp'_`treat'$SFX.dta"
+ 76.             }
+ 77.             else di as error "  [FALLITO] STAB_`grp'_`treat'"
+ 78.         }
+ 79.         else di as text "  SKIP `grp'_`treat' (gia' presente)"
+ 80.     }
+ 81. end
+
+. 
+. *── Esecuzione: dal gruppo piu' piccolo al piu' grande ──────────────────────
+> ───
+. run_stability_group prodHS4
+  SKIP prodHS4 (entrambe le stime presenti)
+
+. run_stability_group deepshallow
+  SKIP deepshallow (entrambe le stime presenti)
+
+. run_stability_group cem_v1
+
+########## GRUPPO: cem_v1 ##########
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    17,251,584
+        from master                17,251,584  
+        from using                          0  
+
+    Matched                        31,993,720  
+    -----------------------------------------
+(17,251,584 observations deleted)
+  31,993,720
+  righe dopo filtro: 31993720
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    28,419,367
+        from master                28,419,367  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,574,353  (_merge==3)
+    -----------------------------------------
+  [merge green] righe appaiate: 3574353
+(28,419,367 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    29,529,992
+        from master                29,529,992  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         2,463,728  (_merge==3)
+    -----------------------------------------
+  [merge dirty] righe appaiate: 2463728
+(29,529,992 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    21,809,923
+        from master                21,809,923  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        10,183,797  (_merge==3)
+    -----------------------------------------
+  [merge depth] righe appaiate: 10183797
+(21,809,923 real changes made)
+  green: 11.172046%
+  dirty: 6.8723612%
+  [cem_v1 WB] reghdfe fpd+fdt+pt...
+(dropped 1.60e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 16,033,233
+Absorbing 3 HDFE groups                           F(   4,     58) =       1.12
+Statistics robust to heteroskedasticity           Prob > F        =     0.3578
+                                                  R-squared       =     0.8690
+                                                  Adj R-squared   =     0.7398
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         59    Root MSE        =     1.3575
+
+                          (Std. err. adjusted for 59 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0008634   .0034342    -0.25   0.802    -.0077378     .006011
+    ep_dirty |  -.0036113    .002416    -1.49   0.140    -.0084476    .0012249
+    td_green |   .0000313   .0001074     0.29   0.772    -.0001838    .0002463
+    td_dirty |   .0001824   .0001043     1.75   0.086    -.0000265    .0003913
+       _cons |   9.594994   .0004395  2.2e+04   0.000     9.594114    9.595874
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   4522369     4522369           0    *|
+         fdt |   3375379     3375379           0    *|
+          pt |     63113           1       63112     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\STAB_cem_v1
+    > _WB_inclHKMO.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\STAB_cem_v1
+    > _WB_inclHKMO.dta saved
+  [OK] STAB_cem_v1_WB_inclHKMO.dta
+  [cem_v1 TREND] reghdfe fpd+fdt+pt...
+(dropped 1.60e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 16,033,233
+Absorbing 3 HDFE groups                           F(   4,     58) =       0.74
+Statistics robust to heteroskedasticity           Prob > F        =     0.5661
+                                                  R-squared       =     0.8690
+                                                  Adj R-squared   =     0.7398
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         59    Root MSE        =     1.3575
+
+                          (Std. err. adjusted for 59 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0005833    .001097    -0.53   0.597    -.0027793    .0016127
+    ep_dirty |  -.0011551   .0007476    -1.55   0.128    -.0026516    .0003413
+    td_green |   .0000928   .0001603     0.58   0.565     -.000228    .0004137
+    td_dirty |   .0002359   .0001531     1.54   0.129    -.0000705    .0005423
+       _cons |   9.594521   .0005045  1.9e+04   0.000     9.593511    9.595531
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   4522369     4522369           0    *|
+         fdt |   3375379     3375379           0    *|
+          pt |     63113           1       63112     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\STAB_cem_v1
+    > _TREND_inclHKMO.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\STAB_cem_v1
+    > _TREND_inclHKMO.dta saved
+  [OK] STAB_cem_v1_TREND_inclHKMO.dta
+
+. 
+. *── Assemblaggio tabella finale ─────────────────────────────────────────────
+> ───
+. di as text _n "########## ASSEMBLAGGIO ##########"
+
+########## ASSEMBLAGGIO ##########
+
+. * I sei file attesi si ELENCANO, non si cercano con un glob: `STAB_*.dta'
+. * raccoglierebbe anche le altre varianti e le impilerebbe qui dentro senza un
+. * avviso (trappola (b)). Cosi' invece un file mancante ferma l'assemblaggio.
+. clear
+
+. local first = 1
+
+. local mancanti ""
+
+. foreach grp in prodHS4 deepshallow cem_v1 {
+  2.     foreach treat in WB TREND {
+  3.         local f "$TAB\STAB_`grp'_`treat'$SFX.dta"
+  4.         cap confirm file "`f'"
+  5.         if _rc {
+  6.             local mancanti "`mancanti' `grp'_`treat'"
+  7.             continue
+  8.         }
+  9.         if `first' {
+ 10.             use "`f'", clear
+ 11.             local first = 0
+ 12.         }
+ 13.         else append using "`f'"
+ 14.     }
+ 15. }
+(variable treat was str2, now str5 to accommodate using data's values)
+(variable groupname was str7, now str11 to accommodate using data's values)
+
+. if "`mancanti'" != "" {
+.     di as error "Stime mancanti:`mancanti'"
+.     di as error "Assemblaggio interrotto: una tabella parziale sembrerebbe co
+> mpleta."
+.     exit 9
+. }
+
+. export delimited "$TAB\stability_fullpanel_reghdfe$SFX.csv", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\stability_f
+    > ullpanel_reghdfe_inclHKMO.csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\stability_fu
+> llpanel_reghdfe_inclHKMO.csv saved
+
+. di as result "[OK] stability_fullpanel_reghdfe$SFX.csv — " _N " righe"
+[OK] stability_fullpanel_reghdfe_inclHKMO.csv — 30 righe
+
+. if "$SFX" == "" {
+.     di as text "Confronto con R: New/Output/TripleDiff/Tables/tripledd_stabil
+> ity.csv"
+.     di as text "  atteso prodHS4 WB green -0.00090 | deepshallow -0.00222 | c
+> em_v1 -0.00228"
+. }
+
+. else di as text "Confronto con R: New/Output/TripleDiff/Tables/tripledd_stabi
+> lity$SFX.csv"
+Confronto con R: New/Output/TripleDiff/Tables/tripledd_stability_inclHKMO.csv
+
+. 
+. di as result _n "=== S8 (stability full panel) COMPLETATO ==="
+
+=== S8 (stability full panel) COMPLETATO ===
+
+. 
+. cap log close _all

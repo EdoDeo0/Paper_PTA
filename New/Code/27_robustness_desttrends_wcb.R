@@ -43,6 +43,7 @@ run_wcb <- function(cache_fst, green_file, dirty_file, depth_file, desttrends_fi
   library(fixest)
   library(data.table)
   library(fwildclusterboot)
+  library(dqrng)
   threads_fst(1)
   setFixest_nthreads(1)
 
@@ -99,6 +100,7 @@ run_wcb <- function(cache_fst, green_file, dirty_file, depth_file, desttrends_fi
 
     for (param in c("ep_green", "ep_dirty")) {
       set.seed(42)
+      dqrng::dqset.seed(42)
       bt <- boottest(m_lm, param = param, clustid = "country_code", B = 9999)
       cat(sprintf("  [%s] %s: p_wcb = %.4f\n", tr_name, param, bt$p_val))
       out[[paste(tr_name, param)]] <- data.table(

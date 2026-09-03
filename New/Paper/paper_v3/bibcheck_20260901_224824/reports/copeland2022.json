@@ -1,0 +1,10 @@
+{
+  "key": "copeland2022",
+  "verdict": "WRONG",
+  "source_url": "https://shop.elsevier.com/books/handbook-of-international-economics/gopinath/978-0-323-98889-6",
+  "issues": [
+    "doi: 10.1016/B978-0-444-54314-1.00002-1 uses ISBN from Volume 4 (2014), not Volume 5 (2022) → should be 10.1016/bs.hesint.2022.02.002"
+  ],
+  "corrected_entry": "@incollection{copeland2022,\n  author    = {Copeland, Brian R. and Shapiro, Joseph S. and Taylor, M. Scott},\n  title     = {Globalization and the environment},\n  booktitle = {Handbook of International Economics},\n  editor    = {Gopinath, Gita and Helpman, Elhanan and Rogoff, Kenneth},\n  volume    = {5},\n  pages     = {61--146},\n  publisher = {Elsevier},\n  year      = {2022},\n  doi       = {10.1016/bs.hesint.2022.02.002}\n}",
+  "notes": "DOI contains ISBN 978-0-444-54314-1 from the Handbook Vol. 4 (2014); the correct DOI for this Vol. 5 (2022) chapter is 10.1016/bs.hesint.2022.02.002, confirmed via doi.org resolution to PII S1573440422000028."
+}

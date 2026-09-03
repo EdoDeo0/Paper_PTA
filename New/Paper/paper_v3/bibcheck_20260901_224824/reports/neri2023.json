@@ -1,0 +1,10 @@
+{
+  "key": "neri2023",
+  "verdict": "WRONG",
+  "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4459813",
+  "issues": [
+    "author: first author given name is Cl{\\'e}ment → should be Matteo"
+  ],
+  "corrected_entry": "@techreport{neri2023,\n  author      = {Neri-Lain{\\'e}, Matteo and Orefice, Gianluca and Ruta, Michele},\n  title       = {Deep trade agreements and heterogeneous firms exports},\n  institution = {World Bank},\n  year        = {2023},\n  number      = {10277},\n  type        = {Policy Research Working Paper},\n  doi         = {10.1596/1813-9450-10277}\n}",
+  "notes": "The first author's given name is Matteo, not Clement; confirmed by SSRN, CEPR profile (https://cepr.org/about/people/matteo-neri-laine), and the World Bank PDF cover page."
+}

@@ -75,6 +75,9 @@ for (tr_name in c("WB", "TREND")) {
   # interazioni e demeaning Frisch-Waugh (pesato) rispetto a pd+dt+pt
   cell[, `:=`(ep_green = get(tr) * env_good,            ep_dirty = get(tr) * dirty_p,
               td_green = get(DEPTH_VAR) * env_good, td_dirty = get(DEPTH_VAR) * dirty_p)]
+  m_direct <- feols(y ~ ep_green + ep_dirty + td_green + td_dirty | pd + dt + pt,
+                    data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
+
   X <- fixest::demean(cell[, .(y, ep_green, ep_dirty, td_green, td_dirty)],
                       f = cell[, .(pd, dt, pt)], weights = cell$n)
   df <- as.data.frame(X)
@@ -83,10 +86,13 @@ for (tr_name in c("WB", "TREND")) {
   rm(X)
   gc()
 
-  # lm sui dati demeanati (coefficienti = feols di 12, verifica stampata)
+  # lm sui dati demeanati: i coefficienti devono coincidere con feols diretto
   m_lm <- lm(y ~ 0 + ep_green + ep_dirty + td_green + td_dirty, data = df, weights = n_w)
-  cat(sprintf("\n[%s] coef lm demeanato: ep_green %+.6f | ep_dirty %+.6f (attesi = 12)\n",
-              tr_name, coef(m_lm)[["ep_green"]], coef(m_lm)[["ep_dirty"]]))
+  b_fwl <- coef(m_lm)[c("ep_green", "ep_dirty", "td_green", "td_dirty")]
+  b_direct <- coef(m_direct)[c("ep_green", "ep_dirty", "td_green", "td_dirty")]
+  if (max(abs(b_fwl - b_direct)) > 1e-6) {
+    stop("FW GUARD FAILED: max |delta| = ", max(abs(b_fwl - b_direct)))
+  }
 
   # boottest sulle due interazioni EP
   for (param in c("ep_green", "ep_dirty")) {

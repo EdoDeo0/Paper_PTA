@@ -1,0 +1,10 @@
+{
+  "key": "sauvage2014",
+  "verdict": "WRONG",
+  "source_url": "https://www.oecd.org/en/publications/the-stringency-of-environmental-regulations-and-trade-in-environmental-goods_5jxrjn7xsnmq-en.html",
+  "issues": [
+    "author: given as 'Jérôme' but the author's actual first name is 'Jehan' (Jehan Sauvage), per OECD and EconBiz records (record slug 'sauvage-jehan')"
+  ],
+  "corrected_entry": "@techreport{sauvage2014,\n  author      = {Sauvage, Jehan},\n  title       = {The stringency of environmental regulations and trade in environmental goods},\n  institution = {OECD},\n  year        = {2014},\n  number      = {2014/03},\n  type        = {Trade and Environment Working Paper},\n  doi         = {10.1787/5jxrjn7xsnmq-en}\n}",
+  "notes": "Title, institution, year, number, type, and DOI all match the canonical OECD Trade and Environment Working Paper 2014/03, but the author's first name is wrong (Jérôme instead of Jehan)."
+}

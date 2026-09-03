@@ -42,6 +42,7 @@ run_all <- function(cache_fst, green_file, dirty_file, depth_file, depth_var, de
   library(fixest)
   library(data.table)
   library(fwildclusterboot)
+  library(dqrng)
   threads_fst(1)
   setFixest_nthreads(1)
 
@@ -110,9 +111,11 @@ run_all <- function(cache_fst, green_file, dirty_file, depth_file, depth_var, de
     gc()
     m_lm <- lm(y_adj ~ 0 + ep_green + ep_dirty + td_green + td_dirty, data = df, weights = n_w)
     dg <- abs(coef(m_lm)[["ep_green"]] - coef(m)[["ep_green"]])
-    if (dg > 1e-5) stop("FW non riproduce feols")
+    db <- abs(coef(m_lm)[["ep_dirty"]] - coef(m)[["ep_dirty"]])
+    if (dg > 1e-5 || db > 1e-5) stop("FW non riproduce feols")
     for (param in c("ep_green", "ep_dirty")) {
       set.seed(42)
+      dqrng::dqset.seed(42)
       bt <- boottest(m_lm, param = param, clustid = "country_code", B = 9999)
       cat(sprintf("  [%s] %s: p_wcb = %.4f\n", tr_name, param, bt$p_val))
       out[[paste(tr_name, param)]] <- data.table(

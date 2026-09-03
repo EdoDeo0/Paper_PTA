@@ -82,6 +82,7 @@ m_check <- feols(y ~ sub_green + sub_dirty + td_green + td_dirty | pd + dt + pt,
 cat(sprintf("  sub_green: %+.5f (p=%.4f) | sub_dirty: %+.5f (p=%.4f)\n",
             coef(m_check)[["sub_green"]], pvalue(m_check)[["sub_green"]],
             coef(m_check)[["sub_dirty"]], pvalue(m_check)[["sub_dirty"]]))
+b_direct <- coef(m_check)[c("sub_green", "sub_dirty", "td_green", "td_dirty")]
 rm(m_check); gc()
 
 ## --- Frisch-Waugh demeaning (pesato) ------------------------------------
@@ -95,8 +96,10 @@ rm(FW, cell); gc()
 
 ## --- lm verifica: coeff devono coincidere con feols --------------------
 m_lm <- lm(y ~ 0 + sub_green + sub_dirty + td_green + td_dirty, data = df, weights = n_w)
-cat(sprintf("[lm FW] sub_green: %+.6f | sub_dirty: %+.6f\n",
-            coef(m_lm)[["sub_green"]], coef(m_lm)[["sub_dirty"]]))
+b_fwl <- coef(m_lm)[c("sub_green", "sub_dirty", "td_green", "td_dirty")]
+if (max(abs(b_fwl - b_direct)) > 1e-6) {
+  stop("FW GUARD FAILED: max |delta| = ", max(abs(b_fwl - b_direct)))
+}
 
 ## --- Funzione WCB fast (Roodman et al. 2019, impose null) ---------------
 ##

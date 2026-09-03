@@ -1,0 +1,8 @@
+{
+  "key": "yue2024",
+  "verdict": "VERIFIED",
+  "source_url": "https://link.springer.com/article/10.1007/s10668-024-05852-3",
+  "issues": [],
+  "corrected_entry": null,
+  "notes": "All fields match CrossRef metadata: Yue & Lin, Environment Development and Sustainability, 2024, DOI 10.1007/s10668-024-05852-3; no volume/pages in CrossRef (online-first publication, December 2024), so omitting them in the BibTeX entry is correct."
+}

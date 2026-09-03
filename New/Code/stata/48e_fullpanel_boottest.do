@@ -8,9 +8,11 @@
 ** Prerequisito: 48e_export_fullpanel_dta.R
 ** Output: New/Output/TripleDiff/Tables/stata_check_trim_fullpanel.csv
 
-clear all
-set more off
-set varabbrev off
+do "New/Code/stata/_root.do"
+
+cap mkdir "New/Output/Diagnostics/stata_logs"
+cap log close _all
+log using "New/Output/Diagnostics/stata_logs/48e_fullpanel_boottest.log", replace text
 
 local dta      "New/Data/Collapsed/tmp_check_trim_fullpanel.dta"
 local dta_dm   "New/Data/Collapsed/tmp_trim_fullpanel_demeaned.dta"
@@ -129,3 +131,4 @@ di as txt "  -> TREND scritto nel CSV"
 capture erase "`dta_dm'"
 
 di as result _n "=== FATTO. Output: $CSV_OUT ==="
+cap log close _all

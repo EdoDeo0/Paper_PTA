@@ -42,9 +42,7 @@
 * cambiando $VSAMPLE/$VDEPTH in testa. Tempo stimato: 1,5-3 h per variante
 * (il blocco F e' il piu' lento: assorbe 2 slope per destinazione).
 
-clear all
-set more off
-set varabbrev off
+do "New/Code/stata/_root.do"
 
 *── PARAMETRI ─────────────────────────────────────────────────────────────────
 * Default (usati se non si passa nulla da riga di comando)
@@ -57,7 +55,6 @@ if "`1'" != "" global VSAMPLE "`1'"
 if "`2'" != "" global VDEPTH  "`2'"
 *──────────────────────────────────────────────────────────────────────────────
 
-global ROOT "C:\Work\projects\Paper_PTA"
 global COLL "$ROOT\New\Data\Collapsed"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 global BREPS 9999
@@ -118,6 +115,10 @@ di as text "  Variante: campione=$VSAMPLE  profondita'=$VDEPTH"
 di as text "  Input:  $VDTA"
 di as text "  Suffisso output: '$SFX'"
 di as text "==============================================================="
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\63_variants_collapsed$SFX.log", replace text
 
 confirm file "$VDTA"
 
@@ -218,6 +219,11 @@ if _rc {
         qui gen double ep_dirty = `xv' * dirty_p
         qui gen double td_green = $DEPTHVAR * env_good
         qui gen double td_dirty = $DEPTHVAR * dirty_p
+        * reghdfe diretto (per verifica FWL)
+        qui reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+            absorb(pd dt pt) vce(cluster country_code)
+        local b_direct_ep_green = _b[ep_green]
+        local b_direct_ep_dirty = _b[ep_dirty]
         * Frisch-Waugh: demean con [aw=n] su pd dt pt (come 52 S3 e come R)
         foreach v in y ep_green ep_dirty td_green td_dirty {
             cap drop `v'_dm
@@ -227,6 +233,9 @@ if _rc {
             cluster(country_code) nocons
         local nobs_post = e(N)
         local nclust    = e(N_clust)
+        * Verifica manuale: i coefficienti FWL devono coincidere con il reghdfe diretto
+        assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+        assert abs(_b[ep_dirty_dm] - `b_direct_ep_dirty') < 1e-6
         foreach p in ep_green ep_dirty {
             local b = _b[`p'_dm]
             set seed 42
@@ -335,6 +344,11 @@ if _rc {
         qui gen double ep_co2   = `xv' * co2_z
         qui gen double td_green = $DEPTHVAR * env_good
         qui gen double td_co2   = $DEPTHVAR * co2_z
+        * reghdfe diretto (per verifica FWL)
+        qui reghdfe y ep_green ep_co2 td_green td_co2 [aw=n], ///
+            absorb(pd dt pt) vce(cluster country_code)
+        local b_direct_ep_green = _b[ep_green]
+        local b_direct_ep_co2   = _b[ep_co2]
         foreach v in y ep_green ep_co2 td_green td_co2 {
             cap drop `v'_dm
             qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol(1e-8)
@@ -343,6 +357,9 @@ if _rc {
             cluster(country_code) nocons
         local NN  = e(N)
         local NCL = e(N_clust)
+        * Verifica manuale: i coefficienti FWL devono coincidere con il reghdfe diretto
+        assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+        assert abs(_b[ep_co2_dm] - `b_direct_ep_co2') < 1e-6
         foreach p in ep_green ep_co2 {
             local b  = _b[`p'_dm]
             local se = _se[`p'_dm]
@@ -470,6 +487,13 @@ if _rc {
         qui gen double ep_green = `xv' * env_good
         qui gen double ep_dirty = `xv' * dirty_p
 
+        di as text "  [F `treat'] reghdfe diretto (per verifica FWL)..."
+        qui reghdfe y ep_green ep_dirty td_green td_dirty, ///
+            absorb(pd dt pt country_code#c.trend_g country_code#c.trend_b) ///
+            vce(cluster country_code)
+        local b_direct_ep_green = _b[ep_green]
+        local b_direct_ep_dirty = _b[ep_dirty]
+
         di as text "  [F `treat'] demeaning (lento: 2 slope per destinazione)..."
         foreach v in y ep_green ep_dirty td_green td_dirty {
             cap drop `v'_dm
@@ -481,6 +505,9 @@ if _rc {
             cluster(country_code) nocons
         local NN  = e(N)
         local NCL = e(N_clust)
+        * Verifica manuale: i coefficienti FWL devono coincidere con il reghdfe diretto
+        assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+        assert abs(_b[ep_dirty_dm] - `b_direct_ep_dirty') < 1e-6
         local i = 1
         foreach v in ep_green ep_dirty td_green td_dirty {
             if `i' == 1 local tn "`xv':env_good"
@@ -575,6 +602,11 @@ if _rc {
         cap drop ep_green ep_dirty
         qui gen double ep_green = `xv' * env_good
         qui gen double ep_dirty = `xv' * dirty_p
+        * reghdfe diretto (per verifica FWL)
+        qui reghdfe y_adj ep_green ep_dirty td_green td_dirty [aw=n], ///
+            absorb(pd dt pt) vce(cluster country_code)
+        local b_direct_ep_green = _b[ep_green]
+        local b_direct_ep_dirty = _b[ep_dirty]
         foreach v in y_adj ep_green ep_dirty td_green td_dirty {
             cap drop `v'_dm
             qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol(1e-8)
@@ -583,6 +615,9 @@ if _rc {
             cluster(country_code) nocons
         local NN  = e(N)
         local NCL = e(N_clust)
+        * Verifica manuale: i coefficienti FWL devono coincidere con il reghdfe diretto
+        assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+        assert abs(_b[ep_dirty_dm] - `b_direct_ep_dirty') < 1e-6
         foreach p in ep_green ep_dirty {
             local b  = _b[`p'_dm]
             local se = _se[`p'_dm]
@@ -608,3 +643,5 @@ if _rc {
 else di as text "[G] gia' presente, salto."
 
 di as result _n "=== 63 FATTO per variante '$SFX' ==="
+
+cap log close _all

@@ -1,0 +1,57 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\tmp_check_cc3.do 
+
+. clear all
+
+. set more off
+
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. global DTA "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed
+> .dta"
+
+. use country_code using "$DTA" if inlist(country_code, 102, 110, 121, 133, 414
+> , 421, 437, 439), clear
+
+. tab country_code
+
+  export destination country or |
+          import origin country |      Freq.     Percent        Cum.
+--------------------------------+-----------------------------------
+                        Bahrian |     76,862        1.53        1.53
+                       HongKong |  3,258,634       64.67       66.19
+                          Macau |    205,459        4.08       70.27
+                     Korea Rep. |  1,480,278       29.38       99.65
+                       Dominica |      7,730        0.15       99.80
+                        Grenada |      2,991        0.06       99.86
+                    Saint Lucia |      4,345        0.09       99.95
+   Saint Vincent and Grenadines |      2,749        0.05      100.00
+--------------------------------+-----------------------------------
+                          Total |  5,039,048      100.00
+
+. 
+end of do-file

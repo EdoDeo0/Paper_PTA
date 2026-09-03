@@ -22,22 +22,9 @@
 * Input:  Data/WB/DTA 2.0 - Vertical Content (v2).xlsx (foglio "STATA")
 * Output: Data/WB/WB_DTA.dta
 
-clear all
-set more off
+do "New/Code/stata/_root.do"
 
-* --- Percorsi radice per sistema operativo ---------------------------------
-* Adattare il ramo del proprio OS se il progetto vive altrove sulla macchina.
-if c(os) == "Windows" {
-    local root "C:\Work\projects\Paper_PTA"
-}
-if c(os) == "MacOSX" {
-    local root "~/Documents/work/projects/Paper_PTA"
-}
-if c(os) == "Unix" {
-    local root "~/work/projects/Paper_PTA"
-}
-
-local wb_dir "`root'/Data/WB"
+local wb_dir "$ROOT/Data/WB"
 
 * --- Conversione -------------------------------------------------------
 import excel "`wb_dir'/DTA 2.0 - Vertical Content (v2).xlsx", sheet("STATA") firstrow clear

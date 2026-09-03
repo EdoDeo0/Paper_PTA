@@ -18,22 +18,7 @@
 *     -ArgumentList '/e','do','"C:\Work\projects\Paper_PTA\New\Code\stata\18_robustness_fullpanel.do"' `
 *     -WorkingDirectory 'C:\Work\projects\Paper_PTA\New\Output' -Wait
 
-clear all
-set more off
-set varabbrev off
-* --- Percorsi radice per sistema operativo ---------------------------------
-* Stessa convenzione di 01_wb_dataset_conversion.do: lo stesso file gira senza
-* modifiche su Windows/Mac/Unix. Adattare il ramo del proprio OS se il progetto
-* vive altrove sulla macchina.
-if c(os) == "Windows" {
-    global ROOT "C:\Work\projects\Paper_PTA"
-}
-if c(os) == "MacOSX" {
-    global ROOT "~/Documents/work/projects/Paper_PTA"
-}
-if c(os) == "Unix" {
-    global ROOT "~/work/projects/Paper_PTA"
-}
+do "New/Code/stata/_root.do"
 
 *-- Variante di campione e depth (analogo Stata di New/Code/_sample_config.R) --
 *  ##########################################################################
@@ -87,6 +72,10 @@ else {
 }
 global OUTSFX "$SFX$DEPTHSFX"
 di "[depth] $PTA_DEPTH ($DEPTHVAR) | suffisso output: '$OUTSFX'"
+
+cap mkdir "$ROOT/New/Output/Diagnostics/stata_logs"
+cap log close _all
+log using "$ROOT/New/Output/Diagnostics/stata_logs/18_robustness_fullpanel$OUTSFX.log", replace text
 
 global TAB  "$ROOT/New/Output/TripleDiff/Tables"
 
@@ -143,11 +132,20 @@ gen byte hkmo = inlist(country_code, 110, 121)
 gen byte asean = inlist(country_code, 105, 107, 112, 119, 122, 106, 129, 132, 136) ///
                | inlist(country_code, 144, 141)
 
-merge m:1 hs6 using `green', keep(master match) nogen
+merge m:1 hs6 using `green', keep(master match)
+qui count if _merge == 3
+di as text "[merge green] righe appaiate: " r(N)
+drop _merge
 replace env_good_new = 0 if missing(env_good_new)
-merge m:1 hs6 using `dirty', keep(master match) nogen
+merge m:1 hs6 using `dirty', keep(master match)
+qui count if _merge == 3
+di as text "[merge dirty] righe appaiate: " r(N)
+drop _merge
 replace dirty_p = 0 if missing(dirty_p)
-merge m:1 country_code year using `depth', keep(master match) nogen
+merge m:1 country_code year using `depth', keep(master match)
+qui count if _merge == 3
+di as text "[merge depth] righe appaiate: " r(N)
+drop _merge
 if $DROP_UNMEASURED {
     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
 }
@@ -178,7 +176,7 @@ cap confirm file "$TAB/_rob_A_WB_controls$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty tariffs ln_hhi_baci AD_pdt ///
         if $HKMOEXPR, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_A_WB_controls$OUTSFX.dta", tstat pval ci replace addlabel(model, A_WB_controls)
+    regsave using "$TAB/_rob_A_WB_controls$OUTSFX.dta", tstat pval ci replace addlabel(model, A_WB_controls, source, reghdfe_stata_18)
 }
 
 *── B. WB senza ASEAN ──────────────────────────────────────────────────────────
@@ -186,7 +184,7 @@ cap confirm file "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
         if $HKMOEXPR & !asean, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta", tstat pval ci replace addlabel(model, B_WB_noASEAN)
+    regsave using "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta", tstat pval ci replace addlabel(model, B_WB_noASEAN, source, reghdfe_stata_18)
 }
 
 * NOTA: il vecchio blocco C ("WB includendo HK+MO") e' stato rimosso. Ora si
@@ -198,13 +196,13 @@ cap confirm file "$TAB/_rob_D_WB_overlap$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
         if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_D_WB_overlap$OUTSFX.dta", tstat pval ci replace addlabel(model, D_WB_overlap)
+    regsave using "$TAB/_rob_D_WB_overlap$OUTSFX.dta", tstat pval ci replace addlabel(model, D_WB_overlap, source, reghdfe_stata_18)
 }
 cap confirm file "$TAB/_rob_D_TREND_overlap$OUTSFX.dta"
 if _rc {
     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
         if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_D_TREND_overlap$OUTSFX.dta", tstat pval ci replace addlabel(model, D_TREND_overlap)
+    regsave using "$TAB/_rob_D_TREND_overlap$OUTSFX.dta", tstat pval ci replace addlabel(model, D_TREND_overlap, source, reghdfe_stata_18)
 }
 
 *── E. C-deepshallow TREND ──────────────────────────────────────────────────────
@@ -212,7 +210,7 @@ cap confirm file "$TAB/_rob_E_TREND_deepshallow$OUTSFX.dta"
 if _rc {
     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
         if $HKMOEXPR & in_deepshallow, absorb(fpd fdt pt) vce(cluster country_code) compact
-    regsave using "$TAB/_rob_E_TREND_deepshallow$OUTSFX.dta", tstat pval ci replace addlabel(model, E_TREND_deepshallow)
+    regsave using "$TAB/_rob_E_TREND_deepshallow$OUTSFX.dta", tstat pval ci replace addlabel(model, E_TREND_deepshallow, source, reghdfe_stata_18)
 }
 
 *── G. Within-firm: quota green nel paniere impresa-dest-anno ──────────────────
@@ -229,10 +227,10 @@ if _rc {
     egen long fd = group(companyID country_code)
     reghdfe share_green WB_EP_Depth $DEPTHVAR, ///
         absorb(fd year) vce(cluster country_code)
-    regsave using "$TAB/_rob_G_WB_withinfirm$OUTSFX.dta", tstat pval ci replace addlabel(model, G_WB_withinfirm)
+    regsave using "$TAB/_rob_G_WB_withinfirm$OUTSFX.dta", tstat pval ci replace addlabel(model, G_WB_withinfirm, source, reghdfe_stata_18)
     reghdfe share_green TREND_EP_Count $DEPTHVAR, ///
         absorb(fd year) vce(cluster country_code)
-    regsave using "$TAB/_rob_G_TREND_withinfirm$OUTSFX.dta", tstat pval ci replace addlabel(model, G_TREND_withinfirm)
+    regsave using "$TAB/_rob_G_TREND_withinfirm$OUTSFX.dta", tstat pval ci replace addlabel(model, G_TREND_withinfirm, source, reghdfe_stata_18)
 }
 
 *── Export riassuntivo ─────────────────────────────────────────────────────────
@@ -273,3 +271,5 @@ foreach f of local files {
 }
 export delimited "$TAB/tripledd_robustness_reghdfe$OUTSFX.csv", replace
 di "[OK] tripledd_robustness_reghdfe$OUTSFX.csv"
+
+cap log close _all

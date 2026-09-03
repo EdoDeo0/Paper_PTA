@@ -1,0 +1,406 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\Code\stata\12_cem_matching_stata.do 
+
+. *****************************************************************************
+> ***
+. ****** 12s — CEM v1 in Stata (fonte autorevole del campione CEM)           **
+> ****
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. *
+. * Covariate CEM v1: gdp_growth_2000, log_gdppc_2000, mfn_tariff_2000
+. * Cutpoints: c(0,3,6,10), c(6,7.5,9,10.5), c(0,5,10,20)
+. *
+. * Output: Output/CEM/matched_countries.csv       (formato compatibile pipelin
+> e)
+. *         New/Output/CEM_stata/cem_v1_matched_stata.csv (dettaglio covariate)
+. *         New/Output/CEM_stata/cem_v1_summary.txt
+. *
+. * Dipendenza: ssc install cem
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. if c(os) == "MacOSX" {
+.     global ROOT "~/Documents/work/projects/Paper_PTA"
+. }
+
+. if c(os) == "Unix" {
+.     global ROOT "~/work/projects/Paper_PTA"
+. }
+
+. 
+. cap which cem
+
+. if _rc ssc install cem
+
+. 
+. cap mkdir "$ROOT/New/Output/CEM_stata"
+
+. 
+. *── 1. Covariate WDI + tariffe MFN ──────────────────────────────────────────
+> ──
+. import delimited "$ROOT/Data/Matching/wdi_data.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(4 vars, 252 obs)
+
+. keep iso3c gdp_growth_2000 log_gdppc_2000
+
+. duplicates drop iso3c, force
+
+Duplicates in terms of iso3c
+
+(3 observations deleted)
+
+. tempfile wdi
+
+. save `wdi'
+file C:\Users\edodr\AppData\Local\Temp\ST_3bb0_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/Data/Matching/mfn_tariffs_2000.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(2 vars, 106 obs)
+
+. keep iso3c mfn_tariff_2000
+
+. tempfile mfn
+
+. save `mfn'
+file C:\Users\edodr\AppData\Local\Temp\ST_3bb0_000002.tmp saved as .dta
+    format
+
+. 
+. use `wdi', clear
+
+. merge 1:1 iso3c using `mfn', nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           143
+        from master                       143  
+        from using                          0  
+
+    Matched                               106  
+    -----------------------------------------
+
+. 
+. *── 2. Indicatore trattamento ───────────────────────────────────────────────
+> ──
+. gen byte treated = 0
+
+. foreach c in AUS BGD BRN KHM CHL CRI HKG ISL IDN IND KOR LAO MYS MAC MMR NZL 
+> PAK PHL PER SGP LKA CHE THA TLS VNM {
+  2.     replace treated = 1 if iso3c == "`c'"
+  3. }
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+
+. 
+. qui count if treated
+
+. di as text "Trattati: " r(N)
+Trattati: 25
+
+. qui count if !treated
+
+. di as text "Controlli: " r(N)
+Controlli: 224
+
+. 
+. *── 3. CEM ──────────────────────────────────────────────────────────────────
+> ──
+. * Eliminare righe con missing nelle covariate
+. foreach v in gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000 {
+  2.     drop if missing(`v')
+  3. }
+(5 observations deleted)
+(0 observations deleted)
+(138 observations deleted)
+
+. 
+. qui count
+
+. di as text "Paesi candidati: " r(N) " (" ///
+>     string(r(N) - r(N) + _N) " dopo drop missing)"
+Paesi candidati: 106 (106 dopo drop missing)
+
+. 
+. imb gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000, treatment(treated)
+
+Multivariate L1 distance: .68073593
+
+Univariate imbalance:
+
+                      L1     mean      min      25%      50%      75%      max
+gdp_growth_2000      .25   1.5371   5.7535   1.4082   .70518   .69996  -5.9353
+ log_gdppc_2000   .16017   .05096  -.12962  -.35809   .01155    .5448   -.0078
+mfn_tariff_2000   .27056  -2.3442    -1.07      .18    -3.63    -6.68    -4.07
+
+. cem gdp_growth_2000 (0 3 6 10) ///
+>     log_gdppc_2000  (6 7.5 9 10.5) ///
+>     mfn_tariff_2000 (0 5 10 20), ///
+>     treatment(treated)
+(using the scott break method for imbalance)
+
+Matching Summary:
+-----------------
+Number of strata: 45
+Number of matched strata: 13
+
+            0   1
+      All  84  22
+  Matched  40  19
+Unmatched  44   3
+
+
+Multivariate L1 distance: .42631579
+
+Univariate imbalance:
+
+                      L1     mean      min      25%      50%      75%      max
+gdp_growth_2000   .13158  -.17542   2.6456   .18177   .20954  -.04675  -.41036
+ log_gdppc_2000   .17544  -.22884   .21125  -.65074  -.18221  -.08806   .06745
+mfn_tariff_2000   .02982  -.38292     -3.3     -.21     -.16     1.04    -4.07
+
+. 
+. *── 4. Diagnostica ──────────────────────────────────────────────────────────
+> ──
+. qui count if cem_matched & treated
+
+. local n_treat_m = r(N)
+
+. qui count if cem_matched & !treated
+
+. local n_ctrl_m = r(N)
+
+. di as text "Matchati: " `n_treat_m' " trattati, " `n_ctrl_m' " controlli"
+Matchati: 19 trattati, 40 controlli
+
+. 
+. *── 5. Merge country_code (dal dataset principale) ──────────────────────────
+> ──
+. keep if cem_matched
+(47 observations deleted)
+
+. rename iso3c country_iso3
+
+. merge m:1 country_iso3 using "$ROOT/New/Output/CEM_stata/iso3c_to_cc.dta", ke
+> ep(master match) nogen keepusing(cc)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                59  
+    -----------------------------------------
+
+. rename country_iso3 iso3c
+
+. rename cc country_code
+
+. 
+. *── 6. Export ───────────────────────────────────────────────────────────────
+> ──
+. * Dettaglio covariate
+. keep iso3c country_code treated cem_strata cem_weights ///
+>     gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000
+
+. sort treated iso3c
+
+. export delimited "$ROOT/New/Output/CEM_stata/cem_v1_matched_stata.csv", repla
+> ce
+file C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_matched_stata.csv s
+> aved
+
+. 
+. * Formato compatibile con la pipeline (52_export, 58_stability, ecc.)
+. rename cem_strata subclass
+
+. rename cem_weights weights
+
+. export delimited iso3c country_code treated subclass weights ///
+>     using "$ROOT/Output/CEM/matched_countries.csv", replace
+file C:\Work\projects\Paper_PTA/Output/CEM/matched_countries.csv saved
+
+. 
+. di as text _n "=== RISULTATO ==="
+
+=== RISULTATO ===
+
+. di as text "Matchati: " `n_treat_m' " trattati, " `n_ctrl_m' " controlli"
+Matchati: 19 trattati, 40 controlli
+
+. di as text "Atteso: 19 trattati, 40 controlli (con dati WDI/MFN aggiornati)"
+Atteso: 19 trattati, 40 controlli (con dati WDI/MFN aggiornati)
+
+. if `n_treat_m' != 19 | `n_ctrl_m' != 40 {
+.     di as error "[ATTENZIONE] Conteggi diversi da 19/40. Verificare dati di i
+> nput."
+. }
+
+. else {
+.     di as text "[OK] Conteggi corretti."
+[OK] Conteggi corretti.
+. }
+
+. 
+. * Chiave country_code per merge rapidi (52_omnibus, 58_stability)
+. preserve
+
+. keep country_code
+
+. duplicates drop country_code, force
+
+Duplicates in terms of country_code
+
+(0 observations are duplicates)
+
+. drop if missing(country_code)
+(0 observations deleted)
+
+. save "$ROOT/New/Output/CEM_stata/cem_v1_cc.dta", replace
+file C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_cc.dta saved
+
+. restore
+
+. 
+. log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", replace text name(
+> summary)
+-------------------------------------------------------------------------------
+      name:  summary
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ opened on:   2 Sep 2026, 18:58:35
+
+. list iso3c country_code treated weights, clean noobs
+
+    iso3c   countr~e   treated     weights  
+      AUT        315         0   .30075188  
+      BEL        301         0   .30075188  
+      BHR        102         0   4.2105263  
+      BRA        410         0   .42105263  
+      CAN        501         0   .30075188  
+      COL        413         0   .35087719  
+      CUB        416         0   .42105263  
+      CYP        108         0   .30075188  
+      CZE        352         0   1.4035088  
+      DEU        304         0   2.1052632  
+      DMA        414         0   .35087719  
+      DNK        302         0   .30075188  
+      ESP        312         0   .30075188  
+      FIN        318         0   .30075188  
+      FRA        305         0   .30075188  
+      GBR        303         0   .30075188  
+      GRC        310         0   .30075188  
+      GRD        421         0   .42105263  
+      GTM        423         0   4.2105263  
+      HND        426         0   2.1052632  
+      IRL        306         0   4.2105263  
+      IRN        113         0   1.4035088  
+      ISR        115         0   2.1052632  
+      ITA        307         0   .30075188  
+      JOR        117         0   1.4035088  
+      LBN        120         0   .35087719  
+      LCA        437         0   .35087719  
+      MDG        227         0   1.0526316  
+      MEX        429         0   .42105263  
+      NGA        236         0   1.4035088  
+      NLD        309         0   .30075188  
+      PAN        432         0   1.4035088  
+      PRT        311         0   .30075188  
+      SUR        441         0   .35087719  
+      SWE        330         0   .30075188  
+      UGA        250         0   1.0526316  
+      USA        502         0   2.1052632  
+      VCT        439         0   .35087719  
+      VEN        445         0   .42105263  
+      ZAF        244         0   1.4035088  
+      AUS        601         1           1  
+      BRN        105         1           1  
+      CHE        331         1           1  
+      CHL        412         1           1  
+      CRI        415         1           1  
+      HKG        110         1           1  
+      IDN        112         1           1  
+      IND        111         1           1  
+      ISL        322         1           1  
+      KOR        133         1           1  
+      LAO        119         1           1  
+      LKA        134         1           1  
+      MAC        121         1           1  
+      NZL        609         1           1  
+      PAK        127         1           1  
+      PER        434         1           1  
+      PHL        129         1           1  
+      SGP        132         1           1  
+      THA        136         1           1  
+
+. di as text _n "Paesi senza country_code (non nel dataset di trade):"
+
+Paesi senza country_code (non nel dataset di trade):
+
+. list iso3c if missing(country_code), clean noobs
+
+. log close summary
+      name:  summary
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ closed on:   2 Sep 2026, 18:58:35
+-------------------------------------------------------------------------------
+
+. 
+end of do-file

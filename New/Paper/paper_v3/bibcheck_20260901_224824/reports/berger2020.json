@@ -1,0 +1,10 @@
+{
+  "key": "berger2020",
+  "verdict": "WRONG",
+  "source_url": "https://www.cambridge.org/core/books/abs/international-trade-investment-and-the-sustainable-development-goals/trade-effects-of-environmental-provisions-in-preferential-trade-agreements/B02E2E00C23AFCB4FB5E903E30452C7D",
+  "issues": [
+    "pages: missing → should be 111--139"
+  ],
+  "corrected_entry": "@incollection{berger2020,\n  author    = {Berger, Axel and Brandi, Clara and Morin, Jean-Fr{\\'e}d{\\'e}ric and Schwab, Jakob},\n  title     = {The trade effects of environmental provisions in preferential trade agreements},\n  booktitle = {International Trade, Investment, and the Sustainable Development Goals},\n  publisher = {Cambridge University Press},\n  year      = {2020},\n  editor    = {Beverelli, Cosimo and Kurtz, J{\\\"u}rgen and Raess, Damian},\n  pages     = {111--139},\n  doi       = {10.1017/9781108881364.006}\n}",
+  "notes": "Missing pages field; Cambridge Core confirms chapter spans pages 111-139."
+}

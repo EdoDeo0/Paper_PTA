@@ -42,10 +42,7 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto - pochi minuti):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\60_sunab_collapsed.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 
 *── VARIANTE ─────────────────────────────────────────────────────────────────
@@ -84,6 +81,10 @@ else {
     global NTRT_ATT 25
 }
 di as text _n "=== Sun-Abraham | campione=$VSAMPLE | suffisso='$SFX' ==="
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\60_sunab_collapsed$SFX.log", replace text
 
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -435,3 +436,5 @@ copy "$TAB\sunab_diag_stata$SFX.csv" "$TAB\sunab_diag_stata${SFX}_desta.csv", re
 di as res "[D] variante DESTA scritta come COPIA di '$SFX' (identica per costruzione)"
 
 di as res "=== 60 FATTO (variante '$SFX' + copia _desta) ==="
+
+cap log close _all

@@ -187,6 +187,8 @@ df_wb <- df_wb %>%
 # identificativo di merge e anno/paesi dell'accordo - mappatura manuale
 # (ordine delle 14 righe = ordine con cui gli accordi compaiono in df_wb dopo
 # il pivot: verificato una volta, non ricostruibile automaticamente)
+stopifnot("df_wb dopo pivot deve avere 14 accordi" = nrow(df_wb) == 14)
+
 df_wb$Merge_ID <- c(8, 15, 10, 1, 9, 2, 12, 3, 4, 7, 13, 5, 6, 11)
 df_wb$Year_WB <- c(2005, 2002, 2015, 2006, 2011, 2003, 2015, 2003, 2008, 2009, 2014, 2007, 2010, 2014)
 Country_WB <- list(
@@ -196,6 +198,22 @@ Country_WB <- list(
   c("Macau"), c("New Zealand"), c("Singapore"), c("Iceland"), c("Pakistan"),
   c("Peru"), c("Switzerland")
 )
+
+## ---- GUARDIA POSIZIONALE (audit 2026-09-02, rilievo C5) ---------------------
+## I vettori Merge_ID, Year_WB e Country_WB qui sopra sono allineati per POSIZIONE
+## all'ordine delle righe restituito da pivot_wider(). Se quell'ordine cambia,
+## il trattamento si sposta senza errori. Queste asserzioni lo intercettano.
+stopifnot(
+  "lunghezza Merge_ID"   = length(df_wb$Merge_ID) == 14,
+  "lunghezza Year_WB"    = length(df_wb$Year_WB)  == 14,
+  "lunghezza Country_WB" = length(Country_WB)     == 14
+)
+## Impronta attesa: WBID nell'ordine in cui il pivot li restituisce.
+## Se questa fallisce, l'ordine e' cambiato: NON aggiornare l'impronta senza
+## aver prima riverificato a mano la corrispondenza WBID <-> accordo <-> paesi.
+WBID_ATTESI <- as.double(c(8, 15, 10, 1, 9, 2, 12, 3, 4, 7, 13, 5, 6, 11))
+stopifnot("ordine WBID cambiato rispetto alla verifica del 2026" =
+            identical(df_wb$WBID, WBID_ATTESI))
 
 # un accordo puo' valere per piu' paesi (es. ASEAN) e per piu' anni (dall'entrata
 # in vigore al 2015): espande una riga-accordo in righe paese-anno
@@ -261,11 +279,32 @@ rm(wto_x_ac, wto_x_le)
 ## --- C3: merge WB x TREND per paese-anno --------------------------------
 df_merged <- df_wb %>% inner_join(df_trend, by = c("Country_WB" = "Country_TREND", "Year"))
 
+## Diagnostica merge (audit 2026-09-02, rilievo W7)
+solo_wb    <- dplyr::anti_join(df_wb, df_trend,
+                 by = c("Country_WB" = "Country_TREND", "Year"))
+solo_trend <- dplyr::anti_join(df_trend, df_wb,
+                 by = c("Country_TREND" = "Country_WB", "Year"))
+cat(sprintf("[merge WBxTREND] wb=%d trend=%d merged=%d | solo WB=%d solo TREND=%d\n",
+            nrow(df_wb), nrow(df_trend), nrow(df_merged),
+            nrow(solo_wb), nrow(solo_trend)))
+if (nrow(solo_wb) > 0)    print(unique(solo_wb$Country_WB))
+if (nrow(solo_trend) > 0) print(unique(solo_trend$Country_TREND))
+stopifnot("il merge WBxTREND ha perso righe inattese" = nrow(df_merged) > 0)
+
 write.csv(df_merged, here("Data/Merged/Merged_TREND_WB_FULL_NAMES.csv"), row.names = FALSE)
 
 country_codes <- read.csv(here("Data/Country_Codes_Custom_Data.csv"), sep = ";")
 df_merged <- df_merged %>%
-  left_join(country_codes %>% select(country, country_code), by = c("Country_WB" = "country")) %>%
+  left_join(country_codes %>% select(country, country_code), by = c("Country_WB" = "country"))
+
+## Guardia country_code (audit 2026-09-02, rilievo W7)
+na_cc <- df_merged$Country_WB[is.na(df_merged$country_code)]
+if (length(na_cc) > 0) {
+  print(unique(na_cc))
+  stop("Destinazioni senza country_code: uscirebbero dal gruppo trattato in silenzio.")
+}
+
+df_merged <- df_merged %>%
   select(-c(Merge_ID.x, Merge_ID.y, Year_WB, Year_trend_min, Country_WB, Trade.Agreement,
             Number, US_Partners, EC_Partners, HBTypeCode, Language)) %>%
   rename(year = Year)

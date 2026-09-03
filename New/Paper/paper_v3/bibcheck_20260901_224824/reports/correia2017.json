@@ -1,0 +1,10 @@
+{
+  "key": "correia2017",
+  "verdict": "WRONG",
+  "source_url": "https://scorreia.com/software/reghdfe/cite.html",
+  "issues": [
+    "institution: Duke University → should be omitted (author's own BibTeX has no institution field; his affiliation is Federal Reserve Board / Federal Reserve Bank of Richmond, not Duke)"
+  ],
+  "corrected_entry": "@techreport{correia2017,\n  author      = {Correia, Sergio},\n  title       = {Linear models with high-dimensional fixed effects: An efficient and feasible estimator},\n  year        = {2017},\n  type        = {Working Paper}\n}",
+  "notes": "Correia's own cite page provides a BibTeX with no institution field; his affiliations per IDEAS/RePEc and his CV are Federal Reserve Board / Federal Reserve Bank of Richmond, never Duke University."
+}

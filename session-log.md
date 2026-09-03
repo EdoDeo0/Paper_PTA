@@ -1,5 +1,296 @@
 # Session Log — Paper_PTA
 
+## 2026-09-03/04 — Continuazione audit: tabelle orfane, sotto-indici EP, controlli
+
+**Tabelle orfane:** verificato che ~19 tabelle in `./New/Paper/paper_v3/Tabelle/` hanno `\label`
+ma nessun `\ref` nel testo. Risultati corrispondenti o riportati inline senza rinvio alla tabella,
+o mai citati. Da sistemare nella prossima revisione del paper.
+
+**Sotto-indici EP — scoperta critica:** tutti i sotto-indici usati nella sezione 5.5
+(GreenLiberalization, StandardsNonRegression, EnforcementDSM, RegulatorySpace lato WB;
+GreenMarketAccess, RegulatorySpace, EnforcementDSM lato TREND) sono **costruzioni nostre**
+in `./New/Code/02_build_dataset_wb_trend_merge.R`, NON variabili native dei dataset WB/TREND.
+Il paper non lo dichiara — va corretto esplicitamente.
+
+**Deliverable:** `./correspondence/audit/2026-09-03_sotto_indici_EP.md` — documento completo
+con ogni singola variabile componente, definizione originale, logica di aggregazione, e 6
+problemi da indirizzare nel paper.
+
+**Antidumping:** `AD_pdt` nello script `18_robustness_fullpanel.do` è variabile pre-esistente
+nei dati doganali, non costruita da noi.
+
+**Stato:** paper_v3 ha bisogno di revisione significativa (disclosure sotto-indici, tabelle
+da collegare o rimuovere, W11-W14 ancora pending).
+
+## 2026-09-03 — Ottavo audit + implementazione fix (CONDITIONAL PASS)
+
+**Audit `/audit`** completo su `./New/` con 7 agenti paralleli. Verdetto: **CONDITIONAL PASS**.
+Numeri nel paper tutti corretti (~40 verifiche, zero discrepanze). 4 CRITICAL + 14 WARNING,
+tutti di infrastruttura/replicabilità/framing, nessuno sui risultati.
+
+**Deliverable:** `./correspondence/audit/2026-09-03_audit_report.md` e
+`./correspondence/audit/2026-09-03_roadmap_soluzioni.md`.
+
+**Fix implementati (17/18):**
+- C1: `run_pipeline.R` step 12 → Stata manual (CEM cancellato)
+- C2: merge diagnostics (`tab _merge` + `assert`) in `03.do`
+- C3: step 69+70 aggiunti al pipeline
+- C4: header provenance su `tab_02_ladder.tex`
+- W1: `set varabbrev off` via `_root.do`
+- W2: CEM drop contato, diagnostic corretto in `12.do`
+- W3: `19b` rinominato `.ARCHIVED`
+- W4: non applicabile (falso allarme — `19c` non usa depth)
+- W5-W7: FW guards in 8 file (5 R + 2 Stata)
+- W8: `dqrng::dqset.seed(42)` in 3 script WCB
+- W9: hash formula con warning in `pta_functions.R`
+- W10: suffisso `.md` via `out_path()` in 6/11 script
+- W15+W18: creato `_root.do`, tutti i 26 `.do` aggiornati, variant globals centralizzate
+- W16: header provenance su tutti i 5 `ptab_*.tex`
+- W17: sezione QA documentata in `run_pipeline.R`
+
+**Non implementati (come richiesto):** W11-W14 (modifiche testo paper, segnalati come TODO).
+
+**Nessun risultato cambiato.** Tutti i fix sono difensivi/infrastrutturali.
+
+## 2026-09-02 (d) — Fix CEM: CSV obsoleto + country_code mapping + re-stima
+
+**Bug trovato e risolto:** `Output/CEM/matched_countries.csv` era un residuo obsoleto (16 treated) — generato prima che HKG/KOR/MAC venissero aggiunti ai dati WDI. Lo script `CEM.R` aveva il `fwrite()` commentato. Con i dati attuali, sia R che Stata producono **19 treated, 40 controls**.
+
+**Secondo bug:** il mapping BACI (`country_codes_V202601.csv`) usa codici ISO numerici (AUS=36), ma il dataset `.dta` usa codici interni sequenziali (AUS=601). Corretto creando `New/Output/CEM_stata/iso3c_to_cc.dta` dal dataset principale.
+
+**File modificati:**
+- `New/Code/stata/12_cem_matching_stata.do` — ora è la fonte autorevole del CEM; genera `Output/CEM/matched_countries.csv` e `New/Output/CEM_stata/cem_v1_cc.dta`
+- `New/Code/stata/58_stability_fullpanel.do` — legge `cem_v1_cc.dta` invece del vecchio CSV
+- `New/Code/stata/52_omnibus_collapsed.do` — merge diretto con `cem_v1_cc.dta` invece di `cem_matched` flag
+
+**Stime rigenerate:** 52_omnibus (CEM block) + 58_stability (4 varianti × 2 stime CEM = 8). Risultati stabili: coefficienti cambiano alla 4ª cifra decimale, conclusioni invariate. Backup vecchie stime in `*_cem16_old.*`.
+
+**Stato:** CEM pipeline completa e corretta. Mapping `iso3c_to_cc.csv/.dta` da mantenere sincronizzato se il dataset cambia.
+
+## 2026-09-02 (c) — Riscrittura Section 4 + bibcheck
+
+**Section 4 (Empirical Strategy) riscritta** — 29 punti di intervento applicati a `./New/Paper/paper_v3/paper_v3.tex`:
+- §4.1 (level effect) fusa nell'apertura non-numerata della sezione
+- §4.2 (triple-diff spec) riscritta: FE con esempi e ref Rajan & Zingales, selezione, omitted category, TD proxy con OVB formula, VIF in nota, clustering d vs dt, TWFE/dose ridotto a 2 frasi + nota
+- §4.3 (two panels) accorciata: singleton in 1 frase, 7-significant-figures rimosso, between/within-firm riscritto, 225 vs 236 cluster spiegato
+- §4.4 (inference) riscritta: perché asintotici falliscono (Cameron 2008, MacKinnon 2017), WCB con Frisch-Waugh, permutazione con null chiara, ASEAN granularity
+
+**bibcheck su references.bib** (60 entry auditate, 8 agenti paralleli):
+- 51 verified, 9 wrong, 0 hallucinated
+- Correzioni applicate: berger2020 (pages), cherniwchan2017 (U.S.), copeland2022 (DOI vol.5), correia2017 (institution rimossa), gutsch2024 (anno 2025), kellenberg2014 (titolo senza "and trade"), mattoo2022 (number), neri2023 (nome autore Matteo), zhusun2026 (number)
+- Report: `./New/Paper/paper_v3/bibcheck_20260901_224824/bibcheck_report.md`
+- PDF ricompilato (47 pagine, nessun errore)
+
+## 2026-09-02 (b) — Applicazione roadmap (P0 completo, P1 quasi completo, P2 parziale)
+
+**Roadmap applicata** (`correspondence/audit/2026-09-02_roadmap_soluzioni.md`):
+
+**P0 — Correzioni testo (TUTTE COMPLETATE):**
+- P0.1: green share 11.0% → 11.5% (4 occorrenze prose + tabelle descriptives/sumstats)
+- P0.2: tab:outcomes TREND fisso (+0.0018/+0.0004), "Asymptotic" → "Bootstrap"
+- P0.3: §4 saturation ladder e Appendix B riscritti
+- P0.4: "14 independent units" → "13 distinct EP profiles" (5 occorrenze)
+- P0.5: W1 (236→228), W2 (C-overlap caveat), W3/W4/W6/W11/N4/N5/N6/E3
+- tab_02_ladder.tex nota riscritta (entrambe le copie)
+- **PDF ricompilato** (48 pagine, pdflatex+biber+pdflatex×2)
+- **Verification greps:** nessun residuo di valori vecchi (11.0%, "14 independent", 236, "Asymptotic")
+
+**P1 — Safety pipeline:**
+- P1.1 (guardie 02.R): DONE — stopifnot su nrow==14, ordine WBID, anti_join diagnostics
+- P1.2 (FWL guard 17b): DONE — guard WB e TREND dopo FWL regress
+- P1.3 (log using): DONE — tutti i do-file ora scrivono in New/Output/Diagnostics/stata_logs/
+- P1.4 (merge diagnostics): DONE per 17, 18, 58; agente in corso per 17b, 17c, 19b-d, 57
+- P1.5 (seed 56.do): SALTATO — serve conferma utente (cambierebbe p-value permutazione)
+
+**P2 — Replication package (parziale):**
+- P2.2 (percorsi Stata portabili): agente in corso per 19 do-file
+- P2.6 (67_verify_stata_coverage.R): DONE — aggiunto blocco identità collassato/full panel + conteggio righe
+
+**Creati:** 70_sumstats_paper.R (non ancora eseguito, R non disponibile su questa macchina)
+
+**Completati nella seconda parte della sessione:**
+- P1.3 .gitignore: rimossa riga `New/Output/Diagnostics/stata_logs/`
+- P1.4 merge diagnostics: completato su tutti i do-file (17b, 17c, 19b-d, 57, 58)
+- P1.5: lasciato invariato (conferma utente: cambierebbe p-value permutazione)
+- P2.2 percorsi portabili: 17 do-file aggiornati con blocco `c(os)`
+- P2.3: creato `run_all_stata.ps1` (entry point unico, resume-safe, 67 in coda)
+- P2.4: eliminati 3 duplicati 19d (incl, desta, incldesta) — identici al base
+- P2.5: aggiunta colonna `source` a 6 do-file (17, 17c, 18, 19b, 19c, 19d)
+- P2.6: esteso 67_verify_stata_coverage.R (identità collassato/full panel + conteggio righe)
+- 70_sumstats_paper.R: eseguito, **confermato green=11.5%, dirty=7.0%**
+- P3.3: già documentato in 12_cem_matching.R (v2 scartato, nessuna azione)
+
+**Da fare (sessioni future):**
+- P2.1: replication package (a paper finito)
+- P3.1: decomposizione between/within — proposta, numeri su disco, da decidere se aggiungere tabella
+- P3.2: pesi CEM — raccomandato di non fare (costo alto, impatto nullo)
+
+## 2026-09-02 — Settimo audit `/audit` su `./New/` (CONDITIONAL PASS)
+
+Audit completo e indipendente su tutto `./New/`: dati, codice R e Stata, output, `paper_v3`,
+domanda di ricerca, specificazione, econometria, interpretazione. **Nessun file di progetto
+modificato.** Prodotti solo due `.md` in `./correspondence/audit/`:
+`2026-09-02_audit_report.md` e `2026-09-02_roadmap_soluzioni.md`.
+
+**Verdetto: CONDITIONAL PASS.** I numeri Stata sono corretti (~40 valori pubblicati
+ricontrollati a macchina contro i CSV di origine: tornano tutti). Gli errori stanno nel
+testo che li descrive.
+
+**Verifiche eseguite dal vivo (2026-09-02):**
+- `67_verify_stata_coverage.R` rieseguito → 44/44 file in accordo con R, scarti 2e-15…4e-13.
+- Identità collassato/full panel confermata a **9 cifre**: `tripledd_full_pddt.csv`
+  (45.695.915 righe, FE pd+dt+pt) riproduce `OMNI_baseline_WB.dta` (−0,0045685004 vs
+  −0,0045685006; −0,011873387 vs −0,011873387). Prova indipendente che la costruzione dati
+  in Stata è corretta.
+- Verificati riga per riga: Tabella 3 (full + collassato, WB + TREND), WCB full e collassato
+  con CI, permutazione, leave-one-out (26 righe), stability (3 gruppi), robustness (7 modelli),
+  PPML, depth bounds, trim, ladder, collinearità, liste green/dirty, mappa del trattamento.
+
+**4 rilievi CRITICI (tutti sul testo, nessuno sui coefficienti):**
+- **C1** quota green: il paper dice 11,0% (colonna `env_good` stantia del `.dta`), le stime
+  usano 11,5% (lista canonica ricalcolata). `sumstats_*.csv` non ha uno script che li generi.
+- **C2** tab:outcomes riga "Log export value" colonna TREND (−0,0002 / −0,0015) contraddice
+  la Tabella 3 (+0,0018 / +0,0004): riga copiata dall'outcome unit-value.
+- **C3** la narrazione della saturation ladder non corrisponde alla tabella su 4 punti:
+  "twelve structures" (sono 4), "falls monotonically" (non è monotona), "significant under
+  sparse FE" (quella riga ha p=0,22), "disappearing once fdt is included" (nessuna riga ha fdt).
+- **C4** "14 independent units of EP variation" e "about nine distinct EP profiles" sono
+  entrambi sbagliati: contati sui dati sono **12 accordi / 13 profili** (il 14 include
+  HK+Macao, che il baseline esclude; il 9 conta i livelli WB ignorando la tempistica).
+- **C5** (rischio, non errore attuale) il trattamento in `02.R` è costruito per **posizione
+  di riga** dopo `pivot_wider()`, senza asserzioni. Oggi è giusto (verificato accordo per
+  accordo), ma uno shift a monte sarebbe invisibile.
+
+**Rilievi WARNING principali:** cluster collassato 236 dichiarato vs 228 reale; C-overlap
+elimina 314 obs su 21,5M (non è un test); "16 deep/9 shallow" include HK+Macao (nel baseline
+sono 16/7); pesi CEM scartati e CEM v2 orfano; guardia FWL assente in 17b/48e/57 (presente
+in 52 con `exit 9`); log Stata sovrascritti fra varianti e gitignorati; provenienza full-panel
+dichiarata da whitelist hardcoded; nota "produced twice … eight significant digits" non vera
+per il full panel (R non completa quelle stime); `New/` non autosufficiente, 19/30 do-file
+con path hardcoded, nessun entry point unico per Stata.
+
+**Pattern trovato:** tutte le tabelle generate da `44_make_tables_tex.R` e le figure sono
+corrette (0 errori); tutti gli errori stanno nelle tabelle e nelle frasi scritte a mano.
+
+**Prossimo passo:** applicare P0.1–P0.5 della roadmap (correzioni al `.tex` + script sumstats,
+~3 ore) prima di far leggere il paper. Nessuna stima da rifare.
+
+
+## 2026-09-01 (d) — Riscrittura Section 4 (Empirical Strategy)
+
+**Section 4 riscritta** in `./New/Paper/paper_v3/paper_v3.tex` (29 punti dell'utente applicati):
+- §4.1 eliminata come sottosezione: contenuto fuso nell'apertura non-numerata della sezione
+- Saturation ladder: due argomenti distinti (diagnostico + strutturale) separati chiaramente
+- Formula potential outcome spostata in nota a pie' di pagina
+- FE ampliati con esempi concreti (solar panels, steel, distribution office) e citazioni (Rajan & Zingales 1998)
+- Selezione: spiegato perche' la minaccia si restringe (non scompare) nella composizione
+- Categoria omessa: chiarito che ogni coefficiente e' gia' il contrasto vs. neutro
+- TD proxy: chiarito "imperfect proxy di cosa" + formula OVB in nota
+- VIF: numero 0.96 rimosso dal testo, spiegazione VIF in nota
+- Clustering: spiegato d vs dt con ragionamento + Abadie et al. (2023)
+- TWFE/dose: ridotto a 2 frasi + nota (non piu' un paragrafo intero)
+- Singleton removal: accorciato a una frase
+- Collapsed panel: dettagli sostituiti con riferimento alla sezione dati
+- Frase equivalenza 7 cifre significative eliminata
+- 225 vs 236 cluster: spiegato (singleton removal elimina 11 destinazioni piccole)
+- WCB: riscritto con struttura chiara (cos'e', Frisch-Waugh spiegato, approssimazioni in nota)
+- Permutazione: ipotesi nulla riscritta chiaramente, spiegato perche' solo tra trattati
+- ASEAN/granularita': spiegato perche' 11 ASEAN = ~9 profili distinti, distribuzione discreta
+- Nota Stata/R spostata alla fine della sezione
+- Terminologia LLM: "crucial element" -> "what drives identification"
+- Nomi variabili dataset sostituiti con notazione della Table vardesc
+
+**PDF ricompilato** senza errori (47 pagine). Utente deve rileggere la sezione.
+
+## 2026-09-01 (c) — Completamento 19d (tutte le varianti) + analisi risultati
+
+**19d completato:** tutte e 4 le varianti della saturation ladder triple-diff (192 modelli totali).
+- Baseline + incl: completati nella notte (lanciati 31/08 ore 12:08)
+- Desta + incl+desta: lanciati la mattina del 01/09, completati nel pomeriggio (~7.5h)
+- Output: `./New/Output/OLS/Tables_Stata/OLS_Ladder_tripledd_19d{sfx}.csv`
+
+**Pattern risultati 19d:** coefficienti EP sensibili alla struttura FE. TREND dirty significativo
+solo con fpd+year (FE leggero), sparisce con FE piu' saturi. TREND green regge con fpt+fpd e
+fpd+pt per ln_export/ln_export_qua. WB quasi sempre n.s. DESTA rende tutto piu' fragile.
+
+**Cross-check 19d vs 17c:** non applicabile — 17c usa 3 FE (fpd+fdt+pt), la ladder usa coppie
+a 2 FE. Verificato che la scelta pt (non fpt) nel paper e' documentata nella wiki
+(`./wiki/Fixed_Effects_Guide.md` §4-6): fdt e' il FE distintivo, fpt in riserva per robustness.
+
+**Niente rimane da stimare.** Aperti: revisione paper, bib, riordino cartelle.
+
+## 2026-09-01 (b) — Correzioni bib applicate
+
+**`references.bib` sostituito** con `corrected.bib` (da bibcheck) + fix `neri2023`:
+- 7 entry corrette: baccini2017 (journal/vol/pages), berger2020 (editors), yue2024 (nomi),
+  sauvage2014 (nome), rajan1998 (DOI rimosso), copeland2022 e low1992 (pages aggiunte)
+- `neri2023` HALLUCINATED → sostituita con Neri-Lainé, Orefice & Ruta (WB WP 10277, 2023)
+- Paper ricompilato senza errori
+
+**Stato:** Section 2 riscritta + bibliografia corretta. Utente deve rileggere il PDF.
+
+## 2026-09-01 — Revisione Section 2 + bibcheck
+
+**Section 2 (Related Literature) riscritta** in `./New/Paper/paper_v3/paper_v3.tex`:
+- Stile narrativo (non più catalogo "Author X does Y")
+- Tutti i 22 punti specifici dell'utente applicati (citep/citet, Vinerian→parafrasi esplicita,
+  scale/technique/composition espansi, critica staggered DiD rimossa, ecc.)
+- PDF ricompilato senza errori (39 pagine)
+
+**bibcheck eseguito** su `references.bib` (60 entries, 8 batch paralleli):
+- 1 HALLUCINATED: `neri2023` — DOI punta a Shingal 2023, paper inesistente
+- 6 WRONG: baccini2017 (journal/vol/pages), berger2020 (editors), yue2024 (nomi autori),
+  sauvage2014 (nome autore), rajan1998 (DOI NBER), copeland2022+low1992 (pages mancanti)
+- 52 verified, 0 unverified
+- Report: `./New/Paper/paper_v3/bibcheck_20260901_121927/bibcheck_report.md`
+- Drop-in fix: `./New/Paper/paper_v3/bibcheck_20260901_121927/corrected.bib`
+
+**Log files spostati** dalla root del progetto a `./New/Output/` (erano output di 17c/19c/19d).
+
+**Pending:** utente deve (1) rileggere Section 2 nel PDF, (2) decidere se sostituire
+`references.bib` con `corrected.bib`, (3) decidere cosa fare con `neri2023` hallucinated.
+
+## 2026-08-31/09-01 — Esecuzione 17c, 19c, 19d su Stata (tutte le varianti)
+
+**Completati (tutti):**
+- `17c` (triple-diff, 3 dep vars): 4/4 varianti (baseline, incl, desta, incl+desta) — OK
+- `19c` (saturation ladder, spec ridotta): baseline + incl — OK, cross-check ≡ 19b (384/384)
+  - Varianti desta non applicabili (la ladder non usa TotalDepth come regressore)
+- `19d` (saturation ladder, spec triple-diff completa): **4/4 varianti completate** (192 modelli)
+  - `OLS_Ladder_tripledd_19d.csv` (baseline)
+  - `OLS_Ladder_tripledd_19d_inclHKMO.csv` (incl)
+  - `OLS_Ladder_tripledd_19d_desta.csv` (desta)
+  - `OLS_Ladder_tripledd_19d_inclHKMO_desta.csv` (incl+desta)
+
+**Cross-check 19d vs 17c:** non applicabile — 17c usa 3 FE (fpd+fdt+pt), la ladder 19d usa
+coppie a 2 FE. Nessuna riga della ladder replica la specifica del paper.
+
+**Risultati 19d (pattern):** i coefficienti EP sono sensibili alla struttura FE. TREND dirty
+significativo solo con fpd+year (FE più leggero), sparisce con FE più saturi. TREND green
+(ln_export, ln_export_qua) regge con fpt+fpd e fpd+pt ma non con fpd+year. WB quasi sempre n.s.
+Con DESTA i risultati sono ancora più fragili.
+
+**Bug fixati:** tempfile dentro `program define` (17c, stesso bug di script 58); log collision
+con batch paralleli dello stesso .do (risolto con copie rinominate).
+
+**Artifact aggiornato:** stato progetto → https://claude.ai/code/artifact/2e5d3da6-2fdd-4b02-922c-0e38b51698a4
+
+## 2026-08-29 (b) — Chiarificazioni subsample e dimensionalità panel
+
+**Domanda utente:** i 4 subsample di controllo (C-prod-HS4, C-overlap, CEM destinations,
+Deep vs. shallow) partono dal full panel o dal collassato?
+
+**Risposta verificata nel codice e nel paper:**
+- Tutti e 4 esistono a livello **f×p×d×t** (full panel). Sono filtri su righe (per HS6 o
+  destinazione), non cambiano la dimensionalità. La formula 1 si applica identica.
+- Le stime girano su **entrambi**: collapsed (`52_omnibus_collapsed.do`) e full panel
+  (`58_stability_fullpanel.do`, `24_stability_controlgroups.R`).
+- **C-overlap non stimato** in pratica: ~98.5% delle righe, crasha R.
+- Il paper (`ptab_stability.tex`) riporta i subsample a livello **full panel** (3.8M, 13.7M,
+  5.3M, 21.5M = firm-level). Il collapsed e' una riga separata.
+
+**Nessun file modificato. Nessun commit.**
+
 ## 2026-08-29 — Saturation ladder + full panel triple-diff per tutte le dep vars
 
 **PRIORITA' PROSSIMA SESSIONE: far eseguire su Stata i due script nuovi (17c e 19c).

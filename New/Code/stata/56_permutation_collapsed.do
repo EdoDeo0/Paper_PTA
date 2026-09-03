@@ -23,11 +23,7 @@
 *   New/Output/TripleDiff/Tables_Stata/permutation_draws.csv
 *   New/Output/TripleDiff/Tables_Stata/permutation_collapsed.csv
 
-clear all
-set more off
-set varabbrev off
-
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 global DRAWS "$TAB\permutation_draws.csv"

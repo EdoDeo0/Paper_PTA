@@ -22,10 +22,7 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto - ~1-2 h in totale):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\65_ppml_variants.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA  "$ROOT\New\Data\Collapsed\ppml_zerofill_all.dta"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 
@@ -35,6 +32,11 @@ if _rc {
     exit 1
 }
 cap mkdir "$TAB"
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\65_ppml_variants.log", replace text
+
 confirm file "$DTA"
 
 ********************************************************************************
@@ -129,3 +131,5 @@ ppml_variant "_desta"          excl DESTA_depth_index
 ppml_variant "_inclHKMO_desta" incl DESTA_depth_index
 
 di as result _n "=== 65 FATTO ==="
+
+cap log close _all

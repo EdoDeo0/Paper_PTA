@@ -22,10 +22,7 @@
 * ESECUZIONE BATCH (da PowerShell, root progetto):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\52_omnibus_collapsed.do"
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA  "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 
@@ -44,6 +41,10 @@ if _rc {
 cap mkdir "$ROOT\New\Output\TripleDiff"
 cap mkdir "$ROOT\New\Output\TripleDiff\Tables_Stata"
 cap mkdir "$TAB"
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\52_omnibus_collapsed.log", replace text
 
 *── Caricamento dati -----------------------------------------------------------
 use "$DTA", clear
@@ -145,7 +146,7 @@ foreach treat in WB TREND {
     cap confirm file "`out'"
     if _rc {
         preserve
-        keep if cem_matched == 1
+        merge m:1 country_code using "$ROOT/New/Output/CEM_stata/cem_v1_cc.dta", keep(match) nogen
         gen double ep_green = `xvar' * env_good
         gen double ep_dirty = `xvar' * dirty_p
         gen double td_green = TotalDepth_nonEnv * env_good
@@ -529,3 +530,5 @@ capture erase "`dta_dm'"
 di as result _n "=== S3 FATTO. Output: `csv_wcb' ==="
 di as text "Confronto: p_wcb attesi da R: WB_green ~0.073, TREND_green ~0.320"
 di as result _n "=== S2+S3 COMPLETATO ==="
+
+cap log close _all

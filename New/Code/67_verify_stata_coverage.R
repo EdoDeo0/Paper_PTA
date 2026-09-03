@@ -226,6 +226,53 @@ for (sfx in SFX) {
   }
 }
 
+## ── Identita' collassato / full panel (audit 2026-09-02) ──────────────────
+## tripledd_full_pddt.csv (full panel con FE pd+dt+pt) deve riprodurre
+## la regressione pesata sul panel collassato (tripledd_collapsed.csv).
+cat("\n── Identita' full-panel pd+dt+pt vs collassato ──\n")
+for (sfx in SFX) {
+  f_pddt <- file.path(DIR_T,  paste0("tripledd_full_pddt", sfx, ".csv"))
+  f_coll <- file.path(DIR_TS, paste0("tripledd_collapsed", sfx, ".csv"))
+  if (!file.exists(f_pddt) || !file.exists(f_coll)) {
+    cat(sprintf("  [%s] skip — file mancante\n", sfx))
+    next
+  }
+  pddt <- read.csv(f_pddt, stringsAsFactors = FALSE)
+  coll <- read.csv(f_coll, stringsAsFactors = FALSE)
+  pairs <- list(c("wb_green", "ep_green"), c("wb_dirty", "ep_dirty"))
+  ok <- TRUE
+  for (p in pairs) {
+    v_fp <- pddt$coef[pddt$var == p[1]]
+    v_co <- coll$coef[coll$treat == "WB" & coll$term == p[2]]
+    if (length(v_fp) == 1 && length(v_co) == 1) {
+      d <- abs(v_fp - v_co)
+      cat(sprintf("  [%s] %s vs %s: delta=%.2e %s\n", sfx, p[1], p[2], d,
+                  if (d > 1e-7) "*** SCARTO ***" else "OK"))
+      if (d > 1e-7) { ok <- FALSE; problemi <- problemi + 1L }
+    } else {
+      cat(sprintf("  [%s] %s vs %s: chiavi non appaiate\n", sfx, p[1], p[2]))
+    }
+  }
+}
+
+## ── Conteggio righe full panel ────────────────────────────────────────────
+cat("\n── Conteggio righe file full panel ──\n")
+fp_attese <- list(
+  tripledd_full_reghdfe = 10,
+  tripledd_full_pddt    = 5,
+  joint_F_fullpanel     = 2
+)
+for (base in names(fp_attese)) {
+  for (sfx in SFX) {
+    f <- file.path(DIR_T, paste0(base, sfx, ".csv"))
+    if (!file.exists(f)) next
+    nr <- nrow(read.csv(f, stringsAsFactors = FALSE))
+    att <- fp_attese[[base]]
+    stato <- if (nr == att) "OK" else { problemi <- problemi + 1L; "*** SCARTO ***" }
+    cat(sprintf("  %-42s %3d / %3d  %s\n", paste0(base, sfx), nr, att, stato))
+  }
+}
+
 cat("\n-------------------------------------------------------------------------\n")
 if (problemi == 0L) {
   if (incompleti > 0L) {

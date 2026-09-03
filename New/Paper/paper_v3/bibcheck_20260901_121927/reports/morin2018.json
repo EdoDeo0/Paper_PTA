@@ -1,0 +1,8 @@
+{
+  "key": "morin2018",
+  "verdict": "VERIFIED",
+  "source_url": "https://academic.oup.com/jiel/article-abstract/20/2/365/3865559",
+  "issues": ["key: bibtex key says 'morin2018' but the actual publication year is 2017 (matches the year field); key is misleading but all bibliographic fields are correct"],
+  "corrected_entry": null,
+  "notes": "All fields (title, authors, journal, year 2017, volume 20, number 2, pages 365-390, doi 10.1093/jiel/jgx013) match the Oxford Academic JIEL landing page exactly; only the citation key label conflicts with the correct 2017 year."
+}

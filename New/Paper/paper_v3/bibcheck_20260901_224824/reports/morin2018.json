@@ -1,0 +1,8 @@
+{
+  "key": "morin2018",
+  "verdict": "VERIFIED",
+  "source_url": "https://academic.oup.com/jiel/article-abstract/20/2/365/3865559",
+  "issues": [],
+  "corrected_entry": null,
+  "notes": "All data fields are correct per Oxford Academic: authors Morin/Pauwelyn/Hollway, title, journal JIEL, year 2017, volume 20, number 2, pages 365-390, DOI 10.1093/jiel/jgx013; the citation key says morin2018 while the year field correctly says 2017, but the key is just an identifier."
+}

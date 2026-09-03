@@ -1,0 +1,50 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\check_dta_vars.do 
+
+. clear all
+
+. set more off
+
+. use "C:\Work\projects\Paper_PTA\New\Data\Collapsed\collapsed_omnibus.dta", cl
+> ear
+
+. describe, short
+
+Contains data from C:\Work\projects\Paper_PTA\New\Data\Collapsed\collapsed_omni
+> bus.dta
+ Observations:     3,773,498                  
+    Variables:            29                  21 Aug 2026 23:21
+Sorted by: 
+
+. ds
+hs6           TREND_EP_C~t  TotalDepth~d  TREND_Soft    dt
+country_code  env_good      WB_GreenLi~n  TREND_Regu~e  pt
+year          apec_egl      TREND_Gree~s  in_HS4match   EP_share
+y             dirty_p       WB_Enforce~M  deepshallow   dose_bin
+n             TotalDepth~v  TREND_Enfo~M  cem_matched   trend
+WB_EP_Depth   DESTA_dept~x  TREND_Hard    pd
+
+. 
+end of do-file

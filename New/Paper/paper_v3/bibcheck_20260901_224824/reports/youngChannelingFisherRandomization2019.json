@@ -1,0 +1,8 @@
+{
+  "key": "youngChannelingFisherRandomization2019",
+  "verdict": "VERIFIED",
+  "source_url": "https://academic.oup.com/qje/article-abstract/134/2/557/5195544",
+  "issues": [],
+  "corrected_entry": null,
+  "notes": "All fields match CrossRef and Oxford Academic metadata: Young, Quarterly Journal of Economics, 2019, vol 134, no 2, pp 557-598, DOI 10.1093/qje/qjy029; CrossRef lists the journal as 'The Quarterly Journal of Economics' but dropping 'The' is standard BibTeX convention."
+}

@@ -28,7 +28,7 @@ CACHE_FST  <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
 GREEN_FILE <- here("New/Data/Classifications/green_codes_hs1996.csv")
 DIRTY_FILE <- here("New/Data/Classifications/dirty_goods_hs6.csv")
 OUT_TAB    <- here("New/Output/TripleDiff/Tables")
-OUT_MD     <- here("New/Output/Diagnostics/42_bounds_depth_controls.md")
+OUT_MD     <- out_path(here("New/Output/Diagnostics/42_bounds_depth_controls.md"))
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 
 cell <- as.data.table(read_fst(CACHE_FST))

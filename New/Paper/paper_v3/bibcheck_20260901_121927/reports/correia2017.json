@@ -1,0 +1,8 @@
+{
+  "key": "correia2017",
+  "verdict": "VERIFIED",
+  "source_url": "https://scorreia.com/research/hdfe.pdf",
+  "issues": ["institution: listed as 'Duke University' in the entry, but the paper's own citation page (scorreia.com) does not state an institutional affiliation for the working paper — plausible (Correia was a Duke PhD student around that time) but not independently confirmed"],
+  "corrected_entry": null,
+  "notes": "Title, author, and year match the canonical working paper hosted at scorreia.com/research/hdfe.pdf; the institution field could not be independently confirmed from the source but is not contradicted."
+}

@@ -1,0 +1,10 @@
+{
+  "key": "rajan1998",
+  "verdict": "WRONG",
+  "source_url": "https://econpapers.repec.org/RePEc:aea:aecrev:v:88:y:1998:i:3:p:559-86",
+  "issues": [
+    "doi: 10.3386/w5758 is the DOI for the NBER working paper version (confirmed at https://www.nber.org/papers/w5758), not for the American Economic Review journal article. It should not be listed as the DOI for a citation that gives AER journal/volume/issue/pages metadata; no registered DOI for the AER journal article was found in this search."
+  ],
+  "corrected_entry": "@article{rajan1998,\n  author  = {Rajan, Raghuram G. and Zingales, Luigi},\n  title   = {Financial dependence and growth},\n  journal = {American Economic Review},\n  year    = {1998},\n  volume  = {88},\n  number  = {3},\n  pages   = {559--586}\n}",
+  "notes": "All bibliographic fields (author, title, journal, volume, issue, pages, year) match the real AER 1998 article, but the DOI belongs to the earlier NBER working paper (w5758), not the journal article."
+}

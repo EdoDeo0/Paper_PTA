@@ -1,0 +1,11 @@
+{
+  "key": "low1992",
+  "verdict": "WRONG",
+  "source_url": "https://link.springer.com/article/10.1007/BF02707399",
+  "issues": [
+    "pages: missing; the chapter runs pages 89-104 within World Bank Discussion Paper 159",
+    "publisher/type: this is a chapter within the edited volume 'International Trade and the Environment' (P. Low, ed.), World Bank Discussion Paper 159, Washington DC, 1992 — the .bib entry has no pages and does not note the editor, though author/title/institution/number/year are otherwise correct"
+  ],
+  "corrected_entry": "@techreport{low1992,\n  author      = {Low, Patrick and Yeats, Alexander},\n  title       = {Do ``dirty'' industries migrate?},\n  institution = {World Bank},\n  year        = {1992},\n  number      = {159},\n  type        = {Discussion Paper},\n  pages       = {89--104}\n}",
+  "notes": "Multiple secondary sources consistently cite this chapter as appearing on pages 89-104 of World Bank Discussion Paper 159 (International Trade and the Environment, ed. P. Low); the .bib entry omits the pages field."
+}

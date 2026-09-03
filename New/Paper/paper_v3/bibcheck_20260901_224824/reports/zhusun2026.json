@@ -1,0 +1,10 @@
+{
+  "key": "zhusun2026",
+  "verdict": "WRONG",
+  "source_url": "https://onlinelibrary.wiley.com/doi/10.1111/cwe.70005",
+  "issues": [
+    "number: missing → should be 1"
+  ],
+  "corrected_entry": "@article{zhusun2026,\n  author  = {Zhu, Yajun and Sun, Churen},\n  title   = {Greener trade agreements and green transformation},\n  journal = {China \\& World Economy},\n  year    = {2026},\n  volume  = {34},\n  number  = {1},\n  pages   = {41--74},\n  doi     = {10.1111/cwe.70005}\n}",
+  "notes": "CrossRef confirms volume 34, issue 1, pages 41-74; the BibTeX entry is missing the issue number (number = 1)."
+}

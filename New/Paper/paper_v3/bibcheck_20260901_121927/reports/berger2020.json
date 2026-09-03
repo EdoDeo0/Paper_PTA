@@ -1,0 +1,10 @@
+{
+  "key": "berger2020",
+  "verdict": "WRONG",
+  "source_url": "https://www.cambridge.org/core/books/abs/international-trade-investment-and-the-sustainable-development-goals/trade-effects-of-environmental-provisions-in-preferential-trade-agreements/B02E2E00C23AFCB4FB5E903E30452C7D",
+  "issues": [
+    "editor: listed as 'Cottier, Thomas and Elsig, Manfred', but the book's actual editors are Beverelli, Cosimo; Kurtz, Jürgen; and Raess, Damian"
+  ],
+  "corrected_entry": "@incollection{berger2020,\n  author    = {Berger, Axel and Brandi, Clara and Morin, Jean-Fr{\\'e}d{\\'e}ric and Schwab, Jakob},\n  title     = {The trade effects of environmental provisions in preferential trade agreements},\n  booktitle = {International Trade, Investment, and the Sustainable Development Goals},\n  publisher = {Cambridge University Press},\n  year      = {2020},\n  editor    = {Beverelli, Cosimo and Kurtz, J{\\\"u}rgen and Raess, Damian},\n  doi       = {10.1017/9781108881364.006}\n}",
+  "notes": "Authors, title, booktitle, publisher, year, and DOI all check out against the Cambridge Core chapter page, but the editors are wrong -- the book is edited by Beverelli, Kurtz, and Raess, not Cottier and Elsig."
+}

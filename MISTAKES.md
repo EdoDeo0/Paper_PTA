@@ -4,6 +4,54 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-09-02 — Country_code mapping sbagliato: BACI vs codici interni dataset
+
+**Cosa e' successo.** Ho usato `Data/Matching/country_codes_V202601.csv` (codici BACI/ISO)
+per mappare iso3c → country_code nel CEM Stata. Ma il dataset `.dta` usa codici interni
+sequenziali (es. AUS=601, BRA=410) diversi dai codici BACI (AUS=36, BRA=76). Il merge con
+il full panel ha prodotto N=908k (sbagliato) anziché ~14M, con variabili collineari omesse.
+
+**Causa.** Ho assunto che i country_code nel dataset fossero codici standard (BACI/ISO)
+senza verificare. Il file BACI era nella cartella `Data/Matching/` e sembrava la fonte
+naturale. Non ho controllato che i codici nel CSV matchassero quelli nel `.dta`.
+
+**Prevenzione.** Mai assumere il sistema di codifica di una variabile numerica: verificare
+sempre con `tab varname, nolabel` o un merge di prova su poche righe prima di lanciare
+l'intera pipeline. Quando si crea un mapping, estrarre i codici dal dataset di destinazione
+del merge, non da una fonte esterna.
+
+---
+
+## 2026-08-30 — Lanciate varianti desta per 19c (ladder) che non le prevede
+
+**Cosa e' successo.** Ho lanciato 19c con `PTA_DEPTH=desta` tre volte, credendo che la
+saturation ladder avesse varianti di profondita' come 17c. La ladder stima `EP_Depth × env_good`
+con diversi FE — non usa `TotalDepth`/`DESTA` come regressore. Le uniche varianti sono
+excl/incl (campione HK/MO). Tempo sprecato: ~2h di processi inutili + crash per conflitto log.
+
+**Causa.** Non ho verificato la specifica del modello prima di decidere quali varianti servivano.
+Ho assunto che 19c avesse le stesse varianti di 17c senza leggere la formula.
+
+**Prevenzione.** Prima di lanciare varianti, verificare nel do-file se il parametro cambia
+effettivamente qualcosa nella specifica stimata (formula, campione, FE).
+
+---
+
+## 2026-08-29 — tempfile dentro program (17c, stesso bug di 58)
+
+**Cosa e' successo.** `17c_tripledd_fullpanel_alldepvars.do` crashava con r(198) al primo
+`merge` dentro `run_tripledd_outcome`: i 3 `tempfile` (`green`, `dirty`, `depth`) erano
+definiti nel main scope (macro locali), invisibili dentro `program define`.
+
+**Causa.** Identica allo script 58, sessione 16: in Stata un `tempfile` e' una macro locale
+e i `program define` hanno il proprio scope. Il bug era gia' noto e risolto per 58 con
+globali `$F_*`, ma non e' stato applicato scrivendo 17c.
+
+**Prevenzione.** In ogni do-file con `program define`: i tempfile usati dal program DEVONO
+essere esposti come globali (`global F_X "\`x'"`) subito dopo la `save`.
+
+---
+
 ## 2026-08-29 — Risposta inventata sullo stato dei risultati
 
 **Cosa e' successo.** L'utente ha chiesto se i risultati del full panel (triple-diff) fossero

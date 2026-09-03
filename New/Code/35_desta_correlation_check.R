@@ -25,7 +25,7 @@ threads_fst(1)
 DATA_FILE  <- here("Data/Final Dataset/final_dataset_pta_env_indices_compressed.fst")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 DESTA_FILE <- here("New/Data/TotalDepth/desta_depth_country_year.csv")
-OUT_MD     <- here("New/Output/Diagnostics/32_desta_check.md")
+OUT_MD     <- out_path(here("New/Output/Diagnostics/32_desta_check.md"))
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 stopifnot("Eseguire prima 32_desta_depth.R" = file.exists(DESTA_FILE))
 

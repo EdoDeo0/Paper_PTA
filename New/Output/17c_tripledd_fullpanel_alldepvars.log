@@ -1,0 +1,911 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\17c_tripledd_fullpanel_alldepvars.do 
+
+. *****************************************************************************
+> ***
+. ****** 17c — Triple-diff full panel, TUTTE le variabili dipendenti         **
+> ****
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Estensione di 17_main_tripledd_fullpanel.do a ln_export_qua e ln_export_val
+> ue.
+. * Lo script 17 stima solo ln_export; questo copre le altre 2 outcome + ln_exp
+> ort.
+. *
+. * SPECIFICA (identica a script 17):
+. *   y ~ EP:green + EP:dirty + TotalDepth:green + TotalDepth:dirty
+. *     | fpd + fdt + pt,  vce(cluster country_code)
+. *
+. * OUTPUT: tripledd_full_alldepvars_reghdfe{OUTSFX}.csv
+. *
+. * ESECUZIONE BATCH:
+. *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\17c_tr
+> ipledd_fullpanel_alldepvars.do"
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. 
+. * --- Percorsi radice -------------------------------------------------------
+> --
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. if c(os) == "MacOSX" {
+.     global ROOT "~/Documents/work/projects/Paper_PTA"
+. }
+
+. if c(os) == "Unix" {
+.     global ROOT "~/work/projects/Paper_PTA"
+. }
+
+. 
+. * --- Variante campione/depth (identica a script 17) ------------------------
+> -
+. local env_sample : env PTA_SAMPLE
+
+. local env_depth  : env PTA_DEPTH
+
+. if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+
+. else                    global PTA_SAMPLE "excl"
+
+. if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+
+. else                    global PTA_DEPTH  "totaldepth"
+
+. 
+. if !inlist("$PTA_SAMPLE", "excl", "incl") {
+.     di as error "PTA_SAMPLE deve essere excl o incl, trovato: $PTA_SAMPLE"
+.     exit 198
+. }
+
+. if "$PTA_SAMPLE" == "incl" {
+.     global HKMOEXPR "1"
+.     global SFX "_inclHKMO"
+. }
+
+. else {
+.     global HKMOEXPR "!hkmo"
+.     global SFX ""
+. }
+
+. 
+. if !inlist("$PTA_DEPTH", "totaldepth", "desta") {
+.     di as error "PTA_DEPTH deve essere totaldepth o desta, trovato: $PTA_DEPT
+> H"
+.     exit 198
+. }
+
+. if "$PTA_DEPTH" == "desta" {
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/desta_depth_country_year.csv"
+.     global DEPTHVAR  "desta_depth_index"
+.     global DEPTHSFX  "_desta"
+.     global DROP_UNMEASURED 1
+. }
+
+. else {
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.cs
+> v"
+.     global DEPTHVAR  "totaldepth_nonenv"
+.     global DEPTHSFX  ""
+.     global DROP_UNMEASURED 0
+. }
+
+. global OUTSFX "$SFX$DEPTHSFX"
+
+. di "[campione] $PTA_SAMPLE | [depth] $PTA_DEPTH ($DEPTHVAR) | suffisso: '$OUT
+> SFX'"
+[campione] incl | [depth] desta (desta_depth_index) | suffisso: '_inclHKMO_dest
+> a'
+
+. 
+. * --- Dipendenze ------------------------------------------------------------
+> --
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. * --- Directory output ------------------------------------------------------
+> --
+. cap mkdir "$ROOT/New/Output/TripleDiff"
+
+. cap mkdir "$ROOT/New/Output/TripleDiff/Tables"
+
+. 
+. *── 1. Liste ausiliarie (tempfile) ──────────────────────────────────────────
+> ──
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. global F_GREEN "`green'"
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+
+. rename dirty dirty_p
+
+. tempfile dirty
+
+. global F_DIRTY "`dirty'"
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000002.tmp saved as .dta
+    format
+
+. 
+. import delimited "$DEPTHFILE", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 239 obs)
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. global F_DEPTH "`depth'"
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000003.tmp saved as .dta
+    format
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * Programma generico: stima triple-diff per una outcome
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. capture program drop run_tripledd_outcome
+
+. program define run_tripledd_outcome
+  1.     args outcome_var raw_var outfile_tag
+  2. 
+.     * Cache check
+.     local cache_wb "$ROOT/New/Output/TripleDiff/Tables/_full17c_WB_`outfile_t
+> ag'$OUTSFX.dta"
+  3.     local cache_tr "$ROOT/New/Output/TripleDiff/Tables/_full17c_TREND_`out
+> file_tag'$OUTSFX.dta"
+  4.     cap confirm file "`cache_wb'"
+  5.     local wb_cached = (_rc == 0)
+  6.     cap confirm file "`cache_tr'"
+  7.     local tr_cached = (_rc == 0)
+  8. 
+.     if `wb_cached' & `tr_cached' {
+  9.         di "[SKIP] `outcome_var': entrambi i trattamenti gia' cached"
+ 10.         exit
+ 11.     }
+ 12. 
+.     * Carica dati
+.     if "`raw_var'" == "ln_export" {
+ 13.         use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd
+>  fdt pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 14.     }
+ 15.     else if "`raw_var'" == "exp_qua" {
+ 16.         use exp_qua WB_EP_Depth TREND_EP_Count hs6 country_code year fpd f
+> dt pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 17.         gen double ln_export_qua = ln(exp_qua)
+ 18.         drop exp_qua
+ 19.     }
+ 20.     else if "`raw_var'" == "uv_exp" {
+ 21.         use uv_exp WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fd
+> t pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 22.         gen double ln_export_value = ln(uv_exp)
+ 23.         drop uv_exp
+ 24.     }
+ 25. 
+.     gen byte hkmo = inlist(country_code, 110, 121)
+ 26.     keep if $HKMOEXPR
+ 27.     drop hkmo
+ 28. 
+.     merge m:1 hs6 using "$F_GREEN", keep(master match) nogen
+ 29.     replace env_good_new = 0 if missing(env_good_new)
+ 30.     merge m:1 hs6 using "$F_DIRTY", keep(master match) nogen
+ 31.     replace dirty_p = 0 if missing(dirty_p)
+ 32.     merge m:1 country_code year using "$F_DEPTH", keep(master match) nogen
+ 33.     if $DROP_UNMEASURED {
+ 34.         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+ 35.     }
+ 36.     replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+ 37. 
+.     gen double wb_green = WB_EP_Depth    * env_good_new
+ 38.     gen double wb_dirty = WB_EP_Depth    * dirty_p
+ 39.     gen double tr_green = TREND_EP_Count * env_good_new
+ 40.     gen double tr_dirty = TREND_EP_Count * dirty_p
+ 41.     gen double td_green = $DEPTHVAR * env_good_new
+ 42.     gen double td_dirty = $DEPTHVAR * dirty_p
+ 43.     drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
+ 44. 
+.     count
+ 45.     di "[`outcome_var'] Righe: " r(N)
+ 46. 
+.     * WB
+.     if !`wb_cached' {
+ 47.         reghdfe `outcome_var' wb_green wb_dirty td_green td_dirty, ///
+>             absorb(fpd fdt pt) vce(cluster country_code) compact
+ 48.         local ncl = e(N_clust)
+ 49.         regsave using "`cache_wb'", ///
+>             tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", ///
+>             nclust, `ncl', outcome, `outcome_var')
+ 50.         di "[OK] WB `outcome_var' — N=" e(N) " clusters=" `ncl'
+ 51.     }
+ 52. 
+.     * TREND
+.     if !`tr_cached' {
+ 53.         cap noisily reghdfe `outcome_var' tr_green tr_dirty td_green td_di
+> rty, ///
+>             absorb(fpd fdt pt) vce(cluster country_code) compact
+ 54.         if !_rc {
+ 55.             local ncl = e(N_clust)
+ 56.             regsave using "`cache_tr'", ///
+>                 tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt"
+> , ///
+>                 nclust, `ncl', outcome, `outcome_var')
+ 57.             di "[OK] TREND `outcome_var' — N=" e(N) " clusters=" `ncl'
+ 58.         }
+ 59.     }
+ 60. end
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * 2. Esegui le 3 passate
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. di as text _n "########## PASSATA A: ln_export ##########"
+
+########## PASSATA A: ln_export ##########
+
+. run_tripledd_outcome ln_export ln_export ln_export
+[SKIP] ln_export: entrambi i trattamenti gia' cached
+
+. 
+. di as text _n "########## PASSATA B: ln_export_qua ##########"
+
+########## PASSATA B: ln_export_qua ##########
+
+. run_tripledd_outcome ln_export_qua exp_qua ln_export_qua
+(337,268 missing values generated)
+(3,464,093 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+(40,499,383 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    42,166,299
+        from master                42,166,299  
+        from using                          0  
+
+    Matched                         3,614,912  
+    -----------------------------------------
+(337,268 missing values generated)
+(0 observations deleted)
+(42,166,299 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,652,802
+        from master                43,652,802  
+        from using                          0  
+
+    Matched                         5,592,502  
+    -----------------------------------------
+(43,652,802 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    45,404,042
+        from master                45,404,042  
+        from using                          0  
+
+    Matched                         3,841,262  
+    -----------------------------------------
+(45,404,042 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,480,566
+        from master                36,480,566  
+        from using                          0  
+
+    Matched                         9,300,645  
+    -----------------------------------------
+(8,884 observations deleted)
+(36,471,682 real changes made)
+  45,772,327
+[ln_export_qua] Righe: 45772327
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    37,162,246
+        from master                37,162,246  
+        from using                          0  
+
+    Matched                        12,083,058  
+    -----------------------------------------
+(229,436 observations deleted)
+(36,932,810 real changes made)
+  49,015,868
+[ln_export_qua] Righe: 49015868
+(dropped 2.41e+07 singleton observations)
+(dropped 2.55e+07 singleton observations)
+(MWFE estimator converged in 90 iterations)
+
+HDFE Linear regression                            Number of obs   = 21,311,206
+Absorbing 3 HDFE groups                           F(   4,    224) =       1.04
+Statistics robust to heteroskedasticity           Prob > F        =     0.3885
+                                                  R-squared       =     0.9131
+                                                  Adj R-squared   =     0.8238
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     1.3421
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   -.000104   .0010035    -0.10   0.918    -.0020816    .0018736
+    tr_dirty |  -.0014223   .0008134    -1.75   0.082    -.0030252    .0001805
+    td_green |  -.0041241   .0089252    -0.46   0.644    -.0217122    .0134641
+    td_dirty |   .0151092   .0084572     1.79   0.075    -.0015567    .0317751
+       _cons |   7.528832   .0004962  1.5e+04   0.000     7.527855     7.52981
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6119912     6119912           0    *|
+         fdt |   4613096     4613096           0    *|
+          pt |     64457           1       64456     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_qua_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_qua_desta.dta saved
+[OK] TREND ln_export_qua — N=21311206 clusters=225
+
+. 
+. di as text _n "########## PASSATA C: ln_export_value ##########"
+
+########## PASSATA C: ln_export_value ##########
+
+. run_tripledd_outcome ln_export_value uv_exp ln_export_value
+(337,281 missing values generated)
+(3,464,093 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+(40,499,383 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    42,166,299
+        from master                42,166,299  
+        from using                          0  
+
+    Matched                         3,614,912  
+    -----------------------------------------
+(42,166,299 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,480,566
+        from master                36,480,566  
+        from using                          0  
+
+    Matched                         9,300,645  
+    -----------------------------------------
+(MWFE estimator converged in 89 iterations)
+(8,884 observations deleted)
+(36,471,682 real changes made)
+  45,772,327
+[ln_export_value] Righe: 45772327
+
+HDFE Linear regression                            Number of obs   = 23,155,803
+Absorbing 3 HDFE groups                           F(   4,    226) =       1.24
+Statistics robust to heteroskedasticity           Prob > F        =     0.2949
+                                                  R-squared       =     0.9106
+                                                  Adj R-squared   =     0.8211
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     1.3521
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0003454   .0009468    -0.36   0.716    -.0022111    .0015202
+    tr_dirty |  -.0016692   .0008745    -1.91   0.058    -.0033924     .000054
+    td_green |  -.0020069   .0072599    -0.28   0.782    -.0163127    .0122989
+    td_dirty |   .0177452   .0088959     1.99   0.047     .0002157    .0352747
+       _cons |    7.57231   .0005366  1.4e+04   0.000     7.571253    7.573368
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6634442     6634442           0    *|
+         fdt |   4879264     4879264           0    *|
+          pt |     65878           1       65877     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_qua_inclHKMO_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_qua_inclHKMO_desta.dta saved
+[OK] TREND ln_export_qua — N=23155803 clusters=227
+
+. 
+. di as text _n "########## PASSATA C: ln_export_value ##########"
+
+########## PASSATA C: ln_export_value ##########
+
+. run_tripledd_outcome ln_export_value uv_exp ln_export_value
+(337,281 missing values generated)
+(0 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,652,802
+        from master                43,652,802  
+        from using                          0  
+
+    Matched                         5,592,502  
+    -----------------------------------------
+(43,652,802 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    45,404,042
+        from master                45,404,042  
+        from using                          0  
+
+    Matched                         3,841,262  
+    -----------------------------------------
+(45,404,042 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    37,162,246
+        from master                37,162,246  
+        from using                          0  
+
+    Matched                        12,083,058  
+    -----------------------------------------
+(dropped 2.41e+07 singleton observations)
+(229,436 observations deleted)
+(36,932,810 real changes made)
+  49,015,868
+[ln_export_value] Righe: 49015868
+(dropped 2.55e+07 singleton observations)
+(MWFE estimator converged in 90 iterations)
+
+HDFE Linear regression                            Number of obs   = 21,311,196
+Absorbing 3 HDFE groups                           F(   4,    224) =       2.03
+Statistics robust to heteroskedasticity           Prob > F        =     0.0917
+                                                  R-squared       =     0.9626
+                                                  Adj R-squared   =     0.9242
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     0.6049
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0004424   .0019321    -0.23   0.819    -.0042498     .003365
+    wb_dirty |   .0004394   .0010521     0.42   0.677    -.0016339    .0025127
+    td_green |   .0048034   .0053503     0.90   0.370      -.00574    .0153467
+    td_dirty |  -.0007989   .0019272    -0.41   0.679    -.0045965    .0029988
+       _cons |    2.08964    .000169  1.2e+04   0.000     2.089307    2.089973
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6119909     6119909           0    *|
+         fdt |   4613093     4613093           0    *|
+          pt |     64457           1       64456     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_WB_ln_ex
+    > port_value_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_WB_ln_ex
+    > port_value_desta.dta saved
+[OK] WB ln_export_value — N=21311196 clusters=225
+(dropped 2.41e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 23,155,793
+Absorbing 3 HDFE groups                           F(   4,    226) =       2.75
+Statistics robust to heteroskedasticity           Prob > F        =     0.0292
+                                                  R-squared       =     0.9627
+                                                  Adj R-squared   =     0.9253
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.6025
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0004132   .0018555    -0.22   0.824    -.0040694    .0032431
+    wb_dirty |   .0008154   .0010074     0.81   0.419    -.0011698    .0028005
+    td_green |   .0048759   .0049703     0.98   0.328    -.0049181    .0146699
+    td_dirty |  -.0021103   .0020944    -1.01   0.315    -.0062375    .0020168
+       _cons |   2.043623   .0001878  1.1e+04   0.000     2.043253    2.043993
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6634439     6634439           0    *|
+         fdt |   4879261     4879261           0    *|
+          pt |     65878           1       65877     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_WB_ln_ex
+    > port_value_inclHKMO_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_WB_ln_ex
+    > port_value_inclHKMO_desta.dta saved
+[OK] WB ln_export_value — N=23155793 clusters=227
+(dropped 2.55e+07 singleton observations)
+(MWFE estimator converged in 90 iterations)
+
+HDFE Linear regression                            Number of obs   = 21,311,196
+Absorbing 3 HDFE groups                           F(   4,    224) =       2.89
+Statistics robust to heteroskedasticity           Prob > F        =     0.0231
+                                                  R-squared       =     0.9626
+                                                  Adj R-squared   =     0.9242
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     0.6049
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0001323   .0004663    -0.28   0.777    -.0010511    .0007865
+    tr_dirty |  -.0000423   .0003473    -0.12   0.903    -.0007266    .0006421
+    td_green |   .0050744   .0057266     0.89   0.377    -.0062105    .0163593
+    td_dirty |   .0003558   .0034648     0.10   0.918    -.0064721    .0071836
+       _cons |   2.089587   .0003209  6511.03   0.000     2.088955     2.09022
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6119909     6119909           0    *|
+         fdt |   4613093     4613093           0    *|
+          pt |     64457           1       64456     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_value_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_value_desta.dta saved
+[OK] TREND ln_export_value — N=21311196 clusters=225
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * 3. Assembla CSV riassuntivo
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. local first 1
+
+. foreach ov in ln_export ln_export_qua ln_export_value {
+  2.     foreach tr in WB TREND {
+  3.         local f "$ROOT/New/Output/TripleDiff/Tables/_full17c_`tr'_`ov'$OUT
+> SFX.dta"
+  4.         cap confirm file "`f'"
+  5.         if !_rc {
+  6.             use "`f'", clear
+  7.             if `first' {
+  8.                 local first 0
+  9.             }
+ 10.             else {
+ 11.                 cap append using "`f'"
+ 12.             }
+ 13.             tempfile accum
+ 14.             save `accum', replace
+ 15.         }
+ 16.     }
+ 17. }
+(file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000004.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000004.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000005.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000005.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000006.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000006.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000007.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000007.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000008.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000008.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000009.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_6ba0_000009.tmp saved as .dta
+    format
+
+. 
+. if !`first' {
+.     use `accum', clear
+.     * raccogliere tutto in modo piu' pulito
+. }
+
+. 
+. * Approccio diretto: carica e appendi uno per uno
+. clear
+
+. local first 1
+
+. foreach ov in ln_export ln_export_qua ln_export_value {
+  2.     foreach tr in WB TREND {
+  3.         local f "$ROOT/New/Output/TripleDiff/Tables/_full17c_`tr'_`ov'$OUT
+> SFX.dta"
+  4.         cap confirm file "`f'"
+  5.         if !_rc {
+  6.             if `first' {
+  7.                 use "`f'", clear
+  8.                 local first 0
+  9.             }
+ 10.             else {
+ 11.                 append using "`f'"
+ 12.             }
+ 13.         }
+ 14.     }
+ 15. }
+(variable treat was str2, now str5 to accommodate using data's values)
+(variable outcome was str9, now str13 to accommodate using data's values)
+(variable outcome was str13, now str15 to accommodate using data's values)
+
+. if !`first' {
+.     export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_alldep
+> vars_reghdfe$OUTSFX.csv", replace
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_all
+    > depvars_reghdfe_desta.csv not found)
+file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_alld
+> epvars_reghdfe_desta.csv saved
+.     di "[OK] tripledd_full_alldepvars_reghdfe$OUTSFX.csv"
+[OK] tripledd_full_alldepvars_reghdfe_desta.csv
+. }
+
+. else {
+.     di as error "Nessun risultato trovato — controllare le stime"
+. }
+
+. 
+end of do-file
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 23,155,793
+Absorbing 3 HDFE groups                           F(   4,    226) =       3.42
+Statistics robust to heteroskedasticity           Prob > F        =     0.0097
+                                                  R-squared       =     0.9627
+                                                  Adj R-squared   =     0.9253
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.6025
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0001345   .0003788    -0.36   0.723    -.0008809    .0006119
+    tr_dirty |   .0002151   .0003369     0.64   0.524    -.0004489     .000879
+    td_green |   .0051659   .0046583     1.11   0.269    -.0040132    .0143451
+    td_dirty |   -.002257   .0028863    -0.78   0.435    -.0079446    .0034305
+       _cons |   2.043619   .0003204  6377.54   0.000     2.042987     2.04425
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   6634439     6634439           0    *|
+         fdt |   4879261     4879261           0    *|
+          pt |     65878           1       65877     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_value_inclHKMO_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_full17c_TREND_ln
+    > _export_value_inclHKMO_desta.dta saved
+[OK] TREND ln_export_value — N=23155793 clusters=227
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * 3. Assembla CSV riassuntivo
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. local first 1
+
+. foreach ov in ln_export ln_export_qua ln_export_value {
+  2.     foreach tr in WB TREND {
+  3.         local f "$ROOT/New/Output/TripleDiff/Tables/_full17c_`tr'_`ov'$OUT
+> SFX.dta"
+  4.         cap confirm file "`f'"
+  5.         if !_rc {
+  6.             use "`f'", clear
+  7.             if `first' {
+  8.                 local first 0
+  9.             }
+ 10.             else {
+ 11.                 cap append using "`f'"
+ 12.             }
+ 13.             tempfile accum
+ 14.             save `accum', replace
+ 15.         }
+ 16.     }
+ 17. }
+(file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000004.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000004.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000005.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000005.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000006.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000006.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000007.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000007.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000008.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000008.tmp saved as .dta
+    format
+(file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000009.tmp not found)
+file C:\Users\edodr\AppData\Local\Temp\ST_55d8_000009.tmp saved as .dta
+    format
+
+. 
+. if !`first' {
+.     use `accum', clear
+.     * raccogliere tutto in modo piu' pulito
+. }
+
+. 
+. * Approccio diretto: carica e appendi uno per uno
+. clear
+
+. local first 1
+
+. foreach ov in ln_export ln_export_qua ln_export_value {
+  2.     foreach tr in WB TREND {
+  3.         local f "$ROOT/New/Output/TripleDiff/Tables/_full17c_`tr'_`ov'$OUT
+> SFX.dta"
+  4.         cap confirm file "`f'"
+  5.         if !_rc {
+  6.             if `first' {
+  7.                 use "`f'", clear
+  8.                 local first 0
+  9.             }
+ 10.             else {
+ 11.                 append using "`f'"
+ 12.             }
+ 13.         }
+ 14.     }
+ 15. }
+(variable treat was str2, now str5 to accommodate using data's values)
+(variable outcome was str9, now str13 to accommodate using data's values)
+(variable outcome was str13, now str15 to accommodate using data's values)
+
+. if !`first' {
+.     export delimited "$ROOT/New/Output/TripleDiff/Tables/tripledd_full_alldep
+> vars_reghdfe$OUTSFX.csv", replace
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_all
+    > depvars_reghdfe_inclHKMO_desta.csv not found)
+file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_full_alld
+> epvars_reghdfe_inclHKMO_desta.csv saved
+.     di "[OK] tripledd_full_alldepvars_reghdfe$OUTSFX.csv"
+[OK] tripledd_full_alldepvars_reghdfe_inclHKMO_desta.csv
+. }
+
+. else {
+.     di as error "Nessun risultato trovato — controllare le stime"
+. }
+
+. 
+end of do-file

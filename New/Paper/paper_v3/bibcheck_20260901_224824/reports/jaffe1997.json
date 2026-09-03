@@ -1,0 +1,8 @@
+{
+  "key": "jaffe1997",
+  "verdict": "VERIFIED",
+  "source_url": "https://direct.mit.edu/rest/article/79/4/610/57027/Environmental-Regulation-and-Innovation-A-Panel",
+  "issues": [],
+  "corrected_entry": null,
+  "notes": "All fields match the MIT Press published version: authors, title, year, volume, number, pages, and DOI are correct. The official journal name is 'The Review of Economics and Statistics' (with 'The'); the entry omits it, which is standard BibTeX practice and not an error."
+}

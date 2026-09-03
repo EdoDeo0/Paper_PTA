@@ -14,24 +14,15 @@
 * ESECUZIONE BATCH:
 *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\17c_tripledd_fullpanel_alldepvars.do"
 
-clear all
-set more off
-set varabbrev off
-
-* --- Percorsi radice ---------------------------------------------------------
-if c(os) == "Windows" {
-    global ROOT "C:\Work\projects\Paper_PTA"
-}
-if c(os) == "MacOSX" {
-    global ROOT "~/Documents/work/projects/Paper_PTA"
-}
-if c(os) == "Unix" {
-    global ROOT "~/work/projects/Paper_PTA"
-}
+do "New/Code/stata/_root.do"
 
 * --- Variante campione/depth (identica a script 17) -------------------------
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+local env_sample : env PTA_SAMPLE
+local env_depth  : env PTA_DEPTH
+if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+else                    global PTA_SAMPLE "excl"
+if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+else                    global PTA_DEPTH  "totaldepth"
 
 if !inlist("$PTA_SAMPLE", "excl", "incl") {
     di as error "PTA_SAMPLE deve essere excl o incl, trovato: $PTA_SAMPLE"
@@ -65,6 +56,10 @@ else {
 global OUTSFX "$SFX$DEPTHSFX"
 di "[campione] $PTA_SAMPLE | [depth] $PTA_DEPTH ($DEPTHVAR) | suffisso: '$OUTSFX'"
 
+cap mkdir "$ROOT/New/Output/Diagnostics/stata_logs"
+cap log close _all
+log using "$ROOT/New/Output/Diagnostics/stata_logs/17c_tripledd_fullpanel_alldepvars$OUTSFX.log", replace text
+
 * --- Dipendenze --------------------------------------------------------------
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -84,17 +79,20 @@ rename hs6_final hs6
 duplicates drop hs6, force
 gen byte env_good_new = 1
 tempfile green
+global F_GREEN "`green'"
 save `green'
 
 import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
 keep hs6 dirty
 rename dirty dirty_p
 tempfile dirty
+global F_DIRTY "`dirty'"
 save `dirty'
 
 import delimited "$DEPTHFILE", clear
 keep country_code year $DEPTHVAR
 tempfile depth
+global F_DEPTH "`depth'"
 save `depth'
 
 *══════════════════════════════════════════════════════════════════════════════
@@ -139,11 +137,20 @@ program define run_tripledd_outcome
     keep if $HKMOEXPR
     drop hkmo
 
-    merge m:1 hs6 using `green', keep(master match) nogen
+    merge m:1 hs6 using "$F_GREEN", keep(master match)
+    qui count if _merge == 3
+    di as text "  [merge green] righe appaiate: " r(N)
+    drop _merge
     replace env_good_new = 0 if missing(env_good_new)
-    merge m:1 hs6 using `dirty', keep(master match) nogen
+    merge m:1 hs6 using "$F_DIRTY", keep(master match)
+    qui count if _merge == 3
+    di as text "  [merge dirty] righe appaiate: " r(N)
+    drop _merge
     replace dirty_p = 0 if missing(dirty_p)
-    merge m:1 country_code year using `depth', keep(master match) nogen
+    merge m:1 country_code year using "$F_DEPTH", keep(master match)
+    qui count if _merge == 3
+    di as text "  [merge depth] righe appaiate: " r(N)
+    drop _merge
     if $DROP_UNMEASURED {
         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
     }
@@ -167,7 +174,7 @@ program define run_tripledd_outcome
         local ncl = e(N_clust)
         regsave using "`cache_wb'", ///
             tstat pval ci replace addlabel(treat, WB, fe, "fpd+fdt+pt", ///
-            nclust, `ncl', outcome, `outcome_var')
+            nclust, `ncl', outcome, `outcome_var', source, reghdfe_stata_17c)
         di "[OK] WB `outcome_var' — N=" e(N) " clusters=" `ncl'
     }
 
@@ -179,7 +186,7 @@ program define run_tripledd_outcome
             local ncl = e(N_clust)
             regsave using "`cache_tr'", ///
                 tstat pval ci replace addlabel(treat, TREND, fe, "fpd+fdt+pt", ///
-                nclust, `ncl', outcome, `outcome_var')
+                nclust, `ncl', outcome, `outcome_var', source, reghdfe_stata_17c)
             di "[OK] TREND `outcome_var' — N=" e(N) " clusters=" `ncl'
         }
     }
@@ -249,3 +256,4 @@ if !`first' {
 else {
     di as error "Nessun risultato trovato — controllare le stime"
 }
+cap log close _all

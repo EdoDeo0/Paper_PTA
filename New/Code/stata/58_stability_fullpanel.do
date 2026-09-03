@@ -50,10 +50,7 @@
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\58_stability_fullpanel.do"
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\58_stability_fullpanel.do" incl desta
 
-clear all
-set more off
-set varabbrev off
-global ROOT "C:\Work\projects\Paper_PTA"
+do "New/Code/stata/_root.do"
 global DTA  "$ROOT\Data\Final Dataset\final_dataset_pta_env_indices_compressed.dta"
 global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
 
@@ -70,6 +67,10 @@ local s1 = cond("$VSAMPLE" == "incl",  "_inclHKMO", "")
 local s2 = cond("$VDEPTH"  == "desta", "_desta",    "")
 global SFX "`s1'`s2'"
 di as text _n "=== Stability full panel | campione=$VSAMPLE | depth=$VDEPTH | suffisso=$SFX ==="
+
+cap mkdir "$ROOT\New\Output\Diagnostics\stata_logs"
+cap log close _all
+log using "$ROOT\New\Output\Diagnostics\stata_logs\58_stability_fullpanel$SFX.log", replace text
 
 cap which reghdfe
 if _rc ssc install reghdfe
@@ -143,11 +144,8 @@ tempfile ds
 save `ds'
 global F_DS "`ds'"
 
-* CEM v1: country_code da tenere
-import delimited "$ROOT\Output\CEM\matched_countries.csv", clear
-keep country_code
-drop if missing(country_code)
-duplicates drop country_code, force
+* CEM v1: country_code da tenere (da 12_cem_matching_stata.do)
+use "$ROOT\New\Output\CEM_stata\cem_v1_cc.dta", clear
 gen byte keep_cem = 1
 count
 di as text "cem_v1: " r(N) " paesi da tenere"
@@ -205,11 +203,20 @@ program define run_stability_group
     di as text "  righe dopo filtro: " r(N)
 
     * Classificazioni ricalcolate (come 24.R, 17.do, 18.do)
-    merge m:1 hs6 using "$F_GREEN", keep(master match) nogen
+    merge m:1 hs6 using "$F_GREEN", keep(master match)
+    qui count if _merge == 3
+    di as text "  [merge green] righe appaiate: " r(N)
+    drop _merge
     replace env_good_new = 0 if missing(env_good_new)
-    merge m:1 hs6 using "$F_DIRTY", keep(master match) nogen
+    merge m:1 hs6 using "$F_DIRTY", keep(master match)
+    qui count if _merge == 3
+    di as text "  [merge dirty] righe appaiate: " r(N)
+    drop _merge
     replace dirty_p = 0 if missing(dirty_p)
-    merge m:1 country_code year using "$F_DEPTH", keep(master match) nogen
+    merge m:1 country_code year using "$F_DEPTH", keep(master match)
+    qui count if _merge == 3
+    di as text "  [merge depth] righe appaiate: " r(N)
+    drop _merge
     * DESTA: le celle TRATTATE senza copertura si eliminano, le altre vanno a 0
     * (stessa regola di 52 blocco 7, 63 e 65)
     if "$VDEPTH" == "desta" {
@@ -296,3 +303,5 @@ if "$SFX" == "" {
 else di as text "Confronto con R: New/Output/TripleDiff/Tables/tripledd_stability$SFX.csv"
 
 di as result _n "=== S8 (stability full panel) COMPLETATO ==="
+
+cap log close _all

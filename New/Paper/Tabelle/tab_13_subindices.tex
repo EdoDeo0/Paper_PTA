@@ -1,52 +1,51 @@
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{Provision sub-indices: which clauses have a trade mechanism?}
+\caption{Scomposizione per tipo di disposizione: quali clausole avrebbero un meccanismo commerciale?}
 \label{tab:subindices}
 \begin{threeparttable}
 \begin{tabular}{lcc}
 \toprule
-Sub-index & $\times$green & $\times$dirty \\
+Sotto-indice & $\times$ Verde & $\times$ Sporco \\
 \midrule
-\multicolumn{3}{l}{\textit{Mechanism-bearing sub-indices}} \\
+Liberalizzazione dei beni verdi (WB) & -0.0115 & -0.0876$^{*}$ \\
+ & (0.0879) & (0.0483) \\
+ & [0.896] & [0.071] \\
 \addlinespace
-\quad Green goods liberalization (WB) & $-0.0115$ & $-0.0876^{*}$ \\
- & $(0.0879)$ & $(0.0483)$ \\
- & $[0.896]$ & $[0.071]$ \\
+Accesso al mercato per i beni verdi (TREND) & -0.0271 & -0.0491$^{**}$ \\
+ & (0.0303) & (0.0243) \\
+ & [0.372] & [0.045] \\
 \addlinespace
-\quad Green market access (TREND) & $-0.0271$ & $-0.0491^{**}$ \\
- & $(0.0303)$ & $(0.0243)$ \\
- & $[0.372]$ & $[0.045]$ \\
+Meccanismo di risoluzione controversie (WB) & -0.0048 & 0.0067 \\
+ & (0.0394) & (0.0525) \\
+ & [0.903] & [0.898] \\
+\addlinespace
+Meccanismo di risoluzione controversie (TREND) & 0.0042 & -0.0052 \\
+ & (0.0148) & (0.0140) \\
+ & [0.778] & [0.709] \\
+\addlinespace
+Disposizioni vincolanti (TREND) & 0.0022 & -0.0013 \\
+ & (0.0047) & (0.0037) \\
+ & [0.638] & [0.724] \\
+\addlinespace
+Disposizioni di sola cooperazione (TREND) & 0.0132 & 0.0019 \\
+ & (0.0121) & (0.0108) \\
+ & [0.275] & [0.858] \\
+\addlinespace
+Clausole di spazio regolatorio (TREND) & 0.0242$^{**}$ & 0.0225$^{***}$ \\
+ & (0.0099) & (0.0086) \\
+ & [0.015] & [0.010] \\
+\addlinespace
 \midrule
-\multicolumn{3}{l}{\textit{Enforcement}} \\
-\addlinespace
-\quad Dispute settlement mechanism (WB) & $-0.0048$ & $\phantom{-}0.0067$ \\
- & $(0.0394)$ & $(0.0525)$ \\
- & $[0.903]$ & $[0.898]$ \\
-\addlinespace
-\quad Dispute settlement mechanism (TREND) & $\phantom{-}0.0042$ & $-0.0052$ \\
- & $(0.0148)$ & $(0.0140)$ \\
- & $[0.778]$ & $[0.709]$ \\
-\addlinespace
-\quad Binding obligations (TREND) & $\phantom{-}0.0022$ & $-0.0013$ \\
- & $(0.0047)$ & $(0.0037)$ \\
- & $[0.638]$ & $[0.724]$ \\
-\midrule
-\multicolumn{3}{l}{\textit{Placebo sub-indices (no trade mechanism)}} \\
-\addlinespace
-\quad Cooperation-only provisions (TREND) & $\phantom{-}0.0132$ & $\phantom{-}0.0019$ \\
- & $(0.0121)$ & $(0.0108)$ \\
- & $[0.275]$ & $[0.858]$ \\
-\addlinespace
-\quad Regulatory space clauses (TREND) & $\phantom{-}0.0242^{**}$ & $\phantom{-}0.0225^{***}$ \\
- & $(0.0099)$ & $(0.0086)$ \\
- & $[0.015]$ & $[0.010]$ \\
-\midrule
-Cells (all rows) & \multicolumn{2}{c}{3,681,023} \\
+Celle (tutte le righe) & \multicolumn{2}{c}{3,681,023} \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
-\item Baseline variant, collapsed panel. Each row is a separate regression replacing the aggregate EP index with the indicated sub-index; TotalDepth controls remain included. Standard errors in parentheses; asymptotic $p$-values in brackets. The two mechanism-bearing WB sub-indices are perfectly collinear in-sample and non-zero in only three treated country--years (Korea from 2015, Switzerland from 2014), so their coefficients are not identified separately from each other. The regulatory space clauses, despite surviving wild cluster bootstrap, cannot be distinguished from general agreement depth (within-sample correlation with TotalDepth: 0.90); see Section~\ref{sec:bundling}. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\item Variante baseline, pannello collassato. Ogni riga \`e una stima separata in cui l'indice complessivo \`e sostituito dal sotto-indice indicato; il controllo di profondit\`a resta incluso.
+\item \textbf{L'obiezione a cui risponde.} Un indice che somma tutte le disposizioni mescola clausole che potrebbero davvero spostare il commercio (abbassare i dazi sui beni verdi, imporre standard vincolanti) con dichiarazioni di intenti che non hanno alcun meccanismo. Se l'effetto esiste, dovrebbe concentrarsi nelle prime.
+\item \textbf{Il limite, che \`e esso stesso un risultato.} Negli accordi cinesi del periodo le disposizioni dotate di un meccanismo commerciale sono rarissime: i due sotto-indici della Banca Mondiale che ne hanno uno sono diversi da zero in soli tre anni-paese e risultano perfettamente sovrapposti fra loro. Non \`e quindi possibile distinguerne gli effetti: non per un difetto del metodo, ma perch\'e quel contenuto negli accordi quasi non c'\`e.
+\item Le righe \emph{sola cooperazione} e \emph{spazio regolatorio} funzionano da controllo negativo: sono clausole senza meccanismo commerciale, e l\`i non dovrebbe emergere nulla.
+\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

@@ -1,0 +1,13 @@
+{
+  "key": "neri2023",
+  "verdict": "HALLUCINATED",
+  "source_url": null,
+  "issues": [
+    "author: no article titled \"The heterogeneous effects of deep trade agreements on exports\" by Neri, Lorenzo and Santacreu-Vasut, Estefania could be found",
+    "title: no matching article found in Review of World Economics or elsewhere",
+    "doi: 10.1007/s10290-022-00481-0 resolves to a completely different paper (Shingal, A., \"Mode 4 restrictiveness and services trade\", Review of World Economics, vol. 159, issue 3, pp. 757-786) with different authors, title, and volume/issue/pages",
+    "volume/number/pages: do not match the paper actually associated with the cited DOI"
+  ],
+  "corrected_entry": null,
+  "notes": "Web searches found no paper matching this author/title combination, and the cited DOI resolves to an unrelated article (Shingal 2022/2023, Mode 4 restrictiveness), indicating the entry is fabricated; the closest real paper on this topic is Neri-Lainé, Orefice & Ruta's 'Deep Trade Agreements and Heterogeneous Firms Exports' (World Bank working paper), which has different authors and was not found published in Review of World Economics."
+}

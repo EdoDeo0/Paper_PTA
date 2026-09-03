@@ -1,0 +1,2617 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\19d_ladder_tripledd_fullpanel.do 
+
+. *****************************************************************************
+> ***
+. ****** 19d — Saturation ladder con specifica TRIPLE-DIFF completa         ***
+> ***
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Come 19c ma con la specifica del paper (17/17c), non quella ridotta.
+. *
+. * SPECIFICA:
+. *   y ~ EP*green + EP*dirty + TotalDepth*green + TotalDepth*dirty + [ctrl] | 
+> FE
+. *   cluster(country_code)
+. *
+. * 4 FE: fpd+year, fpt+pd, fpt+fpd, fpd+pt
+. * 2 treat: WB, TREND
+. * 3 outcome: ln_export, ln_export_qua, ln_export_value
+. * 2 ctrl: senza, con (tariffs + ln_hhi_baci)
+. * Totale: 4 x 2 x 3 x 2 = 48 modelli per variante
+. *
+. * OUTPUT: New/Output/OLS/Tables_Stata/OLS_Ladder_tripledd_19d{OUTSFX}.csv
+. *
+. * ESECUZIONE BATCH:
+. *   "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\19d_la
+> dder_tripledd_fullpanel.do"
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. 
+. * --- Percorsi radice -------------------------------------------------------
+> --
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. if c(os) == "MacOSX" {
+.     global ROOT "~/Documents/work/projects/Paper_PTA"
+. }
+
+. if c(os) == "Unix" {
+.     global ROOT "~/work/projects/Paper_PTA"
+. }
+
+. 
+. * --- Variante campione/depth -----------------------------------------------
+> -
+. local env_sample : env PTA_SAMPLE
+
+. local env_depth  : env PTA_DEPTH
+
+. if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+
+. else                    global PTA_SAMPLE "excl"
+
+. if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+
+. else                    global PTA_DEPTH  "totaldepth"
+
+. 
+. if !inlist("$PTA_SAMPLE", "excl", "incl") {
+.     di as error "PTA_SAMPLE deve essere excl o incl, trovato: $PTA_SAMPLE"
+.     exit 198
+. }
+
+. if "$PTA_SAMPLE" == "incl" {
+.     global HKMOEXPR "1"
+.     global SFX "_inclHKMO"
+. }
+
+. else {
+.     global HKMOEXPR "!hkmo"
+.     global SFX ""
+. }
+
+. 
+. if !inlist("$PTA_DEPTH", "totaldepth", "desta") {
+.     di as error "PTA_DEPTH deve essere totaldepth o desta, trovato: $PTA_DEPT
+> H"
+.     exit 198
+. }
+
+. if "$PTA_DEPTH" == "desta" {
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/desta_depth_country_year.csv"
+.     global DEPTHVAR  "desta_depth_index"
+.     global DEPTHSFX  "_desta"
+.     global DROP_UNMEASURED 1
+. }
+
+. else {
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.cs
+> v"
+.     global DEPTHVAR  "totaldepth_nonenv"
+.     global DEPTHSFX  ""
+.     global DROP_UNMEASURED 0
+. }
+
+. global OUTSFX "$SFX$DEPTHSFX"
+
+. di "[campione] $PTA_SAMPLE | [depth] $PTA_DEPTH ($DEPTHVAR) | suffisso: '$OUT
+> SFX'"
+[campione] excl | [depth] totaldepth (totaldepth_nonenv) | suffisso: ''
+
+. 
+. * --- Dipendenze ------------------------------------------------------------
+> --
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. * --- Directory output ------------------------------------------------------
+> --
+. global TAB "$ROOT/New/Output/OLS/Tables_Stata"
+
+. cap mkdir "$ROOT/New/Output/OLS"
+
+. cap mkdir "$TAB"
+
+. 
+. *── 1. Liste ausiliarie (tempfile) ──────────────────────────────────────────
+> ──
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. global F_GREEN "`green'"
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f74_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+
+. rename dirty dirty_p
+
+. tempfile dirty
+
+. global F_DIRTY "`dirty'"
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f74_000002.tmp saved as .dta
+    format
+
+. 
+. import delimited "$DEPTHFILE", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 249 obs)
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. global F_DEPTH "`depth'"
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_6f74_000003.tmp saved as .dta
+    format
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * Programma: stima ladder triple-diff per una outcome gia' in memoria
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. capture program drop run_ladder_tripledd
+
+. program define run_ladder_tripledd
+  1.     args outcome_var outcome_lbl
+  2. 
+.     local fe_labels  fpd_year   fpt_pd   fpt_fpd   fpd_pt
+  3.     local fe_n = 1
+  4.     foreach fe_label of local fe_labels {
+  5.         if `fe_n' == 1 local absorb_vars "fpd year"
+  6.         if `fe_n' == 2 local absorb_vars "fpt pd"
+  7.         if `fe_n' == 3 local absorb_vars "fpt fpd"
+  8.         if `fe_n' == 4 local absorb_vars "fpd pt"
+  9. 
+.         di as text _n "=== [`outcome_lbl'] FE: `absorb_vars' (`fe_label') ===
+> "
+ 10. 
+.         foreach treat in WB TREND {
+ 11.             local ep_green = cond("`treat'" == "WB", "wb_green", "tr_green
+> ")
+ 12.             local ep_dirty = cond("`treat'" == "WB", "wb_dirty", "tr_dirty
+> ")
+ 13. 
+.             foreach ctrl in 0 1 {
+ 14.                 local tag "`treat'_`fe_label'_`outcome_lbl'_ctrl`ctrl'"
+ 15.                 local out_file "$TAB/OLS_19d_`tag'$OUTSFX.dta"
+ 16. 
+.                 cap confirm file "`out_file'"
+ 17.                 if _rc {
+ 18.                     local ctrl_vars ""
+ 19.                     if `ctrl' == 1 local ctrl_vars "tariffs ln_hhi_baci"
+ 20. 
+.                     local rhs "`ep_green' `ep_dirty' td_green td_dirty"
+ 21. 
+.                     di as text "  [`tag'] `outcome_var' ~ `rhs' `ctrl_vars' |
+>  `absorb_vars'"
+ 22.                     cap noisily reghdfe `outcome_var' `rhs' `ctrl_vars', /
+> //
+>                         absorb(`absorb_vars') vce(cluster country_code) compa
+> ct
+ 23.                     if !_rc {
+ 24.                         local ncl = e(N_clust)
+ 25.                         regsave using "`out_file'", tstat pval ci replace 
+> ///
+>                             addlabel(treat, `treat', ///
+>                                      fe, `fe_label', outcome, `outcome_lbl', 
+> ///
+>                                      ctrl, `ctrl', nclust, `ncl')
+ 26.                         di "[OK] `tag' — N=" e(N) " clusters=" `ncl'
+ 27.                     }
+ 28.                     else di as error "  [FALLITO] `tag'"
+ 29.                 }
+ 30.                 else di as text "  SKIP `tag' (gia' presente)"
+ 31.             }
+ 32.         }
+ 33.         local fe_n = `fe_n' + 1
+ 34.     }
+ 35. end
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * 2. PASSATA A: ln_export
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. di as text _n "########## PASSATA A: ln_export ##########"
+
+########## PASSATA A: ln_export ##########
+
+. use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year ///
+>     pd fpd fpt pt tariffs ln_hhi_baci ///
+>     using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_compressed.
+> dta", clear
+
+. 
+. gen byte hkmo = inlist(country_code, 110, 121)
+
+. keep if $HKMOEXPR
+(3,464,093 observations deleted)
+
+. drop hkmo
+
+. 
+. merge m:1 hs6 using "$F_GREEN", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+
+. replace env_good_new = 0 if missing(env_good_new)
+(40,499,383 real changes made)
+
+. merge m:1 hs6 using "$F_DIRTY", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    42,166,299
+        from master                42,166,299  
+        from using                          0  
+
+    Matched                         3,614,912  
+    -----------------------------------------
+
+. replace dirty_p = 0 if missing(dirty_p)
+(42,166,299 real changes made)
+
+. merge m:1 country_code year using "$F_DEPTH", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,496,372
+        from master                36,496,372  
+        from using                          0  
+
+    Matched                         9,284,839  
+    -----------------------------------------
+
+. if $DROP_UNMEASURED {
+.     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+. }
+
+. replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+(36,496,372 real changes made)
+
+. 
+. gen double wb_green = WB_EP_Depth    * env_good_new
+
+. gen double wb_dirty = WB_EP_Depth    * dirty_p
+
+. gen double tr_green = TREND_EP_Count * env_good_new
+
+. gen double tr_dirty = TREND_EP_Count * dirty_p
+
+. gen double td_green = $DEPTHVAR * env_good_new
+
+. gen double td_dirty = $DEPTHVAR * dirty_p
+
+. drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
+
+. 
+. count
+  45,781,211
+
+. di as text "Passata A: " r(N) " righe"
+Passata A: 45781211 righe
+
+. run_ladder_tripledd ln_export ln_export
+
+=== [ln_export] FE: fpd year (fpd_year) ===
+  [WB_fpd_year_ln_export_ctrl0] ln_export ~ wb_green wb_dirty td_green td_dirty
+>   | fpd year
+(dropped 1.63e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,477,365
+Absorbing 2 HDFE groups                           F(   4,    230) =       1.99
+Statistics robust to heteroskedasticity           Prob > F        =     0.0973
+                                                  R-squared       =     0.7948
+                                                  Adj R-squared   =     0.7158
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3467
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0018095   .0050114     0.36   0.718    -.0080646    .0116835
+    wb_dirty |  -.0037412   .0149825    -0.25   0.803    -.0332617    .0257792
+    td_green |   .0001793    .000203     0.88   0.378    -.0002207    .0005792
+    td_dirty |   .0007022   .0006725     1.04   0.297    -.0006228    .0020273
+       _cons |   9.792916   .0009442  1.0e+04   0.000     9.791056    9.794777
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8193396     8193396           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_ctrl0.dta saved
+[OK] WB_fpd_year_ln_export_ctrl0 — N=29477365 clusters=231
+  [WB_fpd_year_ln_export_ctrl1] ln_export ~ wb_green wb_dirty td_green td_dirty
+>  tariffs ln_hhi_baci | fpd year
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,463,470
+Absorbing 2 HDFE groups                           F(   6,    176) =       8.26
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.7941
+                                                  Adj R-squared   =     0.7144
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        177    Root MSE        =     1.3535
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0026133   .0054972     0.48   0.635    -.0082356    .0134623
+    wb_dirty |  -.0034146   .0147117    -0.23   0.817    -.0324486    .0256194
+    td_green |   .0001618   .0002025     0.80   0.425    -.0002378    .0005614
+    td_dirty |   .0006671   .0006564     1.02   0.311    -.0006284    .0019626
+     tariffs |   -.047464   .0189063    -2.51   0.013    -.0847763   -.0101518
+ ln_hhi_baci |  -.0207874   .0034357    -6.05   0.000    -.0275678    -.014007
+       _cons |   9.859642   .0302815   325.60   0.000      9.79988    9.919403
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7388754     7388754           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_ctrl1.dta saved
+[OK] WB_fpd_year_ln_export_ctrl1 — N=26463470 clusters=177
+  [TREND_fpd_year_ln_export_ctrl0] ln_export ~ tr_green tr_dirty td_green td_di
+> rty  | fpd year
+(dropped 1.63e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,477,365
+Absorbing 2 HDFE groups                           F(   4,    230) =       3.38
+Statistics robust to heteroskedasticity           Prob > F        =     0.0104
+                                                  R-squared       =     0.7948
+                                                  Adj R-squared   =     0.7158
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3467
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0012797   .0009622    -1.33   0.185    -.0031754    .0006161
+    tr_dirty |  -.0049046   .0014558    -3.37   0.001    -.0077731   -.0020361
+    td_green |   .0004358   .0002294     1.90   0.059    -.0000161    .0008878
+    td_dirty |   .0013069   .0003893     3.36   0.001       .00054    .0020739
+       _cons |   9.791421   .0013425  7293.51   0.000     9.788776    9.794066
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8193396     8193396           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_ctrl0.dta saved
+[OK] TREND_fpd_year_ln_export_ctrl0 — N=29477365 clusters=231
+  [TREND_fpd_year_ln_export_ctrl1] ln_export ~ tr_green tr_dirty td_green td_di
+> rty tariffs ln_hhi_baci | fpd year
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,463,470
+Absorbing 2 HDFE groups                           F(   6,    176) =       8.98
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.7941
+                                                  Adj R-squared   =     0.7144
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        177    Root MSE        =     1.3535
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0012233   .0009236    -1.32   0.187    -.0030461    .0005996
+    tr_dirty |  -.0047411   .0014979    -3.17   0.002    -.0076972   -.0017849
+    td_green |    .000434   .0002244     1.93   0.055    -8.74e-06    .0008768
+    td_dirty |   .0012652   .0003987     3.17   0.002     .0004783    .0020522
+     tariffs |  -.0475009   .0188912    -2.51   0.013    -.0847833   -.0102185
+ ln_hhi_baci |  -.0208489   .0034348    -6.07   0.000    -.0276275   -.0140702
+       _cons |   9.858239   .0301439   327.04   0.000     9.798748    9.917729
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7388754     7388754           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_ctrl1.dta saved
+[OK] TREND_fpd_year_ln_export_ctrl1 — N=26463470 clusters=177
+
+=== [ln_export] FE: fpt pd (fpt_pd) ===
+  [WB_fpt_pd_ln_export_ctrl0] ln_export ~ wb_green wb_dirty td_green td_dirty  
+> | fpt pd
+(dropped 1.02e+07 singleton observations)
+(MWFE estimator converged in 53 iterations)
+
+HDFE Linear regression                            Number of obs   = 35,607,036
+Absorbing 2 HDFE groups                           F(   4,    231) =       0.57
+Statistics robust to heteroskedasticity           Prob > F        =     0.6821
+                                                  R-squared       =     0.6211
+                                                  Adj R-squared   =     0.5376
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        232    Root MSE        =     1.7072
+
+                         (Std. err. adjusted for 232 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0011742   .0026783     0.44   0.661    -.0041028    .0064512
+    wb_dirty |  -.0015422   .0026627    -0.58   0.563    -.0067885    .0037041
+    td_green |   .0000382   .0001334     0.29   0.775    -.0002246     .000301
+    td_dirty |   .0001006   .0001449     0.69   0.488    -.0001848     .000386
+       _cons |   9.423553   .0005227  1.8e+04   0.000     9.422523    9.424583
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   6053342           1     6053341     |
+          pd |    380090      380090           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_ctrl0.dta saved
+[OK] WB_fpt_pd_ln_export_ctrl0 — N=35607036 clusters=232
+  [WB_fpt_pd_ln_export_ctrl1] ln_export ~ wb_green wb_dirty td_green td_dirty t
+> ariffs ln_hhi_baci | fpt pd
+(dropped 9534256 singleton observations)
+(MWFE estimator converged in 49 iterations)
+
+HDFE Linear regression                            Number of obs   = 31,391,285
+Absorbing 2 HDFE groups                           F(   6,    181) =       3.55
+Statistics robust to heteroskedasticity           Prob > F        =     0.0024
+                                                  R-squared       =     0.6225
+                                                  Adj R-squared   =     0.5343
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        182    Root MSE        =     1.7230
+
+                         (Std. err. adjusted for 182 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0013636   .0026792     0.51   0.611    -.0039229    .0066501
+    wb_dirty |  -.0035999   .0022143    -1.63   0.106     -.007969    .0007692
+    td_green |    .000022    .000125     0.18   0.860    -.0002246    .0002687
+    td_dirty |   .0001666    .000135     1.23   0.219    -.0000999    .0004331
+     tariffs |  -.0394439   .0140575    -2.81   0.006    -.0671815   -.0117064
+ ln_hhi_baci |  -.0047247   .0041302    -1.14   0.254    -.0128742    .0034249
+       _cons |   9.510019   .0244926   388.28   0.000     9.461691    9.558347
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   5616999           1     5616998     |
+          pd |    325166      325166           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_ctrl1.dta saved
+[OK] WB_fpt_pd_ln_export_ctrl1 — N=31391285 clusters=182
+  [TREND_fpt_pd_ln_export_ctrl0] ln_export ~ tr_green tr_dirty td_green td_dirt
+> y  | fpt pd
+(dropped 1.02e+07 singleton observations)
+(MWFE estimator converged in 53 iterations)
+
+HDFE Linear regression                            Number of obs   = 35,607,036
+Absorbing 2 HDFE groups                           F(   4,    231) =       0.90
+Statistics robust to heteroskedasticity           Prob > F        =     0.4647
+                                                  R-squared       =     0.6211
+                                                  Adj R-squared   =     0.5376
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        232    Root MSE        =     1.7072
+
+                         (Std. err. adjusted for 232 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0009653   .0008693     1.11   0.268    -.0007475    .0026781
+    tr_dirty |   .0000288   .0007144     0.04   0.968    -.0013787    .0014364
+    td_green |   -.000064   .0001809    -0.35   0.724    -.0004204    .0002925
+    td_dirty |    .000039   .0001591     0.25   0.806    -.0002744    .0003525
+       _cons |   9.423855   .0007005  1.3e+04   0.000     9.422475    9.425235
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   6053342           1     6053341     |
+          pd |    380090      380090           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_ctrl0.dta saved
+[OK] TREND_fpt_pd_ln_export_ctrl0 — N=35607036 clusters=232
+  [TREND_fpt_pd_ln_export_ctrl1] ln_export ~ tr_green tr_dirty td_green td_dirt
+> y tariffs ln_hhi_baci | fpt pd
+(dropped 9534256 singleton observations)
+(MWFE estimator converged in 49 iterations)
+
+HDFE Linear regression                            Number of obs   = 31,391,285
+Absorbing 2 HDFE groups                           F(   6,    181) =       2.77
+Statistics robust to heteroskedasticity           Prob > F        =     0.0135
+                                                  R-squared       =     0.6225
+                                                  Adj R-squared   =     0.5343
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        182    Root MSE        =     1.7230
+
+                         (Std. err. adjusted for 182 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0010983   .0008345     1.32   0.190    -.0005482    .0027449
+    tr_dirty |  -.0003741    .000669    -0.56   0.577    -.0016941    .0009459
+    td_green |  -.0000921    .000171    -0.54   0.591    -.0004295    .0002453
+    td_dirty |   .0000907   .0001556     0.58   0.561    -.0002164    .0003978
+     tariffs |  -.0393833   .0140374    -2.81   0.006    -.0670813   -.0116852
+ ln_hhi_baci |  -.0046999   .0041252    -1.14   0.256    -.0128396    .0034399
+       _cons |   9.510212   .0245139   387.95   0.000     9.461842    9.558582
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   5616999           1     5616998     |
+          pd |    325166      325166           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_ctrl1.dta saved
+[OK] TREND_fpt_pd_ln_export_ctrl1 — N=31391285 clusters=182
+
+=== [ln_export] FE: fpt fpd (fpt_fpd) ===
+  [WB_fpt_fpd_ln_export_ctrl0] ln_export ~ wb_green wb_dirty td_green td_dirty 
+>  | fpt fpd
+(dropped 2.29e+07 singleton observations)
+(MWFE estimator converged in 39 iterations)
+
+HDFE Linear regression                            Number of obs   = 22,927,402
+Absorbing 2 HDFE groups                           F(   4,    230) =       1.45
+Statistics robust to heteroskedasticity           Prob > F        =     0.2176
+                                                  R-squared       =     0.8591
+                                                  Adj R-squared   =     0.7496
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.2579
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0060098   .0049956     1.20   0.230    -.0038332    .0158528
+    wb_dirty |   .0058154   .0031118     1.87   0.063    -.0003159    .0119468
+    td_green |  -.0003732   .0002217    -1.68   0.094      -.00081    .0000636
+    td_dirty |  -.0002625    .000195    -1.35   0.180    -.0006467    .0001217
+       _cons |   9.912783    .000663  1.5e+04   0.000     9.911476    9.914089
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3770645           1     3770644     |
+         fpd |   6252825     6252825           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_ctrl0.dta saved
+[OK] WB_fpt_fpd_ln_export_ctrl0 — N=22927402 clusters=231
+  [WB_fpt_fpd_ln_export_ctrl1] ln_export ~ wb_green wb_dirty td_green td_dirty 
+> tariffs ln_hhi_baci | fpt fpd
+(dropped 2.06e+07 singleton observations)
+(MWFE estimator converged in 42 iterations)
+
+HDFE Linear regression                            Number of obs   = 20,288,014
+Absorbing 2 HDFE groups                           F(   6,    175) =       4.96
+Statistics robust to heteroskedasticity           Prob > F        =     0.0001
+                                                  R-squared       =     0.8607
+                                                  Adj R-squared   =     0.7482
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        176    Root MSE        =     1.2648
+
+                         (Std. err. adjusted for 176 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0075963   .0053216     1.43   0.155    -.0029065    .0180991
+    wb_dirty |   .0047369   .0030013     1.58   0.116    -.0011864    .0106603
+    td_green |  -.0004299   .0002397    -1.79   0.075     -.000903    .0000432
+    td_dirty |  -.0002298   .0001883    -1.22   0.224    -.0006014    .0001417
+     tariffs |  -.0453405    .016275    -2.79   0.006    -.0774611   -.0132199
+ ln_hhi_baci |  -.0133023   .0037382    -3.56   0.000    -.0206801   -.0059245
+       _cons |   9.991829   .0253928   393.49   0.000     9.941714    10.04194
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3502066           1     3502065     |
+         fpd |   5560614     5560614           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_ctrl1.dta saved
+[OK] WB_fpt_fpd_ln_export_ctrl1 — N=20288014 clusters=176
+  [TREND_fpt_fpd_ln_export_ctrl0] ln_export ~ tr_green tr_dirty td_green td_dir
+> ty  | fpt fpd
+(dropped 2.29e+07 singleton observations)
+(MWFE estimator converged in 39 iterations)
+
+HDFE Linear regression                            Number of obs   = 22,927,402
+Absorbing 2 HDFE groups                           F(   4,    230) =       2.01
+Statistics robust to heteroskedasticity           Prob > F        =     0.0941
+                                                  R-squared       =     0.8591
+                                                  Adj R-squared   =     0.7496
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.2579
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0021472   .0009208     2.33   0.021     .0003329    .0039615
+    tr_dirty |   .0002038   .0010839     0.19   0.851    -.0019318    .0023394
+    td_green |  -.0004927   .0001991    -2.47   0.014     -.000885   -.0001003
+    td_dirty |   -.000072   .0002201    -0.33   0.744    -.0005057    .0003617
+       _cons |   9.913418   .0008741  1.1e+04   0.000     9.911696     9.91514
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3770645           1     3770644     |
+         fpd |   6252825     6252825           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_ctrl0.dta saved
+[OK] TREND_fpt_fpd_ln_export_ctrl0 — N=22927402 clusters=231
+  [TREND_fpt_fpd_ln_export_ctrl1] ln_export ~ tr_green tr_dirty td_green td_dir
+> ty tariffs ln_hhi_baci | fpt fpd
+(dropped 2.06e+07 singleton observations)
+(MWFE estimator converged in 42 iterations)
+
+HDFE Linear regression                            Number of obs   = 20,288,014
+Absorbing 2 HDFE groups                           F(   6,    175) =       4.51
+Statistics robust to heteroskedasticity           Prob > F        =     0.0003
+                                                  R-squared       =     0.8607
+                                                  Adj R-squared   =     0.7482
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        176    Root MSE        =     1.2648
+
+                         (Std. err. adjusted for 176 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0024879   .0009135     2.72   0.007     .0006851    .0042907
+    tr_dirty |  -2.58e-06   .0010605    -0.00   0.998    -.0020956    .0020905
+    td_green |  -.0005474   .0001945    -2.82   0.005    -.0009312   -.0001637
+    td_dirty |  -.0000502   .0002106    -0.24   0.812     -.000466    .0003655
+     tariffs |  -.0453128   .0162658    -2.79   0.006    -.0774152   -.0132104
+ ln_hhi_baci |  -.0132825   .0037326    -3.56   0.000    -.0206492   -.0059158
+       _cons |   9.992458    .025464   392.42   0.000     9.942202    10.04271
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3502066           1     3502065     |
+         fpd |   5560614     5560614           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_ctrl1.dta saved
+[OK] TREND_fpt_fpd_ln_export_ctrl1 — N=20288014 clusters=176
+
+=== [ln_export] FE: fpd pt (fpd_pt) ===
+  [WB_fpd_pt_ln_export_ctrl0] ln_export ~ wb_green wb_dirty td_green td_dirty  
+> | fpd pt
+(dropped 1.63e+07 singleton observations)
+(MWFE estimator converged in 68 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,473,145
+Absorbing 2 HDFE groups                           F(   4,    230) =       2.81
+Statistics robust to heteroskedasticity           Prob > F        =     0.0264
+                                                  R-squared       =     0.7976
+                                                  Adj R-squared   =     0.7188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3397
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0050047   .0036673     1.36   0.174     -.002221    .0122305
+    wb_dirty |    .006431   .0027113     2.37   0.019     .0010889    .0117732
+    td_green |  -.0002664   .0001643    -1.62   0.106      -.00059    .0000572
+    td_dirty |  -.0002185   .0001602    -1.36   0.174    -.0005341    .0000972
+       _cons |   9.795654   .0005262  1.9e+04   0.000     9.794617    9.796691
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8192031     8192031           0    *|
+          pt |     66249           1       66248     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_ctrl0.dta saved
+[OK] WB_fpd_pt_ln_export_ctrl0 — N=29473145 clusters=231
+  [WB_fpd_pt_ln_export_ctrl1] ln_export ~ wb_green wb_dirty td_green td_dirty t
+> ariffs ln_hhi_baci | fpd pt
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 64 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,459,032
+Absorbing 2 HDFE groups                           F(   6,    176) =       6.38
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.7970
+                                                  Adj R-squared   =     0.7174
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     1.3463
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0059018   .0038312     1.54   0.125    -.0016592    .0134628
+    wb_dirty |   .0063483   .0033336     1.90   0.058    -.0002306    .0129272
+    td_green |  -.0003044   .0001796    -1.69   0.092    -.0006588    .0000501
+    td_dirty |  -.0002407   .0001758    -1.37   0.173    -.0005877    .0001063
+     tariffs |  -.0428042   .0153953    -2.78   0.006    -.0731874   -.0124211
+ ln_hhi_baci |  -.0113952   .0034253    -3.33   0.001    -.0181551   -.0046353
+       _cons |   9.869912   .0244784   403.21   0.000     9.821603    9.918221
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7387328     7387328           0    *|
+          pt |     65063           1       65062     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_ctrl1.dta saved
+[OK] WB_fpd_pt_ln_export_ctrl1 — N=26459032 clusters=177
+  [TREND_fpd_pt_ln_export_ctrl0] ln_export ~ tr_green tr_dirty td_green td_dirt
+> y  | fpd pt
+(dropped 1.63e+07 singleton observations)
+(MWFE estimator converged in 68 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,473,145
+Absorbing 2 HDFE groups                           F(   4,    230) =       1.83
+Statistics robust to heteroskedasticity           Prob > F        =     0.1231
+                                                  R-squared       =     0.7976
+                                                  Adj R-squared   =     0.7188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3397
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0017928   .0007725     2.32   0.021     .0002706    .0033149
+    tr_dirty |   .0009232   .0007633     1.21   0.228    -.0005807    .0024272
+    td_green |  -.0003601   .0001659    -2.17   0.031    -.0006871   -.0000332
+    td_dirty |  -.0001142   .0001576    -0.73   0.469    -.0004247    .0001962
+       _cons |   9.796324   .0006624  1.5e+04   0.000     9.795019    9.797629
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8192031     8192031           0    *|
+          pt |     66249           1       66248     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_ctrl0.dta saved
+[OK] TREND_fpd_pt_ln_export_ctrl0 — N=29473145 clusters=231
+  [TREND_fpd_pt_ln_export_ctrl1] ln_export ~ tr_green tr_dirty td_green td_dirt
+> y tariffs ln_hhi_baci | fpd pt
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 64 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,459,032
+Absorbing 2 HDFE groups                           F(   6,    176) =       5.98
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.7970
+                                                  Adj R-squared   =     0.7174
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     1.3463
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |    .001957   .0007275     2.69   0.008     .0005211    .0033928
+    tr_dirty |   .0011357   .0007523     1.51   0.133     -.000349    .0026204
+    td_green |  -.0003923   .0001584    -2.48   0.014    -.0007048   -.0000798
+    td_dirty |  -.0001764   .0001512    -1.17   0.245    -.0004747     .000122
+     tariffs |  -.0427399   .0153824    -2.78   0.006    -.0730976   -.0123821
+ ln_hhi_baci |  -.0113762   .0034233    -3.32   0.001    -.0181321   -.0046203
+       _cons |   9.870551   .0245341   402.32   0.000     9.822132     9.91897
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7387328     7387328           0    *|
+          pt |     65063           1       65062     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_ctrl1.dta saved
+[OK] TREND_fpd_pt_ln_export_ctrl1 — N=26459032 clusters=177
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * 3. PASSATA B: ln_export_qua
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. di as text _n "########## PASSATA B: ln_export_qua ##########"
+
+########## PASSATA B: ln_export_qua ##########
+
+. use exp_qua WB_EP_Depth TREND_EP_Count hs6 country_code year ///
+>     pd fpd fpt pt tariffs ln_hhi_baci ///
+>     using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_compressed.
+> dta", clear
+
+. 
+. gen byte hkmo = inlist(country_code, 110, 121)
+
+. keep if $HKMOEXPR
+(3,464,093 observations deleted)
+
+. drop hkmo
+
+. 
+. merge m:1 hs6 using "$F_GREEN", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+
+. replace env_good_new = 0 if missing(env_good_new)
+(40,499,383 real changes made)
+
+. merge m:1 hs6 using "$F_DIRTY", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    42,166,299
+        from master                42,166,299  
+        from using                          0  
+
+    Matched                         3,614,912  
+    -----------------------------------------
+
+. replace dirty_p = 0 if missing(dirty_p)
+(42,166,299 real changes made)
+
+. merge m:1 country_code year using "$F_DEPTH", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,496,372
+        from master                36,496,372  
+        from using                          0  
+
+    Matched                         9,284,839  
+    -----------------------------------------
+
+. if $DROP_UNMEASURED {
+.     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+. }
+
+. replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+(36,496,372 real changes made)
+
+. 
+. gen double ln_export_qua = ln(exp_qua)
+(311,158 missing values generated)
+
+. drop exp_qua
+
+. 
+. gen double wb_green = WB_EP_Depth    * env_good_new
+
+. gen double wb_dirty = WB_EP_Depth    * dirty_p
+
+. gen double tr_green = TREND_EP_Count * env_good_new
+
+. gen double tr_dirty = TREND_EP_Count * dirty_p
+
+. gen double td_green = $DEPTHVAR * env_good_new
+
+. gen double td_dirty = $DEPTHVAR * dirty_p
+
+. drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
+
+. 
+. count
+  45,781,211
+
+. di as text "Passata B: " r(N) " righe"
+Passata B: 45781211 righe
+
+. run_ladder_tripledd ln_export_qua ln_export_qua
+
+=== [ln_export_qua] FE: fpd year (fpd_year) ===
+  [WB_fpd_year_ln_export_qua_ctrl0] ln_export_qua ~ wb_green wb_dirty td_green 
+> td_dirty  | fpd year
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,259,694
+Absorbing 2 HDFE groups                           F(   4,    230) =       5.61
+Statistics robust to heteroskedasticity           Prob > F        =     0.0002
+                                                  R-squared       =     0.8715
+                                                  Adj R-squared   =     0.8220
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3637
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0023236    .003748     0.62   0.536    -.0050611    .0097084
+    wb_dirty |  -.0025299   .0130623    -0.19   0.847     -.028267    .0232071
+    td_green |   .0001907   .0001561     1.22   0.223     -.000117    .0004984
+    td_dirty |   .0008757   .0005866     1.49   0.137    -.0002801    .0020315
+       _cons |   7.776809   .0007827  9935.29   0.000     7.775267    7.778351
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8130479     8130479           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_qua_ctrl0.dta saved
+[OK] WB_fpd_year_ln_export_qua_ctrl0 — N=29259694 clusters=231
+  [WB_fpd_year_ln_export_qua_ctrl1] ln_export_qua ~ wb_green wb_dirty td_green 
+> td_dirty tariffs ln_hhi_baci | fpd year
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,265,366
+Absorbing 2 HDFE groups                           F(   6,    176) =      11.42
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8686
+                                                  Adj R-squared   =     0.8177
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        177    Root MSE        =     1.3709
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0027043   .0039853     0.68   0.498    -.0051609    .0105695
+    wb_dirty |  -.0021623   .0129007    -0.17   0.867    -.0276223    .0232977
+    td_green |    .000188   .0001596     1.18   0.241    -.0001271     .000503
+    td_dirty |   .0008427   .0005759     1.46   0.145    -.0002937    .0019792
+     tariffs |   -.054688    .021148    -2.59   0.011    -.0964244   -.0129516
+ ln_hhi_baci |  -.0220615   .0036849    -5.99   0.000    -.0293338   -.0147893
+       _cons |    7.86774   .0338202   232.63   0.000     7.800994    7.934485
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7330817     7330817           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_qua_ctrl1.dta saved
+[OK] WB_fpd_year_ln_export_qua_ctrl1 — N=26265366 clusters=177
+  [TREND_fpd_year_ln_export_qua_ctrl0] ln_export_qua ~ tr_green tr_dirty td_gre
+> en td_dirty  | fpd year
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,259,694
+Absorbing 2 HDFE groups                           F(   4,    230) =       9.48
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8715
+                                                  Adj R-squared   =     0.8220
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3637
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0007291   .0008569    -0.85   0.396    -.0024175    .0009593
+    tr_dirty |  -.0034037   .0012363    -2.75   0.006    -.0058396   -.0009679
+    td_green |   .0003832   .0001979     1.94   0.054    -6.76e-06    .0007731
+    td_dirty |   .0012966   .0003213     4.04   0.000     .0006636    .0019296
+       _cons |   7.775813   .0010951  7100.67   0.000     7.773655    7.777971
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8130479     8130479           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_qua_ctrl0.dta saved
+[OK] TREND_fpd_year_ln_export_qua_ctrl0 — N=29259694 clusters=231
+  [TREND_fpd_year_ln_export_qua_ctrl1] ln_export_qua ~ tr_green tr_dirty td_gre
+> en td_dirty tariffs ln_hhi_baci | fpd year
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,265,366
+Absorbing 2 HDFE groups                           F(   6,    176) =      14.46
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8686
+                                                  Adj R-squared   =     0.8177
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        177    Root MSE        =     1.3709
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0007412   .0007937    -0.93   0.352    -.0023075    .0008252
+    tr_dirty |  -.0032225   .0012681    -2.54   0.012    -.0057251   -.0007199
+    td_green |   .0003921   .0001914     2.05   0.042     .0000144    .0007698
+    td_dirty |   .0012542   .0003299     3.80   0.000     .0006031    .0019053
+     tariffs |  -.0547147   .0211382    -2.59   0.010    -.0964316   -.0129978
+ ln_hhi_baci |  -.0221064   .0036845    -6.00   0.000    -.0293779   -.0148348
+       _cons |   7.866803   .0337229   233.28   0.000      7.80025    7.933356
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7330817     7330817           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_qua_ctrl1.dta saved
+[OK] TREND_fpd_year_ln_export_qua_ctrl1 — N=26265366 clusters=177
+
+=== [ln_export_qua] FE: fpt pd (fpt_pd) ===
+  [WB_fpt_pd_ln_export_qua_ctrl0] ln_export_qua ~ wb_green wb_dirty td_green td
+> _dirty  | fpt pd
+(dropped 1.01e+07 singleton observations)
+(MWFE estimator converged in 53 iterations)
+
+HDFE Linear regression                            Number of obs   = 35,355,735
+Absorbing 2 HDFE groups                           F(   4,    231) =       0.78
+Statistics robust to heteroskedasticity           Prob > F        =     0.5386
+                                                  R-squared       =     0.7488
+                                                  Adj R-squared   =     0.6933
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        232    Root MSE        =     1.7532
+
+                         (Std. err. adjusted for 232 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0031728   .0026267     1.21   0.228    -.0020026    .0083482
+    wb_dirty |  -.0006268   .0027606    -0.23   0.821     -.006066    .0048123
+    td_green |  -.0000539   .0001493    -0.36   0.719    -.0003481    .0002403
+    td_dirty |   .0000453   .0001598     0.28   0.777    -.0002696    .0003603
+       _cons |    7.50029   .0005806  1.3e+04   0.000     7.499146    7.501434
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   6012816           1     6012815     |
+          pd |    379040      379040           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_qua_ctrl0.dta saved
+[OK] WB_fpt_pd_ln_export_qua_ctrl0 — N=35355735 clusters=232
+  [WB_fpt_pd_ln_export_qua_ctrl1] ln_export_qua ~ wb_green wb_dirty td_green td
+> _dirty tariffs ln_hhi_baci | fpt pd
+(dropped 9476916 singleton observations)
+(MWFE estimator converged in 45 iterations)
+
+HDFE Linear regression                            Number of obs   = 31,163,972
+Absorbing 2 HDFE groups                           F(   6,    181) =       4.05
+Statistics robust to heteroskedasticity           Prob > F        =     0.0008
+                                                  R-squared       =     0.7463
+                                                  Adj R-squared   =     0.6870
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        182    Root MSE        =     1.7700
+
+                         (Std. err. adjusted for 182 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0032404   .0025159     1.29   0.199    -.0017238    .0082046
+    wb_dirty |   -.002205   .0025848    -0.85   0.395    -.0073052    .0028952
+    td_green |  -.0000645   .0001417    -0.46   0.649     -.000344     .000215
+    td_dirty |   .0000982   .0001539     0.64   0.524    -.0002055    .0004018
+     tariffs |  -.0357459   .0148773    -2.40   0.017    -.0651013   -.0063906
+ ln_hhi_baci |  -.0030058   .0042788    -0.70   0.483    -.0114485    .0054369
+       _cons |   7.583196   .0261218   290.30   0.000     7.531653    7.634738
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   5578617           1     5578616     |
+          pd |    324400      324400           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_qua_ctrl1.dta saved
+[OK] WB_fpt_pd_ln_export_qua_ctrl1 — N=31163972 clusters=182
+  [TREND_fpt_pd_ln_export_qua_ctrl0] ln_export_qua ~ tr_green tr_dirty td_green
+>  td_dirty  | fpt pd
+(dropped 1.01e+07 singleton observations)
+(MWFE estimator converged in 53 iterations)
+
+HDFE Linear regression                            Number of obs   = 35,355,735
+Absorbing 2 HDFE groups                           F(   4,    231) =       1.19
+Statistics robust to heteroskedasticity           Prob > F        =     0.3158
+                                                  R-squared       =     0.7488
+                                                  Adj R-squared   =     0.6933
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        232    Root MSE        =     1.7532
+
+                         (Std. err. adjusted for 232 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0013019   .0008933     1.46   0.146    -.0004583     .003062
+    tr_dirty |   .0002359   .0007375     0.32   0.749    -.0012172    .0016889
+    td_green |   -.000136   .0002028    -0.67   0.503    -.0005354    .0002635
+    td_dirty |   -.000013   .0001714    -0.08   0.940    -.0003507    .0003247
+       _cons |   7.500712   .0007839  9568.84   0.000     7.499168    7.502257
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   6012816           1     6012815     |
+          pd |    379040      379040           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_qua_ctrl0.dta saved
+[OK] TREND_fpt_pd_ln_export_qua_ctrl0 — N=35355735 clusters=232
+  [TREND_fpt_pd_ln_export_qua_ctrl1] ln_export_qua ~ tr_green tr_dirty td_green
+>  td_dirty tariffs ln_hhi_baci | fpt pd
+(dropped 9476916 singleton observations)
+(MWFE estimator converged in 45 iterations)
+
+HDFE Linear regression                            Number of obs   = 31,163,972
+Absorbing 2 HDFE groups                           F(   6,    181) =       2.60
+Statistics robust to heteroskedasticity           Prob > F        =     0.0191
+                                                  R-squared       =     0.7463
+                                                  Adj R-squared   =     0.6870
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        182    Root MSE        =     1.7700
+
+                         (Std. err. adjusted for 182 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0014111   .0008135     1.73   0.085    -.0001941    .0030162
+    tr_dirty |  -.0000966   .0007067    -0.14   0.891    -.0014911    .0012978
+    td_green |  -.0001605   .0001894    -0.85   0.398    -.0005343    .0002133
+    td_dirty |    .000032   .0001671     0.19   0.849    -.0002978    .0003618
+     tariffs |  -.0356752   .0148559    -2.40   0.017    -.0649883   -.0063622
+ ln_hhi_baci |  -.0029825   .0042717    -0.70   0.486    -.0114113    .0054464
+       _cons |   7.583488   .0261497   290.00   0.000     7.531891    7.635086
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   5578617           1     5578616     |
+          pd |    324400      324400           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_qua_ctrl1.dta saved
+[OK] TREND_fpt_pd_ln_export_qua_ctrl1 — N=31163972 clusters=182
+
+=== [ln_export_qua] FE: fpt fpd (fpt_fpd) ===
+  [WB_fpt_fpd_ln_export_qua_ctrl0] ln_export_qua ~ wb_green wb_dirty td_green t
+> d_dirty  | fpt fpd
+(dropped 2.27e+07 singleton observations)
+(MWFE estimator converged in 39 iterations)
+
+HDFE Linear regression                            Number of obs   = 22,748,753
+Absorbing 2 HDFE groups                           F(   4,    230) =       1.41
+Statistics robust to heteroskedasticity           Prob > F        =     0.2309
+                                                  R-squared       =     0.9112
+                                                  Adj R-squared   =     0.8422
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.2812
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |    .006104   .0059555     1.02   0.306    -.0056303    .0178383
+    wb_dirty |   .0047729   .0031002     1.54   0.125    -.0013354    .0108813
+    td_green |  -.0004218   .0002494    -1.69   0.092    -.0009131    .0000695
+    td_dirty |  -.0002235   .0001971    -1.13   0.258    -.0006119    .0001649
+       _cons |   7.902278   .0007176  1.1e+04   0.000     7.900864    7.903692
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3743093           1     3743092     |
+         fpd |   6201674     6201674           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_qua_ctrl0.dta saved
+[OK] WB_fpt_fpd_ln_export_qua_ctrl0 — N=22748753 clusters=231
+  [WB_fpt_fpd_ln_export_qua_ctrl1] ln_export_qua ~ wb_green wb_dirty td_green t
+> d_dirty tariffs ln_hhi_baci | fpt fpd
+(dropped 2.05e+07 singleton observations)
+(MWFE estimator converged in 43 iterations)
+
+HDFE Linear regression                            Number of obs   = 20,127,936
+Absorbing 2 HDFE groups                           F(   6,    175) =       3.39
+Statistics robust to heteroskedasticity           Prob > F        =     0.0034
+                                                  R-squared       =     0.9106
+                                                  Adj R-squared   =     0.8384
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        176    Root MSE        =     1.2887
+
+                         (Std. err. adjusted for 176 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0076278   .0058686     1.30   0.195    -.0039545      .01921
+    wb_dirty |   .0036361   .0030387     1.20   0.233     -.002361    .0096333
+    td_green |  -.0004735   .0002563    -1.85   0.066    -.0009793    .0000322
+    td_dirty |  -.0001915   .0001916    -1.00   0.319    -.0005695    .0001866
+     tariffs |  -.0462242   .0165626    -2.79   0.006    -.0789123   -.0135361
+ ln_hhi_baci |   -.011451   .0040814    -2.81   0.006     -.019506    -.003396
+       _cons |   7.996374   .0256122   312.21   0.000     7.945826    8.046923
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3476261           1     3476260     |
+         fpd |   5514255     5514255           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_qua_ctrl1.dta saved
+[OK] WB_fpt_fpd_ln_export_qua_ctrl1 — N=20127936 clusters=176
+  [TREND_fpt_fpd_ln_export_qua_ctrl0] ln_export_qua ~ tr_green tr_dirty td_gree
+> n td_dirty  | fpt fpd
+(dropped 2.27e+07 singleton observations)
+(MWFE estimator converged in 39 iterations)
+
+HDFE Linear regression                            Number of obs   = 22,748,753
+Absorbing 2 HDFE groups                           F(   4,    230) =       2.17
+Statistics robust to heteroskedasticity           Prob > F        =     0.0733
+                                                  R-squared       =     0.9112
+                                                  Adj R-squared   =     0.8422
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.2812
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0025058   .0010363     2.42   0.016     .0004641    .0045476
+    tr_dirty |   .0001517   .0011249     0.13   0.893    -.0020647    .0023682
+    td_green |  -.0005931   .0002279    -2.60   0.010    -.0010421    -.000144
+    td_dirty |   -.000065   .0002285    -0.28   0.776    -.0005151    .0003852
+       _cons |   7.903031   .0009622  8213.71   0.000     7.901135    7.904927
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3743093           1     3743092     |
+         fpd |   6201674     6201674           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_qua_ctrl0.dta saved
+[OK] TREND_fpt_fpd_ln_export_qua_ctrl0 — N=22748753 clusters=231
+  [TREND_fpt_fpd_ln_export_qua_ctrl1] ln_export_qua ~ tr_green tr_dirty td_gree
+> n td_dirty tariffs ln_hhi_baci | fpt fpd
+(dropped 2.05e+07 singleton observations)
+(MWFE estimator converged in 43 iterations)
+
+HDFE Linear regression                            Number of obs   = 20,127,936
+Absorbing 2 HDFE groups                           F(   6,    175) =       3.63
+Statistics robust to heteroskedasticity           Prob > F        =     0.0020
+                                                  R-squared       =     0.9106
+                                                  Adj R-squared   =     0.8384
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        176    Root MSE        =     1.2887
+
+                         (Std. err. adjusted for 176 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0028689   .0009617     2.98   0.003     .0009708     .004767
+    tr_dirty |  -.0000304   .0011036    -0.03   0.978    -.0022084    .0021477
+    td_green |  -.0006474    .000219    -2.96   0.004    -.0010797   -.0002151
+    td_dirty |  -.0000494   .0002186    -0.23   0.822    -.0004809    .0003821
+     tariffs |  -.0461789   .0165515    -2.79   0.006    -.0788452   -.0135126
+ ln_hhi_baci |  -.0114209   .0040758    -2.80   0.006     -.019465   -.0033768
+       _cons |    7.99711   .0256911   311.28   0.000     7.946406    8.047815
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3476261           1     3476260     |
+         fpd |   5514255     5514255           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_qua_ctrl1.dta saved
+[OK] TREND_fpt_fpd_ln_export_qua_ctrl1 — N=20127936 clusters=176
+
+=== [ln_export_qua] FE: fpd pt (fpd_pt) ===
+  [WB_fpd_pt_ln_export_qua_ctrl0] ln_export_qua ~ wb_green wb_dirty td_green td
+> _dirty  | fpd pt
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 68 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,255,449
+Absorbing 2 HDFE groups                           F(   4,    230) =       4.29
+Statistics robust to heteroskedasticity           Prob > F        =     0.0023
+                                                  R-squared       =     0.8733
+                                                  Adj R-squared   =     0.8240
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3559
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0053057   .0038222     1.39   0.166    -.0022253    .0128368
+    wb_dirty |   .0057944   .0024925     2.32   0.021     .0008834    .0107054
+    td_green |  -.0002945   .0001647    -1.79   0.075    -.0006191      .00003
+    td_dirty |   -.000172    .000159    -1.08   0.280    -.0004852    .0001412
+       _cons |   7.780236   .0005234  1.5e+04   0.000     7.779205    7.781268
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8129110     8129110           0    *|
+          pt |     66203           1       66202     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_qua_ctrl0.dta saved
+[OK] WB_fpd_pt_ln_export_qua_ctrl0 — N=29255449 clusters=231
+  [WB_fpd_pt_ln_export_qua_ctrl1] ln_export_qua ~ wb_green wb_dirty td_green td
+> _dirty tariffs ln_hhi_baci | fpd pt
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 65 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,260,894
+Absorbing 2 HDFE groups                           F(   6,    176) =       7.30
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8705
+                                                  Adj R-squared   =     0.8198
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     1.3628
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0058491   .0037314     1.57   0.119     -.001515    .0132131
+    wb_dirty |   .0056818   .0029259     1.94   0.054    -.0000925     .011456
+    td_green |  -.0003222   .0001697    -1.90   0.059    -.0006572    .0000128
+    td_dirty |  -.0001981   .0001698    -1.17   0.245    -.0005331    .0001369
+     tariffs |  -.0466003   .0164557    -2.83   0.005    -.0790761   -.0141244
+ ln_hhi_baci |  -.0100172   .0037455    -2.67   0.008     -.017409   -.0026254
+       _cons |   7.877465   .0262578   300.00   0.000     7.825644    7.929285
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7329384     7329384           0    *|
+          pt |     65005           1       65004     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_qua_ctrl1.dta saved
+[OK] WB_fpd_pt_ln_export_qua_ctrl1 — N=26260894 clusters=177
+  [TREND_fpd_pt_ln_export_qua_ctrl0] ln_export_qua ~ tr_green tr_dirty td_green
+>  td_dirty  | fpd pt
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 68 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,255,449
+Absorbing 2 HDFE groups                           F(   4,    230) =       2.39
+Statistics robust to heteroskedasticity           Prob > F        =     0.0514
+                                                  R-squared       =     0.8733
+                                                  Adj R-squared   =     0.8240
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     1.3559
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0017345   .0007601     2.28   0.023     .0002369     .003232
+    tr_dirty |   .0008245   .0007384     1.12   0.265    -.0006303    .0022793
+    td_green |  -.0003684   .0001594    -2.31   0.022    -.0006825   -.0000543
+    td_dirty |   -.000077   .0001581    -0.49   0.627    -.0003885    .0002345
+       _cons |   7.780869   .0006585  1.2e+04   0.000     7.779572    7.782167
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8129110     8129110           0    *|
+          pt |     66203           1       66202     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_qua_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_qua_ctrl0.dta saved
+[OK] TREND_fpd_pt_ln_export_qua_ctrl0 — N=29255449 clusters=231
+  [TREND_fpd_pt_ln_export_qua_ctrl1] ln_export_qua ~ tr_green tr_dirty td_green
+>  td_dirty tariffs ln_hhi_baci | fpd pt
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 65 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,260,894
+Absorbing 2 HDFE groups                           F(   6,    176) =       5.55
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8705
+                                                  Adj R-squared   =     0.8198
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     1.3628
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~a | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0018261     .00067     2.73   0.007     .0005038    .0031484
+    tr_dirty |   .0010243   .0007116     1.44   0.152    -.0003801    .0024286
+    td_green |  -.0003921    .000147    -2.67   0.008    -.0006823   -.0001019
+    td_dirty |  -.0001417   .0001502    -0.94   0.346    -.0004381    .0001546
+     tariffs |  -.0465419   .0164438    -2.83   0.005    -.0789943   -.0140896
+ ln_hhi_baci |  -.0100011   .0037427    -2.67   0.008    -.0173874   -.0026149
+       _cons |   7.878052   .0263075   299.46   0.000     7.826134    7.929971
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7329384     7329384           0    *|
+          pt |     65005           1       65004     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_qua_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_qua_ctrl1.dta saved
+[OK] TREND_fpd_pt_ln_export_qua_ctrl1 — N=26260894 clusters=177
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * 4. PASSATA C: ln_export_value
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. di as text _n "########## PASSATA C: ln_export_value ##########"
+
+########## PASSATA C: ln_export_value ##########
+
+. use uv_exp WB_EP_Depth TREND_EP_Count hs6 country_code year ///
+>     pd fpd fpt pt tariffs ln_hhi_baci ///
+>     using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_compressed.
+> dta", clear
+
+. 
+. gen byte hkmo = inlist(country_code, 110, 121)
+
+. keep if $HKMOEXPR
+(3,464,093 observations deleted)
+
+. drop hkmo
+
+. 
+. merge m:1 hs6 using "$F_GREEN", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,499,383
+        from master                40,499,383  
+        from using                          0  
+
+    Matched                         5,281,828  
+    -----------------------------------------
+
+. replace env_good_new = 0 if missing(env_good_new)
+(40,499,383 real changes made)
+
+. merge m:1 hs6 using "$F_DIRTY", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    42,166,299
+        from master                42,166,299  
+        from using                          0  
+
+    Matched                         3,614,912  
+    -----------------------------------------
+
+. replace dirty_p = 0 if missing(dirty_p)
+(42,166,299 real changes made)
+
+. merge m:1 country_code year using "$F_DEPTH", keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,496,372
+        from master                36,496,372  
+        from using                          0  
+
+    Matched                         9,284,839  
+    -----------------------------------------
+
+. if $DROP_UNMEASURED {
+.     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+. }
+
+. replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+(36,496,372 real changes made)
+
+. 
+. gen double ln_export_value = ln(uv_exp)
+(311,171 missing values generated)
+
+. drop uv_exp
+
+. 
+. gen double wb_green = WB_EP_Depth    * env_good_new
+
+. gen double wb_dirty = WB_EP_Depth    * dirty_p
+
+. gen double tr_green = TREND_EP_Count * env_good_new
+
+. gen double tr_dirty = TREND_EP_Count * dirty_p
+
+. gen double td_green = $DEPTHVAR * env_good_new
+
+. gen double td_dirty = $DEPTHVAR * dirty_p
+
+. drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
+
+. 
+. count
+  45,781,211
+
+. di as text "Passata C: " r(N) " righe"
+Passata C: 45781211 righe
+
+. run_ladder_tripledd ln_export_value ln_export_value
+
+=== [ln_export_value] FE: fpd year (fpd_year) ===
+  [WB_fpd_year_ln_export_value_ctrl0] ln_export_value ~ wb_green wb_dirty td_gr
+> een td_dirty  | fpd year
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,259,686
+Absorbing 2 HDFE groups                           F(   4,    230) =      18.63
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.9557
+                                                  Adj R-squared   =     0.9386
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     0.5620
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0000888   .0015659     0.06   0.955    -.0029965    .0031741
+    wb_dirty |  -.0011671   .0025698    -0.45   0.650    -.0062306    .0038963
+    td_green |  -.0000377   .0000587    -0.64   0.521    -.0001533    .0000779
+    td_dirty |    -.00017   .0001104    -1.54   0.125    -.0003875    .0000475
+       _cons |   2.052654   .0002394  8575.26   0.000     2.052182    2.053125
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8130477     8130477           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_value_ctrl0.dta saved
+[OK] WB_fpd_year_ln_export_value_ctrl0 — N=29259686 clusters=231
+  [WB_fpd_year_ln_export_value_ctrl1] ln_export_value ~ wb_green wb_dirty td_gr
+> een td_dirty tariffs ln_hhi_baci | fpd year
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,265,358
+Absorbing 2 HDFE groups                           F(   6,    176) =      12.60
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.9549
+                                                  Adj R-squared   =     0.9375
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     0.5566
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0000874   .0015597     0.06   0.955    -.0029908    .0031655
+    wb_dirty |  -.0014335   .0024964    -0.57   0.567    -.0063603    .0034934
+    td_green |  -.0000408   .0000562    -0.73   0.469    -.0001517    .0000701
+    td_dirty |   -.000167   .0001098    -1.52   0.130    -.0003838    .0000498
+     tariffs |   .0074974   .0032382     2.32   0.022     .0011067    .0138881
+ ln_hhi_baci |   .0015078    .001018     1.48   0.140    -.0005013     .003517
+       _cons |   2.028966   .0056965   356.18   0.000     2.017724    2.040209
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7330815     7330815           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_yea
+    > r_ln_export_value_ctrl1.dta saved
+[OK] WB_fpd_year_ln_export_value_ctrl1 — N=26265358 clusters=177
+  [TREND_fpd_year_ln_export_value_ctrl0] ln_export_value ~ tr_green tr_dirty td
+> _green td_dirty  | fpd year
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,259,686
+Absorbing 2 HDFE groups                           F(   4,    230) =      20.73
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.9557
+                                                  Adj R-squared   =     0.9386
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     0.5620
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0004098   .0002796    -1.47   0.144    -.0009607     .000141
+    tr_dirty |  -.0014645    .000329    -4.45   0.000    -.0021128   -.0008163
+    td_green |   .0000267   .0000608     0.44   0.660     -.000093    .0001465
+    td_dirty |   8.06e-06   .0000754     0.11   0.915    -.0001404    .0001566
+       _cons |   2.052205   .0003016  6803.97   0.000     2.051611    2.052799
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8130477     8130477           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_value_ctrl0.dta saved
+[OK] TREND_fpd_year_ln_export_value_ctrl0 — N=29259686 clusters=231
+  [TREND_fpd_year_ln_export_value_ctrl1] ln_export_value ~ tr_green tr_dirty td
+> _green td_dirty tariffs ln_hhi_baci | fpd year
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 10 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,265,358
+Absorbing 2 HDFE groups                           F(   6,    176) =      16.13
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.9549
+                                                  Adj R-squared   =     0.9375
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     0.5566
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0004091   .0002636    -1.55   0.122    -.0009294    .0001112
+    tr_dirty |   -.001493   .0003533    -4.23   0.000    -.0021903   -.0007958
+    td_green |   .0000226   .0000586     0.39   0.700    -.0000929    .0001382
+    td_dirty |   7.04e-06   .0000769     0.09   0.927    -.0001448    .0001588
+     tariffs |   .0074886   .0032401     2.31   0.022     .0010941    .0138831
+ ln_hhi_baci |   .0014915   .0010188     1.46   0.145    -.0005191    .0035021
+       _cons |    2.02853   .0056923   356.36   0.000     2.017296    2.039764
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7330815     7330815           0    *|
+        year |        16           1          15     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > year_ln_export_value_ctrl1.dta saved
+[OK] TREND_fpd_year_ln_export_value_ctrl1 — N=26265358 clusters=177
+
+=== [ln_export_value] FE: fpt pd (fpt_pd) ===
+  [WB_fpt_pd_ln_export_value_ctrl0] ln_export_value ~ wb_green wb_dirty td_gree
+> n td_dirty  | fpt pd
+(dropped 1.01e+07 singleton observations)
+(MWFE estimator converged in 49 iterations)
+
+HDFE Linear regression                            Number of obs   = 35,355,728
+Absorbing 2 HDFE groups                           F(   4,    231) =       1.67
+Statistics robust to heteroskedasticity           Prob > F        =     0.1580
+                                                  R-squared       =     0.9320
+                                                  Adj R-squared   =     0.9170
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        232    Root MSE        =     0.6496
+
+                         (Std. err. adjusted for 232 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0018745   .0017099    -1.10   0.274    -.0052434    .0014945
+    wb_dirty |  -.0014285   .0006265    -2.28   0.024     -.002663   -.0001941
+    td_green |   .0000891   .0000578     1.54   0.125    -.0000248    .0002031
+    td_dirty |   .0000658   .0000302     2.18   0.030     6.36e-06    .0001253
+       _cons |   1.957318   .0001178  1.7e+04   0.000     1.957086     1.95755
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   6012815           1     6012814     |
+          pd |    379040      379040           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_value_ctrl0.dta saved
+[OK] WB_fpt_pd_ln_export_value_ctrl0 — N=35355728 clusters=232
+  [WB_fpt_pd_ln_export_value_ctrl1] ln_export_value ~ wb_green wb_dirty td_gree
+> n td_dirty tariffs ln_hhi_baci | fpt pd
+(dropped 9476908 singleton observations)
+(MWFE estimator converged in 45 iterations)
+
+HDFE Linear regression                            Number of obs   = 31,163,967
+Absorbing 2 HDFE groups                           F(   6,    181) =       3.24
+Statistics robust to heteroskedasticity           Prob > F        =     0.0048
+                                                  R-squared       =     0.9322
+                                                  Adj R-squared   =     0.9164
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        182    Root MSE        =     0.6452
+
+                         (Std. err. adjusted for 182 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0018848   .0016496    -1.14   0.255    -.0051397      .00137
+    wb_dirty |  -.0018127   .0006318    -2.87   0.005    -.0030594   -.0005661
+    td_green |   .0000882   .0000558     1.58   0.116     -.000022    .0001984
+    td_dirty |   .0000739   .0000279     2.65   0.009     .0000188    .0001289
+     tariffs |  -.0040797   .0021829    -1.87   0.063     -.008387    .0002276
+ ln_hhi_baci |  -.0017389   .0009024    -1.93   0.056    -.0035196    .0000417
+       _cons |   1.962391   .0037176   527.87   0.000     1.955055    1.969726
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   5578617           1     5578616     |
+          pd |    324400      324400           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_pd_
+    > ln_export_value_ctrl1.dta saved
+[OK] WB_fpt_pd_ln_export_value_ctrl1 — N=31163967 clusters=182
+  [TREND_fpt_pd_ln_export_value_ctrl0] ln_export_value ~ tr_green tr_dirty td_g
+> reen td_dirty  | fpt pd
+(dropped 1.01e+07 singleton observations)
+(MWFE estimator converged in 49 iterations)
+
+HDFE Linear regression                            Number of obs   = 35,355,728
+Absorbing 2 HDFE groups                           F(   4,    231) =       1.13
+Statistics robust to heteroskedasticity           Prob > F        =     0.3422
+                                                  R-squared       =     0.9320
+                                                  Adj R-squared   =     0.9170
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        232    Root MSE        =     0.6496
+
+                         (Std. err. adjusted for 232 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0002686   .0003302    -0.81   0.417    -.0009193     .000382
+    tr_dirty |  -.0002739    .000149    -1.84   0.067    -.0005675    .0000196
+    td_green |   .0000634    .000045     1.41   0.160    -.0000252    .0001521
+    td_dirty |   .0000537   .0000314     1.71   0.088    -8.10e-06    .0001155
+       _cons |   1.957208   .0001384  1.4e+04   0.000     1.956935    1.957481
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   6012815           1     6012814     |
+          pd |    379040      379040           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_value_ctrl0.dta saved
+[OK] TREND_fpt_pd_ln_export_value_ctrl0 — N=35355728 clusters=232
+  [TREND_fpt_pd_ln_export_value_ctrl1] ln_export_value ~ tr_green tr_dirty td_g
+> reen td_dirty tariffs ln_hhi_baci | fpt pd
+(dropped 9476908 singleton observations)
+(MWFE estimator converged in 45 iterations)
+
+HDFE Linear regression                            Number of obs   = 31,163,967
+Absorbing 2 HDFE groups                           F(   6,    181) =       2.08
+Statistics robust to heteroskedasticity           Prob > F        =     0.0574
+                                                  R-squared       =     0.9322
+                                                  Adj R-squared   =     0.9164
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        182    Root MSE        =     0.6452
+
+                         (Std. err. adjusted for 182 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0002475   .0003182    -0.78   0.438    -.0008755    .0003804
+    tr_dirty |  -.0003218   .0001576    -2.04   0.043    -.0006327   -.0000109
+    td_green |   .0000604   .0000439     1.38   0.170    -.0000261     .000147
+    td_dirty |   .0000557   .0000314     1.77   0.078    -6.24e-06    .0001175
+     tariffs |  -.0040849   .0021757    -1.88   0.062     -.008378    .0002081
+ ln_hhi_baci |  -.0017356    .000902    -1.92   0.056    -.0035155    .0000442
+       _cons |   1.962299   .0037066   529.41   0.000     1.954985    1.969612
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   5578617           1     5578616     |
+          pd |    324400      324400           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > pd_ln_export_value_ctrl1.dta saved
+[OK] TREND_fpt_pd_ln_export_value_ctrl1 — N=31163967 clusters=182
+
+=== [ln_export_value] FE: fpt fpd (fpt_fpd) ===
+  [WB_fpt_fpd_ln_export_value_ctrl0] ln_export_value ~ wb_green wb_dirty td_gre
+> en td_dirty  | fpt fpd
+(dropped 2.27e+07 singleton observations)
+(MWFE estimator converged in 39 iterations)
+
+HDFE Linear regression                            Number of obs   = 22,748,748
+Absorbing 2 HDFE groups                           F(   4,    230) =       0.83
+Statistics robust to heteroskedasticity           Prob > F        =     0.5078
+                                                  R-squared       =     0.9728
+                                                  Adj R-squared   =     0.9517
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     0.4956
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0002306   .0015532     0.15   0.882    -.0028298     .003291
+    wb_dirty |   .0005115    .000631     0.81   0.418    -.0007318    .0017548
+    td_green |   .0000312   .0000422     0.74   0.460    -.0000519    .0001144
+    td_dirty |  -.0000296   .0000283    -1.05   0.296    -.0000853    .0000261
+       _cons |   2.047464   .0000957  2.1e+04   0.000     2.047276    2.047653
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3743092           1     3743091     |
+         fpd |   6201673     6201673           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_value_ctrl0.dta saved
+[OK] WB_fpt_fpd_ln_export_value_ctrl0 — N=22748748 clusters=231
+  [WB_fpt_fpd_ln_export_value_ctrl1] ln_export_value ~ wb_green wb_dirty td_gre
+> en td_dirty tariffs ln_hhi_baci | fpt fpd
+(dropped 2.05e+07 singleton observations)
+(MWFE estimator converged in 43 iterations)
+
+HDFE Linear regression                            Number of obs   = 20,127,933
+Absorbing 2 HDFE groups                           F(   6,    175) =       2.39
+Statistics robust to heteroskedasticity           Prob > F        =     0.0305
+                                                  R-squared       =     0.9729
+                                                  Adj R-squared   =     0.9510
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        176    Root MSE        =     0.4912
+
+                         (Std. err. adjusted for 176 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0000318    .001431    -0.02   0.982    -.0028561    .0027926
+    wb_dirty |   .0004291   .0006679     0.64   0.521     -.000889    .0017472
+    td_green |   .0000378   .0000397     0.95   0.341    -.0000404    .0001161
+    td_dirty |  -.0000262   .0000292    -0.90   0.371    -.0000838    .0000314
+     tariffs |   .0007701   .0013415     0.57   0.567    -.0018776    .0034178
+ ln_hhi_baci |  -.0016352   .0007641    -2.14   0.034    -.0031434   -.0001271
+       _cons |   2.033272   .0022984   884.63   0.000     2.028736    2.037809
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3476261           1     3476260     |
+         fpd |   5514254     5514254           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpt_fpd
+    > _ln_export_value_ctrl1.dta saved
+[OK] WB_fpt_fpd_ln_export_value_ctrl1 — N=20127933 clusters=176
+  [TREND_fpt_fpd_ln_export_value_ctrl0] ln_export_value ~ tr_green tr_dirty td_
+> green td_dirty  | fpt fpd
+(dropped 2.27e+07 singleton observations)
+(MWFE estimator converged in 39 iterations)
+
+HDFE Linear regression                            Number of obs   = 22,748,748
+Absorbing 2 HDFE groups                           F(   4,    230) =       1.12
+Statistics robust to heteroskedasticity           Prob > F        =     0.3501
+                                                  R-squared       =     0.9728
+                                                  Adj R-squared   =     0.9517
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     0.4956
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0002249   .0002679    -0.84   0.402    -.0007526    .0003029
+    tr_dirty |  -5.03e-06   .0001435    -0.04   0.972    -.0002879    .0002778
+    td_green |    .000074   .0000435     1.70   0.090    -.0000116    .0001597
+    td_dirty |  -9.28e-06   .0000241    -0.38   0.701    -.0000568    .0000382
+       _cons |   2.047381   .0001243  1.6e+04   0.000     2.047137    2.047626
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3743092           1     3743091     |
+         fpd |   6201673     6201673           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_value_ctrl0.dta saved
+[OK] TREND_fpt_fpd_ln_export_value_ctrl0 — N=22748748 clusters=231
+  [TREND_fpt_fpd_ln_export_value_ctrl1] ln_export_value ~ tr_green tr_dirty td_
+> green td_dirty tariffs ln_hhi_baci | fpt fpd
+(dropped 2.05e+07 singleton observations)
+(MWFE estimator converged in 43 iterations)
+
+HDFE Linear regression                            Number of obs   = 20,127,933
+Absorbing 2 HDFE groups                           F(   6,    175) =       2.59
+Statistics robust to heteroskedasticity           Prob > F        =     0.0197
+                                                  R-squared       =     0.9729
+                                                  Adj R-squared   =     0.9510
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        176    Root MSE        =     0.4912
+
+                         (Std. err. adjusted for 176 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   -.000295   .0002239    -1.32   0.189    -.0007369    .0001469
+    tr_dirty |  -.0000207     .00015    -0.14   0.890    -.0003168    .0002754
+    td_green |   .0000814   .0000406     2.01   0.046     1.31e-06    .0001614
+    td_dirty |  -6.71e-06   .0000232    -0.29   0.773    -.0000525     .000039
+     tariffs |   .0007571   .0013406     0.56   0.573    -.0018887    .0034029
+ ln_hhi_baci |  -.0016428   .0007636    -2.15   0.033    -.0031498   -.0001358
+       _cons |   2.033185   .0023064   881.55   0.000     2.028633    2.037737
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpt |   3476261           1     3476260     |
+         fpd |   5514254     5514254           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpt_
+    > fpd_ln_export_value_ctrl1.dta saved
+[OK] TREND_fpt_fpd_ln_export_value_ctrl1 — N=20127933 clusters=176
+
+=== [ln_export_value] FE: fpd pt (fpd_pt) ===
+  [WB_fpd_pt_ln_export_value_ctrl0] ln_export_value ~ wb_green wb_dirty td_gree
+> n td_dirty  | fpd pt
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 68 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,255,441
+Absorbing 2 HDFE groups                           F(   4,    230) =       1.57
+Statistics robust to heteroskedasticity           Prob > F        =     0.1842
+                                                  R-squared       =     0.9566
+                                                  Adj R-squared   =     0.9396
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     0.5571
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0003061   .0007544     0.41   0.685    -.0011803    .0017925
+    wb_dirty |   .0007584    .000608     1.25   0.214    -.0004395    .0019564
+    td_green |   1.41e-06   .0000314     0.04   0.964    -.0000604    .0000632
+    td_dirty |  -.0000553   .0000295    -1.88   0.062    -.0001133    2.79e-06
+       _cons |   2.051991   .0000856  2.4e+04   0.000     2.051822     2.05216
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8129108     8129108           0    *|
+          pt |     66203           1       66202     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_value_ctrl0.dta saved
+[OK] WB_fpd_pt_ln_export_value_ctrl0 — N=29255441 clusters=231
+  [WB_fpd_pt_ln_export_value_ctrl1] ln_export_value ~ wb_green wb_dirty td_gree
+> n td_dirty tariffs ln_hhi_baci | fpd pt
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 65 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,260,886
+Absorbing 2 HDFE groups                           F(   6,    176) =       2.24
+Statistics robust to heteroskedasticity           Prob > F        =     0.0413
+                                                  R-squared       =     0.9559
+                                                  Adj R-squared   =     0.9386
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     0.5517
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0002263   .0007185     0.31   0.753    -.0011918    .0016443
+    wb_dirty |   .0005617   .0006892     0.82   0.416    -.0007984    .0019218
+    td_green |   3.46e-06   .0000316     0.11   0.913     -.000059    .0000659
+    td_dirty |  -.0000474   .0000313    -1.52   0.131    -.0001092    .0000143
+     tariffs |   .0040097   .0022537     1.78   0.077     -.000438    .0084575
+ ln_hhi_baci |  -.0012054   .0008432    -1.43   0.155    -.0028694    .0004586
+       _cons |   2.029524   .0038936   521.24   0.000      2.02184    2.037208
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7329382     7329382           0    *|
+          pt |     65005           1       65004     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_WB_fpd_pt_
+    > ln_export_value_ctrl1.dta saved
+[OK] WB_fpd_pt_ln_export_value_ctrl1 — N=26260886 clusters=177
+  [TREND_fpd_pt_ln_export_value_ctrl0] ln_export_value ~ tr_green tr_dirty td_g
+> reen td_dirty  | fpd pt
+(dropped 1.62e+07 singleton observations)
+(MWFE estimator converged in 68 iterations)
+
+HDFE Linear regression                            Number of obs   = 29,255,441
+Absorbing 2 HDFE groups                           F(   4,    230) =       1.91
+Statistics robust to heteroskedasticity           Prob > F        =     0.1103
+                                                  R-squared       =     0.9566
+                                                  Adj R-squared   =     0.9396
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        231    Root MSE        =     0.5571
+
+                         (Std. err. adjusted for 231 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0001964    .000202     0.97   0.332    -.0002017    .0005945
+    tr_dirty |   .0001741   .0001199     1.45   0.148    -.0000621    .0004103
+    td_green |  -.0000176   .0000406    -0.43   0.666    -.0000976    .0000625
+    td_dirty |  -.0000533   .0000241    -2.21   0.028    -.0001007   -5.88e-06
+       _cons |   2.052084   .0001236  1.7e+04   0.000     2.051841    2.052327
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   8129108     8129108           0    *|
+          pt |     66203           1       66202     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_value_ctrl0.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_value_ctrl0.dta saved
+[OK] TREND_fpd_pt_ln_export_value_ctrl0 — N=29255441 clusters=231
+  [TREND_fpd_pt_ln_export_value_ctrl1] ln_export_value ~ tr_green tr_dirty td_g
+> reen td_dirty tariffs ln_hhi_baci | fpd pt
+(dropped 1.44e+07 singleton observations)
+(MWFE estimator converged in 65 iterations)
+
+HDFE Linear regression                            Number of obs   = 26,260,886
+Absorbing 2 HDFE groups                           F(   6,    176) =       2.12
+Statistics robust to heteroskedasticity           Prob > F        =     0.0531
+                                                  R-squared       =     0.9559
+                                                  Adj R-squared   =     0.9386
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        177    Root MSE        =     0.5517
+
+                         (Std. err. adjusted for 177 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~e | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0001978   .0002083     0.95   0.344    -.0002132    .0006088
+    tr_dirty |   .0001791   .0001332     1.34   0.181    -.0000838     .000442
+    td_green |  -.0000184   .0000425    -0.43   0.665    -.0001023    .0000654
+    td_dirty |  -.0000543   .0000262    -2.07   0.040     -.000106   -2.53e-06
+     tariffs |   .0040211   .0022555     1.78   0.076    -.0004302    .0084725
+ ln_hhi_baci |   -.001201   .0008433    -1.42   0.156    -.0028652    .0004631
+       _cons |   2.029604   .0038834   522.64   0.000      2.02194    2.037268
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   7329382     7329382           0    *|
+          pt |     65005           1       65004     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_value_ctrl1.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_19d_TREND_fpd_
+    > pt_ln_export_value_ctrl1.dta saved
+[OK] TREND_fpd_pt_ln_export_value_ctrl1 — N=26260886 clusters=177
+
+. 
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. * 5. Assembla CSV riassuntivo
+. *════════════════════════════════════════════════════════════════════════════
+> ══
+. clear
+
+. local first 1
+
+. foreach ov in ln_export ln_export_qua ln_export_value {
+  2.     foreach tr in WB TREND {
+  3.         foreach fe in fpd_year fpt_pd fpt_fpd fpd_pt {
+  4.             foreach ctrl in 0 1 {
+  5.                 local f "$TAB/OLS_19d_`tr'_`fe'_`ov'_ctrl`ctrl'$OUTSFX.dta
+> "
+  6.                 cap confirm file "`f'"
+  7.                 if !_rc {
+  8.                     if `first' {
+  9.                         use "`f'", clear
+ 10.                         local first 0
+ 11.                     }
+ 12.                     else {
+ 13.                         append using "`f'"
+ 14.                     }
+ 15.                 }
+ 16.             }
+ 17.         }
+ 18.     }
+ 19. }
+(variable var was str8, now str11 to accommodate using data's values)
+(variable treat was str2, now str5 to accommodate using data's values)
+(variable outcome was str9, now str13 to accommodate using data's values)
+(variable outcome was str13, now str15 to accommodate using data's values)
+
+. if !`first' {
+.     export delimited "$TAB/OLS_Ladder_tripledd_19d$OUTSFX.csv", replace
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_Ladder_tripled
+    > d_19d.csv not found)
+file C:\Work\projects\Paper_PTA/New/Output/OLS/Tables_Stata/OLS_Ladder_tripledd
+> _19d.csv saved
+.     di "[OK] OLS_Ladder_tripledd_19d$OUTSFX.csv — " _N " righe"
+[OK] OLS_Ladder_tripledd_19d.csv — 288 righe
+. }
+
+. else {
+.     di as error "Nessun risultato trovato"
+. }
+
+. 
+end of do-file

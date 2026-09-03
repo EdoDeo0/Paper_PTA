@@ -1,0 +1,486 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\59_leaveoneout_collapsed.do 
+
+. *****************************************************************************
+> ***
+. ****** 59 — Leave-one-out sul margine dirty (Stata, reghdfe)              ***
+> ***
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisito: Rscript New/Code/52_export_collapsed_dta.R
+. *
+. * Replica in Stata di 31_robustness_leaveoneout.R. Chiude l'ultimo risultato
+. * del paper rimasto in fascia C (due run R identiche, nessuna verifica
+. * cross-software) secondo il censimento 2026-08-21d.
+. *
+. * SPEC (identica a 31.R e al baseline di 16/52):
+. *   y ~ EP:env_good + EP:dirty + TD:env_good + TD:dirty
+. *      | pd + dt + pt,  [aw=n],  vce(cluster country_code)
+. * Si registrano ENTRAMBI i margini (dirty e green): il leave-one-out serve si
+> a
+. * a testare la fragilita' del dirty sia la tenuta del green.
+. *
+. * PIANO (26 stime):
+. *   baseline          -> spec principale, controllo di riproduzione
+. *   lista_estesa      -> dirty_ext (Mani-Wheeler + cemento/minerali non metal
+> lici)
+. *   senza_alta_dose   -> esclude INSIEME Peru(434)+Svizzera(331)+Corea(133):
+. *                        i tre paesi ad alta dose si coprono a vicenda, quind
+> i
+. *                        il leave-one-out singolo non li intercetta
+. *   senza_<cc> x23    -> un paese trattato alla volta
+. *
+. * Nessun preserve/restore: i sotto-campioni si fanno con `if`, cosi' non si
+. * riscrive il dataset su disco a ogni stima (26 volte su 3,7M celle).
+. * Le FE pd/dt/pt restano quelle globali: restringere il campione non cambia l
+> a
+. * partizione, e reghdfe scarta i singleton risultanti (in R le .GRP vengono
+. * rinumerate, ma rinumerare non cambia i gruppi).
+. *
+. * Cache per spec (.dta): rilanciabile senza rifare nulla.
+. *
+. * Output: New/Output/TripleDiff/Tables_Stata/LOO_<spec>.dta (26)
+. *         New/Output/TripleDiff/Tables_Stata/dirty_leaveoneout_stata.csv
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto — ~20-30 min):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\59_l
+> eaveoneout_collapsed.do"
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. global ROOT  "C:\Work\projects\Paper_PTA"
+
+. global DTA   "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
+
+. global DIRTY "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv"
+
+. global TAB   "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. cap mkdir "$TAB"
+
+. 
+. *── dirty_ext (non presente in collapsed_omnibus.dta: 52_export tiene solo di
+> rty) ──
+. import delimited "$DIRTY", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty_ext
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+. tempfile dext
+
+. save `dext'
+file C:\Users\edodr\AppData\Local\Temp\ST_e374_000001.tmp saved as .dta
+    format
+
+. 
+. *── Caricamento e preparazione ──────────────────────────────────────────────
+> ───
+. use "$DTA", clear
+
+. su WB_EP_Depth, meanonly
+
+. if r(max) != 17 {
+.     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio."
+.     exit 1
+. }
+
+. merge m:1 hs6 using `dext', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     3,193,367
+        from master                 3,193,367  
+        from using                          0  
+
+    Matched                           580,131  
+    -----------------------------------------
+
+. replace dirty_ext = 0 if missing(dirty_ext)
+(3,193,367 real changes made)
+
+. 
+. gen double ep_green     = WB_EP_Depth       * env_good
+
+. gen double ep_dirty     = WB_EP_Depth       * dirty_p
+
+. gen double td_green     = TotalDepth_nonEnv * env_good
+
+. gen double td_dirty     = TotalDepth_nonEnv * dirty_p
+
+. gen double ep_dirty_ext = WB_EP_Depth       * dirty_ext
+
+. gen double td_dirty_ext = TotalDepth_nonEnv * dirty_ext
+
+. 
+. count
+  3,773,498
+
+. di as text "Celle: " r(N)
+Celle: 3773498
+
+. 
+. *── Lista dei paesi trattati ────────────────────────────────────────────────
+> ───
+. preserve
+
+. keep country_code WB_EP_Depth
+
+. collapse (max) maxep = WB_EP_Depth, by(country_code)
+
+. keep if maxep > 0
+(213 observations deleted)
+
+. sort country_code
+
+. levelsof country_code, local(treated) clean
+103 105 106 107 111 112 119 122 127 129 132 133 134 136 141 144 322 331 412 415
+>  434 601 609
+
+. local ntr : word count `treated'
+
+. di as text "Paesi trattati: `ntr'  ->  `treated'"
+Paesi trattati: 23  ->  103 105 106 107 111 112 119 122 127 129 132 133 134 136
+>  141 144 322 331 412 415 434 601 609
+
+. restore
+
+. if `ntr' != 23 {
+.     di as error "Attesi 23 paesi trattati, trovati `ntr'. Fermo."
+.     exit 9
+. }
+
+. 
+. *── Program: una stima -> LOO_<label>.dta ───────────────────────────────────
+> ───
+. capture program drop run_loo
+
+. program define run_loo
+  1.     args label dvar ifexpr dropped
+  2.     local out "$TAB\LOO_`label'.dta"
+  3.     cap confirm file "`out'"
+  4.     if _rc == 0 {
+  5.         di as text "  SKIP `label' (gia' presente)"
+  6.         exit 0
+  7.     }
+  8.     local epd = cond("`dvar'" == "ext", "ep_dirty_ext", "ep_dirty")
+  9.     local tdd = cond("`dvar'" == "ext", "td_dirty_ext", "td_dirty")
+ 10.     di as text "  [`label'] reghdfe..."
+ 11.     cap noisily reghdfe y ep_green `epd' td_green `tdd' [aw=n] `ifexpr', /
+> //
+>         absorb(pd dt pt) vce(cluster country_code)
+ 12.     if _rc {
+ 13.         di as error "  [FALLITO] `label'"
+ 14.         exit 0
+ 15.     }
+ 16.     regsave using "`out'", tstat pval ci replace ///
+>         addlabel(spec, `label', dropped_country, "`dropped'", ///
+>                  source, reghdfe_stata_59)
+ 17.     di as text "  `label': dirty=" %9.5f _b[`epd'] "  green=" %9.5f _b[ep_
+> green]
+ 18. end
+
+. 
+. *── 1. baseline (+ guardia di riproduzione) ─────────────────────────────────
+> ───
+. run_loo baseline core "" ""
+  SKIP baseline (gia' presente)
+
+. * La guardia gira solo se la stima e' appena stata fatta (dopo uno SKIP i
+. * coefficienti in memoria non sono quelli del baseline).
+. cap confirm file "$TAB\LOO_baseline.dta"
+
+. if _rc == 0 & "`e(cmd)'" == "reghdfe" {
+.     if abs(_b[ep_dirty] - (-0.0118734)) > 1e-4 | abs(_b[ep_green] - (-0.00456
+> 85)) > 1e-4 {
+.         di as error "Baseline non riprodotto (atteso -0.0118734 / -0.0045685)
+> ."
+.         di as error "  ottenuto: " _b[ep_dirty] " / " _b[ep_green]
+.         exit 9
+.     }
+.     di as result "  [guardia OK] baseline riprodotto"
+. }
+
+. 
+. *── 2. lista estesa (dirty_ext) ─────────────────────────────────────────────
+> ───
+. run_loo lista_estesa ext "" ""
+  SKIP lista_estesa (gia' presente)
+
+. 
+. *── 3. senza i tre paesi ad alta dose (Peru 434, Svizzera 331, Corea 133) ───
+> ───
+. run_loo senza_alta_dose core "if !inlist(country_code, 434, 331, 133)" "434+3
+> 31+133"
+  SKIP senza_alta_dose (gia' presente)
+
+. 
+. *── 4. leave-one-out: un paese trattato alla volta ──────────────────────────
+> ───
+. foreach cc of local treated {
+  2.     run_loo senza_`cc' core "if country_code != `cc'" "`cc'"
+  3. }
+  SKIP senza_103 (gia' presente)
+  SKIP senza_105 (gia' presente)
+  SKIP senza_106 (gia' presente)
+  SKIP senza_107 (gia' presente)
+  SKIP senza_111 (gia' presente)
+  SKIP senza_112 (gia' presente)
+  SKIP senza_119 (gia' presente)
+  SKIP senza_122 (gia' presente)
+  SKIP senza_127 (gia' presente)
+  SKIP senza_129 (gia' presente)
+  SKIP senza_132 (gia' presente)
+  SKIP senza_133 (gia' presente)
+  SKIP senza_134 (gia' presente)
+  SKIP senza_136 (gia' presente)
+  SKIP senza_141 (gia' presente)
+  SKIP senza_144 (gia' presente)
+  SKIP senza_322 (gia' presente)
+  SKIP senza_331 (gia' presente)
+  SKIP senza_412 (gia' presente)
+  SKIP senza_415 (gia' presente)
+  SKIP senza_434 (gia' presente)
+  SKIP senza_601 (gia' presente)
+  SKIP senza_609 (gia' presente)
+
+. 
+. *── Assemblaggio ────────────────────────────────────────────────────────────
+> ───
+. di as text _n "########## ASSEMBLAGGIO ##########"
+
+########## ASSEMBLAGGIO ##########
+
+. 
+. * Normalizzazione del tipo di `dropped_country`: regsave lo salva NUMERICO
+. * quando l'etichetta e' un numero puro ("103") o vuota, e STRINGA quando non 
+> lo
+. * e' ("434+331+133"). L'append di tipi diversi fallisce con r(106). Si passa
+. * tutto a stringa una volta sola (idempotente: se e' gia' stringa non tocca n
+> ulla).
+. local files : dir "$TAB" files "LOO_*.dta"
+
+. foreach f of local files {
+  2.     use "$TAB/`f'", clear
+  3.     capture confirm string variable dropped_country
+  4.     if _rc {
+  5.         tostring dropped_country, replace force
+  6.         replace dropped_country = "" if dropped_country == "."
+  7.         save "$TAB/`f'", replace
+  8.     }
+  9. }
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 03.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 05.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 06.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 07.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 11.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 12.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 19.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 22.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 27.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 29.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 32.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 33.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 34.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 36.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 41.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_1
+    > 44.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_3
+    > 22.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_3
+    > 31.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_4
+    > 12.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_4
+    > 15.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_4
+    > 34.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_6
+    > 01.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/loo_senza_6
+    > 09.dta saved
+
+. 
+. clear
+
+. local first = 1
+
+. foreach f of local files {
+  2.     if `first' {
+  3.         use "$TAB/`f'", clear
+  4.         local first = 0
+  5.     }
+  6.     else {
+  7.         append using "$TAB/`f'"
+  8.     }
+  9. }
+(variable var was str8, now str12 to accommodate using data's values)
+(variable spec was str8, now str12 to accommodate using data's values)
+(variable dropped_country was str1, now str3 to accommodate using data's
+       values)
+(variable spec was str12, now str15 to accommodate using data's values)
+(variable dropped_country was str3, now str11 to accommodate using data's
+       values)
+
+. if `first' == 0 {
+.     export delimited "$TAB\dirty_leaveoneout_stata.csv", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\dirty_leave
+    > oneout_stata.csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\dirty_leaveo
+> neout_stata.csv saved
+.     di as result "[OK] dirty_leaveoneout_stata.csv — " _N " righe"
+[OK] dirty_leaveoneout_stata.csv — 130 righe
+.     di as text "Confronto con R: New/Output/TripleDiff/Tables/dirty_leaveoneo
+> ut.csv"
+Confronto con R: New/Output/TripleDiff/Tables/dirty_leaveoneout.csv
+.     di as text "  attesi: baseline dirty -0.01187 | senza_601 (Australia) -0.
+> 01030"
+  attesi: baseline dirty -0.01187 | senza_601 (Australia) -0.01030
+.     di as text "  NB: la colonna nclust di R e' pre-singleton (236), reghdfe 
+> riporta post (228)."
+  NB: la colonna nclust di R e' pre-singleton (236), reghdfe riporta post (228)
+> .
+. }
+
+. else di as error "Nessuna stima trovata."
+
+. 
+. di as result _n "=== S9 (leave-one-out) COMPLETATO ==="
+
+=== S9 (leave-one-out) COMPLETATO ===
+
+. 
+end of do-file

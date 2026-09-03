@@ -163,9 +163,11 @@ run_rscript("11", "Sub-campioni di controllo (prodHS4, overlap, deepshallow)",
   script = "New/Code/11_subsamples.R",
   artifacts = file.path(ROOT, "New/Data/Subsamples/flag_deepshallow.csv"))
 
-run_rscript("12", "CEM v2: matching di destinazione",
-  script = "New/Code/12_cem_matching.R",
-  artifacts = file.path(ROOT, "New/Output/CEM_v2"))
+stata_manual(
+  "12", "CEM matching (Stata — sostituisce il cancellato 12_cem_matching.R)",
+  artifacts = file.path(ROOT, "Output/CEM/matched_countries.csv"),
+  cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\12_cem_matching_stata.do"'
+)
 
 ########################################################
 ## DESCRITTIVE
@@ -432,6 +434,20 @@ run_rscript("45", "Confronto Brandi et al. (2020)",
   script = "New/Code/45_brandi_comparison.R",
   artifacts = file.path(ROOT, "New/Paper/Tabelle/tab_20_brandi.tex"))
 
+########################################################
+## STEP 69-70 — output paper-facing (summary stats, assemblaggio CSV Stata)
+## Necessari DOPO tutti gli step Stata e PRIMA di 44_make_tables_tex.R
+## se quest'ultimo viene rieseguito.
+########################################################
+
+run_rscript("69", "Assemblaggio CSV Stata nel formato canonico per 44",
+  script = "New/Code/69_assemble_stata_csvs.R",
+  artifacts = file.path(ROOT, "New/Output/TripleDiff/Tables_Stata"))
+
+run_rscript("70", "Statistiche descrittive per il paper",
+  script = "New/Code/70_sumstats_paper.R",
+  artifacts = file.path(ROOT, "New/Output/Diagnostics"))
+
 run_rscript("46", "Robustezza trimming p1/p99 (Windows-only: stima + WCB)",
   script = "New/Code/46_robustness_trim.R",
   artifacts = c(
@@ -491,5 +507,22 @@ stata_manual(
     file.path(ROOT, "New/Output/OLS/Bootstrap/wcb_trimmed_fullpanel.csv")),
   cmd_hint  = '"C:\\Program Files\\StataNow19\\StataSE-64.exe" /e do "New\\Code\\stata\\48e_fullpanel_boottest.do"'
 )
+
+########################################################
+## QA / Cross-software verification (non richiesti per replicazione)
+## Eseguire manualmente dopo la pipeline core per verificare R<->Stata.
+##
+## Stata (lanciare da PowerShell):
+##   59_leaveoneout_collapsed.do
+##   61_secondary_wcb_collapsed.do
+##   63_variants_collapsed.do
+##   65_ppml_variants.do
+##   66_permutation_variants.do
+##   66b_permutation_chunk.do  (+ 66c_merge_permutation_chunks.R)
+##   68_treatment_map.do
+##
+## R verification:
+##   source(here("New", "Code", "67_verify_stata_coverage.R"))
+########################################################
 
 cat("\n[run_pipeline] Fine. Ogni step eseguito e' stato verificato su disco.\n")

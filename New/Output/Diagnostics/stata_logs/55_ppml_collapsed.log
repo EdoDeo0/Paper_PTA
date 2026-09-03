@@ -1,0 +1,208 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\55_ppml_collapsed.do 
+
+. *****************************************************************************
+> ***
+. ****** 55 — PPML margine estensivo in Stata (S5)                          ***
+> ***
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisiti:
+. *   Rscript New/Code/55_export_ppml_dta.R
+. *   ssc install ppmlhdfe (una tantum)
+. *
+. * Replica in Stata di 30_robustness_extensive_ppml.R via ppmlhdfe.
+. * Spec: agg_export ~ EP:env_good + EP:dirty_p + TD:env_good + TD:dirty_p | pd
+>  dt pt
+. *       cluster(country_code), no pesos (ogni cella = una riga nella griglia 
+> zero-filled)
+. *
+. * Output:
+. *   New/Output/TripleDiff/Tables_Stata/ppml_extensive_stata.csv
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\55_p
+> pml_collapsed.do"
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. global ROOT "C:\Work\projects\Paper_PTA"
+
+. global DTA  "$ROOT\New\Data\Collapsed\ppml_zerofill_export.dta"
+
+. global TAB  "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. 
+. cap which ppmlhdfe
+
+. if _rc {
+.     di as error "ppmlhdfe non installato."
+.     di as error "Installare con: ssc install ppmlhdfe"
+.     exit 1
+. }
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. 
+. cap mkdir "$ROOT\New\Output\TripleDiff"
+
+. cap mkdir "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. cap mkdir "$TAB"
+
+. 
+. *── Caricamento dati --------------------------------------------------------
+> ---
+. use "$DTA", clear
+
+. su WB_EP_Depth, meanonly
+
+. if r(max) != 17 {
+.     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio."
+.     exit 1
+. }
+
+. count
+  8,179,904
+
+. di as text "Celle zerofill: " r(N)
+Celle zerofill: 8179904
+
+. su agg_export, meanonly
+
+. di as text "Quota zeri: " 100*(1 - r(mean)/r(sum)*r(N)) "% (approx)"
+Quota zeri: 1.110e-14% (approx)
+
+. 
+. *── WB baseline -------------------------------------------------------------
+> ---
+. local out_wb "$TAB/PPML_extensive_WB.dta"
+
+. cap confirm file "`out_wb'"
+
+. if _rc {
+.     preserve
+.     gen double ep_green = WB_EP_Depth * env_good
+.     gen double ep_dirty = WB_EP_Depth * dirty_p
+.     gen double td_green = TotalDepth_nonEnv * env_good
+.     gen double td_dirty = TotalDepth_nonEnv * dirty_p
+.     di as text "=== PPML WB ==="
+.     ppmlhdfe agg_export ep_green ep_dirty td_green td_dirty, ///
+>         absorb(pd dt pt) vce(cluster country_code)
+.     local nobs_wb   = e(N)
+.     local nclust_wb = e(N_clust)
+.     regsave using "`out_wb'", tstat pval ci replace ///
+>         addlabel(spec, ppml_baseline, treat, WB, source, ppmlhdfe_stata_55)
+.     restore
+.     di "[OK] PPML_extensive_WB.dta  (N=" `nobs_wb' ", cluster=" `nclust_wb' "
+> )"
+. }
+
+. else di "  SKIP PPML_extensive_WB.dta (gia' presente)"
+  SKIP PPML_extensive_WB.dta (gia' presente)
+
+. 
+. *── TREND baseline ----------------------------------------------------------
+> ---
+. local out_tr "$TAB/PPML_extensive_TREND.dta"
+
+. cap confirm file "`out_tr'"
+
+. if _rc {
+.     preserve
+.     gen double ep_green = TREND_EP_Count * env_good
+.     gen double ep_dirty = TREND_EP_Count * dirty_p
+.     gen double td_green = TotalDepth_nonEnv * env_good
+.     gen double td_dirty = TotalDepth_nonEnv * dirty_p
+.     di as text "=== PPML TREND ==="
+.     ppmlhdfe agg_export ep_green ep_dirty td_green td_dirty, ///
+>         absorb(pd dt pt) vce(cluster country_code)
+.     local nobs_tr   = e(N)
+.     local nclust_tr = e(N_clust)
+.     regsave using "`out_tr'", tstat pval ci replace ///
+>         addlabel(spec, ppml_baseline, treat, TREND, source, ppmlhdfe_stata_55
+> )
+.     restore
+.     di "[OK] PPML_extensive_TREND.dta  (N=" `nobs_tr' ", cluster=" `nclust_tr
+> ' ")"
+. }
+
+. else di "  SKIP PPML_extensive_TREND.dta (gia' presente)"
+  SKIP PPML_extensive_TREND.dta (gia' presente)
+
+. 
+. *── Assemblaggio output -----------------------------------------------------
+> ---
+. clear
+
+. local first = 1
+
+. foreach f in PPML_extensive_WB.dta PPML_extensive_TREND.dta {
+  2.     cap confirm file "$TAB/`f'"
+  3.     if !_rc {
+  4.         if `first' {
+  5.             use "$TAB/`f'", clear
+  6.             local first = 0
+  7.         }
+  8.         else {
+  9.             append using "$TAB/`f'"
+ 10.         }
+ 11.     }
+ 12. }
+(variable treat was str2, now str5 to accommodate using data's values)
+
+. if `first' == 0 {
+.     export delimited "$TAB/ppml_extensive_stata.csv", replace
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/ppml_extens
+    > ive_stata.csv not found)
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/ppml_extensi
+> ve_stata.csv saved
+.     di as result "[OK] ppml_extensive_stata.csv — " _N " righe"
+[OK] ppml_extensive_stata.csv — 10 righe
+.     di as text "Confronto con R: coef R (WB:env_good) in New/Output/TripleDif
+> f/Tables/ppml_extensive.csv"
+Confronto con R: coef R (WB:env_good) in New/Output/TripleDiff/Tables/ppml_exte
+> nsive.csv
+. }
+
+. else {
+.     di as error "Nessun output PPML trovato."
+. }
+
+. 
+. di as result _n "=== S5 COMPLETATO ==="
+
+=== S5 COMPLETATO ===
+
+. 
+end of do-file

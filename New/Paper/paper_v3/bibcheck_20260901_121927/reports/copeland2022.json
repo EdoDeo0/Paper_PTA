@@ -1,0 +1,8 @@
+{
+  "key": "copeland2022",
+  "verdict": "WRONG",
+  "source_url": "https://www.sciencedirect.com/science/chapter/handbook/abs/pii/S1573440422000028",
+  "issues": ["pages: missing from entry; chapter spans pages 61--146 in Handbook of International Economics, Vol. 5"],
+  "corrected_entry": "@incollection{copeland2022,\n  author    = {Copeland, Brian R. and Shapiro, Joseph S. and Taylor, M. Scott},\n  title     = {Globalization and the environment},\n  booktitle = {Handbook of International Economics},\n  editor    = {Gopinath, Gita and Helpman, Elhanan and Rogoff, Kenneth},\n  volume    = {5},\n  publisher = {Elsevier},\n  year      = {2022},\n  pages     = {61--146},\n  doi       = {10.1016/B978-0-444-54314-1.00002-1}\n}",
+  "notes": "All present fields (authors, title, booktitle, editors, volume, publisher, year, DOI) match the ScienceDirect/NBER record; only the pages field, which is verifiable, is missing from the entry."
+}

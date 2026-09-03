@@ -85,6 +85,7 @@ stima_sub <- function(cache_fst, green_file, dirty_file, depth_file, idx_file, s
   f <- sprintf("y ~ SUB:env_good + SUB:dirty_p + %s:env_good + %s:dirty_p | pd + dt + pt",
                depth_var, depth_var)
   m <- feols(as.formula(f), data = cell, weights = ~n, cluster = ~country_code, lean = TRUE)
+  if (anyNA(coef(m))) stop(sprintf("feols non converge (%s): coefficienti NA", sub_var))
   list(coefs = coef(m), se = se(m), pval = pvalue(m), nobs = m$nobs)
 }
 
