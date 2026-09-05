@@ -1,5 +1,30 @@
 # Session Log — Paper_PTA
 
+## 2026-09-05 (sessione 8) — Audit paper_v2 + implementazione roadmap
+
+**Audit completo su `./New/` (paper_v2)** con 3 agenti paralleli (paper text, code pipeline, econometrics).
+
+**Verdetto: CONDITIONAL PASS.** 15 issues trovate, nessuna CRITICAL.
+
+**Implementato:** tutti i fix azionabili dalla roadmap:
+- FIX 1-10, 12, 14-15, S1-S2, S5-S6 completati
+- 11+ typos corretti (incresignly, againts, enforcable×4, difficoult, contration, significat, ecc.)
+- Coefficiente −0.0022 → −0.0023 (allineato a ptab_main.tex)
+- VIF allineato a 5.8 in testo e tabella depthbounds
+- "We" → "I" (single-authored), command names spostati in footnote
+- Percorsi interni rimossi da note tabelle, "bounded null" definito al primo uso
+- t=-6 Sun-Abraham dirty discusso, CEM matching vars + citazione aggiunti
+- `run_pipeline.R`: step 44 spostato dopo 69-70 (elimina doppio run)
+- `tab_20_brandi.tex`: commento italiano tradotto in inglese
+- `references.bib`: aggiunta entry `frankel2009`
+- Citazioni bare (Frankel 2009, Cameron et al. 2008) convertite in `\citep`
+
+**Non implementati (non urgenti):** FIX 11 (rigenerare .fst), FIX 13 (metadata FE nei CSV), S3 (notazione p/g), S4 (titolo sezione "false positive").
+
+**Deliverable:** `./correspondence/audit/2026-09-05_audit_report.md` e `./correspondence/audit/2026-09-05_roadmap_soluzioni.md`
+
+---
+
 ## 2026-09-05 (sessione 7) — Implementazione roadmap completa
 
 **Completato tutto il backlog dalla roadmap `2026-09-04_roadmap_soluzioni.md`:**
