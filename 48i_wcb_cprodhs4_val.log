@@ -1,0 +1,1300 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\48i_wcb_cprodhs4_val.do 
+
+. ************************************************************
+. *** 48i — C-prod-HS4 subsample: coefficienti + WCB per VAL (ln_export)
+. *** Full panel con filtro prodHS4, FE fpd+fdt+pt
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do New\Code\stata\48i_wcb_cprodhs4_val.do 
+
+. *** Supporta entrambi i depth (totaldepth / desta) via PTA_DEPTH
+. ************************************************************
+. ************************************************************
+. * OUTPUT: New/Output/TripleDiff/Tables_Stata/cprodhs4_val{OUTSFX}.csv
+. 
+. *** 48i — C-prod-HS4 subsample: coefficienti + WCB per VAL (ln_export)
+. *** Full panel con filtro prodHS4, FE fpd+fdt+pt
+. do "New/Code/stata/_root.do"
+
+. * _root.do — configurazione centralizzata del progetto
+. * Il replicatore deve modificare SOLO questo file.
+. 
+. clear all
+. *** Supporta entrambi i depth (totaldepth / desta) via PTA_DEPTH
+. ************************************************************
+. * OUTPUT: New/Output/TripleDiff/Tables_Stata/cprodhs4_val{OUTSFX}.csv
+. 
+. do "New/Code/stata/_root.do"
+
+. * _root.do — configurazione centralizzata del progetto
+. * Il replicatore deve modificare SOLO questo file.
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. 
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. else if c(os) == "MacOSX" {
+.     global ROOT "~/Documents/work/projects/Paper_PTA"
+. }
+
+. else {
+.     global ROOT "~/work/projects/Paper_PTA"
+. }
+
+. 
+. cd "$ROOT"
+C:\Work\projects\Paper_PTA
+
+. 
+. * --- Variant configuration (2x2 matrix) ---
+. * PTA_SAMPLE: "excl" (default, exclude HK/Macao) or "incl"
+. * PTA_DEPTH:  "totaldepth" (default) or "desta"
+. if "$PTA_SAMPLE" == "" global PTA_SAMPLE "excl"
+
+. if "$PTA_DEPTH"  == "" global PTA_DEPTH  "totaldepth"
+
+. 
+. * --- Output suffix (prevents cross-variant cache contamination) ---
+. global OUTSFX ""
+
+. if "$PTA_SAMPLE" == "incl" global OUTSFX "${OUTSFX}_inclHKMO"
+
+. if "$PTA_DEPTH"  == "desta" global OUTSFX "${OUTSFX}_desta"
+
+. 
+end of do-file
+
+. 
+. * --- Variant config --------------------------------------------------------
+
+. set more off
+
+. set varabbrev off
+
+. 
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. else if c(os) == "MacOSX" {
+.     global ROOT "~/Documents/work/projects/Paper_PTA"
+. }
+
+. else {
+.     global ROOT "~/work/projects/Paper_PTA"
+. }
+
+. 
+. cd "$ROOT"
+C:\Work\projects\Paper_PTA
+
+. 
+. * --- Variant configuration (2x2 matrix) ---
+. * PTA_SAMPLE: "excl" (default, exclude HK/Macao) or "incl"
+. * PTA_DEPTH:  "totaldepth" (default) or "desta"
+. if "$PTA_SAMPLE" == "" global PTA_SAMPLE "excl"
+
+. if "$PTA_DEPTH"  == "" global PTA_DEPTH  "totaldepth"
+
+. 
+. * --- Output suffix (prevents cross-variant cache contamination) ---
+. global OUTSFX ""
+
+. if "$PTA_SAMPLE" == "incl" global OUTSFX "${OUTSFX}_inclHKMO"
+
+. if "$PTA_DEPTH"  == "desta" global OUTSFX "${OUTSFX}_desta"
+
+. 
+end of do-file
+
+. 
+. * --- Variant config --------------------------------------------------------
+. local env_sample : env PTA_SAMPLE
+
+. local env_depth  : env PTA_DEPTH
+
+. local env_sample : env PTA_SAMPLE
+
+. local env_depth  : env PTA_DEPTH
+
+. if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+
+. if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+
+. 
+. if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+
+. if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+
+. 
+. if !inlist("$PTA_SAMPLE", "excl", "incl") {
+.     di as error "PTA_SAMPLE deve essere excl o incl"
+.     exit 198
+. }
+
+. if !inlist("$PTA_SAMPLE", "excl", "incl") {
+.     di as error "PTA_SAMPLE deve essere excl o incl"
+.     exit 198
+. }
+
+. if "$PTA_SAMPLE" == "incl" {
+.     global HKMOEXPR "1"
+" {
+.     global HKMOEXPR "1"
+"
+. }
+
+. else {
+.     global SFX "_inclHKMO"
+. }
+
+. else {
+.     global HKMOEXPR "!hkmo"
+.     global SFX ""
+. }
+
+. 
+. if !inlist("$PTA_DEPTH", "totaldepth", "desta") {
+.     global HKMOEXPR "!hkmo"
+.     global SFX ""
+. }
+
+. 
+. if !inlist("$PTA_DEPTH", "totaldepth", "desta") {
+.     di as error "PTA_DEPTH deve essere totaldepth o desta"
+.     exit 198
+. }
+
+. if "$PTA_DEPTH" == "desta" {
+.     di as error "PTA_DEPTH deve essere totaldepth o desta"
+.     exit 198
+. }
+
+. if "$PTA_DEPTH" == "desta" {
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/desta_depth_country_year.csv"
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/desta_depth_country_year.csv"
+.     global DEPTHVAR  "desta_depth_index"
+.     global DEPTHSFX  "_desta"
+.     global DROP_UNMEASURED 1
+. }
+
+. else {
+.     global DEPTHVAR  "desta_depth_index"
+.     global DEPTHSFX  "_desta"
+.     global DROP_UNMEASURED 1
+. }
+
+. else {
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.cs
+> v"
+.     global DEPTHFILE "$ROOT/New/Data/TotalDepth/wb_totaldepth_country_year.cs
+> v"
+.     global DEPTHVAR  "totaldepth_nonenv"
+.     global DEPTHSFX  ""
+.     global DROP_UNMEASURED 0
+. }
+
+. global OUTSFX "$SFX$DEPTHSFX"
+
+.     global DEPTHVAR  "totaldepth_nonenv"
+.     global DEPTHSFX  ""
+.     global DROP_UNMEASURED 0
+. }
+
+. global OUTSFX "$SFX$DEPTHSFX"
+
+. 
+. cap mkdir "$ROOT/New/Output/TripleDiff/Tables_Stata"
+. cap mkdir "$ROOT/New/Output/TripleDiff/Tables_Stata"
+
+. cap mkdir "$ROOT/New/Output/Diagnostics/stata_logs"
+. cap mkdir "$ROOT/New/Output/Diagnostics/stata_logs"
+
+. cap log close _all
+
+
+. cap log close _all
+
+. log using "$ROOT/New/Output/Diagnostics/stata_logs/48i_cprodhs4_val$OUTSFX.lo
+> g", replace text
+(file
+    C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/48i_cprodhs4
+    > _val_desta.log not found)
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/48i_c
+> prodhs4_val_desta.log
+  log type:  text
+ opened on:   5 Sep 2026, 21:45:54
+
+. log using "$ROOT/New/Output/Diagnostics/stata_logs/48i_cprodhs4_val$OUTSFX.lo
+> g", replace text
+. 
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/48i_c
+> prodhs4_val.log
+  log type:  text
+ opened on:   5 Sep 2026, 21:45:54
+
+. 
+. global CSV_OUT "$ROOT/New/Output/TripleDiff/Tables_Stata/cprodhs4_val$OUTSFX.
+> csv"
+
+global CSV_OUT "$ROOT/New/Output/TripleDiff/Tables_Stata/cprodhs4_val$OUTSFX.
+> csv"
+. 
+. capture erase "$CSV_OUT"
+
+. 
+. capture erase "$CSV_OUT"
+
+. file open fh using "$CSV_OUT", write replace text
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stata/cprodhs4_va
+    > l_desta.csv not found)
+
+
+. file open fh using "$CSV_OUT", write replace text
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stata/cprodhs4_va
+    > l.csv not found)
+
+. file write fh "spec,var,coef,se,pval,p_wcb,ci_low,ci_high,nobs,nclust,breps,o
+> utcome,r2a" _n
+
+. file close fh
+. file write fh "spec,var,coef,se,pval,p_wcb,ci_low,ci_high,nobs,nclust,breps,o
+> utcome,r2a" _n
+
+. 
+
+. file close fh
+
+. 
+. capture program drop write_row
+
+. program define write_row
+. capture program drop write_row
+
+. program define write_row
+  1.     args spec var coef se pval p_wcb ci_low ci_high nobs nclust breps outc
+> ome r2a
+  2.     file open fh using "$CSV_OUT", write append text
+  1.     args spec var coef se pval p_wcb ci_low ci_high nobs nclust breps outc
+> ome r2a
+  2.     file open fh using "$CSV_OUT", write append text
+  3.     file write fh "`spec',`var',`coef',`se',`pval',`p_wcb',`ci_low',`ci_hi
+> gh',`nobs',`nclust',`breps',`outcome',`r2a'" _n
+  4.     file close fh
+  5. end
+
+. 
+. cap which reghdfe
+  3.     file write fh "`spec',`var',`coef',`se',`pval',`p_wcb',`ci_low',`ci_hi
+> gh',`nobs',`nclust',`breps',`outcome',`r2a'" _n
+  4.     file close fh
+  5. end
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+
+. if _rc ssc install reghdfe
+
+. cap which boottest
+. cap which boottest
+
+. if _rc ssc install boottest
+
+. 
+
+. if _rc ssc install boottest
+
+. 
+. * --- Auxiliary lists -------------------------------------------------------
+> --
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+. * --- Auxiliary lists -------------------------------------------------------
+> --
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. keep hs6_final
+ hs6
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_5810_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_4eb0_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+. keep hs6 dirty
+. rename dirty dirty_p
+
+. rename dirty dirty_p
+
+. tempfile dirty
+
+. save `dirty'
+
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_5810_000002.tmp saved as .dta
+    format
+
+. 
+. import delimited "$DEPTHFILE", clear
+. import delimited "$DEPTHFILE", clear
+(encoding automatically selected: ISO-8859-1)
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 239 obs)
+(5 vars, 249 obs)
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. save `depth'
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_5810_000003.tmp saved as .dta
+    format
+
+. 
+ C:\Users\edodr\AppData\Local\Temp\ST_4eb0_000003.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Subsamples/flag_prodHS4.csv", clear
+. import delimited "$ROOT/New/Data/Subsamples/flag_prodHS4.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(encoding automatically selected: ISO-8859-2)
+(5 vars, 5,008 obs)
+(5 vars, 5,008 obs)
+
+. keep if in_hs4match == "TRUE" | in_hs4match == "1"
+. keep if in_hs4match == "TRUE" | in_hs4match == "1"
+(4,410 observations deleted)
+
+. keep hs6
+
+(4,410 observations deleted)
+
+. keep hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+
+(0 observations are duplicates)
+. gen byte keep_hs4 = 1
+
+
+. tempfile hs4
+. gen byte keep_hs4 = 1
+
+. save `hs4'
+
+. tempfile hs4
+
+. save `hs4'
+file C:\Users\edodr\AppData\Local\Temp\ST_5810_000004.tmp saved as .dta
+    format
+
+. 
+. global F_GREEN "`green'"
+
+file C:\Users\edodr\AppData\Local\Temp\ST_4eb0_000004.tmp saved as .dta
+    format
+
+. 
+. global F_GREEN "`green'"
+
+. global F_DIRTY "`dirty'"
+. global F_DIRTY "`dirty'"
+
+
+. global F_DEPTH "`depth'"
+
+. global F_HS4   "`hs4'"
+. global F_HS4   "`hs4'"
+
+
+
+. 
+. ************************************************************
+. * Programma: stima C-prod-HS4 per una outcome
+*************
+. * Programma: stima C-prod-HS4 per una outcome
+. ************************************************************
+. capture program drop cprodhs4_one_outcome
+. ************************************************************
+
+capture program drop cprodhs4_one_outcome
+
+. program define cprodhs4_one_outcome
+  1.     args raw_var outcome_label
+  2. 
+. program define cprodhs4_one_outcome
+  1.     args raw_var outcome_label
+  2. 
+.     di as result _n "========================================================
+> ===="
+.     di as result _n "========================================================
+> ===="
+  3.     di as result "  C-prod-HS4: `outcome_label' ($PTA_DEPTH)"
+  4.     di as result "========================================================
+> ===="
+  5. 
+  3.     di as result "  C-prod-HS4: `outcome_label' ($PTA_DEPTH)"
+  4.     di as result "========================================================
+> ===="
+  5. 
+.     timer clear 1
+  6.     timer on 1
+  7. 
+.     * --- Carica dati ---
+.     if "`raw_var'" == "ln_export" {
+.     timer clear 1
+  6.     timer on 1
+  7. 
+.     * --- Carica dati ---
+.     if "`raw_var'" == "ln_export" {
+  8.         use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd
+>  fdt pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+  8.         use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd
+>  fdt pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+  9.         gen double ln_y = ln_export
+ 10.         drop ln_export
+ 11.         drop if missing(ln_y)
+ 12.     }
+  9.         gen double ln_y = ln_export
+ 10.         drop ln_export
+ 11.         drop if missing(ln_y)
+ 12.     }
+ 13.     else if "`raw_var'" == "exp_qua" {
+ 13.     else if "`raw_var'" == "exp_qua" {
+ 14.         use exp_qua WB_EP_Depth TREND_EP_Count hs6 country_code year fpd f
+> dt pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 14.         use exp_qua WB_EP_Depth TREND_EP_Count hs6 country_code year fpd f
+> dt pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 15.         gen double ln_y = ln(exp_qua)
+ 16.         drop exp_qua
+ 17.         drop if missing(ln_y)
+ 18.     }
+ 15.         gen double ln_y = ln(exp_qua)
+ 16.         drop exp_qua
+ 17.         drop if missing(ln_y)
+ 18.     }
+ 19.     else if "`raw_var'" == "uv_exp" {
+ 19.     else if "`raw_var'" == "uv_exp" {
+ 20.         use uv_exp WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fd
+> t pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 21.         gen double ln_y = ln(uv_exp)
+ 22.         drop uv_exp
+ 20.         use uv_exp WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fd
+> t pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 21.         gen double ln_y = ln(uv_exp)
+ 22.         drop uv_exp
+ 23.         drop if missing(ln_y)
+ 24.     }
+ 23.         drop if missing(ln_y)
+ 24.     }
+ 25. 
+.     gen byte hkmo = inlist(country_code, 110, 121)
+ 26.     keep if $HKMOEXPR
+ 25. 
+.     gen byte hkmo = inlist(country_code, 110, 121)
+ 26.     keep if $HKMOEXPR
+ 27.     drop hkmo
+ 28. 
+.     * --- Filtro C-prod-HS4 ---
+.     merge m:1 hs6 using "$F_HS4", keep(master match) nogen
+ 27.     drop hkmo
+ 28. 
+.     * --- Filtro C-prod-HS4 ---
+.     merge m:1 hs6 using "$F_HS4", keep(master match) nogen
+ 29.     keep if keep_hs4 == 1
+ 30.     drop keep_hs4
+ 31.     count
+ 32.     di "  Righe dopo filtro prodHS4: " r(N)
+ 29.     keep if keep_hs4 == 1
+ 30.     drop keep_hs4
+ 31.     count
+ 32.     di "  Righe dopo filtro prodHS4: " r(N)
+ 33. 
+.     * --- Merge classificazioni ---
+.     merge m:1 hs6 using "$F_GREEN", keep(master match)
+ 33. 
+.     * --- Merge classificazioni ---
+.     merge m:1 hs6 using "$F_GREEN", keep(master match)
+ 34.     drop _merge
+ 35.     replace env_good_new = 0 if missing(env_good_new)
+ 34.     drop _merge
+ 35.     replace env_good_new = 0 if missing(env_good_new)
+ 36.     merge m:1 hs6 using "$F_DIRTY", keep(master match)
+ 37.     drop _merge
+ 38.     replace dirty_p = 0 if missing(dirty_p)
+ 36.     merge m:1 hs6 using "$F_DIRTY", keep(master match)
+ 37.     drop _merge
+ 38.     replace dirty_p = 0 if missing(dirty_p)
+ 39.     merge m:1 country_code year using "$F_DEPTH", keep(master match)
+ 40.     drop _merge
+ 41.     if $DROP_UNMEASURED {
+ 39.     merge m:1 country_code year using "$F_DEPTH", keep(master match)
+ 40.     drop _merge
+ 41.     if $DROP_UNMEASURED {
+ 42.         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+ 43.     }
+ 42.         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+ 43.     }
+ 44.     replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+ 45. 
+.     gen double wb_green = WB_EP_Depth    * env_good_new
+ 44.     replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+ 45. 
+.     gen double wb_green = WB_EP_Depth    * env_good_new
+ 46.     gen double wb_dirty = WB_EP_Depth    * dirty_p
+ 47.     gen double tr_green = TREND_EP_Count * env_good_new
+ 46.     gen double wb_dirty = WB_EP_Depth    * dirty_p
+ 47.     gen double tr_green = TREND_EP_Count * env_good_new
+ 48.     gen double tr_dirty = TREND_EP_Count * dirty_p
+ 49.     gen double td_green = $DEPTHVAR * env_good_new
+ 48.     gen double tr_dirty = TREND_EP_Count * dirty_p
+ 49.     gen double td_green = $DEPTHVAR * env_good_new
+ 50.     gen double td_dirty = $DEPTHVAR * dirty_p
+ 51.     drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
+ 52. 
+ 50.     gen double td_dirty = $DEPTHVAR * dirty_p
+ 51.     drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
+ 52. 
+.     count
+ 53.     local N_raw = r(N)
+ 54.     di "  Righe finali: `N_raw'"
+ 55. 
+.     count
+ 53.     local N_raw = r(N)
+ 54.     di "  Righe finali: `N_raw'"
+ 55. 
+.     * --- WB: reghdfe asintotico ---
+.     di as txt "  [WB] reghdfe fpd+fdt+pt..."
+.     * --- WB: reghdfe asintotico ---
+.     di as txt "  [WB] reghdfe fpd+fdt+pt..."
+ 56.     reghdfe ln_y wb_green wb_dirty td_green td_dirty, ///
+>         absorb(fpd fdt pt) vce(cluster country_code) compact
+ 57.     local nobs   = e(N)
+ 56.     reghdfe ln_y wb_green wb_dirty td_green td_dirty, ///
+>         absorb(fpd fdt pt) vce(cluster country_code) compact
+ 57.     local nobs   = e(N)
+ 58.     local nclust = e(N_clust)
+ 59.     local r2a    = e(r2_a)
+ 60. 
+.     local b_wg = _b[wb_green]
+ 58.     local nclust = e(N_clust)
+ 59.     local r2a    = e(r2_a)
+ 60. 
+.     local b_wg = _b[wb_green]
+ 61.     local b_wd = _b[wb_dirty]
+ 62.     local se_wg = _se[wb_green]
+ 63.     local se_wd = _se[wb_dirty]
+ 61.     local b_wd = _b[wb_dirty]
+ 62.     local se_wg = _se[wb_green]
+ 63.     local se_wd = _se[wb_dirty]
+ 64.     local p_wg = 2*ttail(`nclust'-1, abs(`b_wg'/`se_wg'))
+ 64.     local p_wg = 2*ttail(`nclust'-1, abs(`b_wg'/`se_wg'))
+ 65.     local p_wd = 2*ttail(`nclust'-1, abs(`b_wd'/`se_wd'))
+ 66. 
+.     * FWL demeaning
+.     di as txt "  [WB] demeaning per boottest..."
+ 65.     local p_wd = 2*ttail(`nclust'-1, abs(`b_wd'/`se_wd'))
+ 66. 
+.     * FWL demeaning
+.     di as txt "  [WB] demeaning per boottest..."
+ 67.     local dmvars ln_y wb_green wb_dirty td_green td_dirty
+ 68.     foreach v of local dmvars {
+ 69.         cap drop `v'_dm
+ 67.     local dmvars ln_y wb_green wb_dirty td_green td_dirty
+ 68.     foreach v of local dmvars {
+ 69.         cap drop `v'_dm
+ 70.         qui reghdfe `v', absorb(fpd fdt pt) residuals(`v'_dm) tol(1e-8)
+ 71.     }
+ 72. 
+ 70.         qui reghdfe `v', absorb(fpd fdt pt) residuals(`v'_dm) tol(1e-8)
+ 71.     }
+ 72. 
+.     qui reg ln_y_dm wb_green_dm wb_dirty_dm td_green_dm td_dirty_dm, cluster(
+> country_code) nocons
+ 73. 
+.     qui reg ln_y_dm wb_green_dm wb_dirty_dm td_green_dm td_dirty_dm, cluster(
+> country_code) nocons
+ 73. 
+.     di as txt "    boottest WB_green..."
+ 74.     set seed 42
+ 75.     boottest wb_green_dm, boottype(wild) reps(9999) noci
+.     di as txt "    boottest WB_green..."
+ 74.     set seed 42
+ 75.     boottest wb_green_dm, boottype(wild) reps(9999) noci
+ 76.     local pwcb_wg = r(p)
+ 77.     set seed 42
+ 78.     boottest wb_green_dm, boottype(wild) reps(9999)
+ 76.     local pwcb_wg = r(p)
+ 77.     set seed 42
+ 78.     boottest wb_green_dm, boottype(wild) reps(9999)
+ 79.     local ci_wg_lo = r(CI)[1,1]
+ 80.     local ci_wg_hi = r(CI)[1,2]
+ 81. 
+.     di as txt "    boottest WB_dirty..."
+ 79.     local ci_wg_lo = r(CI)[1,1]
+ 80.     local ci_wg_hi = r(CI)[1,2]
+ 81. 
+.     di as txt "    boottest WB_dirty..."
+ 82.     set seed 42
+ 83.     boottest wb_dirty_dm, boottype(wild) reps(9999) noci
+ 84.     local pwcb_wd = r(p)
+ 82.     set seed 42
+ 83.     boottest wb_dirty_dm, boottype(wild) reps(9999) noci
+ 84.     local pwcb_wd = r(p)
+ 85.     set seed 42
+ 86.     boottest wb_dirty_dm, boottype(wild) reps(9999)
+ 87.     local ci_wd_lo = r(CI)[1,1]
+ 85.     set seed 42
+ 86.     boottest wb_dirty_dm, boottype(wild) reps(9999)
+ 87.     local ci_wd_lo = r(CI)[1,1]
+ 88.     local ci_wd_hi = r(CI)[1,2]
+ 89. 
+ 88.     local ci_wd_hi = r(CI)[1,2]
+ 89. 
+.     write_row "WB_green" wb_green `b_wg' `se_wg' `p_wg' `pwcb_wg' `ci_wg_lo' 
+> `ci_wg_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+.     write_row "WB_green" wb_green `b_wg' `se_wg' `p_wg' `pwcb_wg' `ci_wg_lo' 
+> `ci_wg_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+ 90.     write_row "WB_dirty" wb_dirty `b_wd' `se_wd' `p_wd' `pwcb_wd' `ci_wd_l
+> o' `ci_wd_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+ 90.     write_row "WB_dirty" wb_dirty `b_wd' `se_wd' `p_wd' `pwcb_wd' `ci_wd_l
+> o' `ci_wd_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+ 91. 
+.     * --- TREND: reghdfe asintotico ---
+.     di as txt "  [TREND] reghdfe fpd+fdt+pt..."
+ 91. 
+.     * --- TREND: reghdfe asintotico ---
+.     di as txt "  [TREND] reghdfe fpd+fdt+pt..."
+ 92.     reghdfe ln_y tr_green tr_dirty td_green td_dirty, ///
+>         absorb(fpd fdt pt) vce(cluster country_code) compact
+ 93.     local nobs   = e(N)
+ 94.     local nclust = e(N_clust)
+ 95.     local r2a    = e(r2_a)
+ 96. 
+ 92.     reghdfe ln_y tr_green tr_dirty td_green td_dirty, ///
+>         absorb(fpd fdt pt) vce(cluster country_code) compact
+ 93.     local nobs   = e(N)
+ 94.     local nclust = e(N_clust)
+ 95.     local r2a    = e(r2_a)
+ 96. 
+.     local b_tg = _b[tr_green]
+ 97.     local b_td = _b[tr_dirty]
+ 98.     local se_tg = _se[tr_green]
+.     local b_tg = _b[tr_green]
+ 97.     local b_td = _b[tr_dirty]
+ 98.     local se_tg = _se[tr_green]
+ 99.     local se_td = _se[tr_dirty]
+100.     local p_tg = 2*ttail(`nclust'-1, abs(`b_tg'/`se_tg'))
+ 99.     local se_td = _se[tr_dirty]
+100.     local p_tg = 2*ttail(`nclust'-1, abs(`b_tg'/`se_tg'))
+101.     local p_td = 2*ttail(`nclust'-1, abs(`b_td'/`se_td'))
+102. 
+.     di as txt "  [TREND] demeaning per boottest..."
+101.     local p_td = 2*ttail(`nclust'-1, abs(`b_td'/`se_td'))
+102. 
+.     di as txt "  [TREND] demeaning per boottest..."
+103.     foreach v in ln_y tr_green tr_dirty td_green td_dirty {
+104.         cap drop `v'_dm
+103.     foreach v in ln_y tr_green tr_dirty td_green td_dirty {
+104.         cap drop `v'_dm
+105.         qui reghdfe `v', absorb(fpd fdt pt) residuals(`v'_dm) tol(1e-8)
+106.     }
+107. 
+105.         qui reghdfe `v', absorb(fpd fdt pt) residuals(`v'_dm) tol(1e-8)
+106.     }
+107. 
+.     qui reg ln_y_dm tr_green_dm tr_dirty_dm td_green_dm td_dirty_dm, cluster(
+> country_code) nocons
+108. 
+108. 
+.     di as txt "    boottest TREND_green..."
+109.     set seed 42
+110.     boottest tr_green_dm, boottype(wild) reps(9999) noci
+.     di as txt "    boottest TREND_green..."
+109.     set seed 42
+110.     boottest tr_green_dm, boottype(wild) reps(9999) noci
+111.     local pwcb_tg = r(p)
+112.     set seed 42
+113.     boottest tr_green_dm, boottype(wild) reps(9999)
+111.     local pwcb_tg = r(p)
+112.     set seed 42
+113.     boottest tr_green_dm, boottype(wild) reps(9999)
+114.     local ci_tg_lo = r(CI)[1,1]
+115.     local ci_tg_hi = r(CI)[1,2]
+116. 
+.     di as txt "    boottest TREND_dirty..."
+114.     local ci_tg_lo = r(CI)[1,1]
+115.     local ci_tg_hi = r(CI)[1,2]
+116. 
+.     di as txt "    boottest TREND_dirty..."
+117.     set seed 42
+118.     boottest tr_dirty_dm, boottype(wild) reps(9999) noci
+119.     local pwcb_td = r(p)
+117.     set seed 42
+118.     boottest tr_dirty_dm, boottype(wild) reps(9999) noci
+119.     local pwcb_td = r(p)
+120.     set seed 42
+121.     boottest tr_dirty_dm, boottype(wild) reps(9999)
+122.     local ci_td_lo = r(CI)[1,1]
+120.     set seed 42
+121.     boottest tr_dirty_dm, boottype(wild) reps(9999)
+122.     local ci_td_lo = r(CI)[1,1]
+123.     local ci_td_hi = r(CI)[1,2]
+124. 
+123.     local ci_td_hi = r(CI)[1,2]
+124. 
+.     write_row "TREND_green" tr_green `b_tg' `se_tg' `p_tg' `pwcb_tg' `ci_tg_l
+> o' `ci_tg_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+.     write_row "TREND_green" tr_green `b_tg' `se_tg' `p_tg' `pwcb_tg' `ci_tg_l
+> o' `ci_tg_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+125.     write_row "TREND_dirty" tr_dirty `b_td' `se_td' `p_td' `pwcb_td' `ci_t
+> d_lo' `ci_td_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+126. 
+.     timer off 1
+127.     qui timer list 1
+125.     write_row "TREND_dirty" tr_dirty `b_td' `se_td' `p_td' `pwcb_td' `ci_t
+> d_lo' `ci_td_hi' `nobs' `nclust' 9999 `outcome_label' `r2a'
+126. 
+.     timer off 1
+127.     qui timer list 1
+128.     di as result "  -> `outcome_label' completato in " r(t1)/60 " minuti"
+129. end
+128.     di as result "  -> `outcome_label' completato in " r(t1)/60 " minuti"
+129. end
+
+. 
+. ************************************************************
+. * Esecuzione
+
+. 
+. ************************************************************
+. * Esecuzione
+. ************************************************************
+. ************************************************************
+. di as result _n "*** 48i — C-prod-HS4: export value ***"
+
+*** 48i — C-prod-HS4: export value ***
+
+. di as result "*** Depth: $PTA_DEPTH | Sample: $PTA_SAMPLE ***"
+*** Depth: totaldepth | Sample: excl ***
+
+. 
+. di as result _n "*** 48i — C-prod-HS4: export value ***"
+. cprodhs4_one_outcome ln_export  ln_export
+
+. di as result "*** Depth: $PTA_DEPTH | Sample: $PTA_SAMPLE ***"
+
+============================================================
+
+  C-prod-HS4: ln_export (totaldepth)
+. 
+============================================================
+. cprodhs4_one_outcome ln_export  ln_export
+
+============================================================
+  C-prod-HS4: ln_export (desta)
+============================================================
+(31 missing values generated)
+(31 observations deleted)
+(3,464,092 observations deleted)
+(31 missing values generated)
+(31 observations deleted)
+(3,464,092 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,265,663
+        from master                36,265,663  
+        from using                          0  
+
+    Matched                         9,515,518  
+    -----------------------------------------
+(36,265,663 observations deleted)
+  9,515,518
+  Righe dopo filtro prodHS4: 9515518
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     4,233,690
+        from master                 4,233,690  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,281,828  (_merge==3)
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,265,663
+        from master                36,265,663  
+        from using                          0  
+
+    Matched                         9,515,518  
+    -----------------------------------------
+(4,233,690 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     9,393,235
+        from master                 9,393,235  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                           122,283  (_merge==3)
+    -----------------------------------------
+(9,393,235 real changes made)
+(36,265,663 observations deleted)
+  9,515,518
+  Righe dopo filtro prodHS4: 9515518
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     4,233,690
+        from master                 4,233,690  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,281,828  (_merge==3)
+    -----------------------------------------
+(4,233,690 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     9,393,235
+        from master                 9,393,235  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                           122,283  (_merge==3)
+    -----------------------------------------
+(9,393,235 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     7,369,832
+        from master                 7,369,832  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         2,145,686  (_merge==3)
+    -----------------------------------------
+(7,369,832 real changes made)
+  9,515,518
+  Righe finali: 9515518
+  [WB] reghdfe fpd+fdt+pt...
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     7,363,500
+        from master                 7,363,500  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         2,152,018  (_merge==3)
+    -----------------------------------------
+(2,229 observations deleted)
+(7,361,271 real changes made)
+  9,513,289
+  Righe finali: 9513289
+  [WB] reghdfe fpd+fdt+pt...
+(dropped 5742663 singleton observations)
+(dropped 5740968 singleton observations)
+(MWFE estimator converged in 53 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,772,321
+Absorbing 3 HDFE groups                           F(   4,    213) =       0.16
+Statistics robust to heteroskedasticity           Prob > F        =     0.9604
+                                                  R-squared       =     0.8893
+                                                  Adj R-squared   =     0.7372
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        214    Root MSE        =     1.4122
+
+(MWFE estimator converged in 53 iterations)
+                         (Std. err. adjusted for 214 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0008603   .0051136    -0.17   0.867      -.01094    .0092195
+    wb_dirty |   .0032751   .0167974     0.19   0.846    -.0298353    .0363855
+    td_green |   .0029908    .009568     0.31   0.755    -.0158694    .0218509
+    td_dirty |   .0056045   .0336131     0.17   0.868    -.0606525    .0718615
+       _cons |   9.517328   .0021187  4491.99   0.000     9.513152    9.521505
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   1075628     1075628           0    *|
+         fdt |   1099606     1099606           0    *|
+          pt |      8478           1        8477     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [WB] demeaning per boottest...
+
+HDFE Linear regression                            Number of obs   =  3,772,855
+Absorbing 3 HDFE groups                           F(   4,    214) =       0.31
+Statistics robust to heteroskedasticity           Prob > F        =     0.8734
+                                                  R-squared       =     0.8893
+                                                  Adj R-squared   =     0.7372
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        215    Root MSE        =     1.4122
+
+                         (Std. err. adjusted for 215 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0009035   .0050521    -0.18   0.858    -.0108619    .0090548
+    wb_dirty |   .0065524   .0090407     0.72   0.469    -.0112679    .0243726
+    td_green |   .0000555   .0001287     0.43   0.667    -.0001982    .0003091
+    td_dirty |   -.000043   .0005021    -0.09   0.932    -.0010327    .0009468
+       _cons |   9.517263   .0017951  5301.79   0.000     9.513725    9.520801
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   1075831     1075831           0    *|
+         fdt |   1099690     1099690           0    *|
+          pt |      8478           1        8477     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [WB] demeaning per boottest...
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(213) =    -0.1684
+                        Prob>|t| =     0.8551
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(213) =    -0.1684
+                        Prob>|t| =     0.8551
+
+95% confidence set for null hypothesis expression: [−.04257, .042]
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(213) =     0.1952
+                        Prob>|t| =     0.8503
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(213) =     0.1952
+                        Prob>|t| =     0.8503
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(214) =    -0.1790
+                        Prob>|t| =     0.8600
+
+95% confidence set for null hypothesis expression: [−.1543, .07656]
+  [TREND] reghdfe fpd+fdt+pt...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(214) =    -0.1790
+                        Prob>|t| =     0.8600
+
+95% confidence set for null hypothesis expression: [−.05799, .03495]
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(214) =     0.7256
+                        Prob>|t| =     0.4350
+(dropped 5740968 singleton observations)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(214) =     0.7256
+                        Prob>|t| =     0.4350
+
+95% confidence set for null hypothesis expression: [−.09094, .01739]
+  [TREND] reghdfe fpd+fdt+pt...
+(dropped 5742663 singleton observations)
+(MWFE estimator converged in 53 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,772,321
+Absorbing 3 HDFE groups                           F(   4,    213) =       0.40
+Statistics robust to heteroskedasticity           Prob > F        =     0.8115
+                                                  R-squared       =     0.8893
+                                                  Adj R-squared   =     0.7372
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        214    Root MSE        =     1.4122
+
+                         (Std. err. adjusted for 214 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0003551    .001264     0.28   0.779    -.0021365    .0028467
+    tr_dirty |     .00145   .0040266     0.36   0.719    -.0064871    .0093871
+    td_green |  -.0013247    .012603    -0.11   0.916    -.0261672    .0235178
+    td_dirty |  -.0000264   .0485341    -0.00   1.000    -.0956951    .0956422
+       _cons |   9.517907   .0029629  3212.32   0.000     9.512066    9.523747
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   1075628     1075628           0    *|
+         fdt |   1099606     1099606           0    *|
+          pt |      8478           1        8477     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+(MWFE estimator converged in 53 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,772,855
+Absorbing 3 HDFE groups                           F(   4,    214) =       0.46
+Statistics robust to heteroskedasticity           Prob > F        =     0.7651
+                                                  R-squared       =     0.8893
+                                                  Adj R-squared   =     0.7372
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        215    Root MSE        =     1.4122
+
+                         (Std. err. adjusted for 215 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0004729   .0011461     0.41   0.680    -.0017861    .0027319
+    tr_dirty |   .0024155   .0065721     0.37   0.714    -.0105388    .0153697
+    td_green |  -.0000476   .0001837    -0.26   0.796    -.0004098    .0003145
+    td_dirty |  -.0001838   .0013611    -0.14   0.893    -.0028668    .0024991
+       _cons |   9.518116   .0023509  4048.68   0.000     9.513482     9.52275
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   1075831     1075831           0    *|
+         fdt |   1099690     1099690           0    *|
+          pt |      8478           1        8477     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+    boottest TREND_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(213) =     0.2812
+                        Prob>|t| =     0.8167
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(213) =     0.2812
+                        Prob>|t| =     0.8167
+
+95% confidence set for null hypothesis expression: [−.005677, .004067]
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(213) =     0.3605
+                        Prob>|t| =     0.7354
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(213) =     0.3605
+                        Prob>|t| =     0.7354
+
+95% confidence set for null hypothesis expression: [−.02221, .01719]
+  -> ln_export completato in 14.321183 minuti
+
+. 
+. di as result _n "=== FATTO. Output: $CSV_OUT ==="
+
+=== FATTO. Output: C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stat
+> a/cprodhs4_val_desta.csv ===
+
+. cap log close _all
+
+. 
+end of do-file
+    boottest TREND_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(214) =     0.4131
+                        Prob>|t| =     0.7296
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(214) =     0.4131
+                        Prob>|t| =     0.7296
+
+95% confidence set for null hypothesis expression: [−.003734, .002997]
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(214) =     0.3680
+                        Prob>|t| =     0.7343
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(214) =     0.3680
+                        Prob>|t| =     0.7343
+
+95% confidence set for null hypothesis expression: [−.02157, .02846]
+  -> ln_export completato in 14.985183 minuti
+
+. 
+. di as result _n "=== FATTO. Output: $CSV_OUT ==="
+
+=== FATTO. Output: C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stat
+> a/cprodhs4_val.csv ===
+
+. cap log close _all
+
+. 
+end of do-file

@@ -1,0 +1,578 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/48f_w
+> cb_fullpanel_alldepvars.log
+  log type:  text
+ opened on:   5 Sep 2026, 16:44:17
+
+. 
+. global CSV_OUT "$ROOT/New/Output/OLS/Bootstrap/wcb_fullpanel_alldepvars$OUTSF
+> X.csv"
+
+. 
+. * Intestazione CSV
+. capture erase "$CSV_OUT"
+
+. file open fh using "$CSV_OUT", write replace text
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Bootstrap/wcb_fullpanel_alldepv
+    > ars.csv not found)
+
+. file write fh "spec,coef,p_wcb,ci_low,ci_high,nobs,nclust,breps,outcome" _n
+
+. file close fh
+
+. 
+. capture program drop write_wcb_row
+
+. program define write_wcb_row
+  1.     args spec coef p_wcb ci_low ci_high nobs nclust breps outcome
+  2.     file open fh using "$CSV_OUT", write append text
+  3.     file write fh "`spec',`coef',`p_wcb',`ci_low',`ci_high',`nobs',`nclust
+> ',`breps',`outcome'" _n
+  4.     file close fh
+  5. end
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which boottest
+
+. if _rc ssc install boottest
+
+. 
+. * --- Auxiliary lists (tempfile) --------------------------------------------
+> --
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_3e98_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+
+. rename dirty dirty_p
+
+. tempfile dirty
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_3e98_000002.tmp saved as .dta
+    format
+
+. 
+. import delimited "$DEPTHFILE", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 249 obs)
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_3e98_000003.tmp saved as .dta
+    format
+
+. 
+. ************************************************************
+. * Programma: stima WCB per una outcome (Frisch-Waugh)
+. ************************************************************
+. capture program drop wcb_one_outcome
+
+. program define wcb_one_outcome
+  1.     args outcome_var raw_var outcome_label
+  2. 
+.     di as result _n "========================================================
+> ===="
+  3.     di as result "  WCB per `outcome_label' ($PTA_DEPTH)"
+  4.     di as result "========================================================
+> ===="
+  5. 
+.     timer clear 1
+  6.     timer on 1
+  7. 
+.     * --- Carica dati ---
+.     if "`raw_var'" == "exp_qua" {
+  8.         use exp_qua WB_EP_Depth TREND_EP_Count hs6 country_code year fpd f
+> dt pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+  9.         gen double `outcome_var' = ln(exp_qua)
+ 10.         drop exp_qua
+ 11.         drop if missing(`outcome_var')
+ 12.     }
+ 13.     else if "`raw_var'" == "uv_exp" {
+ 14.         use uv_exp WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fd
+> t pt ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 15.         gen double `outcome_var' = ln(uv_exp)
+ 16.         drop uv_exp
+ 17.         drop if missing(`outcome_var')
+ 18.     }
+ 19. 
+.     gen byte hkmo = inlist(country_code, 110, 121)
+ 20.     keep if $HKMOEXPR
+ 21.     drop hkmo
+ 22. 
+.     merge m:1 hs6 using "$F_GREEN", keep(master match)
+ 23.     drop _merge
+ 24.     replace env_good_new = 0 if missing(env_good_new)
+ 25.     merge m:1 hs6 using "$F_DIRTY", keep(master match)
+ 26.     drop _merge
+ 27.     replace dirty_p = 0 if missing(dirty_p)
+ 28.     merge m:1 country_code year using "$F_DEPTH", keep(master match)
+ 29.     drop _merge
+ 30.     if $DROP_UNMEASURED {
+ 31.         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+ 32.     }
+ 33.     replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+ 34. 
+.     gen double wb_green = WB_EP_Depth    * env_good_new
+ 35.     gen double wb_dirty = WB_EP_Depth    * dirty_p
+ 36.     gen double tr_green = TREND_EP_Count * env_good_new
+ 37.     gen double tr_dirty = TREND_EP_Count * dirty_p
+ 38.     gen double td_green = $DEPTHVAR * env_good_new
+ 39.     gen double td_dirty = $DEPTHVAR * dirty_p
+ 40.     drop WB_EP_Depth TREND_EP_Count env_good_new dirty_p $DEPTHVAR hs6
+ 41. 
+.     count
+ 42.     local N_raw = r(N)
+ 43.     di "  Righe caricate: `N_raw'"
+ 44. 
+.     * --- FASE 1: demeaning ---
+.     di as txt "  [demeaning] `outcome_var'..."
+ 45.     local dmvars `outcome_var' wb_green wb_dirty tr_green tr_dirty td_gree
+> n td_dirty
+ 46.     foreach v of local dmvars {
+ 47.         qui reghdfe `v', absorb(fpd fdt pt) residuals(`v'_dm) tol(1e-8)
+ 48.     }
+ 49.     keep *_dm country_code
+ 50.     local nobs = _N
+ 51.     qui levelsof country_code, local(cclist)
+ 52.     local nclust : word count `cclist'
+ 53. 
+.     * --- FASE 2: WB reg + boottest ---
+.     di as txt "  [WB] OLS + boottest..."
+ 54.     reg `outcome_var'_dm wb_green_dm wb_dirty_dm td_green_dm td_dirty_dm, 
+> cluster(country_code) nocons
+ 55.     local nobs   = e(N)
+ 56.     local nclust = e(N_clust)
+ 57. 
+.     local coef_wb_green = _b[wb_green_dm]
+ 58.     local coef_wb_dirty = _b[wb_dirty_dm]
+ 59. 
+.     di as txt "    boottest WB_green..."
+ 60.     boottest wb_green_dm, boottype(wild) reps(9999) seed(42) noci
+ 61.     local p_wb_green = r(p)
+ 62.     di as txt "    p_boot WB_green = `p_wb_green'"
+ 63. 
+.     di as txt "    boottest WB_dirty..."
+ 64.     boottest wb_dirty_dm, boottype(wild) reps(9999) seed(42) noci
+ 65.     local p_wb_dirty = r(p)
+ 66.     di as txt "    p_boot WB_dirty = `p_wb_dirty'"
+ 67. 
+.     boottest wb_green_dm, boottype(wild) reps(9999) seed(42)
+ 68.     local ci_low_wg  = r(CI)[1,1]
+ 69.     local ci_high_wg = r(CI)[1,2]
+ 70.     boottest wb_dirty_dm, boottype(wild) reps(9999) seed(42)
+ 71.     local ci_low_wd  = r(CI)[1,1]
+ 72.     local ci_high_wd = r(CI)[1,2]
+ 73. 
+.     write_wcb_row "WB_green" `coef_wb_green' `p_wb_green' `ci_low_wg' `ci_hig
+> h_wg' `nobs' `nclust' 9999 `outcome_label'
+ 74.     write_wcb_row "WB_dirty" `coef_wb_dirty' `p_wb_dirty' `ci_low_wd' `ci_
+> high_wd' `nobs' `nclust' 9999 `outcome_label'
+ 75. 
+.     * --- FASE 3: TREND reg + boottest ---
+.     di as txt "  [TREND] OLS + boottest..."
+ 76.     reg `outcome_var'_dm tr_green_dm tr_dirty_dm td_green_dm td_dirty_dm, 
+> cluster(country_code) nocons
+ 77.     local nobs   = e(N)
+ 78.     local nclust = e(N_clust)
+ 79. 
+.     local coef_tr_green = _b[tr_green_dm]
+ 80.     local coef_tr_dirty = _b[tr_dirty_dm]
+ 81. 
+.     di as txt "    boottest TREND_green..."
+ 82.     boottest tr_green_dm, boottype(wild) reps(9999) seed(42) noci
+ 83.     local p_tr_green = r(p)
+ 84.     di as txt "    p_boot TREND_green = `p_tr_green'"
+ 85. 
+.     di as txt "    boottest TREND_dirty..."
+ 86.     boottest tr_dirty_dm, boottype(wild) reps(9999) seed(42) noci
+ 87.     local p_tr_dirty = r(p)
+ 88.     di as txt "    p_boot TREND_dirty = `p_tr_dirty'"
+ 89. 
+.     boottest tr_green_dm, boottype(wild) reps(9999) seed(42)
+ 90.     local ci_low_tg  = r(CI)[1,1]
+ 91.     local ci_high_tg = r(CI)[1,2]
+ 92.     boottest tr_dirty_dm, boottype(wild) reps(9999) seed(42)
+ 93.     local ci_low_td  = r(CI)[1,1]
+ 94.     local ci_high_td = r(CI)[1,2]
+ 95. 
+.     write_wcb_row "TREND_green" `coef_tr_green' `p_tr_green' `ci_low_tg' `ci_
+> high_tg' `nobs' `nclust' 9999 `outcome_label'
+ 96.     write_wcb_row "TREND_dirty" `coef_tr_dirty' `p_tr_dirty' `ci_low_td' `
+> ci_high_td' `nobs' `nclust' 9999 `outcome_label'
+ 97. 
+.     timer off 1
+ 98.     qui timer list 1
+ 99.     di as result "  -> `outcome_label' completato in " r(t1)/60 " minuti"
+100. end
+
+. 
+. * Serve global per i tempfile nei merge dentro il program
+. global F_GREEN "`green'"
+
+. global F_DIRTY "`dirty'"
+
+. global F_DEPTH "`depth'"
+
+. 
+. ************************************************************
+. * Esecuzione
+. ************************************************************
+. di as result _n "*** 48f — WCB full panel: quantity + unit value ***"
+
+*** 48f — WCB full panel: quantity + unit value ***
+
+. di as result "*** Depth: $PTA_DEPTH | Sample: $PTA_SAMPLE ***"
+*** Depth: totaldepth | Sample: excl ***
+
+. 
+. wcb_one_outcome ln_export_qua   exp_qua  ln_export_qua
+
+============================================================
+  WCB per ln_export_qua (totaldepth)
+============================================================
+(337,268 missing values generated)
+(337,268 observations deleted)
+(3,437,983 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,214,159
+        from master                40,214,159  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,255,894  (_merge==3)
+    -----------------------------------------
+(40,214,159 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    41,889,144
+        from master                41,889,144  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,580,909  (_merge==3)
+    -----------------------------------------
+(41,889,144 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,262,510
+        from master                36,262,510  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         9,207,543  (_merge==3)
+    -----------------------------------------
+(36,262,510 real changes made)
+  45,470,053
+  Righe caricate: 45470053
+  [demeaning] ln_export_qua...
+  [WB] OLS + boottest...
+
+Linear regression                               Number of obs     =   21313047
+                                                F(4, 224)         =       1.91
+                                                Prob > F          =     0.1101
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .94268
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~m | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ wb_green_dm |  -.0013067   .0040964    -0.32   0.750     -.009379    .0067657
+ wb_dirty_dm |  -.0047814   .0028731    -1.66   0.097     -.010443    .0008803
+ td_green_dm |  -.0000495    .000118    -0.42   0.676    -.0002821    .0001832
+ td_dirty_dm |   .0001864   .0001211     1.54   0.125    -.0000521     .000425
+------------------------------------------------------------------------------
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(224) =    -0.3190
+                        Prob>|t| =     0.8515
+    p_boot WB_green = .8514851485148515
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(224) =    -1.6642
+                        Prob>|t| =     0.3906
+    p_boot WB_dirty = .3906390639063906
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(224) =    -0.3190
+                        Prob>|t| =     0.8515
+
+95% confidence set for null hypothesis expression: [−.05708, .03907]
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(224) =    -1.6642
+                        Prob>|t| =     0.3906
+
+95% confidence set for null hypothesis expression: [−.07483, .01818]
+(file
+    C:\Work\projects\Paper_PTA/New/Output/OLS/Bootstrap/wcb_fullpanel_alldepv
+    > ars.csv not found)
+  [TREND] OLS + boottest...
+
+Linear regression                               Number of obs     =   21313047
+                                                F(4, 224)         =       0.58
+                                                Prob > F          =     0.6764
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .94268
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~m | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ tr_green_dm |  -.0000347   .0010514    -0.03   0.974    -.0021067    .0020372
+ tr_dirty_dm |   -.000617   .0007473    -0.83   0.410    -.0020896    .0008556
+ td_green_dm |    -.00009   .0001741    -0.52   0.606    -.0004331    .0002531
+ td_dirty_dm |   .0001084   .0001579     0.69   0.493    -.0002027    .0004195
+------------------------------------------------------------------------------
+    boottest TREND_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(224) =    -0.0330
+                        Prob>|t| =     0.9779
+    p_boot TREND_green = .9778977897789779
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(224) =    -0.8256
+                        Prob>|t| =     0.4425
+    p_boot TREND_dirty = .4425442544254425
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(224) =    -0.0330
+                        Prob>|t| =     0.9779
+
+95% confidence set for null hypothesis expression: [−.003899, .00267]
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(224) =    -0.8256
+                        Prob>|t| =     0.4425
+
+95% confidence set for null hypothesis expression: [−.003089, .00158]
+  -> ln_export_qua completato in 40.428967 minuti
+
+. wcb_one_outcome ln_export_value uv_exp   ln_export_value
+
+============================================================
+  WCB per ln_export_value (totaldepth)
+============================================================
+(337,281 missing values generated)
+(337,281 observations deleted)
+(3,437,983 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    40,214,146
+        from master                40,214,146  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,255,894  (_merge==3)
+    -----------------------------------------
+(40,214,146 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    41,889,136
+        from master                41,889,136  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,580,904  (_merge==3)
+    -----------------------------------------
+(41,889,136 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,262,502
+        from master                36,262,502  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         9,207,538  (_merge==3)
+    -----------------------------------------
+(36,262,502 real changes made)
+  45,470,040
+  Righe caricate: 45470040
+  [demeaning] ln_export_value...
+  [WB] OLS + boottest...
+
+Linear regression                               Number of obs     =   21313037
+                                                F(4, 224)         =       1.91
+                                                Prob > F          =     0.1094
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .42491
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~m | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ wb_green_dm |  -.0004058   .0012609    -0.32   0.748    -.0028906     .002079
+ wb_dirty_dm |   .0001232   .0010129     0.12   0.903    -.0018729    .0021193
+ td_green_dm |   .0000841   .0000672     1.25   0.212    -.0000484    .0002165
+ td_dirty_dm |   1.04e-06   .0000375     0.03   0.978    -.0000729     .000075
+------------------------------------------------------------------------------
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(224) =    -0.3219
+                        Prob>|t| =     0.7396
+    p_boot WB_green = .7395739573957396
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(224) =     0.1216
+                        Prob>|t| =     0.9375
+    p_boot WB_dirty = .9374937493749375
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(224) =    -0.3219
+                        Prob>|t| =     0.7396
+
+95% confidence set for null hypothesis expression: [−.01884, .01467]
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(224) =     0.1216
+                        Prob>|t| =     0.9375
+
+95% confidence set for null hypothesis expression: [−.01344, .01291]
+  [TREND] OLS + boottest...
+
+Linear regression                               Number of obs     =   21313037
+                                                F(4, 224)         =       2.45
+                                                Prob > F          =     0.0472
+                                                R-squared         =     0.0000
+                                                Root MSE          =     .42491
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+ln_export_~m | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ tr_green_dm |  -.0000565   .0003128    -0.18   0.857    -.0006728    .0005599
+ tr_dirty_dm |  -.0001397   .0003592    -0.39   0.698    -.0008476    .0005681
+ td_green_dm |   .0000785   .0000712     1.10   0.271    -.0000618    .0002187
+ td_dirty_dm |    .000027   .0000684     0.39   0.694    -.0001079    .0001618
+------------------------------------------------------------------------------
+    boottest TREND_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(224) =    -0.1806
+                        Prob>|t| =     0.8596
+    p_boot TREND_green = .8595859585958596
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(224) =    -0.3890
+                        Prob>|t| =     0.7340
+    p_boot TREND_dirty = .733973397339734
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(224) =    -0.1806
+                        Prob>|t| =     0.8596
+
+95% confidence set for null hypothesis expression: [−.0008611, .0007098]
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(224) =    -0.3890
+                        Prob>|t| =     0.7340
+
+95% confidence set for null hypothesis expression: [−.001064, .00118]
+  -> ln_export_value completato in 55.022017 minuti
+
+. 
+. di as result _n "=== FATTO. Output: $CSV_OUT ==="
+
+=== FATTO. Output: C:\Work\projects\Paper_PTA/New/Output/OLS/Bootstrap/wcb_full
+> panel_alldepvars.csv ===
+
+. cap log close _all

@@ -1,0 +1,26 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/17b_w
+> cb_fullpanel_desta.log
+  log type:  text
+ opened on:   5 Sep 2026, 21:24:43
+
+. 
+. * --- Cache: salta tutto se il CSV finale esiste gia' -----------------------
+> -
+. cap mkdir "$ROOT/New/Output/OLS$OUTSFX"
+
+. cap mkdir "$ROOT/New/Output/OLS$OUTSFX/Bootstrap"
+
+. global OUTCSV "$ROOT/New/Output/OLS$OUTSFX/Bootstrap/wcb_fullpanel$OUTSFX.csv
+> "
+
+. cap confirm file "$OUTCSV"
+
+. if !_rc {
+.     di "[cache] $OUTCSV gia' presente - niente da fare."
+[cache] C:\Work\projects\Paper_PTA/New/Output/OLS_desta/Bootstrap/wcb_fullpanel
+> _desta.csv gia' presente - niente da fare.
+.     exit 0
+
+end of do-file

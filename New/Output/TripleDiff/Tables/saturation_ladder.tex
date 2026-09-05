@@ -1,0 +1,89 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Saturation ladder: progressive fixed-effects absorption}
+\label{tab:saturation_ladder}
+\begin{threeparttable}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{Baseline} & \multicolumn{4}{c}{Interaction ($g_p$, $b_p$)} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) \\
+ & $\theta_{fpd}$, Year & $\theta_{fpt}$, $\theta_{pd}$ & $\theta_{fpt}$, $\theta_{fpd}$ & $\theta_{fpd}$, $\theta_{fdt}$, $\theta_{pt}$ & $\theta_{fpd}$, Year & $\theta_{fpt}$, $\theta_{pd}$ & $\theta_{fpt}$, $\theta_{fpd}$ & $\theta_{fpd}$, $\theta_{fdt}$, $\theta_{pt}$ \\
+\midrule
+\multicolumn{9}{l}{\textit{Panel A --- WB EP depth ($EP^{WB}_{dt}$)}} \\[3pt]
+\multicolumn{9}{l}{\quad $\ln x^{val}_{fpdt}$} \\
+\quad $EP^{WB}_{dt}$ & 0.0031 & 0.0046* & 0.0001 & 0.0009 &  &  &  &  \\
+ & (0.0025) & (0.0027) & (0.0033) & (0.0022) &  &  &  &  \\
+\quad $EP^{WB}_{dt} \times g_p$ &  &  &  &  & 0.0018 & 0.0012 & 0.0060 & 0.0050 \\
+ &  &  &  &  & (0.0050) & (0.0027) & (0.0050) & (0.0037) \\
+\quad $EP^{WB}_{dt} \times b_p$ &  &  &  &  & -0.0037 & -0.0015 & 0.0058* & 0.0064** \\
+ &  &  &  &  & (0.0150) & (0.0027) & (0.0031) & (0.0027) \\[3pt]
+\multicolumn{9}{l}{\quad $\ln x^{qua}_{fpdt}$} \\
+\quad $EP^{WB}_{dt}$ & 0.0042 & 0.0033 & -0.0003 & 0.0012 &  &  &  &  \\
+ & (0.0028) & (0.0028) & (0.0034) & (0.0023) &  &  &  &  \\
+\quad $EP^{WB}_{dt} \times g_p$ &  &  &  &  & 0.0023 & 0.0032 & 0.0061 & 0.0053 \\
+ &  &  &  &  & (0.0037) & (0.0026) & (0.0060) & (0.0038) \\
+\quad $EP^{WB}_{dt} \times b_p$ &  &  &  &  & -0.0025 & -0.0006 & 0.0048 & 0.0058** \\
+ &  &  &  &  & (0.0131) & (0.0028) & (0.0031) & (0.0025) \\[3pt]
+\multicolumn{9}{l}{\quad $\ln x^{uv}_{fpdt}$} \\
+\quad $EP^{WB}_{dt}$ & -0.0010* & 0.0014*** & 0.0005*** & -0.0002 &  &  &  &  \\
+ & (0.0005) & (0.0003) & (0.0002) & (0.0003) &  &  &  &  \\
+\quad $EP^{WB}_{dt} \times g_p$ &  &  &  &  & 0.0001 & -0.0019 & 0.0002 & 0.0003 \\
+ &  &  &  &  & (0.0016) & (0.0017) & (0.0016) & (0.0008) \\
+\quad $EP^{WB}_{dt} \times b_p$ &  &  &  &  & -0.0012 & -0.0014** & 0.0005 & 0.0008 \\
+ &  &  &  &  & (0.0026) & (0.0006) & (0.0006) & (0.0006) \\[3pt]
+\midrule
+\quad $\theta_{fpd}$ & \checkmark &  & \checkmark & \checkmark & \checkmark &  & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ &  &  &  & \checkmark &  &  &  & \checkmark \\
+\quad $\theta_{pt}$ &  &  &  & \checkmark &  &  &  & \checkmark \\
+\quad $\theta_{fpt}$ &  & \checkmark & \checkmark &  &  & \checkmark & \checkmark &  \\
+\quad $\theta_{pd}$ &  & \checkmark &  &  &  & \checkmark &  &  \\
+\quad Year & \checkmark &  &  &  & \checkmark &  &  &  \\
+\midrule
+Clusters ($d$) & 231 & 232 & 231 & 231 & 231 & 232 & 231 & 231 \\
+Obs.\ $\ln x^{val}_{fpdt}$ & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 \\
+Obs.\ $\ln x^{qua}_{fpdt}$ & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 \\
+Obs.\ $\ln x^{uv}_{fpdt}$ & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 \\
+Adj.\ $R^2$ $\ln x^{val}_{fpdt}$ & 0.795 & 0.621 & 0.859 & 0.798 & 0.795 & 0.621 & 0.859 & 0.798 \\
+Adj.\ $R^2$ $\ln x^{qua}_{fpdt}$ & 0.871 & 0.749 & 0.911 & 0.873 & 0.871 & 0.749 & 0.911 & 0.873 \\
+Adj.\ $R^2$ $\ln x^{uv}_{fpdt}$ & 0.956 & 0.932 & 0.973 & 0.957 & 0.956 & 0.932 & 0.973 & 0.957 \\
+\midrule
+\multicolumn{9}{l}{\textit{Panel B --- TREND EP count ($EP^{TR}_{dt}$)}} \\[3pt]
+\multicolumn{9}{l}{\quad $\ln x^{val}_{fpdt}$} \\
+\quad $EP^{TR}_{dt}$ & 0.0004 & 0.0010** & 0.0002 & 0.0003 &  &  &  &  \\
+ & (0.0005) & (0.0005) & (0.0006) & (0.0004) &  &  &  &  \\
+\quad $EP^{TR}_{dt} \times g_p$ &  &  &  &  & -0.0013 & 0.0010 & 0.0021** & 0.0018** \\
+ &  &  &  &  & (0.0010) & (0.0009) & (0.0009) & (0.0008) \\
+\quad $EP^{TR}_{dt} \times b_p$ &  &  &  &  & -0.0049*** & 0.000029 & 0.0002 & 0.0009 \\
+ &  &  &  &  & (0.0015) & (0.0007) & (0.0011) & (0.0008) \\[3pt]
+\multicolumn{9}{l}{\quad $\ln x^{qua}_{fpdt}$} \\
+\quad $EP^{TR}_{dt}$ & 0.0005 & 0.0006 & 0.000047 & 0.0003 &  &  &  &  \\
+ & (0.0005) & (0.0005) & (0.0006) & (0.0005) &  &  &  &  \\
+\quad $EP^{TR}_{dt} \times g_p$ &  &  &  &  & -0.0007 & 0.0013 & 0.0025** & 0.0017** \\
+ &  &  &  &  & (0.0009) & (0.0009) & (0.0010) & (0.0008) \\
+\quad $EP^{TR}_{dt} \times b_p$ &  &  &  &  & -0.0034*** & 0.0002 & 0.0002 & 0.0008 \\
+ &  &  &  &  & (0.0012) & (0.0007) & (0.0011) & (0.0007) \\[3pt]
+\multicolumn{9}{l}{\quad $\ln x^{uv}_{fpdt}$} \\
+\quad $EP^{TR}_{dt}$ & -0.0001 & 0.0004*** & 0.0001*** & 0.000022 &  &  &  &  \\
+ & (0.0001) & (0.0001) & (0.000047) & (0.000048) &  &  &  &  \\
+\quad $EP^{TR}_{dt} \times g_p$ &  &  &  &  & -0.0004 & -0.0003 & -0.0002 & 0.0002 \\
+ &  &  &  &  & (0.0003) & (0.0003) & (0.0003) & (0.0002) \\
+\quad $EP^{TR}_{dt} \times b_p$ &  &  &  &  & -0.0015*** & -0.0003* & -0.000005 & 0.0002 \\
+ &  &  &  &  & (0.0003) & (0.0001) & (0.0001) & (0.0001) \\[3pt]
+\midrule
+Clusters ($d$) & 231 & 232 & 231 & 231 & 231 & 232 & 231 & 231 \\
+Obs.\ $\ln x^{val}_{fpdt}$ & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 \\
+Obs.\ $\ln x^{qua}_{fpdt}$ & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 \\
+Obs.\ $\ln x^{uv}_{fpdt}$ & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 \\
+Adj.\ $R^2$ $\ln x^{val}_{fpdt}$ & 0.795 & 0.621 & 0.859 & 0.798 & 0.795 & 0.621 & 0.859 & 0.798 \\
+Adj.\ $R^2$ $\ln x^{qua}_{fpdt}$ & 0.871 & 0.749 & 0.911 & 0.873 & 0.871 & 0.749 & 0.911 & 0.873 \\
+Adj.\ $R^2$ $\ln x^{uv}_{fpdt}$ & 0.956 & 0.932 & 0.973 & 0.957 & 0.956 & 0.932 & 0.973 & 0.957 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Each column represents a different fixed-effects structure. Columns (1)--(4) estimate the baseline EP coefficient without product-type interactions. Columns (5)--(8) decompose the EP effect by interacting with environmental ($g_p$) and pollution-intensive ($b_p$) product classifications. All specifications include the non-environmental depth control ($TD_{dt}$) and its interactions. Standard errors clustered at the destination level in parentheses. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$ (asymptotic).
+\item \textit{Source:} Authors\textquotesingle{} calculations on Chinese Customs data (2000--2015).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
