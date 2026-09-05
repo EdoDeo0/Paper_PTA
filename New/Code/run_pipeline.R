@@ -37,7 +37,7 @@
 REBUILD_FST <- Sys.getenv("REBUILD_FST", unset = "FALSE") == "TRUE"
 
 library(here)
-RSCRIPT_BIN <- file.path(R.home("bin"), "Rscript.exe")
+RSCRIPT_BIN <- file.path(R.home("bin"), "Rscript")
 
 ## --- helper: verifica artefatto su disco ------------------------------------
 check_artifact <- function(path, required = TRUE) {

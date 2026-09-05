@@ -1,5 +1,53 @@
 # Session Log — Paper_PTA
 
+## 2026-09-05 (sessione 10) — Implementazione roadmap completa paper_v3
+
+**Implementati tutti i fix della roadmap `./correspondence/audit/2026-09-05_roadmap_soluzioni.md`:**
+
+- **C1**: Tradotte 5 tabelle italiane in inglese (tab_01, 07, 11, 18, 19) — caption, headers, row labels, notes
+- **C2**: `alta_dose` → `\textit{High EP depth only}` in tab_16, separato con `\midrule`, aggiunta nota esplicativa
+- **C3**: Aggiunta frase singleton removal in Section 4 (45.8M→21.5M full panel, 3.77M→3.68M collapsed)
+- **C4**: Pronome `I construct` → `we construct` (riga 1101); restanti "I" erano commenti o variabili
+- **W1**: VIF 5.7→5.8 in `fragments/ptab_depthbounds.tex` (allineato al valore diagnostico 5.76)
+- **W2**: 27.7%→27.8% in paper_v3.tex (riga 849)
+- **W3**: p=0.012→0.015 nel testo destination trends (riga 1083)
+- **W4**: ptab_stability.tex: "9 shallow"→"7 shallow (excl. HK/Macao; 9 incl.)"
+- **W5**: ptab_main.tex Obs row: separato WB (21,519,511) / TREND (21,517,666)
+- **W6**: Aggiunta nota Australia SE in tab_16
+- **W7**: "14.0 million"→chiarito pre/post singleton in paper_v3.tex
+- **W8**: tab_06_permutation.tex: "roughly nine"→"13 distinct EP profiles (of which ~9 independent)"
+- **N1**: Rimossi 16 bib entries non citati da references.bib
+- **N2**: morin2018→morin2017, gutsch2024→gutsch2025 in bib + .tex (6+2 occorrenze)
+- **N3**: East Timor→Timor-Leste in tab_16 (tab_01 già coperto da C1)
+- **N4**: 4 figure inutilizzate spostate in `./New/Paper/paper_v3/Figures/_unused/`
+- **N6**: `run_pipeline.R`: `Rscript.exe`→`Rscript` (cross-platform)
+- **N5, N7**: Data submission (N5) e renv::snapshot (N7) richiesti dall'utente
+
+**Compilazione:** `pdflatex+biber+pdflatex×2` completata senza errori. Biber: 45 citekeys, 0 warning. PDF output: 57 pagine.
+
+---
+
+## 2026-09-05 (sessione 9) — Audit approfondito paper_v3
+
+**Audit completo su `./New/` (paper_v3)** — read-only, nessun file modificato. 3 agenti paralleli (R code pipeline, LaTeX tables/figures, audit history/data) + lettura diretta del paper completo, 6 tabelle appendice, 4 script R chiave, 2 CSV summary stats, references.bib, 5 figure.
+
+**Verdetto: CONDITIONAL PASS.** 4 CRITICI (tutti di presentazione), 8 WARNING (numeri da riconciliare), 8 NOTE (pulizia). Nessun problema nei dati né nelle stime.
+
+**Problemi principali trovati:**
+- C1: 5 tabelle appendice in italiano nel paper inglese (tab_01, 07, 11, 18, 19)
+- C2: Riga "alta_dose" (italiano, non spiegata) in tab_16 leave-one-out
+- C3: Gap osservazioni 45.8M → 21.5M da singleton removal mai dichiarato per full panel
+- C4: Pronomi we/I incoerenti
+- W1-W8: discrepanze numeriche minori (VIF 5.8/5.7, percentuali, conteggi, SE non verificabili)
+
+**Codice R:** 0 critici, 1 warning (run_pipeline.R Windows-only), 16 note best practice. Codebase eccezionalmente ben difeso: guard FWL, 53 repliche Stata, callr subprocess, seed doppio WCB.
+
+**Deliverable:**
+- `./correspondence/audit/2026-09-05_audit_report.md` (report completo)
+- `./correspondence/audit/2026-09-05_roadmap_soluzioni.md` (istruzioni implementazione dettagliate)
+
+---
+
 ## 2026-09-05 (sessione 8) — Audit paper_v2 + implementazione roadmap
 
 **Audit completo su `./New/` (paper_v2)** con 3 agenti paralleli (paper text, code pipeline, econometrics).

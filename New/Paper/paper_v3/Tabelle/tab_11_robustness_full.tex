@@ -1,64 +1,64 @@
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{Robustezza sul \emph{full panel}: varianti di campione, controlli e variabile dipendente}
+\caption{Robustness on the full panel: sample, control, and dependent-variable variants}
 \label{tab:robust-full}
 \begin{threeparttable}
 \begin{tabular}{lccrc}
 \toprule
-Variante & $\times$ Verde & $\times$ Sporco & Osservazioni & $R^2$ \\
+Variant & $\times$ Green & $\times$ Dirty & Observations & $R^2$ \\
 \midrule
-\multicolumn{5}{l}{\textit{Panel A --- Indice WB}} \\
+\multicolumn{5}{l}{\textit{Panel A --- WB index}} \\
 \addlinespace
-Con controlli aggiuntivi (dazi, concentrazione, antidumping) & -0.00023 & -0.00600$^{**}$ & 19,286,638 & 0.8736 \\
+With additional controls (tariffs, concentration, antidumping) & -0.00023 & -0.00600$^{**}$ & 19,286,638 & 0.8736 \\
  & (0.00296) & (0.00259) & & \\
  & [0.938] & [0.022] & & \\
 \addlinespace
-Escludendo le 11 destinazioni ASEAN & -0.00252 & -0.00438$^{*}$ & 19,236,090 & 0.8719 \\
+Excluding the 11 ASEAN destinations & -0.00252 & -0.00438$^{*}$ & 19,236,090 & 0.8719 \\
  & (0.00360) & (0.00223) & & \\
  & [0.484] & [0.051] & & \\
 \addlinespace
-Reinserendo Hong Kong e Macao & -0.00089 & -0.00409$^{*}$ & 23,560,110 & 0.8706 \\
+Including Hong Kong and Macao & -0.00089 & -0.00409$^{*}$ & 23,560,110 & 0.8706 \\
  & (0.00360) & (0.00243) & & \\
  & [0.805] & [0.094] & & \\
 \addlinespace
-Solo prodotti con supporto comune & -0.00225 & -0.00435$^{*}$ & 21,519,197 & 0.8734 \\
+Common-support products only & -0.00225 & -0.00435$^{*}$ & 21,519,197 & 0.8734 \\
  & (0.00392) & (0.00223) & & \\
  & [0.567] & [0.052] & & \\
 \addlinespace
-Quota verde nel paniere dell'impresa & \multicolumn{2}{c}{-0.00010} & 13,345,132 & 0.8510 \\
+Green share in firm's export basket & \multicolumn{2}{c}{-0.00010} & 13,345,132 & 0.8510 \\
  & \multicolumn{2}{c}{(0.00015)} & & \\
  & \multicolumn{2}{c}{[0.503]} & & \\
 \midrule
-\multicolumn{5}{l}{\textit{Panel B --- Indice TREND}} \\
+\multicolumn{5}{l}{\textit{Panel B --- TREND index}} \\
 \addlinespace
-Con controlli aggiuntivi (dazi, concentrazione, antidumping) & +0.00039 & -0.00085 & 19,286,638 & 0.8736 \\
+With additional controls (tariffs, concentration, antidumping) & +0.00039 & -0.00085 & 19,286,638 & 0.8736 \\
  & (0.00091) & (0.00068) & & \\
  & [0.669] & [0.209] & & \\
 \addlinespace
-Escludendo le 11 destinazioni ASEAN & -0.00102 & -0.00183$^{**}$ & 19,236,090 & 0.8719 \\
+Excluding the 11 ASEAN destinations & -0.00102 & -0.00183$^{**}$ & 19,236,090 & 0.8719 \\
  & (0.00102) & (0.00072) & & \\
  & [0.318] & [0.012] & & \\
 \addlinespace
-Solo prodotti con supporto comune & -0.00011 & -0.00090 & 21,519,197 & 0.8734 \\
+Common-support products only & -0.00011 & -0.00090 & 21,519,197 & 0.8734 \\
  & (0.00099) & (0.00062) & & \\
  & [0.914] & [0.153] & & \\
 \addlinespace
-Solo partner con accordo, profondi vs superficiali & -0.00036 & -0.00061 & 5,262,293 & 0.8839 \\
+PTA partners only, deep vs.\ shallow & -0.00036 & -0.00061 & 5,262,293 & 0.8839 \\
  & (0.00100) & (0.00101) & & \\
  & [0.723] & [0.549] & & \\
 \addlinespace
-Quota verde nel paniere dell'impresa & \multicolumn{2}{c}{-0.00006$^{**}$} & 13,345,132 & 0.8510 \\
+Green share in firm's export basket & \multicolumn{2}{c}{-0.00006$^{**}$} & 13,345,132 & 0.8510 \\
  & \multicolumn{2}{c}{(0.00003)} & & \\
  & \multicolumn{2}{c}{[0.043]} & & \\
 \addlinespace
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
-\item \emph{Notes:} Variante baseline (escl.\ HK/Macao, controllo TotalDepth). Stima \texttt{reghdfe}; effetti fissi e raggruppamento come nella Tabella \ref{tab:main}, salvo dove indicato.
-\item \textit{Supporto comune}: si tengono solo i prodotti che vengono esportati sia verso destinazioni con accordo sia verso destinazioni senza. Per gli altri non esiste un termine di paragone osservato.
-\item \textit{Quota verde nel paniere}: la variabile dipendente cambia. Non \`e pi\`u l'export, ma la frazione di fatturato che l'impresa realizza in prodotti verdi verso quella destinazione. Effetti fissi impresa$\times$destinazione e anno.
-\item Errore standard fra parentesi tonde, $p$-value fra parentesi quadre. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\item \emph{Notes:} Baseline variant (excl.\ HK/Macao, TotalDepth control). Estimated with \texttt{reghdfe}; fixed effects and clustering as in Table~\ref{tab:main}, except where noted.
+\item \textit{Common support}: only products exported to both agreement and non-agreement destinations are retained. For the others, no observed comparison exists.
+\item \textit{Green share in basket}: the dependent variable changes. Instead of export value, it is the share of the firm's revenue from green products to that destination. Fixed effects: firm$\times$destination and year.
+\item Standard error in parentheses, $p$-value in brackets. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

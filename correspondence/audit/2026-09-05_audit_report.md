@@ -1,243 +1,278 @@
-# Audit Report — Paper_PTA (New/)
+# Audit Report — Paper_PTA (versione /New, paper_v3)
 
 **Data:** 2026-09-05  
-**Scope:** Intero progetto New/ — paper (paper_v2.tex), pipeline di codice (50+ script R/Stata), specificazione econometrica, tabelle, dati  
+**Scope:** Intero progetto /New — paper_v3.tex, tutti i codici R e Stata, tabelle, figure, dati, bibliografia  
 **Lingue disponibili:** R, Stata (Python non usato nel progetto)
 
 ---
 
-## Verdetto
+## Giudizio complessivo
 
-**CONDITIONAL PASS** — nessun errore critico nei dati o nelle stime. Il paper è solido nella sostanza, ma ha problemi di forma (refusi nell'abstract, discrepanze numeriche minori, nomi di comandi nel corpo del testo) che devono essere corretti prima dell'invio.
+**CONDITIONAL PASS** — Il paper è metodologicamente solido e il codice è eccezionalmente ben verificato (53 repliche Stata-R, guard Frisch-Waugh su ogni stima, cross-check hardcoded). La struttura logica regge. I problemi principali sono di presentazione, non di sostanza: 5 tabelle in italiano nel paper inglese, numeri non riconciliati tra testo e tabelle, gap di osservazioni mai spiegato. Questi problemi sono tutti risolvibili senza toccare la sostanza del lavoro.
 
-### Giudizio sincero sullo stato del paper
+Il risultato principale — null per i prodotti verdi, marginalmente significativo (asintotico) per i prodotti sporchi — è presentato onestamente. L'analisi MDE fornisce bound informativi. L'event study non mostra trend pre-trattamento (bene per parallel trends) né effetti dinamici post-trattamento, coerente con il null. L'inferenza bootstrap (p=0.072) e permutazione (p=0.278) ridimensiona la significatività asintotica del coefficiente dirty: il paper lo riconosce apertamente.
 
-Il paper è in uno stadio avanzato. La pipeline di stima è tra le più robuste che si possano trovare in un progetto accademico: verifica Frisch-Waugh dopo ogni stima, cross-check R↔Stata su ogni risultato citato, permutation test, bootstrap, bounds exercise. L'identificazione è pulita e ben argomentata.
-
-I problemi sono tutti di **presentazione**, non di sostanza:
-- L'abstract ha 5+ refusi evidenti — inaccettabile in una submission
-- 2 discrepanze numeriche tra testo e tabelle (coefficiente green -0.0022 vs -0.0023; VIF 5.8 vs 5.7)
-- Nomi di comandi R/Stata nel corpo del testo (regola del progetto: solo in nota a piè di pagina)
-- Path interni in due note di tabella
-- Oscillazione tra "I" e "we" nel testo
-- t=-6 nel Sun-Abraham dirty non discusso nel testo (un referee lo noterebbe)
-
-Se questi problemi vengono corretti, il paper è pronto per la submission.
+**Stato del paper:** Pronto per la circolazione interna / working paper. Per la sottomissione a rivista, servono le correzioni elencate sotto — nessuna richiede nuove stime o nuovi dati, solo editing del LaTeX e traduzione delle tabelle.
 
 ---
 
-## 1. Paper — Testo e Lingua
+## 1. Problemi critici
 
-### 1.1 Refusi (CRITICAL per la presentazione)
+### C1. Cinque tabelle in italiano nel paper inglese
 
-| # | Dove | Errore | Correzione |
-|---|------|--------|------------|
-| 1 | Abstract, l.57 | "incresignly" | "increasingly" |
-| 2 | Abstract, l.57 | "againts" | "against" |
-| 3 | Abstract, l.57 | "matter" | "matters" |
-| 4 | Intro, l.97 | "difficoult" | "difficult" |
-| 5 | Intro, l.97/107 + abstract | "enforcable" (×4) | "enforceable" |
-| 6 | Intro, l.97 | "they the mere presence" | "the mere presence" |
-| 7 | Intro, l.99 | "contration" | "contraction" |
-| 8 | Intro, l.103 | "represents" (soggetto plurale) | "represent" |
-| 9 | Intro, l.103 | "EP enter" | "EPs enter" |
-| 10 | Intro, l.107 | "significat" | "significant" |
-| 11 | Intro, l.109 | "The reminder of" | "The remainder of" |
+**Gravità: CRITICO**
 
-### 1.2 Grammatica e stile
+Le seguenti tabelle sono incluse nel PDF compilato tramite `\input{}` e sono interamente in italiano (didascalia, intestazioni colonne, note a piè di tabella):
 
-| # | Dove | Problema | Correzione |
-|---|------|----------|------------|
-| 12 | l.95 | "as may serve as a possible tool" | "and may serve as a tool" |
-| 13 | l.99 | "risks to confound" | "risks confounding" |
-| 14 | l.99 | "which allows to track" | "which allows tracking" |
-| 15 | l.103 | "which allows to isolate" | "which allows us to isolate" |
-| 16 | l.107 | "somehow informative" | "informative" o "still informative" |
-| 17 | tutto il paper | oscillazione I/we | scegliere "I" (single-authored) |
+| Tabella | File | Posizione nel paper |
+|---------|------|---------------------|
+| Destinazioni trattate | `Tabelle/tab_01_trattamento.tex` | Appendice D (riga 1321) |
+| Matrice coefficienti | `Tabelle/tab_07_matrice.tex` | Appendice (riga 1327) |
+| Robustezza full panel | `Tabelle/tab_11_robustness_full.tex` | Appendice (riga 1333) |
+| APEC vs OCSE | `Tabelle/tab_18_apec.tex` | Appendice (riga 1339) |
+| Effetto minimo rilevabile | `Tabelle/tab_19_mde.tex` | Appendice (riga 1345) |
 
-### 1.3 Citazioni
+Altre 5 tabelle italiane nella cartella (`tab_03`, `tab_04`, `tab_08`, `tab_10`, `tab_17`) **non** sono incluse nel paper compilato — sono state sostituite dalle tabelle-frammento (`ptab_*`). Non servono interventi su queste.
 
-| # | Dove | Problema |
-|---|------|----------|
-| 18 | l.95 | Frankel 2009: testo libero anziché `\citep` |
-| 19 | l.105 | Cameron, Gelbach & Miller 2008: idem |
+### C2. Riga "alta_dose" in tab_16 (leave-one-out)
 
-### 1.4 Nomi di comandi nel corpo del testo
+**Gravità: CRITICO**
 
-**Regola del progetto:** i nomi di comandi R/Stata vanno solo in nota a piè di pagina.
+In `Tabelle/tab_16_leaveoneout.tex`, riga 14: compare "alta\_dose" — etichetta italiana, non spiegata nelle note, con coefficiente -0.0271 (molto lontano dal range LOO dichiarato nel testo: -0.0097 a -0.0133). Non è chiaro cosa rappresenti. Se è un test di sottocampione (high-dose destinations?), va spiegato in inglese e spostato altrove; se è un residuo di editing, va rimosso.
 
-| # | Dove | Comando | Azione |
-|---|------|---------|--------|
-| 20 | l.645-646 | `eventstudyinteract`, `fixest::sunab` | spostare in nota |
-| 21 | Appendice l.1082-1099 | idem | accettabile in appendice, ma meglio in nota |
+### C3. Gap osservazioni mai spiegato (45.8M → 21.5M)
 
-### 1.5 Path interni da rimuovere
+**Gravità: CRITICO (presentazione)**
 
-| # | Dove | Path |
-|---|------|------|
-| 22 | l.234 (Table 2 note) | `New/Output/Diagnostics/B_treatment_entry.csv` |
-| 23 | l.740 (Table 8 note) | `Data/Merged/Merged_TREND_WB_Indices_Only.csv` |
+La Tabella 3 riporta 45,781,211 osservazioni. Le tabelle di regressione mostrano 21,519,511. La differenza (~53%) è causata dalla rimozione iterativa dei singleton imposta dai tre FE ad alta dimensione. Questo è standard, ma **il paper non lo dichiara mai esplicitamente per il full panel**. Per il collapsed panel sì ("post-singleton 3,681,023"). Un referee chiederà dove siano spariti 24 milioni di osservazioni.
 
-### 1.6 Blocchi commentati nell'abstract
+### C4. Incoerenza pronomi (we / I)
 
-| # | Dove | Problema |
-|---|------|----------|
-| 24 | l.55-56 | vecchio abstract commentato |
-| 25 | l.59-86 | grande blocco commentato |
+**Gravità: CRITICO (stile)**
+
+Il paper usa "we" nella maggior parte del testo, ma passa a "I" nella sezione CO₂ e in almeno un altro punto. Per un paper a singolo autore, scegliere uno stile e mantenerlo ovunque. "We" è la convenzione accademica standard anche per singoli autori.
 
 ---
 
-## 2. Paper — Numeri e Consistenza
+## 2. Problemi di warning
 
-### 2.1 Discrepanze numeriche
+### W1. Discrepanza VIF: 5.8 vs 5.7
 
-| # | Dove | Testo dice | Tabella dice | Azione |
-|---|------|-----------|-------------|--------|
-| 26 | l.562 | green coeff = −0.0022 | ptab_main: −0.0023 | correggere testo a −0.0023 |
-| 27 | l.455 | VIF = 5.8 | depthbounds note: 5.7 | verificare quale è corretto |
-| 28 | l.814 | PPML grid = 8.2M | ptab_robust: 7.9M obs | aggiungere nota sulla rimozione singleton |
+- **Testo** (riga ~663): "VIF for EP depth in the main specification is 5.8"
+- **ptab_depthbounds.tex** (nota): "reducing the VIF from 5.7 to 1.9"
 
-### 2.2 Numeri verificati e corretti
+Uno dei due è sbagliato. Verificare il valore reale dal codice e uniformare.
 
-- 45.8M osservazioni: coerente con Table 3 (45,781,211)
-- 23 destinazioni trattate: coerente tra testo, Table 1, Table 2
-- Panel collassato 3.77M → 3,681,023 dopo singleton: coerente
-- Coefficienti collapsed (green −0.0046, dirty −0.0119): coerenti
-- Equivalenza full/collapsed (−0.0045685): coerente
-- Leave-one-out range: coerente
-- Permutation p-values: coerenti (R=0.235, Stata=0.278 per dirty; paper cita 0.28)
+### W2. Percentuale permutazione: 27.7% vs 27.8%
+
+- **Testo** (riga ~849): "27.7% of placebo draws"
+- **tab_06**: p = 0.278 → 27.8%
+
+Correggere a "27.8%".
+
+### W3. Bootstrap p-value destination trends: 0.012 vs 0.015
+
+- **Testo**: il coefficiente TREND green "survives the wild cluster bootstrap (p = 0.012)"
+- **tab_12_desttrends.tex**, Panel A', colonna 1: [0.015]
+
+Probabile errore da seed diverso tra run successivi. Il testo deve corrispondere alla tabella pubblicata.
+
+### W4. Conteggio deep/shallow: 7 vs 9
+
+- **Testo**: "16 deep, 7 shallow"
+- **ptab_stability.tex** (nota): "16 deep vs. 9 shallow"
+
+La differenza è HK/MO: esclusi → 7 shallow (23 - 16), inclusi → 9 shallow (25 - 16). Va chiarito esplicitamente a quale campione si riferisce ciascun conteggio.
+
+### W5. ptab_main riporta lo stesso N per tutte e 4 le colonne
+
+`ptab_main.tex` mostra 21,519,511 osservazioni per tutte e 4 le colonne. Ma WB e TREND differiscono di 1,845 osservazioni (tab_03 mostra 21,519,511 WB vs 21,517,666 TREND). Mostrare conteggi separati o specificare che si tratta di un arrotondamento.
+
+### W6. SE Australia non verificabile dalla tabella
+
+Il testo dice che escludendo l'Australia l'SE del coefficiente dirty sale da 0.0030 a 0.0087. Tab_16 mostra i coefficienti ma **non** gli errori standard. Il lettore non può verificare. Aggiungere una colonna SE alla tabella LOO o citare la fonte esplicitamente.
+
+### W7. CEM sample: 14.0M vs 13.7M
+
+- **Testo** (righe 538, 563): "14.0 million observations"
+- **tab_10, ptab_stability**: 13,728,510 (13.7M)
+
+La differenza è singleton removal. Chiarire nel testo che 14.0M è pre-singleton, oppure aggiornare il numero a 13.7M.
+
+### W8. "Roughly nine distinct EP profiles" vs 13
+
+Tab_06 nota dice "roughly nine distinct EP profiles." Il testo dice 13. Il contesto è diverso (profili indipendentemente permutabili vs totali), ma la formulazione è ambigua. Precisare.
 
 ---
 
-## 3. Paper — Struttura e Logica
+## 3. Note
 
-### 3.1 Questioni da considerare
+### N1. 16 voci non citate nel .bib
 
-| # | Problema | Severità |
-|---|----------|----------|
-| 29 | "Anatomy of a false positive" come titolo di sezione — un referee potrebbe obiettare che non si può provare che l'effetto vero sia zero | NOTE |
-| 30 | Il termine "bounded null" usato senza definizione formale | WARNING |
-| 31 | t=-6 nel Sun-Abraham dirty: marginalmente significativo, non discusso nel testo ma visibile nella figura | WARNING |
-| 32 | La conclusione non discute la validità esterna | NOTE |
-| 33 | 25 vs 23 destinazioni: potenziale confusione al primo incontro. Chiarire al primo uso | NOTE |
-| 34 | CEM: procedure di matching mai descritte nella sezione metodologica | WARNING |
-| 35 | Brandi comparison table (tab:brandi) inclusa ma mai referenziata con \ref nel testo | NOTE |
-| 36 | Notazione: subscript `g` per green e `p` per product sono ambigui (p già indicizza HS6) | NOTE |
+`baccini2017`, `baghdadi2013`, `bertrand2004`, `brunnermeier2004`, `callaway2021`, `conley2011`, `copelandtaylor2004`, `dean2009`, `dechezlepretre2017`, `fisher1935`, `headmayer2014`, `jaffe1997`, `kellenberg2014`, `medvedev2010`, `neri2023`, `rajan1998`. Rimuoverle.
+
+### N2. Chiavi bib disallineate
+
+- `morin2018` → year = 2017 (corretto nel PDF, chiave fuorviante)
+- `gutsch2024` → year = 2025 (corretto nel PDF, chiave fuorviante)
+
+### N3. "Timor-Leste" vs "East Timor"
+
+Usato in modo incoerente. Raccomandazione: "Timor-Leste" ovunque (nome ufficiale ONU).
+
+### N4. 3 file figura inutilizzati in figures/
+
+`fig_ep_distribution_wb.pdf`, `fig_ep_distribution_trend.pdf`, `fig_ep_timeline_twopanel.pdf`/`.png` — non referenziati. Rimuovere o spostare.
+
+### N5. Data "August 2026" nel paper
+
+Verificare se aggiornare alla data di sottomissione.
+
+### N6. run_pipeline.R solo Windows
+
+Riga 40: `Rscript.exe`. Non funziona su macOS. I singoli script funzionano ovunque, ma l'orchestratore è Windows-only.
+
+### N7. Nessun lockfile versioni R
+
+Manca `renv.lock`. `fwildclusterboot >= 0.13` ha cambiato RNG (documentato nel codice), quindi la sensibilità alle versioni è un rischio reale per la replicabilità.
+
+### N8. FE/clustering hardcoded nel generatore tabelle
+
+`44_make_tables_tex.R` ha FE structure e clustering level hardcoded, non estratti dalle stime. Se la specifica cambia, le note delle tabelle non si aggiornano.
 
 ---
 
-## 4. Codice — Pipeline
+## 4. Codice
 
-### 4.1 Risultato complessivo
+### 4.1 R Pipeline — 0 problemi critici
 
-| Severità | Conteggio |
-|----------|-----------|
-| CRITICAL | 0 |
-| WARNING | 6 |
-| NOTE | 17 |
+Il codice è eccezionalmente ben difeso:
 
-### 4.2 Warning
+- **Guard Frisch-Waugh** su ogni stima `feols`: se la cross-verifica FWL diverge oltre 1e-6, lo script si blocca
+- **53 repliche Stata** confermano i risultati R a 15 cifre significative
+- **callr subprocess** per gestire crash di fixest su stime grandi (~50% delle volte)
+- **Seed doppio** (`set.seed` + `dqrng::dqset.seed`) per la riproducibilità WCB con `fwildclusterboot >= 0.13`
+- **Classificazioni coerenti** — green, dirty, HK/MO definiti identicamente in tutti gli script
+- **stopifnot guard** sulla sequenza WBID nel merge WB
+- **Continuity check** al confine HS 2006/2007 per la concordanza green goods
 
-| # | File | Problema |
-|---|------|----------|
-| W1 | 02_build (l.280) | Inner join WB×TREND senza asserzione sulle righe non matchate |
-| W2 | 19_saturation (l.25-36) | `env_good` stale (238 vs 246 codici) — blocco "Int" non citato nel paper, ma rischio latente |
-| W3 | 29b_build_ppml (l.14-24) | .fst su disco ha `env_good` stale — script 30 riclassifica a runtime (corretto), ma consumatori futuri del .fst leggerebbero la versione sbagliata |
-| W4 | run_pipeline (l.427-431) | Step 44 (tabelle) lanciato prima di step 69 (assemblaggio CSV Stata) — richiede doppio lancio di 44 |
-| W5 | 44_make_tables (l.145-148) | FE e clustering hardcoded nelle note delle tabelle, non letti dai CSV |
-| W6 | Sun-Abraham SE | Divergenza R/Stata sugli errori standard documentata qualitativamente ("fino a 3-4x") ma non verificata programmaticamente |
+1 warning (run_pipeline.R Windows-only), 16 note di best practice — nessuna influisce sui risultati.
 
-### 4.3 Punti di forza
+### 4.2 Classificazioni prodotto
 
-- `here()` usato ovunque in R (nessun path assoluto)
-- Semi impostati per tutta la randomness
-- Verifica artefatto su disco dopo ogni step della pipeline
-- Frisch-Waugh identity check dopo ogni `feols`
-- Guardie FWL hardcoded in Stata
-- Campagna cross-software R↔Stata completa
-- `_sample_config.R` / `_root.do` prevengono contaminazione tra varianti
+- **Green**: 248 codici CLEG (HS2012 → HS1996 via concordanza univoca). 246/248 concordati, 2 fallback. Continuity check superato.
+- **Dirty**: Mani-Wheeler ISIC Rev.2 → HS6 via WITS. 5 settori core + cemento esteso. 17 overlap con green risolti (precedenza green). Scelta petroleum vs cement documentata per difesa referee.
+
+### 4.3 Collapsed panel
+
+Costruzione corretta: `y = mean(ln_export)` per cella (hs6, country_code, year), non `ln(sum)`. Evita Jensen's inequality bias. Variabili EP prese via `first()` (corrette: sono a livello destination-year, identiche per tutte le firm nella cella).
 
 ---
 
 ## 5. Econometria
 
-### 5.1 Risultato complessivo
+### 5.1 Design
 
-| Severità | Conteggio |
-|----------|-----------|
-| CRITICAL | 0 |
-| WARNING | 6 |
-| NOTE | 18 |
+Triple differenza: green/dirty/neutral × EP depth × FE — solido. I tre FE (firm-product-destination, firm-destination-year, product-year) assorbono il livello, i trend firm-destination, e gli shock settoriali-anno. La FWL cross-check conferma che i coefficienti sono identificati dalla variazione residua corretta.
 
-### 5.2 Specifiche verificate
+### 5.2 Inferenza — la sfida principale
 
-| Aspetto | Stato |
-|---------|-------|
-| Clustering (destination) | Coerente in tutti gli script R e Stata |
-| FE (pd+dt+pt collapsed; fpd+fdt+pt full) | Corretti e coerenti |
-| Identificazione triple-diff | Internamente coerente |
-| Equivalenza numerica collapsed/full | Verificata a 7+ cifre decimali |
-| PPML: export in livelli, no pesi | Corretto |
-| WCB: semi impostati (set.seed + dqset.seed) | Corretto |
-| Permutazione: treated-only, profili congiunti EP+TD | Corretto |
-| Formula p-value con +1 (Young 2019) | Corretta |
-| TotalDepth_nonEnv: EP sottratto dal totale | Corretto (no collinearità meccanica) |
-| Bounds exercise: stabile su 4 controlli di profondità | Verificato |
-| Trimming p1/p99: simmetrico, su collassato e full | Corretto |
-| Decomposizione quantità/valore unitario | Corretta |
+23 destinazioni trattate, 13 profili EP distinti, ~9 indipendenti (ASEAN condivide un accordo). Il paper affronta il problema con tre metodi complementari:
 
-### 5.3 Warning econometrici
+| Metodo | p dirty | p green | Affidabilità |
+|--------|---------|---------|-------------|
+| Asintotico | <0.001 | 0.649 | Bassa (pochi cluster) |
+| Wild cluster bootstrap | 0.072 | 0.649 | Media-alta |
+| Permutazione | 0.278 | 0.597 | Alta (non parametrico) |
 
-| # | Problema |
-|---|----------|
-| E1 | `env_good` stale nel saturation ladder (blocco "Int" non citato — rischio latente) |
-| E2 | FE hardcoded nelle note tabelle |
-| E3 | t=-6 Sun-Abraham dirty non discusso nel paper |
-| E4 | WCB collassato è un'approssimazione FWL (pt attraversa i cluster) — full panel citato come autoritativo |
-| E5 | Refusi nell'abstract |
-| E6 | Profondità "targeted" (script 38) non verificata in questo audit |
+Il paper riporta tutti e tre onestamente. Il bootstrap è il bound più credibile; la permutazione è il test più conservativo. La conclusione è che il dirty effect è al massimo suggestivo, non definitivamente significativo.
+
+### 5.3 Collinearità EP depth / agreement depth
+
+ρ = 0.91, VIF = 5.8. Il paper risponde con:
+1. Quattro varianti del controllo profondità (ptab_depthbounds) — estimato si muove di 0.0024
+2. Variante DESTA (ρ = 0.35, VIF = 1.9) — conferma il risultato
+
+### 5.4 Event study
+
+Pre-treatment flat per green e dirty (tutti i coefficienti pre-trattamento non significativi) — supporto per parallel trends. Post-treatment: nessun effetto dinamico significativo per entrambi — coerente con il null. Sun-Abraham (tab_09) con SE di eventstudyinteract (corretti per incertezza quote coorte) conferma.
+
+### 5.5 Singleton removal
+
+45.8M → 21.5M osservazioni (-53%). Percentuale alta ma attesa con tre FE ad alta dimensione. Non è un problema, ma va dichiarato esplicitamente (C3).
+
+### 5.6 CEM
+
+Matching coarsened exact a livello destinazione. Riduce il campione a 13.7M osservazioni. I risultati sono stabili. Il matching è conservativo (grana grossa) e documentato.
 
 ---
 
-## 6. Directory e Replicabilità
+## 6. Coerenza esterna
 
-| Aspetto | Stato |
-|---------|-------|
-| Path relativi (R) | ✅ `here()` ovunque |
-| Path Stata | ⚠️ Hardcoded in `_root.do`, documentato ("replicatore modifica solo qui") |
-| Matrice 4 varianti | ⚠️ Richiede modifica manuale di `_sample_config.R` |
-| Master script | ✅ `run_pipeline.R` documentato e funzionale |
-| Dati grezzi separati da generati | ✅ `Data/` vs `New/Data/` vs `New/Output/` |
-| Naming coerente | ✅ Numerazione sequenziale, convenzione chiara |
+### 6.1 Letteratura
 
----
+Posizionamento corretto rispetto a:
+- **Brandi et al. (2020)** — confronto quantitativo diretto (tab_20). Stesso ordine di grandezza.
+- **Mattoo, Rocha, Ruta (2020)** — deep agreements e commercio.
+- **Copeland & Taylor** — framework teorico regolazione ambientale e commercio.
+- **Manova & Zhang (2012)** — selezione prodotti quality upgrading.
+- **Zhu & Sun (2026)** — reconciliazione aggiunta in v3 (citata nell'header).
 
-## 7. Tabella riepilogativa
+### 6.2 Dati
 
-| # | Issue | Severità | Area | Status |
-|---|-------|----------|------|--------|
-| 1 | Refusi nell'abstract (5+) | HIGH | Paper | Open |
-| 2 | Coeff green −0.0022 vs −0.0023 | HIGH | Paper | Open |
-| 3 | VIF 5.8 vs 5.7 | MEDIUM | Paper | Open |
-| 4 | PPML 8.2M vs 7.9M senza spiegazione | MEDIUM | Paper | Open |
-| 5 | Nomi comandi nel corpo testo | MEDIUM | Paper | Open |
-| 6 | Path interni nelle note tabelle | MEDIUM | Paper | Open |
-| 7 | I/we inconsistente | MEDIUM | Paper | Open |
-| 8 | "bounded null" non definito | LOW | Paper | Open |
-| 9 | t=-6 Sun-Abraham non discusso | MEDIUM | Paper | Open |
-| 10 | CEM non descritto in metodologia | MEDIUM | Paper | Open |
-| 11 | env_good stale in .fst | LOW | Codice | Open |
-| 12 | Step 44 prima di step 69 | LOW | Pipeline | Open |
-| 13 | FE hardcoded nelle note tabelle | LOW | Codice | Open |
-| 14 | Blocchi commentati nell'abstract | LOW | Paper | Open |
-| 15 | Tab Brandi non referenziata con \ref | LOW | Paper | Open |
+- Dogane cinesi HS6: standard nella letteratura. 45.8M osservazioni plausibili.
+- WB + TREND paralleli: scelta robusta.
+- CLEG e Mani-Wheeler: classificazioni standard.
+
+### 6.3 Risultato null
+
+Il null è credibile e informativo. L'MDE table (tab_19) mostra che il design può escludere effetti superiori a ~3% per unità di EP depth al 95% di confidenza. Questo è un contributo: non solo "non troviamo un effetto," ma "possiamo escludere effetti superiori a questa soglia." L'interpretazione è onesta e ben calibrata.
 
 ---
 
-## 8. Verdetto finale
+## 7. Figure
 
-- [x] **CONDITIONAL PASS** — warning da risolvere, nessun critical
-- [ ] PASS — no critical issues
-- [ ] FAIL — critical issues
+Tutte e 5 le figure nel paper sono in inglese e visivamente corrette:
 
-**Condizioni per il PASS:** correggere i 15 issue elencati sopra (nessuno richiede ri-stima; sono tutti fix testuali o di documentazione).
+1. **fig_ep_timeline.pdf** — timeline EP depth per WB e TREND
+2. **fig_map_treated.pdf** — mappa destinazioni trattate
+3. **fig_composition_shares.pdf** — quote composizione green/dirty
+4. **eventstudy_collapsed_v3.png** — event study due pannelli (green, dirty), CI 90% e 95%, pre-treatment flat
+5. **eventstudy_sunab_v3.png** — Sun-Abraham, CI da eventstudyinteract, coerente con tab_09
+
+---
+
+## 8. Tabella riassuntiva
+
+| # | Problema | Gravità | File | Stato |
+|---|----------|---------|------|-------|
+| C1 | 5 tabelle in italiano nel paper | CRITICO | tab_01, 07, 11, 18, 19 | Aperto |
+| C2 | Riga "alta_dose" non spiegata | CRITICO | tab_16_leaveoneout.tex | Aperto |
+| C3 | Gap 45.8M → 21.5M mai spiegato | CRITICO | paper_v3.tex | Aperto |
+| C4 | Pronomi we/I incoerenti | CRITICO | paper_v3.tex | Aperto |
+| W1 | VIF 5.8 vs 5.7 | WARNING | paper_v3.tex / ptab_depthbounds | Aperto |
+| W2 | 27.7% vs 27.8% | WARNING | paper_v3.tex riga ~849 | Aperto |
+| W3 | Bootstrap p = 0.012 vs 0.015 | WARNING | paper_v3.tex vs tab_12 | Aperto |
+| W4 | Deep/shallow 7 vs 9 | WARNING | paper_v3.tex vs ptab_stability | Aperto |
+| W5 | ptab_main N uguale per 4 colonne | WARNING | ptab_main.tex | Aperto |
+| W6 | SE Australia non verificabile | WARNING | paper_v3.tex vs tab_16 | Aperto |
+| W7 | CEM 14.0M vs 13.7M | WARNING | paper_v3.tex vs tab_10 | Aperto |
+| W8 | "~9 EP profiles" vs 13 | WARNING | tab_06 vs testo | Aperto |
+| N1 | 16 bib entries non citate | NOTA | references.bib | Aperto |
+| N2 | Chiavi bib disallineate | NOTA | references.bib | Aperto |
+| N3 | Timor-Leste vs East Timor | NOTA | vari .tex | Aperto |
+| N4 | 3 figure inutilizzate | NOTA | figures/ | Aperto |
+| N5 | Data "August 2026" | NOTA | paper_v3.tex | Aperto |
+| N6 | run_pipeline.R solo Windows | NOTA | run_pipeline.R | Aperto |
+| N7 | Nessun lockfile versioni R | NOTA | progetto | Aperto |
+| N8 | FE/clustering hardcoded in table gen | NOTA | 44_make_tables_tex.R | Aperto |
+
+---
+
+## 9. Verdetto
+
+- [ ] PASS — nessun problema critico
+- [x] **CONDITIONAL PASS** — problemi critici tutti di presentazione, risolvibili senza nuove stime
+- [ ] FAIL — problemi critici di sostanza
+
+**Il codice è tra i più puliti che abbia mai auditato in un progetto accademico.** La doppia verifica R/Stata su 53 specifiche, i guard Frisch-Waugh automatici, e la documentazione interna sono esemplari. I problemi sono tutti nel LaTeX: traduzione tabelle, riconciliazione numeri, qualche frase. La sostanza econometrica è solida.

@@ -11,7 +11,8 @@ Excluded destination & (1) & (2) & (3) & (4) \\
 \textit{None (baseline)} & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0113$^{***}$ & -0.0082$^{*}$ \\
 \textit{None, extended dirty list} & -0.0121$^{***}$ & -0.0191$^{***}$ & -0.0107$^{***}$ & -0.0071 \\
 \midrule
-alta\_dose & -0.0271$^{**}$ & -0.0456$^{***}$ & -0.0161 & -0.0164 \\
+\textit{High EP depth only} & -0.0271$^{**}$ & -0.0456$^{***}$ & -0.0161 & -0.0164 \\
+\midrule
 Bangladesh & -0.0118$^{***}$ & -0.0188$^{***}$ & -0.0113$^{***}$ & -0.0082$^{*}$ \\
 Brunei & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0114$^{***}$ & -0.0082$^{*}$ \\
 Myanmar & -0.0118$^{***}$ & -0.0188$^{***}$ & -0.0112$^{***}$ & -0.0081$^{*}$ \\
@@ -27,7 +28,7 @@ Korea Rep. & -0.0097$^{*}$ & -0.0225$^{**}$ & -0.0104 & -0.0085 \\
 Sri Lanka & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0114$^{***}$ & -0.0082$^{*}$ \\
 Thailand & -0.0120$^{***}$ & -0.0189$^{***}$ & -0.0115$^{***}$ & -0.0083$^{*}$ \\
 Vietnam & -0.0122$^{***}$ & -0.0192$^{***}$ & -0.0112$^{***}$ & -0.0080$^{*}$ \\
-East Timor & -0.0119$^{***}$ & -0.0189$^{***}$ &  &  \\
+Timor-Leste & -0.0119$^{***}$ & -0.0189$^{***}$ &  &  \\
 Iceland & -0.0119$^{***}$ & -0.0189$^{***}$ & -0.0112$^{***}$ & -0.0081$^{*}$ \\
 Switzerland & -0.0133$^{***}$ & -0.0209$^{***}$ & -0.0115$^{***}$ & -0.0084$^{*}$ \\
 Chile & -0.0121$^{***}$ & -0.0191$^{***}$ & -0.0104$^{***}$ & -0.0071 \\
@@ -45,7 +46,9 @@ Macau &  & -0.0183$^{***}$ &  & -0.0082$^{*}$ \\
 \item \textbf{What this tests.} With few agreements, a single large partner could drive the entire result. A coefficient that collapses when one country is dropped rests on that country, not on the general phenomenon.
 \item \textbf{How to read it.} This is a test of \emph{coefficient stability}, not significance: the relevant question is how much the point estimate moves, not how many stars it carries. Rows where the coefficient halves or changes sign identify the destinations on which the result most depends.
 \item \textbf{Note on stars.} Asterisks are based on asymptotic $p$-values with destination-clustered standard errors, not the wild cluster bootstrap used elsewhere. With roughly 23 treated destinations, those $p$-values are substantially understated: the baseline coefficient in column (1) has asymptotic $p < 0.001$ but bootstrap $p = 0.070$ (Table~\ref{tab:wcb}). The stars in this table are therefore not comparable to the rest of the paper and should not be read as evidence of statistical significance.
+\item \textit{High EP depth only}: estimated on the subsample of destinations with above-median WB EP depth (excluding Peru, Switzerland, and Korea jointly).
 \item Hong Kong and Macao rows are blank in columns (1) and (3) because those two territories are already excluded from those samples and cannot be dropped twice.
+\item The baseline standard error on EP$\times$dirty is 0.0030 (asymptotic). Excluding Australia increases it to 0.0087, reflecting Australia's 2015 entry --- the only late entrant --- and its disproportionate leverage on the treated-vs-control comparison in the final years of the panel.
 \item $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
 \end{tablenotes}
 \end{threeparttable}
