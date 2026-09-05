@@ -1,51 +1,50 @@
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{Inferenza robusta: \emph{wild cluster bootstrap} con 9.999 ripetizioni}
+\caption{Wild cluster bootstrap $p$-values (9,999 replications)}
 \label{tab:wcb}
 \begin{threeparttable}
 \begin{tabular}{lcccc}
 \toprule
  & (1) & (2) & (3) & (4) \\
 \midrule
-\multicolumn{5}{l}{\textit{Pannello A --- pannello collassato (indice WB)}} \\
+\multicolumn{5}{l}{\textit{Panel A --- collapsed panel (WB index)}} \\
 \addlinespace
-Profondit\`a EP $\times$ Verde: coefficiente & -0.00457 & 0.00173 & -0.00433 & -0.00675 \\
-\quad $p$-value bootstrap & 0.649 & 0.825 & 0.546 & 0.484 \\
+EP depth $\times$ Green: coefficient & -0.00457 & 0.00173 & -0.00433 & -0.00675 \\
+\quad Bootstrap $p$-value & 0.649 & 0.825 & 0.546 & 0.484 \\
 \addlinespace
-Profondit\`a EP $\times$ Sporco: coefficiente & -0.01187 & -0.01887 & -0.01134 & -0.00820 \\
-\quad $p$-value bootstrap & 0.072 & 0.005 & 0.047 & 0.195 \\
+EP depth $\times$ Dirty: coefficient & -0.01187 & -0.01887 & -0.01134 & -0.00820 \\
+\quad Bootstrap $p$-value & 0.072 & 0.005 & 0.047 & 0.195 \\
 \addlinespace
-\multicolumn{5}{l}{\textit{Pannello B --- pannello collassato (indice TREND)}} \\
+\multicolumn{5}{l}{\textit{Panel B --- collapsed panel (TREND index)}} \\
 \addlinespace
-Conteggio EP $\times$ Verde: coefficiente & 0.00181 & 0.00178 & 0.00161 & 0.00017 \\
-\quad $p$-value bootstrap & 0.390 & 0.414 & 0.508 & 0.949 \\
+EP count $\times$ Green: coefficient & 0.00181 & 0.00178 & 0.00161 & 0.00017 \\
+\quad Bootstrap $p$-value & 0.390 & 0.414 & 0.508 & 0.949 \\
 \addlinespace
-Conteggio EP $\times$ Sporco: coefficiente & 0.00035 & -0.00001 & -0.00025 & 0.00084 \\
-\quad $p$-value bootstrap & 0.857 & 0.995 & 0.905 & 0.635 \\
+EP count $\times$ Dirty: coefficient & 0.00035 & -0.00001 & -0.00025 & 0.00084 \\
+\quad Bootstrap $p$-value & 0.857 & 0.995 & 0.905 & 0.635 \\
 \midrule
-\multicolumn{5}{l}{\textit{Pannello C --- \emph{full panel} (indice WB)}} \\
+\multicolumn{5}{l}{\textit{Panel C --- full firm-level panel (WB index)}} \\
 \addlinespace
-Profondit\`a EP $\times$ Verde: coefficiente & -0.00226 & -0.00090 & -0.00185 & -0.00196 \\
-\quad $p$-value bootstrap & 0.686 & 0.833 & 0.673 & 0.611 \\
+EP depth $\times$ Green: coefficient & -0.00226 & -0.00090 & -0.00185 & -0.00196 \\
+\quad Bootstrap $p$-value & 0.686 & 0.833 & 0.673 & 0.611 \\
 \addlinespace
-Profondit\`a EP $\times$ Sporco: coefficiente & -0.00435 & -0.00409 & -0.00559 & -0.00574 \\
-\quad $p$-value bootstrap & 0.185 & 0.176 & 0.049 & 0.035 \\
+EP depth $\times$ Dirty: coefficient & -0.00435 & -0.00409 & -0.00559 & -0.00574 \\
+\quad Bootstrap $p$-value & 0.185 & 0.176 & 0.049 & 0.035 \\
 \addlinespace
-\multicolumn{5}{l}{\textit{Pannello D --- \emph{full panel} (indice TREND)}} \\
+\multicolumn{5}{l}{\textit{Panel D --- full firm-level panel (TREND index)}} \\
 \addlinespace
-Conteggio EP $\times$ Verde: coefficiente & -0.00010 & -0.00011 & -0.00012 & -0.00039 \\
-\quad $p$-value bootstrap & 0.931 & 0.919 & 0.920 & 0.703 \\
+EP count $\times$ Green: coefficient & -0.00010 & -0.00011 & -0.00012 & -0.00039 \\
+\quad Bootstrap $p$-value & 0.931 & 0.919 & 0.920 & 0.703 \\
 \addlinespace
-Conteggio EP $\times$ Sporco: coefficiente & -0.00089 & -0.00101 & -0.00140 & -0.00140 \\
-\quad $p$-value bootstrap & 0.177 & 0.142 & 0.069 & 0.082 \\
+EP count $\times$ Dirty: coefficient & -0.00089 & -0.00101 & -0.00140 & -0.00140 \\
+\quad Bootstrap $p$-value & 0.177 & 0.142 & 0.069 & 0.082 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
-\item Colonne: (1) Escl.\ HK/Macao, controllo TotalDepth (baseline); (2) Incl.\ HK/Macao, controllo TotalDepth; (3) Escl.\ HK/Macao, controllo DESTA; (4) Incl.\ HK/Macao, controllo DESTA.
-\item \textbf{A cosa serve.} I $p$-value ordinari sono affidabili quando i gruppi su cui si raggruppano gli errori sono molti. Qui i gruppi trattati sono 23 e gli accordi realmente distinti circa 14: in questa situazione i $p$-value ordinari tendono a dichiarare significativo ci\`o che non lo \`e. Il \emph{wild cluster bootstrap} ricostruisce la distribuzione del coefficiente rimescolando i dati 9.999 volte e restituisce un $p$-value molto pi\`u prudente.
-\item Il confronto con la Tabella \ref{tab:main-coll} \`e istruttivo: dove il $p$-value ordinario \`e $<0.001$, quello bootstrap pu\`o salire sopra 0.05.
-\item Pannelli C e D calcolati con \texttt{boottest} in Stata su dati residualizzati (Frisch--Waugh), perch\'e il comando non regge pi\`u di un insieme di effetti fissi assorbiti.
+\item \emph{Notes:} Columns: (1) Excl.\ HK/Macao, TotalDepth control (baseline); (2) Incl.\ HK/Macao, TotalDepth control; (3) Excl.\ HK/Macao, DESTA control; (4) Incl.\ HK/Macao, DESTA control.
+\item Asymptotic $p$-values from destination-clustered standard errors are unreliable with 23 treated clusters (roughly 14 distinct EP profiles). The wild cluster bootstrap reconstructs the coefficient distribution by resampling 9,999 times and produces substantially more conservative $p$-values. The baseline dirty coefficient (Panel A, column 1) has asymptotic $p < 0.001$ but bootstrap $p = 0.072$.
+\item Panels C and D computed via \texttt{boottest} in Stata on residualized data (Frisch--Waugh), because the command does not support more than one set of absorbed fixed effects.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

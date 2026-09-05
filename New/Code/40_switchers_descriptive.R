@@ -17,6 +17,7 @@ library(data.table)
 
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 OUT_MD     <- here("New/Output/Diagnostics/40_switchers_descriptive.md")
+# Nessun suffisso di variante: script non sample-dipendente (solo 3 switcher fissi da WB_DTA)
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 
 td <- fread(DEPTH_FILE)

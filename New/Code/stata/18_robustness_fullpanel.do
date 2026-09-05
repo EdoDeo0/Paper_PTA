@@ -35,8 +35,9 @@ do "New/Code/stata/_root.do"
 * robustezza (i cui output esistono gia': suffissi _inclHKMO / _desta).
 * Riportato al default il 2026-08-23: era rimasto su "incl"/"desta" dall'ultima
 * variante eseguita, quindi un rerun non riproduceva il baseline.
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+* Default: spec principale. Se gia' settati dal wrapper, non sovrascrivere.
+if "$PTA_SAMPLE" == "" global PTA_SAMPLE "excl"
+if "$PTA_DEPTH"  == "" global PTA_DEPTH  "totaldepth"
 
 * Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {
@@ -179,12 +180,29 @@ if _rc {
     regsave using "$TAB/_rob_A_WB_controls$OUTSFX.dta", tstat pval ci replace addlabel(model, A_WB_controls, source, reghdfe_stata_18)
 }
 
+*── A. TREND con controlli ─────────────────────────────────────────────────────
+cap confirm file "$TAB/_rob_A_TREND_controls$OUTSFX.dta"
+if _rc {
+    reghdfe ln_export tr_green tr_dirty td_green td_dirty tariffs ln_hhi_baci AD_pdt ///
+        if $HKMOEXPR, absorb(fpd fdt pt) vce(cluster country_code) compact
+    regsave using "$TAB/_rob_A_TREND_controls$OUTSFX.dta", tstat pval ci replace addlabel(model, A_TREND_controls, source, reghdfe_stata_18)
+}
+
 *── B. WB senza ASEAN ──────────────────────────────────────────────────────────
 cap confirm file "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta"
 if _rc {
     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
         if $HKMOEXPR & !asean, absorb(fpd fdt pt) vce(cluster country_code) compact
     regsave using "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta", tstat pval ci replace addlabel(model, B_WB_noASEAN, source, reghdfe_stata_18)
+}
+
+*── B. TREND senza ASEAN ───────────────────────────────────────────────────────
+cap confirm file "$TAB/_rob_B_TREND_noASEAN$OUTSFX.dta"
+if _rc {
+    cap noisily reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
+        if $HKMOEXPR & !asean, absorb(fpd fdt pt) vce(cluster country_code) compact
+    if !_rc regsave using "$TAB/_rob_B_TREND_noASEAN$OUTSFX.dta", tstat pval ci replace addlabel(model, B_TREND_noASEAN, source, reghdfe_stata_18)
+    else di as error "[SKIP] B_TREND_noASEAN$OUTSFX: reghdfe fallita (campione vuoto o variazione insufficiente)"
 }
 
 * NOTA: il vecchio blocco C ("WB includendo HK+MO") e' stato rimosso. Ora si

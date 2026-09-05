@@ -145,5 +145,6 @@ else
 sprintf("Per confronto: VIF dell'aggregato TotalDepth_nonEnv (14_descriptives_collinearity.md) = 5,76 circa (fonte: cappello §8). Range VIF per singola area: [%.2f, %.2f].",
         min(corr_tab$vif), max(corr_tab$vif))
 )
+# Nessun suffisso: script non sample-dipendente (costruisce depth-by-area da WB_DTA, non dal panel)
 writeLines(md, file.path(DIAG_DIR, "37_totaldepth_byarea.md"))
 cat("\n[OK]", file.path(DIAG_DIR, "37_totaldepth_byarea.md"), "\n")

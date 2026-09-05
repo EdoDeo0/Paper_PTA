@@ -404,6 +404,7 @@ get_coll <- function(sfx, tr) {
     paste0("\\item ", NOTE_SE, " ", NOTE_STARS),
     "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
   wr(L, "tab_03_main_full.tex")
+  # tab_03: generato ma non incluso nel paper — superseded da fragments/ptab_main
 }
 
 ########################################################################
@@ -456,6 +457,7 @@ get_coll <- function(sfx, tr) {
     paste0("\\item ", NOTE_SE, " ", NOTE_STARS),
     "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
   wr(L, "tab_04_main_collapsed.tex")
+  # tab_04: generato ma non incluso nel paper — superseded da fragments/ptab_main
 }
 
 ########################################################################
@@ -631,6 +633,7 @@ get_coll <- function(sfx, tr) {
       "\\item L'anno $-1$ \\`e il termine di paragone: tutti gli altri coefficienti misurano la distanza da quell'anno.",
       "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
     wr(L, "tab_08_eventstudy.tex")
+    # tab_08: generato ma non incluso nel paper — superseded da figure eventstudy_collapsed_v3.png e eventstudy_sunab_v3.png
   }
 }
 
@@ -733,6 +736,7 @@ get_coll <- function(sfx, tr) {
       paste0("\\item ", NOTE_SE, " ", NOTE_STARS),
       "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
     wr(L, "tab_10_stability.tex")
+    # tab_10: generato ma non incluso nel paper — superseded da fragments/ptab_stability
   }
 }
 
@@ -1141,6 +1145,7 @@ get_coll <- function(sfx, tr) {
     paste0("\\item ", NOTE_SE, " ", NOTE_STARS),
     "\\end{tablenotes}", "\\end{threeparttable}", "\\end{table}")
   wr(L, "tab_17_depthcontrols.tex")
+  # tab_17: generato ma non incluso nel paper — superseded da fragments/ptab_depthbounds
 }
 
 ########################################################################

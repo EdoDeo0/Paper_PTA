@@ -33,7 +33,7 @@ Aggregated ATT & $-0.0421$ & 0.269 & $\phantom{-}0.0729$ & 0.276 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
-\item Estimated via \texttt{eventstudyinteract} in \textsc{Stata} \citep{sun2021}. Dependent variable: destination--year composition gap (mean log exports of green or dirty products minus mean log exports of neutral products, within destination--year cells). Standard errors propagate estimation uncertainty in cohort shares, as prescribed by \citet{sun2021}; \texttt{fixest::sunab} in \textsc{R} treats the shares as known weights and yields narrower standard errors --- the ratio reaches 3--4 in periods identified by many discordant cohorts. Coefficients agree to 15 significant figures across implementations. Endpoint bins at $t\leq -10$ and $t\geq +8$ accumulate all observations beyond those thresholds. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\item \emph{Notes:} Estimated via \texttt{eventstudyinteract} in \textsc{Stata} \citep{sun2021}. Dependent variable: destination--year composition gap (mean log exports of green or dirty products minus mean log exports of neutral products, within destination--year cells). Standard errors propagate estimation uncertainty in cohort shares, as prescribed by \citet{sun2021}; \texttt{fixest::sunab} in \textsc{R} treats the shares as known weights and yields narrower standard errors --- the ratio reaches 3--4 in periods identified by many discordant cohorts. Coefficients agree to 15 significant figures across implementations. Endpoint bins at $t\leq -10$ and $t\geq +8$ accumulate all observations beyond those thresholds. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

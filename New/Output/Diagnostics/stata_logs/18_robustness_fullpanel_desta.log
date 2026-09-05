@@ -1,0 +1,526 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/18_ro
+> bustness_fullpanel_desta.log
+  log type:  text
+ opened on:   5 Sep 2026, 11:47:14
+
+. 
+. global TAB  "$ROOT/New/Output/TripleDiff/Tables"
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. *── Liste ausiliarie ────────────────────────────────────────────────────────
+> ───
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good_new = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_52b0_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+
+. rename dirty dirty_p
+
+. tempfile dirty
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_52b0_000002.tmp saved as .dta
+    format
+
+. 
+. import delimited "$DEPTHFILE", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 239 obs)
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_52b0_000003.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Subsamples/flag_overlap.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 5,008 obs)
+
+. keep if overlap_cem == "TRUE"
+(160 observations deleted)
+
+. keep hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+. gen byte in_overlap = 1
+
+. tempfile overlap
+
+. save `overlap'
+file C:\Users\edodr\AppData\Local\Temp\ST_52b0_000004.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Subsamples/flag_deepshallow.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(4 vars, 239 obs)
+
+. keep if inlist(group, "deep", "shallow")
+(214 observations deleted)
+
+. keep country_code
+
+. duplicates drop country_code, force
+
+Duplicates in terms of country_code
+
+(0 observations are duplicates)
+
+. gen byte in_deepshallow = 1
+
+. tempfile deepshallow
+
+. save `deepshallow'
+file C:\Users\edodr\AppData\Local\Temp\ST_52b0_000005.tmp saved as .dta
+    format
+
+. 
+. *── Panel preparato (una volta sola) ────────────────────────────────────────
+> ───
+. use ln_export WB_EP_Depth TREND_EP_Count hs6 country_code year fpd fdt pt ///
+>     tariffs ln_hhi_baci AD_pdt companyID export ///
+>     using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_compressed.
+> dta", clear
+
+. 
+. gen byte hkmo = inlist(country_code, 110, 121)
+
+. * membri ASEAN nei dati doganali (accordo unico 2005)
+. gen byte asean = inlist(country_code, 105, 107, 112, 119, 122, 106, 129, 132,
+>  136) ///
+>                | inlist(country_code, 144, 141)
+
+. 
+. merge m:1 hs6 using `green', keep(master match)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,652,802
+        from master                43,652,802  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,592,502  (_merge==3)
+    -----------------------------------------
+
+. qui count if _merge == 3
+
+. di as text "[merge green] righe appaiate: " r(N)
+[merge green] righe appaiate: 5592502
+
+. drop _merge
+
+. replace env_good_new = 0 if missing(env_good_new)
+(43,652,802 real changes made)
+
+. merge m:1 hs6 using `dirty', keep(master match)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    45,404,042
+        from master                45,404,042  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,841,262  (_merge==3)
+    -----------------------------------------
+
+. qui count if _merge == 3
+
+. di as text "[merge dirty] righe appaiate: " r(N)
+[merge dirty] righe appaiate: 3841262
+
+. drop _merge
+
+. replace dirty_p = 0 if missing(dirty_p)
+(45,404,042 real changes made)
+
+. merge m:1 country_code year using `depth', keep(master match)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    37,162,246
+        from master                37,162,246  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        12,083,058  (_merge==3)
+    -----------------------------------------
+
+. qui count if _merge == 3
+
+. di as text "[merge depth] righe appaiate: " r(N)
+[merge depth] righe appaiate: 12083058
+
+. drop _merge
+
+. if $DROP_UNMEASURED {
+.     drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+(229,436 observations deleted)
+. }
+
+. replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+(36,932,810 real changes made)
+
+. merge m:1 hs6 using `overlap', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                         2,279
+        from master                     2,279  
+        from using                          0  
+
+    Matched                        49,013,589  
+    -----------------------------------------
+
+. replace in_overlap = 0 if missing(in_overlap)
+(2,279 real changes made)
+
+. merge m:1 country_code using `deepshallow', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    34,012,226
+        from master                34,012,226  
+        from using                          0  
+
+    Matched                        15,003,642  
+    -----------------------------------------
+
+. replace in_deepshallow = 0 if missing(in_deepshallow)
+(34,012,226 real changes made)
+
+. 
+. gen double wb_green = WB_EP_Depth    * env_good_new
+
+. gen double wb_dirty = WB_EP_Depth    * dirty_p
+
+. gen double tr_green = TREND_EP_Count * env_good_new
+
+. gen double tr_dirty = TREND_EP_Count * dirty_p
+
+. gen double td_green = $DEPTHVAR * env_good_new
+
+. gen double td_dirty = $DEPTHVAR * dirty_p
+
+. 
+. * panel per il modulo within-firm (G), salvato PRIMA di droppare colonne
+. preserve
+
+. keep companyID country_code year export env_good_new WB_EP_Depth TREND_EP_Cou
+> nt ///
+>      $DEPTHVAR hkmo
+
+. tempfile forG
+
+. save `forG'
+file C:\Users\edodr\AppData\Local\Temp\ST_52b0_000007.tmp saved as .dta
+    format
+
+. restore
+
+. drop companyID export hs6 WB_EP_Depth TREND_EP_Count $DEPTHVAR
+
+. 
+. *── A. WB con controlli (HK+MO esclusi) ─────────────────────────────────────
+> ───
+. cap confirm file "$TAB/_rob_A_WB_controls$OUTSFX.dta"
+
+. if _rc {
+.     reghdfe ln_export wb_green wb_dirty td_green td_dirty tariffs ln_hhi_baci
+>  AD_pdt ///
+>         if $HKMOEXPR, absorb(fpd fdt pt) vce(cluster country_code) compact
+.     regsave using "$TAB/_rob_A_WB_controls$OUTSFX.dta", tstat pval ci replace
+>  addlabel(model, A_WB_controls, source, reghdfe_stata_18)
+. }
+
+. 
+. *── A. TREND con controlli ──────────────────────────────────────────────────
+> ───
+. cap confirm file "$TAB/_rob_A_TREND_controls$OUTSFX.dta"
+
+. if _rc {
+.     reghdfe ln_export tr_green tr_dirty td_green td_dirty tariffs ln_hhi_baci
+>  AD_pdt ///
+>         if $HKMOEXPR, absorb(fpd fdt pt) vce(cluster country_code) compact
+(dropped 2.16e+07 singleton observations)
+(MWFE estimator converged in 83 iterations)
+
+HDFE Linear regression                            Number of obs   = 19,285,603
+Absorbing 3 HDFE groups                           F(   7,    174) =       3.81
+Statistics robust to heteroskedasticity           Prob > F        =     0.0007
+                                                  R-squared       =     0.8736
+                                                  Adj R-squared   =     0.7429
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        175    Root MSE        =     1.3400
+
+                         (Std. err. adjusted for 175 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |   .0001483   .0009215     0.16   0.872    -.0016704    .0019671
+    tr_dirty |  -.0010608   .0007708    -1.38   0.171    -.0025821    .0004605
+    td_green |  -.0004897   .0095658    -0.05   0.959    -.0193696    .0183902
+    td_dirty |   .0099186   .0086391     1.15   0.253    -.0071324    .0269696
+     tariffs |  -.0009094   .0048806    -0.19   0.852    -.0105421    .0087234
+ ln_hhi_baci |  -.0016601   .0020414    -0.81   0.417    -.0056892    .0023691
+      AD_pdt |  -.0561309   .0125409    -4.48   0.000    -.0808829    -.031379
+       _cons |   9.605828   .0081485  1178.84   0.000     9.589745     9.62191
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   5547626     5547626           0    *|
+         fdt |   4195902     4195902           0    *|
+          pt |     63107           1       63106     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+.     regsave using "$TAB/_rob_A_TREND_controls$OUTSFX.dta", tstat pval ci repl
+> ace addlabel(model, A_TREND_controls, source, reghdfe_stata_18)
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_rob_A_TREND_cont
+    > rols_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_rob_A_TREND_cont
+    > rols_desta.dta saved
+. }
+
+. 
+. *── B. WB senza ASEAN ───────────────────────────────────────────────────────
+> ───
+. cap confirm file "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta"
+
+. if _rc {
+.     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
+>         if $HKMOEXPR & !asean, absorb(fpd fdt pt) vce(cluster country_code) c
+> ompact
+.     regsave using "$TAB/_rob_B_WB_noASEAN$OUTSFX.dta", tstat pval ci replace 
+> addlabel(model, B_WB_noASEAN, source, reghdfe_stata_18)
+. }
+
+. 
+. *── B. TREND senza ASEAN ────────────────────────────────────────────────────
+> ───
+. cap confirm file "$TAB/_rob_B_TREND_noASEAN$OUTSFX.dta"
+
+. if _rc {
+.     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
+>         if $HKMOEXPR & !asean, absorb(fpd fdt pt) vce(cluster country_code) c
+> ompact
+(dropped 2.11e+07 singleton observations)
+(MWFE estimator converged in 83 iterations)
+
+HDFE Linear regression                            Number of obs   = 19,236,090
+Absorbing 3 HDFE groups                           F(   4,    213) =       4.44
+Statistics robust to heteroskedasticity           Prob > F        =     0.0018
+                                                  R-squared       =     0.8719
+                                                  Adj R-squared   =     0.7423
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        214    Root MSE        =     1.3348
+
+                         (Std. err. adjusted for 214 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+   ln_export | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0008843   .0011359    -0.78   0.437    -.0031234    .0013547
+    tr_dirty |  -.0019006   .0009183    -2.07   0.040    -.0037108   -.0000905
+    td_green |   .0085038   .0094472     0.90   0.369    -.0101182    .0271259
+    td_dirty |   .0210658   .0097903     2.15   0.033     .0017674    .0403641
+       _cons |     9.5959   .0002524  3.8e+04   0.000     9.595403    9.596398
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   5493864     5493864           0    *|
+         fdt |   4114509     4114509           0    *|
+          pt |     63329           1       63328     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+.     regsave using "$TAB/_rob_B_TREND_noASEAN$OUTSFX.dta", tstat pval ci repla
+> ce addlabel(model, B_TREND_noASEAN, source, reghdfe_stata_18)
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_rob_B_TREND_noAS
+    > EAN_desta.dta not found)
+file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/_rob_B_TREND_noAS
+    > EAN_desta.dta saved
+. }
+
+. 
+. * NOTA: il vecchio blocco C ("WB includendo HK+MO") e' stato rimosso. Ora si
+. * ottiene lanciando questo stesso file con  global PTA_SAMPLE "incl", che
+. * produce la variante inclusiva di TUTTI i blocchi, non solo di WB baseline.
+. 
+. *── D. C-overlap (WB e TREND) ───────────────────────────────────────────────
+> ───
+. cap confirm file "$TAB/_rob_D_WB_overlap$OUTSFX.dta"
+
+. if _rc {
+.     reghdfe ln_export wb_green wb_dirty td_green td_dirty ///
+>         if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_cod
+> e) compact
+.     regsave using "$TAB/_rob_D_WB_overlap$OUTSFX.dta", tstat pval ci replace 
+> addlabel(model, D_WB_overlap, source, reghdfe_stata_18)
+. }
+
+. cap confirm file "$TAB/_rob_D_TREND_overlap$OUTSFX.dta"
+
+. if _rc {
+.     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
+>         if $HKMOEXPR & in_overlap, absorb(fpd fdt pt) vce(cluster country_cod
+> e) compact
+.     regsave using "$TAB/_rob_D_TREND_overlap$OUTSFX.dta", tstat pval ci repla
+> ce addlabel(model, D_TREND_overlap, source, reghdfe_stata_18)
+. }
+
+. 
+. *── E. C-deepshallow TREND ──────────────────────────────────────────────────
+> ────
+. cap confirm file "$TAB/_rob_E_TREND_deepshallow$OUTSFX.dta"
+
+. if _rc {
+.     reghdfe ln_export tr_green tr_dirty td_green td_dirty ///
+>         if $HKMOEXPR & in_deepshallow, absorb(fpd fdt pt) vce(cluster country
+> _code) compact
+.     regsave using "$TAB/_rob_E_TREND_deepshallow$OUTSFX.dta", tstat pval ci r
+> eplace addlabel(model, E_TREND_deepshallow, source, reghdfe_stata_18)
+. }
+
+. 
+. *── G. Within-firm: quota green nel paniere impresa-dest-anno ───────────────
+> ───
+. * share_green_fdt = quota di valore export green dell'impresa f verso d in t.
+. * EP varia a dest-anno: FE impresa-dest (fd) + anno; identificazione within-f
+> d.
+. cap confirm file "$TAB/_rob_G_WB_withinfirm$OUTSFX.dta"
+
+. if _rc {
+.     use `forG' if $HKMOEXPR, clear
+.     gen double exp_green = export * env_good_new
+.     collapse (sum) export exp_green ///
+>              (first) WB_EP_Depth TREND_EP_Count $DEPTHVAR, ///
+>              by(companyID country_code year)
+.     gen double share_green = exp_green / export
+.     egen long fd = group(companyID country_code)
+.     reghdfe share_green WB_EP_Depth $DEPTHVAR, ///
+>         absorb(fd year) vce(cluster country_code)
+.     regsave using "$TAB/_rob_G_WB_withinfirm$OUTSFX.dta", tstat pval ci repla
+> ce addlabel(model, G_WB_withinfirm, source, reghdfe_stata_18)
+.     reghdfe share_green TREND_EP_Count $DEPTHVAR, ///
+>         absorb(fd year) vce(cluster country_code)
+.     regsave using "$TAB/_rob_G_TREND_withinfirm$OUTSFX.dta", tstat pval ci re
+> place addlabel(model, G_TREND_withinfirm, source, reghdfe_stata_18)
+. }
+
+. 
+. *── Export riassuntivo ──────────────────────────────────────────────────────
+> ───
+. * NOTA: "append using "$TAB/`f''" falliva con r(601) perche' `dir ... files`
+. * restituisce nomi gia' tra virgolette compound e append non accetta un
+. * dataset vuoto in memoria come target del primissimo append: si usa `use`
+. * per il primo file e `append` per i successivi, con path a forward slash
+. * (Stata li accetta anche su Windows ed evita l'ambiguita' backslash-backtick
+> ).
+. * Il glob non distingue le 4 varianti: si mantengono solo i file il cui nome
+. * termina con OUTSFX.dta (suffisso composto campione+depth).
+. * Per OUTSFX vuoto (spec principale) si escludono i file con _inclHKMO o _des
+> ta.
+. clear
+
+. local all : dir "$TAB" files "_rob_*.dta"
+
+. local files ""
+
+. foreach f of local all {
+  2.     * NB: su Windows `: dir` restituisce i nomi in MINUSCOLO, mentre i fil
+> e sul
+.     * disco sono _rob_A_WB_controls_inclHKMO.dta: senza lower() su entrambi i
+.     * lati il confronto non matcha mai -> lista vuota (r(102) su export) per 
+> le
+.     * run suffissate, e nessuna esclusione per la run principale.
+.     local match 0
+  3.     if "$OUTSFX" != "" {
+  4.         if strpos(lower("`f'"), lower("$OUTSFX.dta")) > 0 local match 1
+  5.     }
+  6.     else {
+  7.         if !strpos(lower("`f'"), "_inclhkmo") & !strpos(lower("`f'"), "_de
+> sta") local match 1
+  8.     }
+  9.     if `match' local files `"`files' "`f'""'
+ 10. }
+
+. local first = 1
+
+. foreach f of local files {
+  2.     if `first' {
+  3.         use "$TAB/`f'", clear
+  4.         local first = 0
+  5.     }
+  6.     else {
+  7.         append using "$TAB/`f'"
+  8.     }
+  9. }
+(variable model was str16, now str19 to accommodate using data's values)
+(variable var was str11, now str17 to accommodate using data's values)
+
+. export delimited "$TAB/tripledd_robustness_reghdfe$OUTSFX.csv", replace
+file C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/tripledd_robustnes
+> s_reghdfe_desta.csv saved
+
+. di "[OK] tripledd_robustness_reghdfe$OUTSFX.csv"
+[OK] tripledd_robustness_reghdfe_desta.csv
+
+. 
+. cap log close _all

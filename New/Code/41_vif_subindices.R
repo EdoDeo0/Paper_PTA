@@ -22,6 +22,7 @@ IDX_FILE   <- here("Data/Merged/Merged_TREND_WB_Indices_Only.csv")
 DEPTH_FILE <- here("New/Data/TotalDepth/wb_totaldepth_country_year.csv")
 SUBIDX_FILE<- here("New/Output/TripleDiff/Tables/subindices_collapsed.csv")
 OUT_MD     <- here("New/Output/Diagnostics/41_vif_subindices.md")
+# Nessun suffisso di variante: script non sample-dipendente (VIF su indici EP, non su panel)
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 
 SUBS <- c("WB_GreenLiberalization", "TREND_GreenMarketAccess",

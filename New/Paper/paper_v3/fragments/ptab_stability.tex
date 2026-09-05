@@ -1,32 +1,44 @@
 % ptab_stability.tex
 % Source: assembled from tab_10_stability.tex (control-group subsamples) and
 %         tab_11_robustness_full.tex (full-panel variations rows)
-% Last verified: 2026-09-03
+% Last verified: 2026-09-04 — restructured into Panel A (WB) / Panel B (TREND)
 \small
 \begin{threeparttable}
 \begin{tabular}{lccc}
 \toprule
 Sample / design & Obs. & EP$\times$green & Asymptotic $p$ \\
 \midrule
+\multicolumn{4}{l}{\textit{Panel A --- WB index}} \\
+\addlinespace
 Full panel (firm level) & 21.5M & $-0.0023$ & 0.57 \\
 Collapsed panel & 3.7M cells & $-0.0046$ & 0.51 \\
 \addlinespace
-\multicolumn{4}{l}{\textit{Control-group subsamples}} \\
+\multicolumn{4}{l}{\quad\textit{Control-group subsamples}} \\
 \quad C-prod-HS4 (within-HS4 neutral products) & 3.8M & $-0.0009$ & 0.86 \\
 \quad CEM-matched destinations & 13.7M & $-0.0023$ & 0.54 \\
 \quad Deep vs.\ shallow (PTA partners only) & 5.3M & $-0.0022$ & 0.53 \\
 \quad Common support (C-overlap) & 21.5M & $-0.0022$ & 0.57 \\
 \addlinespace
-\multicolumn{4}{l}{\textit{Full-panel variations}} \\
+\multicolumn{4}{l}{\quad\textit{Full-panel variations}} \\
 \quad With controls & 19.3M & $-0.0002$ & 0.94 \\
 \quad Excluding ASEAN & 19.2M & $-0.0025$ & 0.48 \\
 \quad Including HK--Macao & 23.6M & $-0.0009$ & 0.80 \\
 \midrule
+\multicolumn{4}{l}{\textit{Panel B --- TREND index}} \\
+\addlinespace
+Full panel (firm level) & 21.5M & $-0.0001$ & 0.91 \\
+Collapsed panel & 3.7M cells & $+0.0018$ & 0.32 \\
+\addlinespace
+\multicolumn{4}{l}{\quad\textit{Control-group subsamples}} \\
+\quad C-prod-HS4 (within-HS4 neutral products) & 3.8M & $+0.0005$ & 0.68 \\
+\quad CEM-matched destinations & 13.7M & $-0.0006$ & 0.59 \\
+\quad Deep vs.\ shallow (PTA partners only) & 5.3M & $-0.0004$ & 0.72 \\
+\quad Common support (C-overlap) & 21.5M & $-0.0001$ & 0.91 \\
+\midrule
 Fixed effects as in baseline & \multicolumn{3}{c}{Yes (all rows)} \\
-WB index & \multicolumn{3}{c}{Yes (all rows)} \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
-\item Each row estimates equation~\eqref{eq:main} on the indicated subsample or design; asymptotic destination-clustered $p$-values. Fixed effects: $fpd + fdt + pt$ (full panel); $pd + dt + pt$ (collapsed). CEM matches on log GDP p.c., growth, and MFN tariff (year 2000). Deep/shallow split at the median of maximum EP depth: 16 deep vs.\ 9 shallow partner destinations. TREND analogues (where estimated): full panel $-0.0001$ ($p = 0.91$), common support $-0.0001$ ($p = 0.91$), deep vs.\ shallow $-0.0004$ ($p = 0.72$). Controls: MFN tariff, HHI, antidumping indicator.
+\item \emph{Notes:} Each row estimates equation~\eqref{eq:main} on the indicated subsample or design; asymptotic destination-clustered $p$-values. Fixed effects: $fpd + fdt + pt$ (full panel); $pd + dt + pt$ (collapsed). CEM matches on log GDP p.c., growth, and MFN tariff (year 2000). Deep/shallow split at the median of maximum EP depth: 16 deep vs.\ 9 shallow partner destinations. Full-panel variations (With controls, Excluding ASEAN, Including HK--Macao) are not estimated for the TREND index. Controls: MFN tariff, HHI, antidumping indicator.
 \end{tablenotes}
 \end{threeparttable}

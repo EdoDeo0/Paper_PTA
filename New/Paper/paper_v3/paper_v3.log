@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.20)  3 SEP 2026 00:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.20)  5 SEP 2026 14:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -180,6 +180,19 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
 Package: setspace 2022/12/04 v6.7b set line spacing
 )
+(C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/footmisc\footmisc.sty
+Package: footmisc 2025/05/09 v7.0b a miscellany of footnote facilities
+\FN@temptoken=\toks26
+\footnotemargin=\dimen181
+Package footmisc Info: Declaring symbol style bringhurst on input line 549.
+Package footmisc Info: Declaring symbol style chicago on input line 557.
+Package footmisc Info: Declaring symbol style wiley on input line 566.
+Package footmisc Info: Declaring symbol style lamport-robust on input line 577.
+
+Package footmisc Info: Declaring symbol style lamport* on input line 597.
+Package footmisc Info: Declaring symbol style lamport*-robust on input line 618
+.
+)
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
 
@@ -237,7 +250,7 @@ ty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen181
+\@linkdim=\dimen182
 \Hy@linkcounter=\count304
 \Hy@pagecounter=\count305
  (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
@@ -267,7 +280,7 @@ Package hyperref Info: Bookmarks ON on input line 4462.
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4801.
-\XeTeXLinkMargin=\dimen182
+\XeTeXLinkMargin=\dimen183
 
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -278,8 +291,8 @@ Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
 \Fld@menulength=\count308
-\Field@Width=\dimen183
-\Fld@charsize=\dimen184
+\Field@Width=\dimen184
+\Fld@charsize=\dimen185
 Package hyperref Info: Hyper figures OFF on input line 6078.
 Package hyperref Info: Link nesting OFF on input line 6083.
 Package hyperref Info: Hyper index ON on input line 6086.
@@ -316,12 +329,23 @@ ttable.sty
 Package: threeparttable 2003/06/13  v 3.0
 \@tempboxb=\box55
 )
+(C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count314
+\float@exts=\toks27
+\float@box=\box56
+\@float@everytoks=\toks28
+\@floatcapt=\box57
+)
+(C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/placeins\placeins.sty
+Package: placeins 2005/04/18  v 2.2
+)
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.sty
 Package: biblatex 2025/07/10 v3.21 programmable bibliographies (PK/MW)
 
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.sty
 Package: logreq 2010/08/04 v1.0 xml request logger
-\lrq@indent=\count314
+\lrq@indent=\count315
 
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.def
 File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
@@ -329,49 +353,49 @@ File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
 Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 )
-\c@tabx@nest=\count315
-\c@listtotal=\count316
-\c@listcount=\count317
-\c@liststart=\count318
-\c@liststop=\count319
-\c@citecount=\count320
-\c@citetotal=\count321
-\c@multicitecount=\count322
-\c@multicitetotal=\count323
-\c@instcount=\count324
-\c@maxnames=\count325
-\c@minnames=\count326
-\c@maxitems=\count327
-\c@minitems=\count328
-\c@citecounter=\count329
-\c@maxcitecounter=\count330
-\c@savedcitecounter=\count331
-\c@uniquelist=\count332
-\c@uniquename=\count333
-\c@refsection=\count334
-\c@refsegment=\count335
-\c@maxextratitle=\count336
-\c@maxextratitleyear=\count337
-\c@maxextraname=\count338
-\c@maxextradate=\count339
-\c@maxextraalpha=\count340
-\c@abbrvpenalty=\count341
-\c@highnamepenalty=\count342
-\c@lownamepenalty=\count343
-\c@maxparens=\count344
-\c@parenlevel=\count345
-\blx@tempcnta=\count346
-\blx@tempcntb=\count347
-\blx@tempcntc=\count348
-\c@blx@maxsection=\count349
-\blx@maxsegment@0=\count350
-\blx@notetype=\count351
-\blx@parenlevel@text=\count352
-\blx@parenlevel@foot=\count353
-\blx@sectionciteorder@0=\count354
-\blx@sectionciteorderinternal@0=\count355
-\blx@entrysetcounter=\count356
-\blx@biblioinstance=\count357
+\c@tabx@nest=\count316
+\c@listtotal=\count317
+\c@listcount=\count318
+\c@liststart=\count319
+\c@liststop=\count320
+\c@citecount=\count321
+\c@citetotal=\count322
+\c@multicitecount=\count323
+\c@multicitetotal=\count324
+\c@instcount=\count325
+\c@maxnames=\count326
+\c@minnames=\count327
+\c@maxitems=\count328
+\c@minitems=\count329
+\c@citecounter=\count330
+\c@maxcitecounter=\count331
+\c@savedcitecounter=\count332
+\c@uniquelist=\count333
+\c@uniquename=\count334
+\c@refsection=\count335
+\c@refsegment=\count336
+\c@maxextratitle=\count337
+\c@maxextratitleyear=\count338
+\c@maxextraname=\count339
+\c@maxextradate=\count340
+\c@maxextraalpha=\count341
+\c@abbrvpenalty=\count342
+\c@highnamepenalty=\count343
+\c@lownamepenalty=\count344
+\c@maxparens=\count345
+\c@parenlevel=\count346
+\blx@tempcnta=\count347
+\blx@tempcntb=\count348
+\blx@tempcntc=\count349
+\c@blx@maxsection=\count350
+\blx@maxsegment@0=\count351
+\blx@notetype=\count352
+\blx@parenlevel@text=\count353
+\blx@parenlevel@foot=\count354
+\blx@sectionciteorder@0=\count355
+\blx@sectionciteorderinternal@0=\count356
+\blx@entrysetcounter=\count357
+\blx@biblioinstance=\count358
 \labelnumberwidth=\skip55
 \labelalphawidth=\skip56
 \biblabelsep=\skip57
@@ -383,9 +407,9 @@ Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 \blx@bcfin=\read2
 \blx@bcfout=\write3
 \blx@langwohyphens=\language79
-\c@mincomprange=\count358
-\c@maxcomprange=\count359
-\c@mincompwidth=\count360
+\c@mincomprange=\count359
+\c@maxcomprange=\count360
+\c@mincompwidth=\count361
 Package biblatex Info: Trying to load biblatex default data model...
 Package biblatex Info: ... file 'blx-dm.def' found.
 
@@ -396,74 +420,74 @@ Package biblatex Info: Trying to load biblatex style data model...
 Package biblatex Info: ... file 'authoryear-comp.dbx' not found.
 Package biblatex Info: Trying to load biblatex custom data model...
 Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
-\c@afterword=\count361
-\c@savedafterword=\count362
-\c@annotator=\count363
-\c@savedannotator=\count364
-\c@author=\count365
-\c@savedauthor=\count366
-\c@bookauthor=\count367
-\c@savedbookauthor=\count368
-\c@commentator=\count369
-\c@savedcommentator=\count370
-\c@editor=\count371
-\c@savededitor=\count372
-\c@editora=\count373
-\c@savededitora=\count374
-\c@editorb=\count375
-\c@savededitorb=\count376
-\c@editorc=\count377
-\c@savededitorc=\count378
-\c@foreword=\count379
-\c@savedforeword=\count380
-\c@holder=\count381
-\c@savedholder=\count382
-\c@introduction=\count383
-\c@savedintroduction=\count384
-\c@namea=\count385
-\c@savednamea=\count386
-\c@nameb=\count387
-\c@savednameb=\count388
-\c@namec=\count389
-\c@savednamec=\count390
-\c@translator=\count391
-\c@savedtranslator=\count392
-\c@shortauthor=\count393
-\c@savedshortauthor=\count394
-\c@shorteditor=\count395
-\c@savedshorteditor=\count396
-\c@labelname=\count397
-\c@savedlabelname=\count398
-\c@institution=\count399
-\c@savedinstitution=\count400
-\c@lista=\count401
-\c@savedlista=\count402
-\c@listb=\count403
-\c@savedlistb=\count404
-\c@listc=\count405
-\c@savedlistc=\count406
-\c@listd=\count407
-\c@savedlistd=\count408
-\c@liste=\count409
-\c@savedliste=\count410
-\c@listf=\count411
-\c@savedlistf=\count412
-\c@location=\count413
-\c@savedlocation=\count414
-\c@organization=\count415
-\c@savedorganization=\count416
-\c@origlocation=\count417
-\c@savedoriglocation=\count418
-\c@origpublisher=\count419
-\c@savedorigpublisher=\count420
-\c@publisher=\count421
-\c@savedpublisher=\count422
-\c@language=\count423
-\c@savedlanguage=\count424
-\c@origlanguage=\count425
-\c@savedoriglanguage=\count426
-\c@pageref=\count427
-\c@savedpageref=\count428
+\c@afterword=\count362
+\c@savedafterword=\count363
+\c@annotator=\count364
+\c@savedannotator=\count365
+\c@author=\count366
+\c@savedauthor=\count367
+\c@bookauthor=\count368
+\c@savedbookauthor=\count369
+\c@commentator=\count370
+\c@savedcommentator=\count371
+\c@editor=\count372
+\c@savededitor=\count373
+\c@editora=\count374
+\c@savededitora=\count375
+\c@editorb=\count376
+\c@savededitorb=\count377
+\c@editorc=\count378
+\c@savededitorc=\count379
+\c@foreword=\count380
+\c@savedforeword=\count381
+\c@holder=\count382
+\c@savedholder=\count383
+\c@introduction=\count384
+\c@savedintroduction=\count385
+\c@namea=\count386
+\c@savednamea=\count387
+\c@nameb=\count388
+\c@savednameb=\count389
+\c@namec=\count390
+\c@savednamec=\count391
+\c@translator=\count392
+\c@savedtranslator=\count393
+\c@shortauthor=\count394
+\c@savedshortauthor=\count395
+\c@shorteditor=\count396
+\c@savedshorteditor=\count397
+\c@labelname=\count398
+\c@savedlabelname=\count399
+\c@institution=\count400
+\c@savedinstitution=\count401
+\c@lista=\count402
+\c@savedlista=\count403
+\c@listb=\count404
+\c@savedlistb=\count405
+\c@listc=\count406
+\c@savedlistc=\count407
+\c@listd=\count408
+\c@savedlistd=\count409
+\c@liste=\count410
+\c@savedliste=\count411
+\c@listf=\count412
+\c@savedlistf=\count413
+\c@location=\count414
+\c@savedlocation=\count415
+\c@organization=\count416
+\c@savedorganization=\count417
+\c@origlocation=\count418
+\c@savedoriglocation=\count419
+\c@origpublisher=\count420
+\c@savedorigpublisher=\count421
+\c@publisher=\count422
+\c@savedpublisher=\count423
+\c@language=\count424
+\c@savedlanguage=\count425
+\c@origlanguage=\count426
+\c@savedoriglanguage=\count427
+\c@pageref=\count428
+\c@savedpageref=\count429
 \shorthandwidth=\skip63
 \shortjournalwidth=\skip64
 \shortserieswidth=\skip65
@@ -488,19 +512,19 @@ Package biblatex Info: Trying to load generic definitions...
 Package biblatex Info: ... file 'biblatex.def' found.
  (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.def
 File: biblatex.def 2025/07/10 v3.21 biblatex compatibility (PK/MW)
-\c@textcitecount=\count429
-\c@textcitetotal=\count430
-\c@textcitemaxnames=\count431
-\c@biburlbigbreakpenalty=\count432
-\c@biburlbreakpenalty=\count433
-\c@biburlnumpenalty=\count434
-\c@biburlucpenalty=\count435
-\c@biburllcpenalty=\count436
+\c@textcitecount=\count430
+\c@textcitetotal=\count431
+\c@textcitemaxnames=\count432
+\c@biburlbigbreakpenalty=\count433
+\c@biburlbreakpenalty=\count434
+\c@biburlnumpenalty=\count435
+\c@biburlucpenalty=\count436
+\c@biburllcpenalty=\count437
 \biburlbigskip=\muskip19
 \biburlnumskip=\muskip20
 \biburlucskip=\muskip21
 \biburllcskip=\muskip22
-\c@smartand=\count437
+\c@smartand=\count438
 )
 Package biblatex Info: Trying to load natbib compatibility...
 Package biblatex Info: ... file 'blx-natbib.def' found.
@@ -528,8 +552,8 @@ Package biblatex Info: ... file 'standard.bbx' found.
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/bbx\standard.b
 bx
 File: standard.bbx 2025/07/10 v3.21 biblatex bibliography style (PK/MW)
-\c@bbx:relatedcount=\count438
-\c@bbx:relatedtotal=\count439
+\c@bbx:relatedcount=\count439
+\c@bbx:relatedtotal=\count440
 )))
 Package biblatex Info: Trying to load citation style 'authoryear-comp'...
 Package biblatex Info: ... file 'authoryear-comp.cbx' found.
@@ -565,7 +589,7 @@ Package: expl3 2025-12-24 L3 programming layer (loader)
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count440
+\l__color_backend_stack_int=\count441
 ))
 Package biblatex Info: ... and expl3
 (biblatex)             2025-12-24 L3 programming layer (loader) 
@@ -580,7 +604,7 @@ Package: xparse 2025-10-09 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2025/07/10 v3.21 expl3 case changing code for biblatex
 ))
-Package biblatex Info: Redefining '\cite' on input line 24.
+Package biblatex Info: Redefining '\cite' on input line 27.
 
 
 Package biblatex Warning: Redefining '\citep'.
@@ -588,44 +612,44 @@ Package biblatex Warning: Redefining '\citep'.
 
 Package biblatex Warning: Redefining '\citet'.
 
-\@quotelevel=\count441
-\@quotereset=\count442
+\@quotelevel=\count442
+\@quotereset=\count443
 (paper_v3.aux)
 \openout1 = `paper_v3.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
 
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count443
-\scratchdimen=\dimen185
-\scratchbox=\box56
-\nofMPsegments=\count444
-\nofMParguments=\count445
-\everyMPshowfont=\toks26
-\MPscratchCnt=\count446
-\MPscratchDim=\dimen186
-\MPnumerator=\count447
-\makeMPintoPDFobject=\count448
-\everyMPtoPDFconversion=\toks27
+\scratchcounter=\count444
+\scratchdimen=\dimen186
+\scratchbox=\box58
+\nofMPsegments=\count445
+\nofMParguments=\count446
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count447
+\MPscratchDim=\dimen187
+\MPnumerator=\count448
+\makeMPintoPDFobject=\count449
+\everyMPtoPDFconversion=\toks30
 )
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
@@ -671,7 +695,7 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 53.
+Package hyperref Info: Link coloring OFF on input line 56.
 (paper_v3.out) (paper_v3.out)
 \@outlinefile=\write4
 \openout4 = `paper_v3.out'.
@@ -691,15 +715,15 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'paper_v3.bbl' found.
  (paper_v3.bbl)
-Package biblatex Info: Reference section=0 on input line 53.
-Package biblatex Info: Reference segment=0 on input line 53.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 55.
+Package biblatex Info: Reference section=0 on input line 56.
+Package biblatex Info: Reference segment=0 on input line 56.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 58.
 
 
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 55.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 58.
 
 
 (C:\Users\edodr\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
@@ -708,64 +732,150 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {C:/Users/edodr/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2]
-[3] [4] [5] [6] [7] [8] [9]
-Overfull \hbox (12.5686pt too wide) in paragraph at lines 158--162
+[3] [4] [5] [6] [7]
+Overfull \hbox (12.5686pt too wide) in paragraph at lines 184--188
 \T1/cmr/m/n/12 Between 2000 and 2015, China signed pref-er-en-tial agree-ments 
 cov-er-ing 25 des-ti-na-tion economies,
  []
 
-[10] [11]
-Overfull \hbox (35.72984pt too wide) in paragraph at lines 240--249
+[8
+pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.253 
+      ] [9
+pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.253 
+      ]
+Overfull \hbox (35.72984pt too wide) in paragraph at lines 259--268
 \T1/cmr/m/n/12 Agree-ments database ([][]Hof-mann, Os-nago, and Ruta, []2017[][
 ]) yields $\OML/cmm/m/it/12 EP[]$\T1/cmr/m/n/12 , the count of environmental-
  []
 
-<figures/fig_ep_timeline.pdf, id=345, 505.89pt x 325.215pt>
+
+
+pdfTeX warning: pdflatex.exe (file ./figures/fig_ep_timeline.pdf): PDF inclusio
+n: found PDF version <1.7>, but at most version <1.5> allowed
+<figures/fig_ep_timeline.pdf, id=321, 867.24pt x 397.485pt>
 File: figures/fig_ep_timeline.pdf Graphic file (type pdf)
 <use figures/fig_ep_timeline.pdf>
-Package pdftex.def Info: figures/fig_ep_timeline.pdf  used on input line 261.
-(pdftex.def)             Requested size: 401.22942pt x 257.93929pt.
-<figures/fig_ep_distribution_wb.pdf, id=346, 433.62pt x 289.08pt>
-File: figures/fig_ep_distribution_wb.pdf Graphic file (type pdf)
-<use figures/fig_ep_distribution_wb.pdf>
-Package pdftex.def Info: figures/fig_ep_distribution_wb.pdf  used on input line
- 275.
-(pdftex.def)             Requested size: 226.57297pt x 151.05028pt.
-<figures/fig_ep_distribution_trend.pdf, id=347, 433.62pt x 289.08pt>
-File: figures/fig_ep_distribution_trend.pdf Graphic file (type pdf)
-<use figures/fig_ep_distribution_trend.pdf>
-Package pdftex.def Info: figures/fig_ep_distribution_trend.pdf  used on input l
-ine 279.
-(pdftex.def)             Requested size: 226.57297pt x 151.05028pt.
-<figures/fig_map_treated.pdf, id=348, 578.16pt x 325.215pt>
+Package pdftex.def Info: figures/fig_ep_timeline.pdf  used on input line 279.
+(pdftex.def)             Requested size: 472.03123pt x 216.34906pt.
+
+
+pdfTeX warning: pdflatex.exe (file ./figures/fig_map_treated.pdf): PDF inclusio
+n: found PDF version <1.7>, but at most version <1.5> allowed
+<figures/fig_map_treated.pdf, id=322, 722.7pt x 397.485pt>
 File: figures/fig_map_treated.pdf Graphic file (type pdf)
 <use figures/fig_map_treated.pdf>
-Package pdftex.def Info: figures/fig_map_treated.pdf  used on input line 291.
-(pdftex.def)             Requested size: 401.22942pt x 225.6888pt.
-[12] [13 <./figures/fig_ep_timeline.pdf> <./figures/fig_ep_distribution_wb.pdf>
- <./figures/fig_ep_distribution_trend.pdf>] [14 <./figures/fig_map_treated.pdf>
-]
-<figures/fig_composition_shares.pdf, id=406, 505.89pt x 361.35pt>
+Package pdftex.def Info: figures/fig_map_treated.pdf  used on input line 292.
+(pdftex.def)             Requested size: 401.22942pt x 220.6735pt.
+[10] [11
+pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.326 
+      
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.326 
+       <./figures/fig_ep_timeline.pdf> <./figures/fig_map_treated.pdf
+
+pdfTeX warning: pdflatex.exe (file ./figures/fig_map_treated.pdf): PDF inclusio
+n: multiple pdfs with page group included in a single page
+>]
+
+pdfTeX warning: pdflatex.exe (file ./figures/fig_composition_shares.pdf): PDF i
+nclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<figures/fig_composition_shares.pdf, id=362, 650.43pt x 397.485pt>
 File: figures/fig_composition_shares.pdf Graphic file (type pdf)
 <use figures/fig_composition_shares.pdf>
 Package pdftex.def Info: figures/fig_composition_shares.pdf  used on input line
- 478.
-(pdftex.def)             Requested size: 401.22942pt x 286.5992pt.
- [15] [16] [17 <./figures/fig_composition_shares.pdf>] [18]
-Overfull \hbox (108.48494pt too wide) in paragraph at lines 586--607
+ 435.
+(pdftex.def)             Requested size: 401.22942pt x 245.20087pt.
+[12
+pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.484 \end{table}
+                 ] [13
+pdfTeX warning (ext4): destination with the same identifier (name{table.4}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.484 \end{table}
+                 
+pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.484 \end{table}
+                 ] [14
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.507 T
+       he \emph{zero-filled PPML grid} (8.2 million cells) is built from the...
+ <./figures/fig_composition_shares.pdf>]
+Overfull \hbox (108.48494pt too wide) in paragraph at lines 528--549
  [] 
  []
 
-[19] [20] [21] [22] [23] [24] [25] [26] (fragments/ptab_main.tex
-Underfull \hbox (badness 1454) in paragraph at lines 40--41
+[15
+pdfTeX warning (ext4): destination with the same identifier (name{table.6}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.557 
+      ] [16
+pdfTeX warning (ext4): destination with the same identifier (name{table.7}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.581 
+      ] [17] [18] [19] [20] (Tabelle/tab_05_wcb.tex) [21
+pdfTeX warning (ext4): destination with the same identifier (name{table.8}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.740 
+      ] (fragments/ptab_main.tex
+Underfull \hbox (badness 10000) in paragraph at lines 45--46
+[]\T1/cmr/m/it/10 Notes: \T1/cmr/m/n/10 All spec-i-fi-ca-tions in-clude TotalDe
+pth$\OMS/cmsy/m/n/10 ^^B$\T1/cmr/m/n/10 green and
+ []
+
+
+Underfull \hbox (badness 8038) in paragraph at lines 45--46
+\T1/cmr/m/n/10 (1)--(4): $\OT1/cmr/m/n/10 [\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/10 
+0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 035\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML
+/cmm/m/it/10 :\OT1/cmr/m/n/10 036]$\T1/cmr/m/n/10 , $\OT1/cmr/m/n/10 [\OMS/cmsy
+/m/n/10 ^^@\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 043\OML/cmm/m/it/
+10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 011]$\T1/cmr/m/n/10 , 
+$\OT1/cmr/m/n/10 [\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/c
+mr/m/n/10 0037\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m
+/n/10 0025]$\T1/cmr/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 5077) in paragraph at lines 45--46
 \OT1/cmr/m/n/10 [\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cm
-r/m/n/10 0037\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/
-n/10 0025]$\T1/cmr/m/n/10 , $\OT1/cmr/m/n/10 [\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/
-10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0027\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0
-\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0007]$\T1/cmr/m/n/10 ; Panel B: $\OT1/cmr/m/n
-/10 [\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 018
-\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 032]$\T1
-/cmr/m/n/10 ,
+r/m/n/10 0027\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/
+n/10 0007]$\T1/cmr/m/n/10 ; Panel B: $\OT1/cmr/m/n/10 [\OMS/cmsy/m/n/10 ^^@\OT1
+/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 018\OML/cmm/m/it/10 ; \OT1/cmr/m
+/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 032]$\T1/cmr/m/n/10 , $\OT1/cmr/m/n/1
+0 [\OMS/cmsy/m/n/10 ^^@\OT1/cmr/m/n/10 0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 018\O
+ML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 002]$\T1/c
+mr/m/n/10 ,
  []
 
 ) (Tabelle/tab_20_brandi.tex
@@ -773,91 +883,289 @@ Overfull \hbox (38.50471pt too wide) in paragraph at lines 8--16
  [][] 
  []
 
-) (fragments/ptab_stability.tex)
-<figures/eventstudy_collapsed_v3.png, id=575, 903.375pt x 390.258pt>
+) [22] [23
+pdfTeX warning (ext4): destination with the same identifier (name{table.9}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.777 
+      
+pdfTeX warning (ext4): destination with the same identifier (name{table.10}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.777 
+      ] (fragments/ptab_stability.tex) [24
+pdfTeX warning (ext4): destination with the same identifier (name{table.11}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.795 
+      ]
+<figures/eventstudy_collapsed_v3.png, id=550, 903.375pt x 390.258pt>
 File: figures/eventstudy_collapsed_v3.png Graphic file (type png)
 <use figures/eventstudy_collapsed_v3.png>
 Package pdftex.def Info: figures/eventstudy_collapsed_v3.png  used on input lin
-e 989.
+e 801.
 (pdftex.def)             Requested size: 472.03123pt x 203.92383pt.
- [27] [28] [29] [30 <./figures/eventstudy_collapsed_v3.png>]
-Overfull \hbox (82.60983pt too wide) in paragraph at lines 1089--1107
- [] 
+ [25
+pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.834 
+       <./figures/eventstudy_collapsed_v3.png>] [26]
+(Tabelle/tab_06_permutation.tex) (Tabelle/tab_16_leaveoneout.tex
+
+LaTeX Warning: Float too large for page by 2.16074pt on input line 52.
+
+) (fragments/ptab_depthbounds.tex) [27] [28
+pdfTeX warning (ext4): destination with the same identifier (name{table.12}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.898 
+      ] [29
+pdfTeX warning (ext4): destination with the same identifier (name{table.13}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.898 
+      ] [30
+pdfTeX warning (ext4): destination with the same identifier (name{table.14}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.909 
+      ]
+Underfull \hbox (badness 3965) in paragraph at lines 925--925
+[] \T1/cmr/m/n/10.95 WB: Green Lib-er-al-iza-tion +
  []
 
-[31] [32] [33] (fragments/ptab_depthbounds.tex) [34] (fragments/ptab_robust.tex
-) [35] [36]
+[31
+pdfTeX warning (ext4): destination with the same identifier (name{table.15}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.954 
+      ] [32] (Tabelle/tab_14_ppml.tex
+Underfull \hbox (badness 2717) in paragraph at lines 36--37
+[]\T1/cmr/m/n/10 PPML es-ti-mated on the HS6--destination--year grid com-pleted
+
+ []
+
+) [33] [34
+pdfTeX warning (ext4): destination with the same identifier (name{table.16}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1045 
+       ] (fragments/ptab_robust.tex) [35
+pdfTeX warning (ext4): destination with the same identifier (name{table.17}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1062 T
+        wo features limit the risk this poses for the headline results. Firs...
+] (Tabelle/tab_12_desttrends.tex
+
+LaTeX Warning: Float too large for page by 50.15865pt on input line 61.
+
+)
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1300.
+(hyperref)                removing `math shift' on input line 1098.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 1300.
+(hyperref)                removing `subscript' on input line 1098.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1300.
+(hyperref)                removing `math shift' on input line 1098.
 
-[37] [38] [39]
-Overfull \hbox (4.21649pt too wide) in paragraph at lines 1415--1415
+[36] [37
+pdfTeX warning (ext4): destination with the same identifier (name{table.18}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1109 
+       ] (Tabelle/tab_15_co2.tex) [38] [39
+pdfTeX warning (ext4): destination with the same identifier (name{table.19}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1168 \section
+               {Conclusion}\label{sec:conclusion}
+pdfTeX warning (ext4): destination with the same identifier (name{table.20}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1168 \section
+               {Conclusion}\label{sec:conclusion}] [40]
+Overfull \hbox (4.21649pt too wide) in paragraph at lines 1211--1211
 [][]\T1/cmr/m/n/12 Cherniwchan, Je-van (2017). ``Trade lib-er-al-iza-tion and t
 he en-vi-ron-ment: Ev-i-dence from NAFTA
  []
 
-[40]
-Overfull \hbox (55.61937pt too wide) in paragraph at lines 1415--1415
+[41]
+Overfull \hbox (55.61937pt too wide) in paragraph at lines 1211--1211
 \T1/cmr/m/n/12 high-dimensional fixed ef-fects''. In: \T1/cmr/m/it/12 Stata Jou
 r-nal \T1/cmr/m/n/12 20.1, pp. 95^^U115. \T1/cmr/m/sc/12 doi\T1/cmr/m/n/12 : []
 $\T1/cmtt/m/n/12 10 . 1177 / 1536867X20909691$[]\T1/cmr/m/n/12 . 
  []
 
-[41] [42]
-Overfull \hbox (13.407pt too wide) in paragraph at lines 1415--1415
+[42]
+Overfull \hbox (13.407pt too wide) in paragraph at lines 1211--1211
 \T1/cmr/m/n/12 environment-competitiveness re-la-tion-ship''. In: \T1/cmr/m/it/
 12 Jour-nal of Eco-nomic Per-spec-tives \T1/cmr/m/n/12 9.4, pp. 97^^U
  []
 
-[43] (Tabelle/tab_02_ladder.tex) [44]
-<figures/eventstudy_sunab_v3.png, id=775, 903.375pt x 448.074pt>
+[43] [44] (Tabelle/tab_02_ladder.tex) [45
+pdfTeX warning (ext4): destination with the same identifier (name{table.21}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1239 A
+         note on standard errors. The cohort shares used to aggregate group-...
+]
+<figures/eventstudy_sunab_v3.png, id=784, 903.375pt x 448.074pt>
 File: figures/eventstudy_sunab_v3.png Graphic file (type png)
 <use figures/eventstudy_sunab_v3.png>
-Package pdftex.def Info: figures/eventstudy_sunab_v3.png  used on input line 14
+Package pdftex.def Info: figures/eventstudy_sunab_v3.png  used on input line 12
 63.
 (pdftex.def)             Requested size: 472.03123pt x 234.13477pt.
- (Tabelle/tab_09_sunab.tex)
-(Tabelle/tab_13_subindices.tex) [45] [46] [47] [48 <./figures/eventstudy_sunab_
-v3.png>] (paper_v3.aux)
+ (Tabelle/tab_09_sunab.tex) [46
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1268 \section
+               {Sub-index estimates}\label{app:subindices} <./figures/eventstud
+y_sunab_v3.png>] [47
+pdfTeX warning (ext4): destination with the same identifier (name{table.22}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1268 \section
+               {Sub-index estimates}\label{app:subindices}]
+(Tabelle/tab_13_subindices.tex)
+Underfull \hbox (badness 3179) in paragraph at lines 1288--1289
+[]\T1/cmr/m/n/10.95 Liberalization of trade in en-vi-ron-men-tal
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1290--1290
+[]\T1/cmr/m/n/10.95 Standards Non-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1298--1298
+[]\T1/cmr/m/n/10.95 Dispute Set-tle-ment
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1300--1300
+[]\T1/cmr/m/n/10.95 Dispute Set-tle-ment
+ []
+
+
+Underfull \hbox (badness 5607) in paragraph at lines 1306--1307
+[]\T1/cmr/m/n/10.95 Regulatory au-ton-omy and pol-icy space
+ []
+
+
+Underfull \hbox (badness 3460) in paragraph at lines 1308--1309
+[]\T1/cmr/m/n/10.95 Information ex-change, ca-pac-ity build-ing,
+ []
+
+[48] [49
+pdfTeX warning (ext4): destination with the same identifier (name{table.23}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1317 \section
+               {Treated destinations}\label{app:trattamento}] [50
+pdfTeX warning (ext4): destination with the same identifier (name{table.24}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1317 \section
+               {Treated destinations}\label{app:trattamento}]
+(Tabelle/tab_01_trattamento.tex) [51] [52
+pdfTeX warning (ext4): destination with the same identifier (name{table.25}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1323 \section
+               {Wild-cluster-bootstrap coefficient matrix}\label{app:matrice}]
+(Tabelle/tab_07_matrice.tex) (Tabelle/tab_11_robustness_full.tex
+Overfull \hbox (19.53226pt too wide) in paragraph at lines 7--64
+ [] 
+ []
+
+) [53
+pdfTeX warning (ext4): destination with the same identifier (name{table.26}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1335 \section
+               {APEC versus OECD product classification}\label{app:apec}]
+[54
+pdfTeX warning (ext4): destination with the same identifier (name{table.27}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1335 \section
+               {APEC versus OECD product classification}\label{app:apec}]
+(Tabelle/tab_18_apec.tex) (Tabelle/tab_19_mde.tex
+Overfull \hbox (31.39128pt too wide) in paragraph at lines 7--25
+ [] 
+ []
+
+) [55
+pdfTeX warning (ext4): destination with the same identifier (name{table.28}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1347 \end{document}
+                     ] [56
+pdfTeX warning (ext4): destination with the same identifier (name{table.29}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1347 \end{document}
+                     ] (paper_v3.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `paper_v3.out' has not changed.
-(rerunfilecheck)             Checksum: 6607C0A8248F80820E5B36007F2ACAA9;5932.
+(rerunfilecheck)             Checksum: AA9BF7E422AA315850E16F62A8ED936C;6480.
 Package logreq Info: Writing requests to 'paper_v3.run.xml'.
 \openout1 = `paper_v3.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 18681 strings out of 467871
- 328796 string characters out of 5418376
- 1178257 words of memory out of 5000000
- 47160 multiletter control sequences out of 15000+600000
- 651518 words of font info for 99 fonts, out of 8000000 for 9000
+ 18962 strings out of 467871
+ 334020 string characters out of 5418376
+ 1180478 words of memory out of 5000000
+ 47375 multiletter control sequences out of 15000+600000
+ 651905 words of font info for 99 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,15n,79p,2453b,1828s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc
-1200.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
-0\ecbx1200.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
-/dpi600\ectt1095.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
-pen/ec/dpi600\eccc1000.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour
-/jknappen/ec/dpi600\ectt1200.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/
-ljfour/jknappen/ec/dpi600\ecti1000.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fon
+ 75i,15n,79p,1929b,1838s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbi
+1000.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
+0\ectt1200.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
+/dpi600\eccc1200.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
+pen/ec/dpi600\ecbx1000.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour
+/jknappen/ec/dpi600\ectt1000.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/
+ljfour/jknappen/ec/dpi600\eccc1000.pk> <C:\Users\edodr\AppData\Local\MiKTeX\fon
 ts/pk/ljfour/jknappen/ec/dpi600\ecrm0700.pk> <C:\Users\edodr\AppData\Local\MiKT
 eX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0800.pk> <C:\Users\edodr\AppData\Loca
-l\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk> <C:\Users\edodr\AppDat
+l\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1095.pk> <C:\Users\edodr\AppDat
 a\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\edodr\
-AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1095.pk> <C:\Users\
+AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1000.pk> <C:\Users\
 edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1200.pk> <C:\
 Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk
 > <C:\Users\edodr\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1
@@ -880,9 +1188,9 @@ e1/public/amsfonts/cm/cmr8.pfb><C:/Users/edodr/AppData/Local/Programs/MiKTeX/fo
 nts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/edodr/AppData/Local/Programs/
 MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/edodr/AppData/Local/P
 rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on paper_v3.pdf (48 pages, 1459940 bytes).
+Output written on paper_v3.pdf (56 pages, 1502889 bytes).
 PDF statistics:
- 1637 PDF objects out of 1728 (max. 8388607)
- 169 named destinations out of 1000 (max. 500000)
- 268 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1723 PDF objects out of 1728 (max. 8388607)
+ 190 named destinations out of 1000 (max. 500000)
+ 282 words of extra memory for PDF output out of 10000 (max. 10000000)
 

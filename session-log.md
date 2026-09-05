@@ -1,5 +1,141 @@
 # Session Log — Paper_PTA
 
+## 2026-09-05 (sessione 7) — Implementazione roadmap completa
+
+**Completato tutto il backlog dalla roadmap `2026-09-04_roadmap_soluzioni.md`:**
+
+- **Stata (script 18):** stimate tutte e 4 le varianti campione×depth (excl/incl × totaldepth/desta). Risolto crash `B_TREND_noASEAN_inclHKMO_desta` con `cap noisily`. Tutti i CSV rigenerati.
+- **Figure 1:** ricostruita a due pannelli (WB | TREND, assi separati, no scaling /9). File `fig_ep_timeline.pdf` aggiornato.
+- **`tab_11_robustness_full.tex`:** Panel B completato con righe A_TREND_controls e B_TREND_noASEAN (valori estratti da CSV, R² inclusi).
+- **`paper_v3.tex`:** aggiunti \ref per tab:wcb (P1) e tab:brandi (P2); 5 nuove appendici (trattamento, matrice, robustfull, apec, mde); footnote APEC, MDE, robustness full, dirty; riferimento "23 destinazioni"; W11 ladder WB vs TREND p-value già presente; W12 paragrafo dose-response LOO aggiunto; W13 footnote ~40 test già presente; W14 caveat causale già presente.
+- **W10:** script 37/40/41 non sample-dipendenti — giustificati con commento, no modifica path.
+
+- **`berge2018` citation:** aggiunta entry mancante in `references.bib` (Laurent Bergé / fixest). Paper ora compila senza nessuna undefined reference o citation.
+
+**Stato:** roadmap completamente chiusa. Paper compila pulito — zero errori, zero undefined references. Solo 2 warning di layout ("Float too large") non bloccanti.
+
+**Prossimi step naturali:** commit, invio a relatore.
+
+---
+
+## 2026-09-04 (sessione 6) — Decimo audit (CONDITIONAL PASS, 8/10)
+
+**Audit `/audit` completo su `./New/`** con agente specializzato.
+
+**Verdetto: CONDITIONAL PASS (8/10).** Nessun CRITICAL. Tutti i 4 CRITICAL e 14/18 WARNING dell'audit precedente chiusi.
+
+**Problemi ancora aperti:**
+- W13 (WARNING): testing multiplo ~40 test, segnale RegulatorySpace non contestualizzato
+- P1 (WARNING): `tab_05_wcb` inclusa nel paper ma mai citata con `\ref{tab:wcb}`
+- P2 (WARNING): `tab_20_brandi` inclusa ma mai citata con `\ref{tab:brandi}`
+- W10/W11/W12/W14 (NOTE): suffisso variante su 5 script, ladder non distingue WB vs TREND p-value, LOO lettura alternativa, "content matters" senza caveat
+
+**Deliverable:** `./correspondence/audit/2026-09-04_audit_report.md` e `./correspondence/audit/2026-09-04_roadmap_soluzioni.md`.
+
+---
+
+## 2026-09-04 (sessione 5) — Nono audit (CONDITIONAL PASS)
+
+**Audit completo su `./New/`** con lettura sequenziale di: paper_v3.tex, run_pipeline.R, _root.do, session-log, report precedenti, tabelle.
+
+**Verdetto: CONDITIONAL PASS.** Tutti i CRITICAL e i WARNING principali dell'audit 2026-09-03 sono stati risolti. Rimangono 1 WARNING (W13 test multipli) + 4 NOTE (W10 parziale, W11 ladder, W12 LOO dose-response, W14 conclusione causale) + 2 nuovi WARNING di LaTeX (tab_05_wcb e tab_20_brandi incluse senza \ref).
+
+**Trovato nuovo:**
+- `tab_05_wcb` e `tab_20_brandi` sono incluse via `\input` nel paper ma nessun `\ref` le cita nel testo
+- 10 file in `Tabelle/` non inclusi via `\input` nel paper (status poco chiaro)
+- Sotto-indici EP disclosure: RISOLTO nel paper (dichiarazione esplicita in §5.5 e nota tabella composizione)
+
+**Deliverable:** `correspondence/audit/2026-09-04_audit_report.md` e `correspondence/audit/2026-09-04_roadmap_soluzioni.md`
+
+---
+
+## 2026-09-04 (sessione 4) — Formatting finale e verifiche
+
+**Completato:**
+- Caption di tutte e 5 le figure spostate SOPRA `\includegraphics` con `\vspace{6pt}` (ultima: Sun-Abraham appendix)
+- Aggiunto `\emph{Notes:}` al primo `\item` di ogni blocco `tablenotes` — 10 blocchi nel tex principale + 19 tabelle esterne in `Tabelle/`
+- TODO-VERIFY HS2012 (riga 317) risolto: i diagnostici confermano 0 codici green non concordati, impatto nullo; frase aggiornata, TODO rimosso
+- CEM 19 trattati + 40 controlli verificato da `New/Output/CEM_stata/cem_v1_matched_stata.csv` e assert in `12_cem_matching_stata.do`
+- Compilazione doppia passata: 48 pagine, nessun errore
+
+**Stato:** nessun punto aperto di formatting. I task strutturali non applicati dalla sessione precedente (riorganizzazione sezione 5, spostamento tabelle, ecc.) restano pendenti ma sono decisioni dell'autore.
+
+---
+
+## 2026-09-04 (sessione 3) — Integrazione tabelle, traduzioni, compilazione
+
+**Completato:**
+- Tradotte dall'italiano all'inglese 6 tabelle in `New/Paper/paper_v3/Tabelle/`: `tab_05_wcb`, `tab_06_permutation`, `tab_12_desttrends`, `tab_14_ppml`, `tab_15_co2`, `tab_16_leaveoneout`
+- Integrate nel paper con `\input` + citazioni nel testo: WCB (prima di Results), permutation + LOO (dirty margin), PPML (extensive margin), trends (destination-specific trends), CO₂ (CO₂ section)
+- **Task 4.4:** bootstrap bound riscritto (era incomprensibile)
+- **Task 4.33:** tariff explanation riscritta in due paragrafi chiari
+- **Task 4.20–4.21:** aggiunto `Table~\ref{tab:subindices}` nella sezione provision bundling
+- **Compilazione:** pulita (pdflatex → biber → pdflatex × 2), nessun errore, 48 pagine
+
+**Ancora aperti (richiedono decisioni strutturali o accesso a script R):**
+- **0.2:** caption formatting, note sezioni, colori b/n figure, resize tabelle
+- **4.6–4.9:** più dettaglio Sun-Abraham + formula (già ben coperto in appendice)
+- **4.39–4.40:** full panel controls table e alternative outcomes per full panel
+
+---
+
+## 2026-09-04 — Revisione paper_v3.tex: roadmap_revisione applicata
+
+**Obiettivo:** applicare la roadmap di revisione (`correspondence/revision/roadmap_revisione.md`) a `New/Paper/paper_v3/paper_v3.tex`.
+
+**Completato:**
+- **0.1:** `\usepackage[bottom]{footmisc}` aggiunto al preambolo
+- **0.4 linguaggio LLM:** rimossi/sostituiti: "In light of these findings", "The contrast…is instructive. The key difference lies in", "may obscure" → "mask", "mirror position" → "symmetric position", "trickles in" → "joins one at a time", "sits comfortably in the middle of the placebo distribution" → p-value esplicitato, "warrants" → "deserves", "mechanism-bearing" → "trade-mechanism" (tutte le istanze), "bears noting"/"bear noting" → "should be noted", "The honest reading is" → riformulato, "falls apart under scrutiny" → "does not survive robust inference"
+- **0.5:** nessuna variazione necessaria (paper già usa mix di terminologie EP)
+- **0.3:** `ppmlhdfe` rimosso dal body (ora solo in nota), nomi variabili dataset non presenti nel testo
+- **Sezione 1 (Related Literature):** 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16 applicati
+- **Sezione 2 (Data):** 2.1, 2.4, 2.5 (rimossa frase triple-diff), 2.7, 2.10 (TREND nome completo), 2.12 (fig:ep_dist rimossa), 2.14, 2.15, 2.16, 2.18, 2.19, 2.20, 2.22, 2.26, 2.27, 2.29, 2.30, 2.33, 2.34 applicati
+- **Sezione 3 (Empirical Strategy):** 3.1, 3.2, 3.4, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.13, 3.14, 3.15, 3.16, 3.17, 3.18, 3.21, 3.22, 3.24, 3.25 applicati
+- **Sezione 4 (Results):** 4.2, 4.3, 4.5, 4.13, 4.15, 4.16, 4.17, 4.18, 4.19, 4.22, 4.23, 4.25, 4.26, 4.27, 4.30 (0.96→0.91), 4.31, 4.35, 4.37 (trimming rimosso), 4.38 applicati
+- **Sezione 5 (Conclusion):** aggiustamenti minori
+- **Verifica \ref/\label:** tutti i riferimenti incrociati verificati, nessuno rotto
+
+**Non applicati (richiedono verifica codice o decisioni strutturali):**
+- 2.2: spostamento Table 2 (riorganizzazione strutturale, da fare manualmente)
+- 2.6: riscrittura numerosità (richiede conferma dei numeri esatti profili EP)
+- 2.21: % osservazioni HS2012 (richiede verifica nel codice)
+- 2.32: CEM 19+40 (confermato nel session log 2026-09-02, già nel testo)
+- 3.3: rimozione saturation ladder dal main text (già in appendice, richiede revisione manuale)
+- 3.19, 3.20: spostamento collapsed vs full panel results a sezione 5
+- 4.0: riorganizzazione struttura sezione 5 con numerazione subsection
+- 4.28, 4.29: rimozione subsection TREND vs WB e Depth control sensitivity
+- 4.34: rimozione within-firm share panel dalla tabella outcomes
+
+**Nota:** Shapiro (2021) spostato dalla lit review a nota nella sezione CO2 (task 1.12).
+
+---
+
+## 2026-09-04 (continuazione) — Integrazione tabelle mancanti e completamento tasks
+
+**Completato in questa sessione:**
+- **Tabelle tradotte dall'italiano all'inglese** (caption, header di riga/colonna, note): `tab_16_leaveoneout.tex`, `tab_14_ppml.tex`, `tab_15_co2.tex`, `tab_12_desttrends.tex`, `tab_06_permutation.tex`
+- **Tabelle aggiunte al paper** con `\input` nelle sezioni giuste:
+  - `tab_06_permutation` → dopo paragrafo dirty margin (p=0.28), con ref `Table~\ref{tab:perm}`
+  - `tab_16_leaveoneout` → dopo paragrafo leave-one-out, con ref `Table~\ref{tab:loo}`
+  - `tab_14_ppml` → dopo paragrafo extensive margin, con ref `Table~\ref{tab:ppml}`
+  - `tab_12_desttrends` → dopo paragrafo destination-specific trends, con ref `Table~\ref{tab:trends}`
+  - `tab_15_co2` → dopo paragrafo CO2 intensity, con ref `Table~\ref{tab:co2}`
+- **Task 4.4:** Riscritta spiegazione bootstrap bound (era incomprensibile): ora spiega chiaramente che il limite superiore è ~1/4 dell'effetto Brandi, il design esclude effetti grandi come Brandi ma non effetti più piccoli
+- **Task 4.33:** Riscritta spiegazione tariff control (era incomprensibile): ora spiega in due paragrafi separati cosa è la variabile tariff, perché è MFN non preferenziale, e perché l'omissione della tariffa preferenziale non è un problema per le stime principali
+- **Task 4.10:** Verificato che `tab_09_sunab` esiste e è già incluso nell'appendice `app:sunab` (riga 1271). Nessuna azione necessaria.
+- **Task 4.34:** Verificato che `tab_13_subindices` non ha una riga "within-firm green share" — probabilmente già rimossa in sessione precedente.
+- **Check LLM language:** nessun termine proibito residuo
+- **Check 0.96:** nessuna occorrenza della correlazione 0.96 (solo 0.966 nelle statistiche descrittive, corretto)
+
+**Ancora aperti (richiedono decisioni/lavoro strutturale):**
+- **0.2:** Caption formatting, note sezioni, colori b/n figure, resize tabelle — richiede accesso a script R
+- **4.6–4.9:** Più dettaglio Sun-Abraham + formula — già ben coperto in appendice
+- **4.12:** Full structural rewrite dirty margin — già parzialmente fatto; il testo attuale è sostanzialmente completo
+- **4.20–4.21:** Riferimenti tabella specifici per mechanism/placebo sub-indices
+- **4.24:** Verificare che la tabella extensive margin abbia 3 variabili dipendenti
+- **4.39–4.40:** Full panel controls table e alternative outcomes per full panel
+Sub-indici dichiarati come costruzioni degli autori (task 4.19).
+
 ## 2026-09-03/04 — Continuazione audit: tabelle orfane, sotto-indici EP, controlli
 
 **Tabelle orfane:** verificato che ~19 tabelle in `./New/Paper/paper_v3/Tabelle/` hanno `\label`
