@@ -423,21 +423,8 @@ run_rscript("58c", "CSV depthbounds riscritti dai .dta Stata (solo I/O)",
   ))
 
 ########################################################
-## TABELLE FINALI
-########################################################
-
-run_rscript("44", "Generatore CSV -> frammenti LaTeX",
-  script = "New/Code/44_make_tables_tex.R",
-  artifacts = file.path(ROOT, "New/Paper/Tabelle"))
-
-run_rscript("45", "Confronto Brandi et al. (2020)",
-  script = "New/Code/45_brandi_comparison.R",
-  artifacts = file.path(ROOT, "New/Paper/Tabelle/tab_20_brandi.tex"))
-
-########################################################
 ## STEP 69-70 — output paper-facing (summary stats, assemblaggio CSV Stata)
-## Necessari DOPO tutti gli step Stata e PRIMA di 44_make_tables_tex.R
-## se quest'ultimo viene rieseguito.
+## Necessari DOPO tutti gli step Stata e PRIMA di 44_make_tables_tex.R.
 ########################################################
 
 run_rscript("69", "Assemblaggio CSV Stata nel formato canonico per 44",
@@ -447,6 +434,18 @@ run_rscript("69", "Assemblaggio CSV Stata nel formato canonico per 44",
 run_rscript("70", "Statistiche descrittive per il paper",
   script = "New/Code/70_sumstats_paper.R",
   artifacts = file.path(ROOT, "New/Output/Diagnostics"))
+
+########################################################
+## TABELLE FINALI (dopo 69-70, cosi' 44 vede i CSV Stata assemblati)
+########################################################
+
+run_rscript("44", "Generatore CSV -> frammenti LaTeX",
+  script = "New/Code/44_make_tables_tex.R",
+  artifacts = file.path(ROOT, "New/Paper/Tabelle"))
+
+run_rscript("45", "Confronto Brandi et al. (2020)",
+  script = "New/Code/45_brandi_comparison.R",
+  artifacts = file.path(ROOT, "New/Paper/Tabelle/tab_20_brandi.tex"))
 
 run_rscript("46", "Robustezza trimming p1/p99 (Windows-only: stima + WCB)",
   script = "New/Code/46_robustness_trim.R",

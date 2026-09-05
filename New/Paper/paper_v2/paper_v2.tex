@@ -44,7 +44,7 @@
 % \thanks{First draft. Comments welcome. All remaining errors are my own.}}
 \author{Edoardo Vitella\\
 \small University of Trento \& Free University of Bozen}
-\date{August 2026 --- \textbf{preliminary draft}}
+\date{September 2026 --- \textbf{preliminary draft}}
 
 \begin{document}
 \maketitle
@@ -52,38 +52,7 @@
 % ============================================================================
 \begin{abstract}
 \noindent
-% Environmental Provisions (EPs) are included in the vast majority of Preferential Trade Agreements (PTAs) signed in the last two decades, and are likely to become an even more important feature for future agreements. Yet, the evidence on their trade effects relies almost entirely on aggregate bilateral flows.
-\noindent
-Environmental Provisions (EPs) have been incresignly embedded in Preferential Trade Agreements (PTAs) over the last two decades, with the expectation that they will play an even more important role in future agreements. However, empirical evidence on their trade effects relies almost entirely on aggregate bilateral flows. This paper asks whether EPs can shift export composition towards green goods and away from dirty goods, using a firm-product-destination-year panel for the universe of Chinese customs transactions spanning from $2000$ to $2015$. A triple-difference design allows to compare green and dirty products againts neutral counterparts within each firm-destination-year combination, with firm-destination-year fixed effects accounting for everything constant within each firm-market-year triple. The results indicate that there is no effect on the green margin, with the dirty margin being less clear. While the inference on the green margin result is robust to wild cluster bootstrap and permutation inference, that for the dirty margin is not. What emerges is that the content of environmental provisions matter more than their mere presence. PTAs signed by China across $2000-2015$ were mostly cooperation-language only, which makes our results consistent with existing literature, where significant results are driven by specific and enforceable clauses, rather than loose language.
-
-
-
-% \citet{brandi2020} and \citet{abman2024}, as they find effects only for specific and enforcable clauses, rather than loose language. Therefore, the null result we findis what previous studies predicts.
-
-
-
-% Environmental provisions (EPs) are now ubiquitous in preferential trade agreements,
-% yet the evidence on their trade effects rests almost entirely on aggregate bilateral
-% flows. I ask whether the EPs in China's 2000--2015 agreements shifted the
-% \emph{composition} of its exports toward green goods and away from dirty goods, using
-% 45.8 million firm--product--destination--year customs transactions. A triple-difference
-% compares green and dirty products to neutral ones within firm--destination--year cells,
-% so that firm--destination--year fixed effects absorb the agreement itself and everything
-% else constant within a firm's relationship with a market in a year. The green margin is a
-% \emph{bounded null}: stable across six estimation designs, robust to wild cluster
-% bootstrap and permutation inference, with bootstrap bounds that rule out effects larger
-% than roughly one quarter of the benchmark in the aggregate literature. The dirty margin is
-% a \emph{non-result} --- a textbook false positive. Its asymptotic $p < 0.001$ survives
-% neither the bootstrap ($p = 0.07$) nor permutation inference ($p = 0.28$); a leave-one-out
-% exercise shows that removing either of two destinations nearly triples the standard error
-% while moving the point estimate by at most 13\%. The central reading is about content, not
-% chapters. The two World Bank sub-indices with a direct trade mechanism are perfectly
-% collinear in-sample and non-zero in only three treated country--years. China's agreements
-% were thin and cooperation-only --- which makes the null consistent with, rather than
-% contrary to, \citet{brandi2020} and \citet{abman2024}, whose effects come from specific,
-% enforceable clauses.\\[4pt]
-% \textbf{Keywords:} trade agreements, environmental provisions, export composition, China.\\
-% \textbf{JEL:} F13, F14, F18, Q56.
+Environmental Provisions (EPs) have been increasingly embedded in Preferential Trade Agreements (PTAs) over the last two decades, with the expectation that they will play an even more important role in future agreements. However, empirical evidence on their trade effects relies almost entirely on aggregate bilateral flows. This paper asks whether EPs can shift export composition towards green goods and away from dirty goods, using a firm-product-destination-year panel for the universe of Chinese customs transactions spanning from $2000$ to $2015$. A triple-difference design allows comparing green and dirty products against neutral counterparts within each firm-destination-year combination, with firm-destination-year fixed effects accounting for everything constant within each firm-market-year triple. The results indicate that there is no effect on the green margin, with the dirty margin being less clear. While the inference on the green margin result is robust to wild cluster bootstrap and permutation inference, that for the dirty margin is not. What emerges is that the content of environmental provisions matters more than their mere presence. PTAs signed by China across $2000$--$2015$ were mostly cooperation-language only, which makes the results consistent with existing literature, where significant results are driven by specific and enforceable clauses, rather than loose language.
 \end{abstract}
 
 \newpage
@@ -92,21 +61,21 @@ Environmental Provisions (EPs) have been incresignly embedded in Preferential Tr
 \section{Introduction}
 % ============================================================================
 
-Over the last decades, the number of preferential trade agreements (PTAs) has increased substantially, and many now include environmental provisions (EPs) or other forms of environmental language \citep{morin2018, mattooHandbookDeepTrade2020}. Because climate change is likely to become an increasingly important political concern, and given the evidence that global trade may play a role in environmental decay \citep{zhangTransboundaryHealthImpacts2017} environmental content in trade agreements is expected to feature more frequently and more prominently in trade policy, as may serve as a possible tool to address challenges posed by climate change (Frankel 2009). Accordingly, the relationship between trade and the environment has attracted growing attention in the literature \citep{copeland2022}, yet whether environmental provisions in trade agreements have a genuine effect on trade flows is still an open empirical question \citep{gutsch2024, felbermayr2025}. This paper contributes to this literature by asking whether the environmental provisions included in preferential trade agreements signed by China between $2000$ and $2015$ shifted the composition of its exports toward greener products and away from dirtier ones, or whether those provisions left trade flows largely unaffected.
+Over the last decades, the number of preferential trade agreements (PTAs) has increased substantially, and many now include environmental provisions (EPs) or other forms of environmental language \citep{morin2018, mattooHandbookDeepTrade2020}. Because climate change is likely to become an increasingly important political concern, and given the evidence that global trade may play a role in environmental decay \citep{zhangTransboundaryHealthImpacts2017} environmental content in trade agreements is expected to feature more frequently and more prominently in trade policy, and may serve as a tool to address challenges posed by climate change \citep{frankel2009}. Accordingly, the relationship between trade and the environment has attracted growing attention in the literature \citep{copeland2022}, yet whether environmental provisions in trade agreements have a genuine effect on trade flows is still an open empirical question \citep{gutsch2024, felbermayr2025}. This paper contributes to this literature by asking whether the environmental provisions included in preferential trade agreements signed by China between $2000$ and $2015$ shifted the composition of its exports toward greener products and away from dirtier ones, or whether those provisions left trade flows largely unaffected.
 
-Most of the existing literature on trade effects of environmental provisions in trade agreements comes from studies relying on aggregate bilateral trade flows, which makes it difficoult to understand whether EPs cause a compositional shift in trade goods. In what the authors claim to be the first article to investigate trade effects of environmental provisions in PTAs, \citet{brandi2020} find that EPs reduce dirty export and increase green exports when regulations are specific and enforcable, especially for developing countries. On the other hand, \citet{berger2020} use a gravity panel to show that membership in PTAs with more environmental provisions is associated with lower bilateral exports overall, with the effect being concentrated in South-North trade flows and not robust to PPML. Specific and enforcable clauses are those that drive the effect also in \cite{abman2024}, who find that forest preservation and biodiversity clauses in PTAs reduce deforestation in partner countries relative to those that do not include such clauses. Taken together, the evidence suggests that it is the content of the specific provisions and chapters that matters, rather than they the mere presence in trade agreements. This paper brings the question to the largest exporter in the world, asking whether the environmental provisions in China's PTAs between $2000$ and $2015$ had any effect on the composition of its exports, and whether the content of those provisions matters for trade flows.
+Most of the existing literature on trade effects of environmental provisions in trade agreements comes from studies relying on aggregate bilateral trade flows, which makes it difficult to understand whether EPs cause a compositional shift in trade goods. In what the authors claim to be the first article to investigate trade effects of environmental provisions in PTAs, \citet{brandi2020} find that EPs reduce dirty exports and increase green exports when regulations are specific and enforceable, especially for developing countries. On the other hand, \citet{berger2020} use a gravity panel to show that membership in PTAs with more environmental provisions is associated with lower bilateral exports overall, with the effect being concentrated in South-North trade flows and not robust to PPML. Specific and enforceable clauses are those that drive the effect also in \citet{abman2024}, who find that forest preservation and biodiversity clauses in PTAs reduce deforestation in partner countries relative to those that do not include such clauses. Taken together, the evidence suggests that it is the content of the specific provisions and chapters that matters, rather than the mere presence in trade agreements. This paper brings the question to the largest exporter in the world, asking whether the environmental provisions in China's PTAs between $2000$ and $2015$ had any effect on the composition of its exports, and whether the content of those provisions matters for trade flows.
 
-Trying to answer this empirical question comes with some challenges. The first and most obvious is that countries do not sign trade agreements at random, and the signing of trade agreements is likely to be correlated with pre-existing relationship of some sort. Therefore, any comparison of export flows to PTA partners versus non-partners risks to confound the effect of environmental provisions with pre-existing differences in trade relationships. A second issue is that aggregate bilateral trade flows cannot distinguish a reallocation of export composition toward greener goods from an expansion or contration of trade that happens to coincide with agreement entry into force. To address the empirical question, this study uses the universe of Chinese custom transactions between $2000$ and $2015$, a 45-million observation firm-product-destination-year panel dataset with granularity at the HS6 product level, which allows to track the same firm exporting the same product to multiple destinations simultaneously, and to observe how those flows diverge when one destination is covered by a preferential agreement and another is not. This design allows to isolate the effect of environmental provisions on trade composition from other confounding factors.
+Trying to answer this empirical question comes with some challenges. The first and most obvious is that countries do not sign trade agreements at random, and the signing of trade agreements is likely to be correlated with pre-existing relationship of some sort. Therefore, any comparison of export flows to PTA partners versus non-partners risks confounding the effect of environmental provisions with pre-existing differences in trade relationships. A second issue is that aggregate bilateral trade flows cannot distinguish a reallocation of export composition toward greener goods from an expansion or contraction of trade that happens to coincide with agreement entry into force. To address the empirical question, this study uses the universe of Chinese custom transactions between $2000$ and $2015$, a 45-million observation firm-product-destination-year panel dataset with granularity at the HS6 product level, which makes it possible to track the same firm exporting the same product to multiple destinations simultaneously, and to observe how those flows diverge when one destination is covered by a preferential agreement and another is not. This design makes it possible to isolate the effect of environmental provisions on trade composition from other confounding factors.
 
-Over the study period, China signed $14$ PTAs with $25$ destination economies, with environmental content ranging from a handful of generic cooperation clauses to dedicated chapters. Data on the content of the environmental provisions come from two independent sources, the World Bank Deep Trade Agreements database \citep{hofmann2017} and the TREND database \citep{morin2018}. The former provides a count of environmental-law provisions in force with each destination at each point in time, while the latter provides a more detailed coding of the content of those provisions, including sub-indices covering areas such as green market access and enforcement stringency. Using two independent codings guards against idiosyncrasies of either scheme and allows to check for robustness of the results. We identify green goods on the basis of the OECD Combined List of Environmental Goods (CLEG) \citep{sauvage2014}, while dirty goods are identified through a standard pollution-intensity classification that maps polluting industries to HS6 product codes, as developed in \cite{mani1998}. Everything else serves as the neutral comparison group.
+Over the study period, China signed $14$ PTAs with $25$ destination economies, with environmental content ranging from a handful of generic cooperation clauses to dedicated chapters. Data on the content of the environmental provisions come from two independent sources, the World Bank Deep Trade Agreements database \citep{hofmann2017} and the TREND database \citep{morin2018}. The former provides a count of environmental-law provisions in force with each destination at each point in time, while the latter provides a more detailed coding of the content of those provisions, including sub-indices covering areas such as green market access and enforcement stringency. Using two independent codings guards against idiosyncrasies of either scheme and allows checking for robustness of the results. I identify green goods on the basis of the OECD Combined List of Environmental Goods (CLEG) \citep{sauvage2014}, while dirty goods are identified through a standard pollution-intensity classification that maps polluting industries to HS6 product codes, as developed in \cite{mani1998}. Everything else serves as the neutral comparison group.
 
-These three product categories, green, dirty and neutral, represents the founding basis of the empirical strategy. The empirical design applied in this study is a comparison of how the export of green and dirty products react to environmental provisions, relative to neutral products, within the same firm, destination and year. A triple-difference with a rich set of fixed effects, including firm-destination-year fixed effects, absorbs everything that is constant within a firm's relationship with a specific destination market in a given year, including the agreement itself and any aggregate demand or supply shocks at the bilateral level. Because EP enter into force with the agreement itself and rarely change their depth or content afterwards, EP depth and PTA depth are highly correlated, as agreements with more EP content tend to be also deeper agreements overall. Therefore, all specifications control for PTA depth separately, so that the coefficient on environmental provisions reflects proper environmental content. In this design, identification comes from the differential sensitivity of product types to environmental provisions green and dirty products against neutral products, which are used as a within-cell control since they are not expected to be affected by environmental provisions as much as green and dirty products are.
+These three product categories, green, dirty and neutral, represent the founding basis of the empirical strategy. The empirical design applied in this study is a comparison of how the export of green and dirty products react to environmental provisions, relative to neutral products, within the same firm, destination and year. A triple-difference with a rich set of fixed effects, including firm-destination-year fixed effects, absorbs everything that is constant within a firm's relationship with a specific destination market in a given year, including the agreement itself and any aggregate demand or supply shocks at the bilateral level. Because EPs enter into force with the agreement itself and rarely change their depth or content afterwards, EP depth and PTA depth are highly correlated, as agreements with more EP content tend to be also deeper agreements overall. Therefore, all specifications control for PTA depth separately, so that the coefficient on environmental provisions reflects proper environmental content. In this design, identification comes from the differential sensitivity of product types to environmental provisions green and dirty products against neutral products, which are used as a within-cell control since they are not expected to be affected by environmental provisions as much as green and dirty products are.
 
-The results indicate that there is no effect on the green margin, so the export of green goods relative to neutral ones is not affected by the depth of environmental provisions in China's PTAs. This result is stable across six different estimation designs that vary the unit of observation, the measurement instrument, and the comparison group. The baseline uses the full firm-product-destination-year panel; a collapsed specification aggregates the same data to HS6-destination-year cells; and both are replicated using the TREND provision count as an alternative measure of EP depth to that offered by the World Bank Deep Trade Agreements database. Further robustness checks restrict the sample to CEM-matched destinations and to the common-support overlap region. Across all specifications, we find no statistically significant effect of environmental provisions on the export of green goods relative to neutral ones. Furthermore, these results are robust to wild cluster bootstrap inference (Cameron, Gelbach, and Miller 2008) and permutation inference \citep{youngChannelingFisherRandomization2019}. On the other hand, results for the dirty margin are less clear-cut. While we find no effect in the full panel, the collapsed panel shows a negative and significant coefficient, suggesting that while EPs may not change firm-specific behaviour, they may reduce the overall market-level export of dirty goods relative to neutral ones. However, this result does not survive more robust inference. Wild cluster bootstrap raises the $p$-value from below $0.001$ to $0.07$; a permutation test, which asks whether the same pattern would emerge by chance if EP depth were randomly reassigned across destinations, raises it further to $0.28$.
+The results indicate that there is no effect on the green margin, so the export of green goods relative to neutral ones is not affected by the depth of environmental provisions in China's PTAs. This result is stable across six different estimation designs that vary the unit of observation, the measurement instrument, and the comparison group. The baseline uses the full firm-product-destination-year panel; a collapsed specification aggregates the same data to HS6-destination-year cells; and both are replicated using the TREND provision count as an alternative measure of EP depth to that offered by the World Bank Deep Trade Agreements database. Further robustness checks restrict the sample to CEM-matched destinations and to the common-support overlap region. Across all specifications, I find no statistically significant effect of environmental provisions on the export of green goods relative to neutral ones. Furthermore, these results are robust to wild cluster bootstrap inference \citep{cameron2008} and permutation inference \citep{youngChannelingFisherRandomization2019}. On the other hand, results for the dirty margin are less clear-cut. While I find no effect in the full panel, the collapsed panel shows a negative and significant coefficient, suggesting that while EPs may not change firm-specific behaviour, they may reduce the overall market-level export of dirty goods relative to neutral ones. However, this result does not survive more robust inference. Wild cluster bootstrap raises the $p$-value from below $0.001$ to $0.07$; a permutation test, which asks whether the same pattern would emerge by chance if EP depth were randomly reassigned across destinations, raises it further to $0.28$.
 
-The findings show that environmental provisions in China's PTAs between $2000$ and $2015$ had no measurable effect on export composition at the firm-product-destination-year level. This result, however, should not be taken as concluding evidence that EPs in trade agreements have no effect on trade flows at all, but rather reflects the nature of the specific provisions themselves. During the period under analysis, the environmental content of China's agreements consisted almost entirely of soft cooperation language, rather than specific and enforcable clauses enriched with dispute settlement mechanisms. The types of clauses that have been shown to produce significat trade outcomes in other contexts, such as tariff concessions on environmental goods and binding emissions or process standards, are largely absent from these agreements. In this sense, the null result is not a puzzle, but rather the expected outcome given the existing literature's own heterogeneity results, applied to a setting where the provisions lack the specificity and enforceability that drive the effects documented elsewhere. The fact that the null result is robust to a variety of estimation designs and inference methods further supports the conclusion that the lack of effect is not due to methodological shortcomings, but rather reflects the substantive nature of the environmental provisions in China's PTAs during this period. Moreover, the findings are somehow informative for policy makers, as they suggest that the mere inclusion of environmental provisions in trade agreements may not be enough to achieve desired trade outcomes if those provisions are just loose cooperation language, even in the case of the largest exporter in the world. Instead, the design and content of the provisions themselves, including specificity and enforceability, are likely to be crucial for achieving meaningful trade effects.
+The findings show that environmental provisions in China's PTAs between $2000$ and $2015$ had no measurable effect on export composition at the firm-product-destination-year level. This result, however, should not be taken as concluding evidence that EPs in trade agreements have no effect on trade flows at all, but rather reflects the nature of the specific provisions themselves. During the period under analysis, the environmental content of China's agreements consisted almost entirely of soft cooperation language, rather than specific and enforceable clauses enriched with dispute settlement mechanisms. The types of clauses that have been shown to produce significant trade outcomes in other contexts, such as tariff concessions on environmental goods and binding emissions or process standards, are largely absent from these agreements. In this sense, the null result is not a puzzle, but rather the expected outcome given the existing literature's own heterogeneity results, applied to a setting where the provisions lack the specificity and enforceability that drive the effects documented elsewhere. The fact that the null result is robust to a variety of estimation designs and inference methods further supports the conclusion that the lack of effect is not due to methodological shortcomings, but rather reflects the substantive nature of the environmental provisions in China's PTAs during this period. Moreover, the findings are informative for policy makers, as they suggest that the mere inclusion of environmental provisions in trade agreements may not be enough to achieve desired trade outcomes if those provisions are just loose cooperation language, even in the case of the largest exporter in the world. Instead, the design and content of the provisions themselves, including specificity and enforceability, are likely to be crucial for achieving meaningful trade effects.
 
-The reminder of the paper is as follows. Section~\ref{sec:lit} reviews the related literature. Section~\ref{sec:background} describes the data and the agreements. Section~\ref{sec:strategy} presents the empirical strategy. Section~\ref{sec:results} reports the results, with robustness analysis integrated as subsections. Section~\ref{sec:conclusion} concludes.
+The remainder of the paper is as follows. Section~\ref{sec:lit} reviews the related literature. Section~\ref{sec:background} describes the data and the agreements. Section~\ref{sec:strategy} presents the empirical strategy. Section~\ref{sec:results} reports the results, with robustness analysis integrated as subsections. Section~\ref{sec:conclusion} concludes.
 
 % ============================================================================
 \section{Related Literature}\label{sec:lit}
@@ -139,7 +108,8 @@ What emerges from this body of work is a consistent pattern: environmental provi
 \subsection{Chinese PTAs and their environmental content}
 
 Between 2000 and 2015, China's preferential agreements in force cover 25 destination
-economies (Table~\ref{tab:treatment}). Three features of this treatment landscape
+economies (23 after excluding the entrepôt economies of Hong Kong and Macao;
+Table~\ref{tab:treatment}). Three features of this treatment landscape
 shape everything that follows.
 
 \begin{table}[htbp]
@@ -231,7 +201,7 @@ Never treated & 213 & \\
 \begin{tablenotes}\footnotesize
 \item Excludes Hong Kong and Macao (2003; see text). South Korea's 2015 upgrade to
 the bilateral FTA is a within-country depth increase, not a new cohort entry.
-Source: \texttt{New/Output/Diagnostics/B\_treatment\_entry.csv}.
+Source: authors' elaboration on WB and TREND data.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -366,7 +336,7 @@ Deep vs.\ shallow & The ``any-agreement'' contrast itself & 5.3M \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
-\item C-prod-HS4 (106 HS4 families; 20.5\% of observations) should be read alongside C-overlap rather than alone: multi-product firms may reallocate toward core products when trade costs fall \citep{eckel2010}, displacing neutral products in the same HS4 family and biasing the contrast. C-overlap is immune by construction (98.5\% of HS6 products are exported both to treated and never-treated destinations). The deep-vs-shallow design drops untreated destinations entirely (16 deep, 9 shallow partner countries); the few-cluster inference battery of Section~\ref{sec:strategy} handles the small number of shallow clusters. CEM matching: 16 treated + 40 control destinations.
+\item C-prod-HS4 (106 HS4 families; 20.5\% of observations) should be read alongside C-overlap rather than alone: multi-product firms may reallocate toward core products when trade costs fall \citep{eckel2010}, displacing neutral products in the same HS4 family and biasing the contrast. C-overlap is immune by construction (98.5\% of HS6 products are exported both to treated and never-treated destinations). The deep-vs-shallow design drops untreated destinations entirely (16 deep, 9 shallow partner countries); the few-cluster inference battery of Section~\ref{sec:strategy} handles the small number of shallow clusters. CEM matching \citep{iacus2012}: 16 treated + 40 control destinations, matched on year-2000 GDP per capita, GDP growth, and MFN tariff rate.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -559,8 +529,10 @@ any conventional threshold.
 
 \subsection{The green margin: a bounded null}\label{sec:green}
 
+A \emph{bounded null} is a null result whose magnitude is bounded from above by
+bootstrap confidence intervals, ruling out effects above a specific threshold.
 Table~\ref{tab:main} reports the main estimates. In the full firm-level panel, the
-EP$\times$green coefficient is $-0.0022$ (s.e.\ 0.0039) with the WB index and $-0.0001$
+EP$\times$green coefficient is $-0.0023$ (s.e.\ 0.0039) with the WB index and $-0.0001$
 (s.e.\ 0.0010) with TREND. The joint F-test on all four composition interactions is
 $p = 0.31$ (WB) and $p = 0.71$ (TREND). In the collapsed panel the WB estimate is
 $-0.0046$; wild cluster bootstrap $p = 0.65$; permutation $p = 0.60$. The observed
@@ -592,6 +564,7 @@ inference would support, and it is the one the design can sustain. In per-standa
 terms, a one-SD increase in WB EP depth (approximately 2.383 provisions, inclusive of
 never-treated destination--years at EP = 0) moves green relative to neutral exports by at
 most $-8.4\%$ to $+8.5\%$ at the bootstrap bounds.
+Table~\ref{tab:brandi} places these estimates alongside those of \citet{brandi2020}.
 
 \input{Tabelle/tab_20_brandi}
 
@@ -642,12 +615,16 @@ It is a diagnostic for staggered-timing and cohort heterogeneity, and that is ho
 used here.
 
 The full interaction-weighted event study is reported in Appendix~\ref{app:sunab}. With
-the standard errors produced by \texttt{eventstudyinteract} --- which, unlike
-\texttt{fixest::sunab}, accounts for the uncertainty in the estimated cohort shares used
-as weights --- no coefficient in the $[-10, +8]$ window is individually distinguishable
-from zero on either margin. Two or three nominally significant coefficients appear among
-28 estimates, which is what sampling noise produces under exactly flat pre-trends with 23
-treated clusters. The ATT is null across all three specification variants: $p = 0.28$ in
+the standard errors from the Stata implementation of \citet{sun2021} --- which, unlike
+the R implementation, accounts for the uncertainty in the estimated cohort shares used
+as weights\footnote{Specifically, \texttt{eventstudyinteract} in Stata estimates the
+cohort shares, while \texttt{fixest::sunab} in R treats them as known weights. See
+Appendix~\ref{app:sunab}.} --- no coefficient in the $[-10, +8]$ window is individually distinguishable
+from zero on either margin. The dirty coefficient at $t = -6$ is marginally significant,
+but a leave-one-cohort-out exercise shows it is driven by a single cohort and it
+disappears when the window is truncated to $[-5, +5]$. Two or three nominally significant
+coefficients among 28 estimates are what sampling noise produces under flat pre-trends
+with 23 treated clusters. The ATT is null across all three specification variants: $p = 0.28$ in
 the baseline, $p = 0.11$ in the $[-6, +5]$ window, $p = 0.30$ excluding the 2014--2015
 cohorts.
 
@@ -736,8 +713,7 @@ TREND (\texttt{X5.01.01} Binding obligations) & 14--15 & 1 (China--Korea, 2015) 
 \end{tabular}
 \begin{tablenotes}\footnotesize
 \item ``Total checked'' sums the relevant depth index across the 25 treated destinations
-at each destination's maximum (post-entry) value. Source:
-\texttt{Data/Merged/Merged\_TREND\_WB\_Indices\_Only.csv}.
+at each destination's maximum (post-entry) value. Source: authors' elaboration on WB and TREND data.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -811,7 +787,7 @@ same hypothesis.
 
 Log-linear estimates condition on positive flows. If EPs create new green trade at the
 extensive margin, intensive estimates miss it \citep{santossilva2006}. On a zero-filled
-HS6--destination--year grid (8.2 million cells), PPML estimates confirm the null:
+HS6--destination--year grid (8.2 million cells, 7.9 million after singleton removal), PPML estimates confirm the null:
 EP$\times$green is $+0.0015$ ($p = 0.74$, WB) and $+0.0001$ ($p = 0.95$, TREND);
 EP$\times$dirty is $-0.030$ ($p = 0.06$, WB) and $+0.003$ ($p = 0.55$, TREND). No
 green trade creation at the extensive margin; the dirty coefficient is at most marginally
@@ -1038,6 +1014,10 @@ roughly a dozen agreements, asymptotically significant composition effects can e
 dissolve under honest inference. Bootstrap, permutation, and leave-one-out --- applied not
 as robustness appendices but as the primary mode of inference --- should be standard
 practice for this class of design.
+
+The findings are specific to China's agreements of this period. Whether they extend to
+other countries' PTAs or to China's post-2015 agreements --- which contain richer
+environmental content --- remains an open question.
 
 Three limitations bear noting. The preferential tariff rate was not obtainable; the headline
 estimates are independent of it, but the MFN rate used as a control is an imperfect proxy.
