@@ -1,0 +1,1390 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{booktabs}   % Per \toprule, \midrule, \bottomrule
+%\usepackage{multicolumn} % Per unire le colonne di intestazione
+\usepackage{caption}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{setspace}
+\usepackage[bottom]{footmisc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{threeparttable}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage[style=authoryear-comp, natbib=true, backend=biber]{biblatex}
+\newcommand{\sym}[1]{$^{#1}$}
+
+\title{TABELLE DEL PAPER}
+\author{Edoardo Vitella}
+\date{September 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{FULL PANEL}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Full panel --- triple-difference estimates}
+\label{tab:fullpanel}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0023 & $-$0.0013 & $-$0.0004 & $-$0.0001 & $-$0.00003 & $-$0.0001 \\
+ & (0.0030) & (0.0041) & (0.0013) & (0.0009) & (0.0011) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.935] & [0.750] & [0.748] & [0.669] & [0.974] & [0.857] \\
+\quad Bootstrap $p$ & [0.686] & [0.851] & [0.740] & [0.931] & [0.978] & [0.860] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0044** & $-$0.0048* & 0.0001 & $-$0.0009 & $-$0.0006 & $-$0.0001 \\
+ & (0.0026) & (0.0029) & (0.0010) & (0.0007) & (0.0007) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.022] & [0.096] & [0.903] & [0.209] & [0.409] & [0.697] \\
+\quad Bootstrap $p$ & [0.185] & [0.391] & [0.937] & [0.177] & [0.443] & [0.734] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 21,519,511 & 21,313,047 & 21,313,037 & 21,519,511 & 21,313,047 & 21,313,037 \\
+Clusters ($d$) & 225 & 225 & 225 & 225 & 225 & 225 \\
+Adj.\ $R^2$ & 0.873 & 0.913 & 0.963 & 0.873 & 0.913 & 0.963 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0019 & $-$0.0015 & $-$0.0004 & $-$0.0001 & $-$0.0001 & $-$0.0001 \\
+ & (0.0027) & (0.0034) & (0.0019) & (0.0009) & (0.0010) & (0.0005) \\[2pt]
+\quad Asymptotic $p$ & [0.749] & [0.660] & [0.819] & [0.872] & [0.917] & [0.776] \\
+\quad Bootstrap $p$ & [0.673] & [0.755] & [0.843] & [0.920] & [0.933] & [0.852] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0056* & $-$0.0070** & 0.0004 & $-$0.0014 & $-$0.0014* & $-$0.00004 \\
+ & (0.0030) & (0.0030) & (0.0011) & (0.0008) & (0.0008) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.057] & [0.020] & [0.676] & [0.171] & [0.080] & [0.903] \\
+\quad Bootstrap $p$ & [0.049] & [0.035] & [0.765] & [0.069] & [0.100] & [0.915] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 21,517,666 & 21,311,206 & 21,311,196 & 21,517,666 & 21,311,206 & 21,311,196 \\
+Clusters ($d$) & 225 & 225 & 225 & 225 & 225 & 225 \\
+Adj.\ $R^2$ & 0.873 & 0.913 & 0.963 & 0.873 & 0.913 & 0.963 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Full firm-level panel, excluding Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt} = \ln x^{val}_{fpdt} - \ln x^{qua}_{fpdt}$). Quantity and unit-value regressions are estimated on the subset of observations with non-missing quantity data. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\newpage
+
+% ============================================================================
+\section{COLLAPSED PANEL}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Collapsed panel --- triple-difference estimates}
+\label{tab:collapsed}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0046 & $-$0.0055 & 0.0005 & 0.0018 & 0.0019 & $-$0.0001 \\
+ & (0.0069) & (0.0069) & (0.0028) & (0.0018) & (0.0020) & (0.0007) \\[2pt]
+\quad Asymptotic $p$ & [0.508] & [0.426] & [0.854] & [0.316] & [0.360] & [0.868] \\
+\quad Bootstrap $p$ & [0.649] & [0.525] & [0.851] & [0.390] & [0.433] & [0.867] \\
+\quad Permutation $p$ & [0.597] &  &  & [0.160] &  &  \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0119*** & $-$0.0115* & 0.0006 & 0.0004 & $-$0.0004 & 0.0009 \\
+ & (0.0029) & (0.0067) & (0.0042) & (0.0016) & (0.0019) & (0.0005) \\[2pt]
+\quad Asymptotic $p$ & [0.000] & [0.087] & [0.880] & [0.825] & [0.837] & [0.076] \\
+\quad Bootstrap $p$ & [0.072] & [0.250] & [0.947] & [0.857] & [0.886] & [0.169] \\
+\quad Permutation $p$ & [0.278] &  &  & [0.817] &  &  \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,681,023 & 3,672,709 & 3,672,709 & 3,681,023 & 3,672,709 & 3,672,709 \\
+Clusters ($d$) & 228 & 228 & 228 & 228 & 228 & 228 \\
+Adj.\ $R^2$ & 0.843 & 0.919 & 0.966 & 0.843 & 0.919 & 0.966 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0043 & $-$0.0084* & 0.0038 & 0.0016 & 0.0010 & 0.0006 \\
+ & (0.0086) & (0.0044) & (0.0042) & (0.0144) & (0.0022) & (0.0008) \\[2pt]
+\quad Asymptotic $p$ & [0.697] & [0.058] & [0.368] & [0.110] & [0.649] & [0.495] \\
+\quad Bootstrap $p$ & [0.546] & [0.268] & [0.446] & [0.508] & [0.712] & [0.542] \\
+\quad Permutation $p$ & [0.480] &  &  & [0.316] &  &  \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0113*** & $-$0.0097** & $-$0.0012 & $-$0.0002 & $-$0.0008 & 0.0007 \\
+ & (0.0054) & (0.0045) & (0.0029) & (0.0129) & (0.0014) & (0.0006) \\[2pt]
+\quad Asymptotic $p$ & [0.000] & [0.033] & [0.689] & [0.996] & [0.603] & [0.252] \\
+\quad Bootstrap $p$ & [0.047] & [0.311] & [0.757] & [0.905] & [0.876] & [0.332] \\
+\quad Permutation $p$ & [0.146] &  &  & [0.904] &  &  \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,677,333 & 3,669,025 & 3,669,025 & 3,677,333 & 3,669,025 & 3,669,025 \\
+Clusters ($d$) & 228 & 228 & 228 & 228 & 228 & 228 \\
+Adj.\ $R^2$ & 0.843 & 0.919 & 0.966 & 0.843 & 0.919 & 0.966 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Collapsed panel (product$\times$destination$\times$period cells, analytic weights), excluding Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt}$). All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. Permutation $p$-values (treated-only design, $R = 1{,}000$) reported for export value only; columns~(2)--(3) and~(5)--(6) not permuted. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\newpage
+% ============================================================================
+\section{SUBSAMPLE C-PROD-H4}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{C-prod-HS4 subsample --- triple-difference estimates}
+\label{tab:cprodhs4}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0009 & $-$0.0019 & 0.0005 & 0.0005 & 0.0001 & 0.0002 \\
+ & (0.0051) & (0.0043) & (0.0007) & (0.0011) & (0.0010) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.858] & [0.665] & [0.471] & [0.680] & [0.906] & [0.689] \\
+\quad Bootstrap $p$ & [0.860] & [0.662] & [0.421] & [0.730] & [0.916] & [0.713] \\[6pt]
+$EP_{dt} \times b_p$ & 0.0066 & 0.0068 & $-$0.0017 & 0.0024 & 0.0033 & $-$0.0004 \\
+ & (0.0090) & (0.0111) & (0.0070) & (0.0066) & (0.0059) & (0.0024) \\[2pt]
+\quad Asymptotic $p$ & [0.469] & [0.541] & [0.807] & [0.714] & [0.581] & [0.860] \\
+\quad Bootstrap $p$ & [0.435] & [0.562] & [0.857] & [0.734] & [0.591] & [0.866] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,772,855 & 3,745,788 & 3,745,788 & 3,772,855 & 3,745,788 & 3,745,788 \\
+Clusters ($d$) & 215 & 215 & 215 & 215 & 215 & 215 \\
+Adj.\ $R^2$ & 0.889 & 0.835 & 0.923 & 0.889 & 0.835 & 0.923 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0009 & $-$0.0032 & 0.0012 & 0.0004 & $-$0.0003 & 0.0003 \\
+ & (0.0051) & (0.0042) & (0.0012) & (0.0013) & (0.0011) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.867] & [0.449] & [0.338] & [0.779] & [0.790] & [0.484] \\
+\quad Bootstrap $p$ & [0.855] & [0.461] & [0.368] & [0.817] & [0.806] & [0.546] \\[6pt]
+$EP_{dt} \times b_p$ & 0.0033 & $-$0.0059 & 0.0076 & 0.0015 & $-$0.0006 & 0.0022 \\
+ & (0.0168) & (0.0182) & (0.0098) & (0.0040) & (0.0032) & (0.0025) \\[2pt]
+\quad Asymptotic $p$ & [0.846] & [0.747] & [0.440] & [0.719] & [0.854] & [0.383] \\
+\quad Bootstrap $p$ & [0.850] & [0.758] & [0.554] & [0.735] & [0.852] & [0.454] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,772,321 & 3,745,254 & 3,745,254 & 3,772,321 & 3,745,254 & 3,745,254 \\
+Clusters ($d$) & 214 & 214 & 214 & 214 & 214 & 214 \\
+Adj.\ $R^2$ & 0.889 & 0.835 & 0.923 & 0.889 & 0.835 & 0.923 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} C-prod-HS4 subsample: restricted to HS6 products with a comparable HS4-level match across classification revisions. Full firm-level panel, excluding Hong Kong and Macao. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\newpage
+% ============================================================================
+\section{CEM DESTINATIONS}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{CEM destinations --- triple-difference estimates}
+\label{tab:cem}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0023 & $-$0.0014 & $-$0.0003 & $-$0.0006 & $-$0.0002 & $-$0.0004 \\
+ & (0.0037) & (0.0041) & (0.0016) & (0.0011) & (0.0012) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.543] & [0.734] & [0.837] & [0.576] & [0.857] & [0.201] \\
+\quad Bootstrap $p$ & [0.610] & [0.824] & [0.887] & [0.609] & [0.878] & [0.241] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0041* & $-$0.0042 & $-$0.0002 & $-$0.0011 & $-$0.0006 & $-$0.0004 \\
+ & (0.0024) & (0.0034) & (0.0013) & (0.0007) & (0.0010) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.098] & [0.214] & [0.868] & [0.140] & [0.541] & [0.308] \\
+\quad Bootstrap $p$ & [0.251] & [0.544] & [0.928] & [0.204] & [0.610] & [0.403] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 13,992,396 & 13,858,213 & 13,858,206 & 13,992,396 & 13,858,213 & 13,858,206 \\
+Clusters ($d$) & 57 & 57 & 57 & 57 & 57 & 57 \\
+Adj.\ $R^2$ & 0.742 & 0.815 & 0.921 & 0.742 & 0.815 & 0.921 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0016 & $-$0.0016 & 0.0000 & $-$0.0005 & $-$0.0003 & $-$0.0003 \\
+ & (0.0034) & (0.0035) & (0.0019) & (0.0011) & (0.0011) & (0.0005) \\[2pt]
+\quad Asymptotic $p$ & [0.648] & [0.644] & [0.980] & [0.655] & [0.783] & [0.567] \\
+\quad Bootstrap $p$ & [0.676] & [0.737] & [0.978] & [0.676] & [0.815] & [0.683] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0043* & $-$0.0055* & 0.0001 & $-$0.0013* & $-$0.0011 & $-$0.0002 \\
+ & (0.0024) & (0.0030) & (0.0013) & (0.0007) & (0.0009) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.081] & [0.071] & [0.938] & [0.091] & [0.194] & [0.478] \\
+\quad Bootstrap $p$ & [0.121] & [0.180] & [0.981] & [0.125] & [0.255] & [0.607] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 13,992,396 & 13,858,213 & 13,858,206 & 13,992,396 & 13,858,213 & 13,858,206 \\
+Clusters ($d$) & 57 & 57 & 57 & 57 & 57 & 57 \\
+Adj.\ $R^2$ & 0.742 & 0.815 & 0.921 & 0.742 & 0.815 & 0.921 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} CEM-matched destinations subsample. Full firm-level panel, excluding Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt}$). Quantity and unit-value regressions estimated on the subset with non-missing quantity data. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\newpage
+% ============================================================================
+\section{DEEP VS SHALLOW}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Deep vs.\ shallow agreements --- triple-difference estimates}
+\label{tab:deepshallow}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0022 & $-$0.0013 & $-$0.0004 & $-$0.0004 & $-$0.0001 & $-$0.0002 \\
+ & (0.0035) & (0.0036) & (0.0011) & (0.0010) & (0.0010) & (0.0002) \\[2pt]
+\quad Asymptotic $p$ & [0.534] & [0.712] & [0.748] & [0.721] & [0.903] & [0.392] \\
+\quad Bootstrap $p$ & [0.585] & [0.817] & [0.708] & [0.751] & [0.919] & [0.305] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0034 & $-$0.0034 & $-$0.0005 & $-$0.0006 & $-$0.0004 & $-$0.0003 \\
+ & (0.0029) & (0.0034) & (0.0008) & (0.0010) & (0.0012) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.246] & [0.330] & [0.572] & [0.549] & [0.712] & [0.389] \\
+\quad Bootstrap $p$ & [0.499] & [0.601] & [0.771] & [0.739] & [0.785] & [0.379] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 5,262,293 & 5,201,289 & 5,201,282 & 5,262,293 & 5,201,289 & 5,201,282 \\
+Clusters ($d$) & 23 & 23 & 23 & 23 & 23 & 23 \\
+Adj.\ $R^2$ & 0.751 & 0.844 & 0.932 & 0.751 & 0.844 & 0.932 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0016 & $-$0.0015 & $-$0.0002 & $-$0.0003 & $-$0.0002 & $-$0.0002 \\
+ & (0.0032) & (0.0031) & (0.0018) & (0.0010) & (0.0009) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.619] & [0.633] & [0.915] & [0.776] & [0.832] & [0.624] \\
+\quad Bootstrap $p$ & [0.616] & [0.727] & [0.910] & [0.784] & [0.857] & [0.715] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0042 & $-$0.0043 & $-$0.0007 & $-$0.0009 & $-$0.0008 & $-$0.0003 \\
+ & (0.0025) & (0.0028) & (0.0009) & (0.0008) & (0.0009) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.113] & [0.141] & [0.431] & [0.253] & [0.401] & [0.294] \\
+\quad Bootstrap $p$ & [0.173] & [0.294] & [0.755] & [0.386] & [0.492] & [0.336] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 5,260,451 & 5,199,451 & 5,199,444 & 5,260,451 & 5,199,451 & 5,199,444 \\
+Clusters ($d$) & 23 & 23 & 23 & 23 & 23 & 23 \\
+Adj.\ $R^2$ & 0.751 & 0.844 & 0.932 & 0.751 & 0.844 & 0.932 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Deep vs.\ shallow agreements subsample: restricted to destinations with at least one deep PTA in force. Full firm-level panel, excluding Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt}$). Quantity and unit-value regressions estimated on the subset with non-missing quantity data. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{SATURATION LADDER}
+% ============================================================================
+
+\subsection{WB DEPTH}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Saturation ladder --- WB EP depth ($EP^{WB}_{dt}$)}
+\label{tab:ladder_wb}
+\begin{threeparttable}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{Baseline} & \multicolumn{4}{c}{Interaction ($g_p$, $b_p$)} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) \\
+\midrule
+\multicolumn{9}{l}{\textit{Panel A --- $\ln x^{val}_{fpdt}$}} \\[3pt]
+\quad $EP^{WB}_{dt}$ & 0.0031 & 0.0046* & 0.0001 & 0.0009 &  &  &  &  \\
+ & (0.0025) & (0.0027) & (0.0033) & (0.0022) &  &  &  &  \\
+\quad $EP^{WB}_{dt} \times g_p$ &  &  &  &  & 0.0018 & 0.0012 & 0.0060 & 0.0050 \\
+ &  &  &  &  & (0.0050) & (0.0027) & (0.0050) & (0.0037) \\
+\quad $EP^{WB}_{dt} \times b_p$ &  &  &  &  & $-$0.0037 & $-$0.0015 & 0.0058* & 0.0064** \\
+ &  &  &  &  & (0.0150) & (0.0027) & (0.0031) & (0.0027) \\[3pt]
+Observations & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 \\
+Adj.\ $R^2$ & 0.795 & 0.621 & 0.859 & 0.798 & 0.795 & 0.621 & 0.859 & 0.798 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{9}{l}{\textit{Panel B --- $\ln x^{qua}_{fpdt}$}} \\[3pt]
+\quad $EP^{WB}_{dt}$ & 0.0042 & 0.0033 & $-$0.0003 & 0.0012 &  &  &  &  \\
+ & (0.0028) & (0.0028) & (0.0034) & (0.0023) &  &  &  &  \\
+\quad $EP^{WB}_{dt} \times g_p$ &  &  &  &  & 0.0023 & 0.0032 & 0.0061 & 0.0053 \\
+ &  &  &  &  & (0.0037) & (0.0026) & (0.0060) & (0.0038) \\
+\quad $EP^{WB}_{dt} \times b_p$ &  &  &  &  & $-$0.0025 & $-$0.0006 & 0.0048 & 0.0058** \\
+ &  &  &  &  & (0.0131) & (0.0028) & (0.0031) & (0.0025) \\[3pt]
+Observations & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 \\
+Adj.\ $R^2$ & 0.871 & 0.749 & 0.911 & 0.873 & 0.871 & 0.749 & 0.911 & 0.873 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{9}{l}{\textit{Panel C --- $\ln x^{uv}_{fpdt}$}} \\[3pt]
+\quad $EP^{WB}_{dt}$ & $-$0.0010* & 0.0014*** & 0.0005*** & $-$0.0002 &  &  &  &  \\
+ & (0.0005) & (0.0003) & (0.0002) & (0.0003) &  &  &  &  \\
+\quad $EP^{WB}_{dt} \times g_p$ &  &  &  &  & 0.0001 & $-$0.0019 & 0.0002 & 0.0003 \\
+ &  &  &  &  & (0.0016) & (0.0017) & (0.0016) & (0.0008) \\
+\quad $EP^{WB}_{dt} \times b_p$ &  &  &  &  & $-$0.0012 & $-$0.0014** & 0.0005 & 0.0008 \\
+ &  &  &  &  & (0.0026) & (0.0006) & (0.0006) & (0.0006) \\[3pt]
+Observations & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 \\
+Adj.\ $R^2$ & 0.956 & 0.932 & 0.973 & 0.957 & 0.956 & 0.932 & 0.973 & 0.957 \\
+\addlinespace[6pt]
+\midrule
+\quad $\theta_{fpd}$ & \checkmark &  & \checkmark & \checkmark & \checkmark &  & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ &  &  &  & \checkmark &  &  &  & \checkmark \\
+\quad $\theta_{fpt}$ &  & \checkmark & \checkmark &  &  & \checkmark & \checkmark &  \\
+\quad $\theta_{pd}$ &  & \checkmark &  &  &  & \checkmark &  &  \\
+\quad $\theta_{t}$ & \checkmark &  &  &  & \checkmark &  &  &  \\
+Clusters ($d$) & 231 & 232 & 231 & 231 & 231 & 232 & 231 & 231 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Each column represents a different fixed-effects structure. Columns~(1)--(4) estimate the baseline $EP^{WB}_{dt}$ coefficient without product-type interactions. Columns~(5)--(8) decompose the EP effect by interacting with environmental ($g_p$) and pollution-intensive ($b_p$) product classifications. Hong Kong and Macao included. All specifications include the non-environmental depth control ($TD_{dt}$) and its interactions (not shown). Standard errors clustered at the destination level in parentheses. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$.
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\subsection{TREND DEPTH}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Saturation ladder --- TREND EP count ($EP^{TR}_{dt}$)}
+\label{tab:ladder_trend}
+\begin{threeparttable}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{Baseline} & \multicolumn{4}{c}{Interaction ($g_p$, $b_p$)} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) \\
+\midrule
+\multicolumn{9}{l}{\textit{Panel A --- $\ln x^{val}_{fpdt}$}} \\[3pt]
+\quad $EP^{TR}_{dt}$ & 0.0004 & 0.0010** & 0.0002 & 0.0003 &  &  &  &  \\
+ & (0.0005) & (0.0005) & (0.0006) & (0.0004) &  &  &  &  \\
+\quad $EP^{TR}_{dt} \times g_p$ &  &  &  &  & $-$0.0013 & 0.0010 & 0.0021** & 0.0018** \\
+ &  &  &  &  & (0.0010) & (0.0009) & (0.0009) & (0.0008) \\
+\quad $EP^{TR}_{dt} \times b_p$ &  &  &  &  & $-$0.0049*** & 0.000029 & 0.0002 & 0.0009 \\
+ &  &  &  &  & (0.0015) & (0.0007) & (0.0011) & (0.0008) \\[3pt]
+Observations & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 \\
+Adj.\ $R^2$ & 0.795 & 0.621 & 0.859 & 0.798 & 0.795 & 0.621 & 0.859 & 0.798 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{9}{l}{\textit{Panel B --- $\ln x^{qua}_{fpdt}$}} \\[3pt]
+\quad $EP^{TR}_{dt}$ & 0.0005 & 0.0006 & 0.000047 & 0.0003 &  &  &  &  \\
+ & (0.0005) & (0.0005) & (0.0006) & (0.0005) &  &  &  &  \\
+\quad $EP^{TR}_{dt} \times g_p$ &  &  &  &  & $-$0.0007 & 0.0013 & 0.0025** & 0.0017** \\
+ &  &  &  &  & (0.0009) & (0.0009) & (0.0010) & (0.0008) \\
+\quad $EP^{TR}_{dt} \times b_p$ &  &  &  &  & $-$0.0034*** & 0.0002 & 0.0002 & 0.0008 \\
+ &  &  &  &  & (0.0012) & (0.0007) & (0.0011) & (0.0007) \\[3pt]
+Observations & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 & 29,259,694 & 35,355,735 & 22,748,753 & 29,255,449 \\
+Adj.\ $R^2$ & 0.871 & 0.749 & 0.911 & 0.873 & 0.871 & 0.749 & 0.911 & 0.873 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{9}{l}{\textit{Panel C --- $\ln x^{uv}_{fpdt}$}} \\[3pt]
+\quad $EP^{TR}_{dt}$ & $-$0.0001 & 0.0004*** & 0.0001*** & 0.000022 &  &  &  &  \\
+ & (0.0001) & (0.0001) & (0.000047) & (0.000048) &  &  &  &  \\
+\quad $EP^{TR}_{dt} \times g_p$ &  &  &  &  & $-$0.0004 & $-$0.0003 & $-$0.0002 & 0.0002 \\
+ &  &  &  &  & (0.0003) & (0.0003) & (0.0003) & (0.0002) \\
+\quad $EP^{TR}_{dt} \times b_p$ &  &  &  &  & $-$0.0015*** & $-$0.0003* & $-$0.000005 & 0.0002 \\
+ &  &  &  &  & (0.0003) & (0.0001) & (0.0001) & (0.0001) \\[3pt]
+Observations & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 & 29,259,686 & 35,355,728 & 22,748,748 & 29,255,441 \\
+Adj.\ $R^2$ & 0.956 & 0.932 & 0.973 & 0.957 & 0.956 & 0.932 & 0.973 & 0.957 \\
+\addlinespace[6pt]
+\midrule
+\quad $\theta_{fpd}$ & \checkmark &  & \checkmark & \checkmark & \checkmark &  & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ &  &  &  & \checkmark &  &  &  & \checkmark \\
+\quad $\theta_{fpt}$ &  & \checkmark & \checkmark &  &  & \checkmark & \checkmark &  \\
+\quad $\theta_{pd}$ &  & \checkmark &  &  &  & \checkmark &  &  \\
+\quad $\theta_{t}$ & \checkmark &  &  &  & \checkmark &  &  &  \\
+Clusters ($d$) & 231 & 232 & 231 & 231 & 231 & 232 & 231 & 231 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Each column represents a different fixed-effects structure. Columns~(1)--(4) estimate the baseline $EP^{TR}_{dt}$ coefficient without product-type interactions. Columns~(5)--(8) decompose the EP effect by interacting with environmental ($g_p$) and pollution-intensive ($b_p$) product classifications. Hong Kong and Macao included. All specifications include the non-environmental depth control ($TD_{dt}$) and its interactions (not shown). Standard errors clustered at the destination level in parentheses. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$.
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{SUB-INDEX DECOMPOSITION}
+% ============================================================================
+
+\subsection{FULL PANEL}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Full panel --- sub-index decomposition}
+\label{tab:subindex_fullpanel}
+\begin{threeparttable}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & \multicolumn{2}{c}{WB sub-indices} & \multicolumn{5}{c}{TREND sub-indices} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-8}
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) \\
+ & \shortstack{Green\\Lib.} & \shortstack{Enf.\\DSM} & \shortstack{Green\\Mkt.} & \shortstack{Enf.\\DSM} & Hard & Soft & \shortstack{Reg.\\Space} \\
+\midrule
+\multicolumn{8}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{\text{sub}} \times g_p$ & 0.0085 & $-$0.0028 & 0.0158 & 0.0020 & 0.0007 & $-$0.0037 & 0.0049 \\
+                             & (0.0467) & (0.0208) & (0.0178) & (0.0083) & (0.0023) & (0.0085) & (0.0095) \\[6pt]
+$EP_{\text{sub}} \times b_p$ & $-$0.0019 & $-$0.0243$^{*}$ & $-$0.0088 & $-$0.0107 & $-$0.0019 & $-$0.0047 & 0.0072 \\
+                             & (0.0335) & (0.0117) & (0.0153) & (0.0061) & (0.0016) & (0.0070) & (0.0075) \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 \\
+Clusters ($d$) & 225 & 225 & 225 & 225 & 225 & 225 & 225 \\
+Adj.\ $R^2$ & 0.744 & 0.744 & 0.744 & 0.744 & 0.744 & 0.744 & 0.744 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{8}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{\text{sub}} \times g_p$ & 0.0073 & $-$0.0029 & 0.0141 & 0.0016 & 0.0005 & $-$0.0038 & 0.0029 \\
+                             & (0.0432) & (0.0168) & (0.0162) & (0.0087) & (0.0023) & (0.0077) & (0.0068) \\[6pt]
+$EP_{\text{sub}} \times b_p$ & $-$0.0171 & $-$0.0308$^{*}$ & $-$0.0155 & $-$0.0133 & $-$0.0029 & $-$0.0080$^{*}$ & $-$0.0037 \\
+                             & (0.0316) & (0.0150) & (0.0143) & (0.0068) & (0.0018) & (0.0043) & (0.0060) \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 & 21,519,511 \\
+Clusters ($d$) & 225 & 225 & 225 & 225 & 225 & 225 & 225 \\
+Adj.\ $R^2$ & 0.744 & 0.744 & 0.744 & 0.744 & 0.744 & 0.744 & 0.744 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Full firm-level panel (excluding Hong Kong and Macao), restricted to observations with valid sub-index data.
+  Each column estimates a separate model replacing the aggregate EP index with one sub-index;
+  the non-environmental depth control ($TD_{dt} \times g_p$ and $TD_{dt} \times b_p$) is included in all specifications but not shown.
+  Fixed effects: firm-product-destination ($\theta_{fpd}$), firm-destination-year ($\theta_{fdt}$), product-year ($\theta_{pt}$).
+  Standard errors clustered at the destination level in parentheses.
+  $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$.
+\item WB sub-indices: (1)~Green Liberalization; (2)~Enforcement \& DSM.
+  TREND sub-indices: (3)~Green Market Access; (4)~Enforcement \& DSM; (5)~Hard obligations;
+  (6)~Soft obligations; (7)~Regulatory Space.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\newpage
+\subsection{COLLAPSED PANEL}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Collapsed panel --- sub-index decomposition}
+\label{tab:subindex}
+\begin{threeparttable}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & \multicolumn{2}{c}{WB sub-indices} & \multicolumn{5}{c}{TREND sub-indices} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-8}
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) \\
+ & \shortstack{Green\\Lib.} & \shortstack{Enf.\\DSM} & \shortstack{Green\\Mkt.} & \shortstack{Enf.\\DSM} & Hard & Soft & \shortstack{Reg.\\Space} \\
+\midrule
+\multicolumn{8}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{\text{sub}} \times g_p$ & $-$0.0115 & $-$0.0048 & $-$0.0271 & 0.0042 & 0.0022 & 0.0132 & 0.0242$^{**}$ \\
+                             & (0.0879) & (0.0394) & (0.0303) & (0.0148) & (0.0047) & (0.0121) & (0.0099) \\[6pt]
+$EP_{\text{sub}} \times b_p$ & $-$0.0876$^{*}$ & 0.0067 & $-$0.0491$^{**}$ & $-$0.0052 & $-$0.0013 & 0.0019 & 0.0225$^{***}$ \\
+                             & (0.0483) & (0.0525) & (0.0243) & (0.0140) & (0.0037) & (0.0108) & (0.0086) \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 \\
+Clusters ($d$) & 236 & 236 & 236 & 236 & 236 & 236 & 236 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{8}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{\text{sub}} \times g_p$ & $-$0.0141 & $-$0.0105 & $-$0.0290 & 0.0032 & 0.0017 & 0.0132 & 0.0149 \\
+                             & (0.0892) & (0.0280) & (0.0288) & (0.0160) & (0.0047) & (0.0131) & (0.0104) \\[6pt]
+$EP_{\text{sub}} \times b_p$ & $-$0.1001$^{**}$ & $-$0.0197 & $-$0.0543$^{***}$ & $-$0.0086 & $-$0.0023 & $-$0.0015 & 0.0092 \\
+                             & (0.0398) & (0.0343) & (0.0187) & (0.0115) & (0.0029) & (0.0101) & (0.0075) \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 \\
+Clusters ($d$) & 236 & 236 & 236 & 236 & 236 & 236 & 236 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Collapsed panel (HS6--destination--year cells), excluding Hong Kong and Macao.
+  Dependent variable: mean log export value ($\bar{y}_{pdt}$), weighted by cell size.
+  Each column estimates a separate model replacing the aggregate EP index with one sub-index;
+  the non-environmental depth control ($TD_{dt} \times g_p$ and $TD_{dt} \times b_p$) is included in all specifications but not shown.
+  Fixed effects: product-destination ($\theta_{pd}$), destination-year ($\theta_{dt}$), product-year ($\theta_{pt}$).
+  Standard errors clustered at the destination level in parentheses.
+  $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$.
+\item WB sub-indices: (1)~Green Liberalization; (2)~Enforcement \& DSM.
+  TREND sub-indices: (3)~Green Market Access; (4)~Enforcement \& DSM; (5)~Hard obligations;
+  (6)~Soft obligations; (7)~Regulatory Space.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{PPML}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{PPML --- extensive margin (collapsed panel, zero-filled)}
+\label{tab:ppml}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{2}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\
+\addlinespace
+$EP_{dt} \times g_p$ & $0.0015$ & $0.0029$ & $0.0001$ & $-0.0001$ \\
+ & $(0.0046)$ & $(0.0061)$ & $(0.0019)$ & $(0.0021)$ \\
+Asymptotic $p$ & $[0.738]$ & $[0.630]$ & $[0.951]$ & $[0.972]$ \\
+\addlinespace
+$EP_{dt} \times b_p$ & $-0.0301$\sym{*} & $-0.0268$ & $0.0028$ & $0.0048$ \\
+ & $(0.0158)$ & $(0.0178)$ & $(0.0047)$ & $(0.0050)$ \\
+Asymptotic $p$ & $[0.057]$ & $[0.133]$ & $[0.550]$ & $[0.335]$ \\
+\addlinespace
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 7,895,543 & 8,030,137 & 7,895,543 & 8,030,137 \\
+Clusters ($d$) & 225 & 228 & 225 & 228 \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel B --- DESTA depth control}} \\
+\addlinespace
+$EP_{dt} \times g_p$ & $0.0053$ & $0.0064$ & $0.0010$ & $0.0008$ \\
+ & $(0.0045)$ & $(0.0050)$ & $(0.0013)$ & $(0.0015)$ \\
+Asymptotic $p$ & $[0.232]$ & $[0.205]$ & $[0.442]$ & $[0.565]$ \\
+\addlinespace
+$EP_{dt} \times b_p$ & $-0.0186$ & $-0.0108$ & $0.0027$ & $0.0046$ \\
+ & $(0.0169)$ & $(0.0198)$ & $(0.0053)$ & $(0.0050)$ \\
+Asymptotic $p$ & $[0.270]$ & $[0.585]$ & $[0.612]$ & $[0.358]$ \\
+\addlinespace
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 7,878,784 & 8,003,772 & 7,878,784 & 8,003,772 \\
+Clusters ($d$) & 225 & 228 & 225 & 228 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} PPML estimated on the HS6--destination--year grid completed with zeros (Santos Silva \& Tenreyro, 2006); fixed effects: product$\times$destination ($\theta_{pd}$), destination$\times$year ($\theta_{dt}$), product$\times$year ($\theta_{pt}$); standard errors clustered at the destination level. Columns~(1) and~(3) exclude Hong Kong and Macao; columns~(2) and~(4) include them. Panel~A controls for non-environmental WB depth ($TD_{dt} \times g_p$ and $TD_{dt} \times b_p$, not shown); Panel~B uses the DESTA depth index.
+\item Log-linear estimates condition on positive flows: if an environmental clause created new green exports to a market where none previously existed, those estimates would miss it. PPML retains zeros and therefore captures this margin.
+\item PPML coefficients are approximate percentage changes.
+\item $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\newpage
+% ============================================================================
+\section{DYNAMICS --- EVENT STUDY (TWFE)}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\caption{Event study (TWFE) --- EP leads and lags interacted with product type}
+\label{tab:eventstudy_twfe}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB depth control} & \multicolumn{2}{c}{DESTA depth control} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Period & $EP \times g_p$ & $EP \times b_p$ & $EP \times g_p$ & $EP \times b_p$ \\
+       & (1)             & (2)             & (3)             & (4)             \\
+\midrule
+\multicolumn{5}{l}{\textit{Pre-treatment leads (parallel trends test)}} \\[3pt]
+$t=-6$ & $-0.044$        & $0.027$         & $-0.044$        & $0.027$         \\
+       & $(0.045)$       & $(0.043)$       & $(0.045)$       & $(0.043)$       \\[4pt]
+$t=-5$ & $-0.005$        & $-0.017$        & $-0.005$        & $-0.017$        \\
+       & $(0.038)$       & $(0.025)$       & $(0.038)$       & $(0.025)$       \\[4pt]
+$t=-4$ & $0.017$         & $0.036$         & $0.017$         & $0.036$         \\
+       & $(0.027)$       & $(0.027)$       & $(0.027)$       & $(0.027)$       \\[4pt]
+$t=-3$ & $-0.008$        & $0.002$         & $-0.008$        & $0.002$         \\
+       & $(0.020)$       & $(0.028)$       & $(0.020)$       & $(0.028)$       \\[4pt]
+$t=-2$ & $0.006$         & $0.020$         & $0.006$         & $0.020$         \\
+       & $(0.019)$       & $(0.039)$       & $(0.019)$       & $(0.039)$       \\[4pt]
+\midrule
+\multicolumn{5}{l}{\textit{Reference period}} \\[3pt]
+$t=-1$ & $0$             & $0$             & $0$             & $0$             \\[4pt]
+\midrule
+\multicolumn{5}{l}{\textit{Post-treatment lags}} \\[3pt]
+$t=0$  & $0.007$         & $0.027$         & $0.007$         & $0.027$         \\
+       & $(0.014)$       & $(0.027)$       & $(0.014)$       & $(0.027)$       \\[4pt]
+$t=1$  & $0.011$         & $0.017$         & $0.011$         & $0.017$         \\
+       & $(0.020)$       & $(0.028)$       & $(0.020)$       & $(0.028)$       \\[4pt]
+$t=2$  & $-0.020$        & $0.021$         & $-0.020$        & $0.021$         \\
+       & $(0.024)$       & $(0.033)$       & $(0.024)$       & $(0.033)$       \\[4pt]
+$t=3$  & $-0.038$        & $0.020$         & $-0.038$        & $0.020$         \\
+       & $(0.026)$       & $(0.034)$       & $(0.026)$       & $(0.034)$       \\[4pt]
+$t=4$  & $-0.039$        & $0.021$         & $-0.040$        & $0.021$         \\
+       & $(0.033)$       & $(0.035)$       & $(0.033)$       & $(0.035)$       \\[4pt]
+$t=5$  & $-0.084^{**}$   & $-0.032$        & $-0.084^{**}$   & $-0.032$        \\
+       & $(0.034)$       & $(0.043)$       & $(0.034)$       & $(0.043)$       \\[4pt]
+\midrule
+Observations   & 3,681,023 & 3,681,023 & 3,677,333 & 3,677,333 \\
+Clusters ($d$) & 228       & 228       & 228       & 228       \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} TWFE event study on the collapsed panel. Each row corresponds to a relative time period $t$ around PTA entry into force ($t=0$). The dependent variable is log total exports from China. The coefficients are $EP_{dt} \times \mathbf{1}[\text{rel.\ time}=t] \times g_p$ (cols.\ 1, 3) and $EP_{dt} \times \mathbf{1}[\text{rel.\ time}=t] \times b_p$ (cols.\ 2, 4), estimated jointly. The non-environmental depth control ($TD_{dt} \times g_p$ and $TD_{dt} \times b_p$) is included in all specifications but not shown. $t=-1$ is the omitted reference period. FE: $pd + dt + pt$. Standard errors clustered at the destination level in parentheses. Columns (1)--(2) use WB total depth; columns (3)--(4) use DESTA depth.
+\item Pre-treatment coefficients ($t \leq -2$) are all statistically indistinguishable from zero, supporting the parallel-trends assumption. The negative coefficient on $EP \times g_p$ at $t=5$ should be interpreted cautiously: the panel ends in 2015 and $t=5$ covers the thinnest treated subsample.
+\item $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic, destination-clustered).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{LEAVE ONE OUT}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Leave-one-out: EP$\times$dirty coefficient stability across 23 treated destinations}
+\label{tab:loo_new}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB depth control} & \multicolumn{2}{c}{DESTA depth control} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Excluded destination & Excl.\ HK/Macao & Incl.\ HK/Macao & Excl.\ HK/Macao & Incl.\ HK/Macao \\
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\textit{None (baseline)}         & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0113^{***}$ & $-0.0082^{*}$  \\
+\textit{None, extended dirty}    & $-0.0121^{***}$ & $-0.0191^{***}$ & $-0.0107^{***}$ & $-0.0071$      \\
+\midrule
+\textit{High EP depth only}      & $-0.0271^{**}$  & $-0.0456^{***}$ & $-0.0161$       & $-0.0164$      \\
+\midrule
+Bangladesh     & $-0.0118^{***}$ & $-0.0188^{***}$ & $-0.0113^{***}$ & $-0.0082^{*}$  \\
+Brunei         & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0114^{***}$ & $-0.0082^{*}$  \\
+Myanmar        & $-0.0118^{***}$ & $-0.0188^{***}$ & $-0.0112^{***}$ & $-0.0081^{*}$  \\
+Cambodia       & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0112^{***}$ & $-0.0081^{*}$  \\
+India          & $-0.0120^{***}$ & $-0.0190^{***}$ & $-0.0115^{***}$ & $-0.0084^{**}$ \\
+Indonesia      & $-0.0119^{***}$ & $-0.0190^{***}$ & $-0.0119^{***}$ & $-0.0087^{**}$ \\
+Laos, PDR      & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0113^{***}$ & $-0.0082^{*}$  \\
+Malaysia       & $-0.0124^{***}$ & $-0.0195^{***}$ & $-0.0110^{***}$ & $-0.0076^{*}$  \\
+Pakistan       & $-0.0114^{***}$ & $-0.0183^{***}$ & $-0.0106^{***}$ & $-0.0056$      \\
+Philippines    & $-0.0118^{***}$ & $-0.0189^{***}$ & $-0.0115^{***}$ & $-0.0083^{*}$  \\
+Singapore      & $-0.0098^{**}$  & $-0.0166^{***}$ & $-0.0128^{***}$ & $-0.0100^{**}$ \\
+Korea Rep.     & $-0.0097^{*}$   & $-0.0225^{**}$  & $-0.0104$       & $-0.0085$      \\
+Sri Lanka      & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0114^{***}$ & $-0.0082^{*}$  \\
+Thailand       & $-0.0120^{***}$ & $-0.0189^{***}$ & $-0.0115^{***}$ & $-0.0082^{*}$  \\
+Vietnam        & $-0.0122^{***}$ & $-0.0192^{***}$ & $-0.0112^{***}$ & $-0.0080^{*}$  \\
+Timor-Leste    & $-0.0119^{***}$ & $-0.0189^{***}$ &                 &                \\
+Iceland        & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0112^{***}$ & $-0.0081^{*}$  \\
+Switzerland    & $-0.0133^{***}$ & $-0.0209^{***}$ & $-0.0115^{***}$ & $-0.0084^{*}$  \\
+Chile          & $-0.0121^{***}$ & $-0.0191^{***}$ & $-0.0104^{***}$ & $-0.0071$      \\
+Costa Rica     & $-0.0114^{***}$ & $-0.0185^{***}$ & $-0.0109^{***}$ & $-0.0076^{*}$  \\
+Peru           & $-0.0133^{***}$ & $-0.0204^{***}$ & $-0.0121^{***}$ & $-0.0092^{**}$ \\
+Australia      & $-0.0103$       & $-0.0245^{**}$  & $-0.0110^{***}$ & $-0.0048$      \\
+New Zealand    & $-0.0119^{***}$ & $-0.0190^{***}$ & $-0.0113^{***}$ & $-0.0081^{*}$  \\
+\midrule
+Hong Kong      &                 & $-0.0129^{***}$ &                 & $-0.0112^{***}$ \\
+Macau          &                 & $-0.0183^{***}$ &                 & $-0.0082^{*}$  \\
+\midrule
+Observations   & 3,681,023       & 3,769,187       & 3,677,333       & 3,759,733      \\
+Clusters ($d$) & 228             & 230             & 228             & 230            \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} OLS on the collapsed panel. Dependent variable: log total exports from China. The coefficient shown is $\widehat{\beta}$ on EP$\times$dirty, re-estimated dropping one treated destination at a time. FE: $pd + dt + pt$. Standard errors (not shown) clustered by destination. Columns (1) and (3) exclude Hong Kong and Macao from the sample; columns (2) and (4) include them as additional treated observations. Columns (1)--(2) use WB total depth as the control-depth variable; columns (3)--(4) use DESTA depth. Observations and clusters refer to the baseline specification; individual rows differ slightly due to the dropped destination.
+\item \textit{High EP depth only}: estimated on the subsample excluding Peru, Switzerland, and Korea jointly --- the three destinations with above-median WB EP depth.
+\item Timor-Leste rows are blank in columns (3)--(4): Timor-Leste is absent from the DESTA dataset. Hong Kong and Macau rows are blank in columns (1) and (3): those territories are already excluded in those samples.
+\item \textbf{Note on inference.} Stars are based on asymptotic $p$-values with destination-clustered SEs. With $\approx23$ treated destinations, these $p$-values are substantially understated relative to the wild cluster bootstrap: the baseline coefficient in column (1) has asymptotic $p<0.001$ but bootstrap $p=0.070$ (Table~\ref{tab:wcb}). Stars are not comparable to the rest of the paper.
+\item \textbf{How to read.} This is a test of \emph{coefficient stability}, not significance. The relevant question is how much the point estimate moves when one destination is dropped, not how many stars it carries.
+\item $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$ (asymptotic).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+% ============================================================================
+%
+%                    APPENDIX --- HK/MACAO VARIANTS
+%
+% ============================================================================
+% ============================================================================
+
+\section{APPENDIX: FULL PANEL INCL HK/MC}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Full panel including Hong Kong and Macao --- triple-difference estimates}
+\label{tab:fullpanel_inclHKMO}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0009 & $-$0.0001 & $-$0.0004 & $-$0.0001 & $-$0.0001 & $-$0.0001 \\
+ & (0.0036) & (0.0038) & (0.0013) & (0.0010) & (0.0011) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.804] & [0.984] & [0.734] & [0.913] & [0.960] & [0.847] \\
+\quad Bootstrap $p$ & [0.833] & --- & --- & [0.919] & --- & --- \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0041 & $-$0.0036 & $-$0.0008 & $-$0.0010 & $-$0.0008 & $-$0.0001 \\
+ & (0.0024) & (0.0031) & (0.0010) & (0.0006) & (0.0008) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.094] & [0.236] & [0.451] & [0.112] & [0.321] & [0.836] \\
+\quad Bootstrap $p$ & [0.176] & --- & --- & [0.142] & --- & --- \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 23,560,110 & 23,334,037 & 23,334,027 & 23,560,110 & 23,334,037 & 23,334,027 \\
+Clusters ($d$) & 227 & 227 & 227 & 227 & 227 & 227 \\
+Adj.\ $R^2$ & 0.871 & 0.910 & 0.963 & 0.871 & 0.910 & 0.963 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0020 & $-$0.0016 & $-$0.0004 & $-$0.0004 & $-$0.0003 & $-$0.0001 \\
+ & (0.0035) & (0.0032) & (0.0019) & (0.0009) & (0.0009) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.572] & [0.617] & [0.824] & [0.675] & [0.716] & [0.723] \\
+\quad Bootstrap $p$ & [0.611] & --- & --- & [0.703] & --- & --- \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0057** & $-$0.0076** & 0.0008 & $-$0.0014* & $-$0.0017* & 0.0002 \\
+ & (0.0027) & (0.0031) & (0.0010) & (0.0007) & (0.0009) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.034] & [0.015] & [0.419] & [0.052] & [0.058] & [0.524] \\
+\quad Bootstrap $p$ & [0.035] & --- & --- & [0.082] & --- & --- \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$  & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 23,381,204 & 23,155,803 & 23,155,793 & 23,381,204 & 23,155,803 & 23,155,793 \\
+Clusters ($d$) & 227 & 227 & 227 & 227 & 227 & 227 \\
+Adj.\ $R^2$ & 0.871 & 0.911 & 0.963 & 0.871 & 0.911 & 0.963 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Full firm-level panel, including Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt} = \ln x^{val}_{fpdt} - \ln x^{qua}_{fpdt}$). Quantity and unit-value regressions are estimated on the subset of observations with non-missing quantity data. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets; ``---'' indicates bootstrap not available for this outcome. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+\subsection{COLLAPSED PANEL INCL HK/MACAO}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Collapsed panel including Hong Kong and Macao --- triple-difference estimates}
+\label{tab:collapsed_inclHKMO}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+ & WB EP depth ($EP^{WB}_{dt}$) & TREND EP count ($EP^{TR}_{dt}$) \\
+\cmidrule(lr){2-2}\cmidrule(lr){3-3}
+ & (1) & (2) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{val}_{fpdt}$ \\
+\midrule
+\multicolumn{3}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & 0.0017 & 0.0018 \\
+ & (0.0091) & (0.0018) \\[2pt]
+\quad Asymptotic $p$ & [0.849] & [0.337] \\
+\quad Bootstrap $p$ & [0.825] & [0.414] \\
+\quad Permutation $p$ & [0.897] & [0.468] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0189*** & $-$0.00001 \\
+ & (0.0061) & (0.0015) \\[2pt]
+\quad Asymptotic $p$ & [0.002] & [0.995] \\
+\quad Bootstrap $p$ & [0.005] & [0.995] \\
+\quad Permutation $p$ & [0.146] & [0.996] \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,769,187 & 3,769,187 \\
+Clusters ($d$) & 230 & 230 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{3}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0067 & 0.0002 \\
+ & (0.0048) & (0.0020) \\[2pt]
+\quad Asymptotic $p$ & [0.157] & [0.931] \\
+\quad Bootstrap $p$ & [0.486] & [0.946] \\
+\quad Permutation $p$ & [0.465] & [0.929] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0082 & 0.0008 \\
+ & (0.0043) & (0.0015) \\[2pt]
+\quad Asymptotic $p$ & [0.055] & [0.575] \\
+\quad Bootstrap $p$ & [0.192] & [0.631] \\
+\quad Permutation $p$ & [0.384] & [0.788] \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,759,733 & 3,759,733 \\
+Clusters ($d$) & 230 & 230 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Collapsed panel (product$\times$destination$\times$period cells, analytic weights), including Hong Kong and Macao. Dependent variable: log export value ($\ln x^{val}_{fpdt}$). All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. Permutation $p$-values (treated-only design, $R = 1{,}000$). $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\newpage
+% ============================================================================
+\section{CO2 SHAPIRO}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{CO$_2$ intensity (Shapiro 2021) --- collapsed panel, triple-difference}
+\label{tab:co2}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB depth control ($TD_{dt}$)} & \multicolumn{2}{c}{DESTA depth control} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & (1) & (2) & (3) & (4) \\
+ & Excl.\ HK/Macao & Incl.\ HK/Macao & Excl.\ HK/Macao & Incl.\ HK/Macao \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A --- WB EP depth ($EP^{WB}_{dt}$)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0050 & 0.0004 & $-$0.0025 & $-$0.0041 \\
+ & (0.0070) & (0.0080) & (0.0049) & (0.0055) \\[2pt]
+\quad Asymptotic $p$ & [0.472] & [0.956] & [0.613] & [0.455] \\
+\quad Bootstrap $p$ & [0.544] & [0.961] & [0.797] & [0.797] \\[6pt]
+$EP_{dt} \times \text{CO}_2$ & $-$0.0026 & $-$0.0049 & 0.0013 & 0.0028 \\
+ & (0.0057) & (0.0064) & (0.0031) & (0.0031) \\[2pt]
+\quad Asymptotic $p$ & [0.653] & [0.448] & [0.679] & [0.373] \\
+\quad Bootstrap $p$ & [0.707] & [0.529] & [0.773] & [0.384] \\[6pt]
+\midrule
+\multicolumn{5}{l}{\textit{Panel B --- TREND EP count ($EP^{TR}_{dt}$)}} \\[3pt]
+$EP_{dt} \times g_p$ & 0.0009 & 0.0009 & 0.0011 & $-$0.00002 \\
+ & (0.0017) & (0.0017) & (0.0018) & (0.0017) \\[2pt]
+\quad Asymptotic $p$ & [0.605] & [0.617] & [0.546] & [0.990] \\
+\quad Bootstrap $p$ & [0.677] & [0.698] & [0.652] & [0.993] \\[6pt]
+$EP_{dt} \times \text{CO}_2$ & $-$0.0013$^{**}$ & $-$0.0014$^{**}$ & $-$0.0008$^{**}$ & $-$0.0002 \\
+ & (0.0005) & (0.0005) & (0.0004) & (0.0006) \\[2pt]
+\quad Asymptotic $p$ & [0.011] & [0.012] & [0.032] & [0.779] \\
+\quad Bootstrap $p$ & [0.063] & [0.056] & [0.083] & [0.817] \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,681,023 & 3,769,187 & 3,677,333 & 3,759,733 \\
+Clusters ($d$) & 228 & 230 & 228 & 230 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Collapsed panel (product$\times$destination$\times$year cells, analytic weights).
+  The binary dirty indicator is replaced by a continuous product-level CO$_2$ emission intensity from Shapiro (2021), mapped to HS6 codes.
+  $EP_{dt} \times g_p$ captures the differential effect on environmental goods;
+  $EP_{dt} \times \text{CO}_2$ captures the marginal effect of a one-unit increase in CO$_2$ intensity.
+  All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times \text{CO}_2$ controls (not shown).
+  Columns~(1) and~(3) exclude Hong Kong and Macao; columns~(2) and~(4) include them.
+  Standard errors clustered at the destination level in parentheses.
+  Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets.
+  $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database; Shapiro (2021).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+% ============================================================================
+% ============================================================================
+%
+%           NEW SECTIONS --- PREVIOUSLY MISSING TABLES
+%
+% ============================================================================
+% ============================================================================
+
+\newpage
+% ============================================================================
+\section{WILD CLUSTER BOOTSTRAP $p$-VALUES}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Wild cluster bootstrap $p$-values (9,999 replications)}
+\label{tab:wcb}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A --- collapsed panel (WB index)}} \\
+\addlinespace
+EP depth $\times$ Green: coefficient & -0.00457 & 0.00173 & -0.00433 & -0.00675 \\
+\quad Bootstrap $p$-value & 0.649 & 0.825 & 0.546 & 0.484 \\
+\addlinespace
+EP depth $\times$ Dirty: coefficient & -0.01187 & -0.01887 & -0.01134 & -0.00820 \\
+\quad Bootstrap $p$-value & 0.072 & 0.005 & 0.047 & 0.195 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Panel B --- collapsed panel (TREND index)}} \\
+\addlinespace
+EP count $\times$ Green: coefficient & 0.00181 & 0.00178 & 0.00161 & 0.00017 \\
+\quad Bootstrap $p$-value & 0.390 & 0.414 & 0.508 & 0.949 \\
+\addlinespace
+EP count $\times$ Dirty: coefficient & 0.00035 & -0.00001 & -0.00025 & 0.00084 \\
+\quad Bootstrap $p$-value & 0.857 & 0.995 & 0.905 & 0.635 \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel C --- full firm-level panel (WB index)}} \\
+\addlinespace
+EP depth $\times$ Green: coefficient & -0.00226 & -0.00090 & -0.00185 & -0.00196 \\
+\quad Bootstrap $p$-value & 0.686 & 0.833 & 0.673 & 0.611 \\
+\addlinespace
+EP depth $\times$ Dirty: coefficient & -0.00435 & -0.00409 & -0.00559 & -0.00574 \\
+\quad Bootstrap $p$-value & 0.185 & 0.176 & 0.049 & 0.035 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Panel D --- full firm-level panel (TREND index)}} \\
+\addlinespace
+EP count $\times$ Green: coefficient & -0.00010 & -0.00011 & -0.00012 & -0.00039 \\
+\quad Bootstrap $p$-value & 0.931 & 0.919 & 0.920 & 0.703 \\
+\addlinespace
+EP count $\times$ Dirty: coefficient & -0.00089 & -0.00101 & -0.00140 & -0.00140 \\
+\quad Bootstrap $p$-value & 0.177 & 0.142 & 0.069 & 0.082 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Columns: (1) Excl.\ HK/Macao, TotalDepth control (baseline); (2) Incl.\ HK/Macao, TotalDepth control; (3) Excl.\ HK/Macao, DESTA control; (4) Incl.\ HK/Macao, DESTA control.
+\item Asymptotic $p$-values from destination-clustered standard errors are unreliable with 23 treated clusters (roughly 14 distinct EP profiles). The wild cluster bootstrap reconstructs the coefficient distribution by resampling 9,999 times and produces substantially more conservative $p$-values. The baseline dirty coefficient (Panel A, column 1) has asymptotic $p < 0.001$ but bootstrap $p = 0.072$.
+\item Panels C and D computed via \texttt{boottest} in Stata on residualized data (Frisch--Waugh), because the command does not support more than one set of absorbed fixed effects.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{PERMUTATION TEST}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Permutation test: 1,000 random reassignments of environmental content}
+\label{tab:perm}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A --- WB index}} \\
+\addlinespace
+EP depth $\times$ Green: observed coefficient & -0.00457 & 0.00173 & -0.00433 & -0.00675 \\
+\quad Permutation $p$-value & 0.597 & 0.897 & 0.480 & 0.465 \\
+\quad Valid permutations & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+EP depth $\times$ Dirty: observed coefficient & -0.01187 & -0.01887 & -0.01134 & -0.00820 \\
+\quad Permutation $p$-value & 0.278 & 0.146 & 0.146 & 0.384 \\
+\quad Valid permutations & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Panel B --- TREND index}} \\
+\addlinespace
+EP count $\times$ Green: observed coefficient & 0.00181 & 0.00178 & 0.00161 & 0.00017 \\
+\quad Permutation $p$-value & 0.160 & 0.468 & 0.316 & 0.929 \\
+\quad Valid permutations & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+EP count $\times$ Dirty: observed coefficient & 0.00035 & -0.00001 & -0.00025 & 0.00084 \\
+\quad Permutation $p$-value & 0.817 & 0.996 & 0.904 & 0.788 \\
+\quad Valid permutations & 1,000 & 1,000 & 1,000 & 1,000 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Columns: (1) Excl.\ HK/Macao, TotalDepth control (baseline); (2) Incl.\ HK/Macao, TotalDepth control; (3) Excl.\ HK/Macao, DESTA control; (4) Incl.\ HK/Macao, DESTA control.
+\item The EP profile of each agreement (depth level and entry years) is randomly reassigned among the 23 treated destinations, 1,000 times, and the model is re-estimated each time. The $p$-value is the share of random reassignments that produce a coefficient at least as large in absolute value as the observed one.
+\item A high $p$-value means the same number would have arisen by randomly labeling these destinations --- the result does not depend on actual environmental content. A low $p$-value means the observed estimate stands out in the placebo distribution.
+\item The 13 distinct EP profiles (of which approximately 9 are effectively independent, since the 10 ASEAN destinations share a single agreement) make the permutation distribution discrete; $p$-values are not reproducible to the last digit across implementations.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{BOOTSTRAP $p$-VALUE MATRIX (DIRTY COEFFICIENT)}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Summary: dirty-product coefficient across four specification variants, with common inference method}
+\label{tab:matrice}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+Collapsed panel: coefficient & -0.01187 & -0.01887 & -0.01134 & -0.00820 \\
+\quad Bootstrap $p$-value & 0.072 & 0.005 & 0.047 & 0.195 \\
+\addlinespace
+\emph{Full panel}: coefficient & -0.00435 & -0.00409 & -0.00559 & -0.00574 \\
+\quad Bootstrap $p$-value & 0.185 & 0.176 & 0.049 & 0.035 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Columns: (1) Excl.\ HK/Macao, TotalDepth control (baseline); (2) Incl.\ HK/Macao, TotalDepth control; (3) Excl.\ HK/Macao, DESTA control; (4) Incl.\ HK/Macao, DESTA control.
+\item Coefficient on the interaction between environmental depth (WB index) and dirty products. This is the only coefficient in the paper that moves: the one on green products is zero everywhere.
+\item \textbf{All $p$-values in this table come from the \emph{wild cluster bootstrap}}, so all eight cells are comparable.
+\item \textbf{How to read it.} On the \emph{full panel} the result depends on which depth control is used: with the World Bank control the $p$-value stays above 0.17; with the DESTA control it falls below 0.05. The two controls have different partial correlations with environmental depth net of fixed effects (0.959 and 0.891, respectively): the more a control overlaps with the variable of interest, the less independent variation remains and the larger the standard error.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{SUN--ABRAHAM EVENT STUDY}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Sun--Abraham interaction-weighted event study: composition gap estimates}
+\label{tab:sunab}
+\begin{threeparttable}
+\begin{tabular}{rcccc}
+\toprule
+Years since & \multicolumn{2}{c}{Green $-$ neutral gap} & \multicolumn{2}{c}{Dirty $-$ neutral gap} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+entry & Coeff. & $p$ & Coeff. & $p$ \\
+\midrule
+$-10$ & $-0.0500$ & 0.419 & $-0.0356$ & 0.598 \\
+$-9$  & $-0.0128$ & 0.881 & $\phantom{-}0.0641$  & 0.424 \\
+$-8$  & $-0.0001$ & 0.999 & $-0.0478$ & 0.436 \\
+$-7$  & $-0.0392$ & 0.422 & $-0.0186$ & 0.561 \\
+$-6$  & $\phantom{-}0.0027$  & 0.959 & $\phantom{-}0.0466$  & 0.335 \\
+$-5$  & $\phantom{-}0.0022$  & 0.961 & $-0.0447$ & 0.378 \\
+$-4$  & $\phantom{-}0.0345$  & 0.359 & $-0.0210$ & 0.538 \\
+$-3$  & $\phantom{-}0.0021$  & 0.938 & $-0.0451$ & 0.189 \\
+$-2$  & $\phantom{-}0.0034$  & 0.861 & $-0.0080$ & 0.832 \\
+$+0$  & $\phantom{-}0.0116$  & 0.504 & $\phantom{-}0.0579$  & 0.107 \\
+$+1$  & $\phantom{-}0.0191$  & 0.470 & $\phantom{-}0.0661$  & 0.192 \\
+$+2$  & $-0.0049$ & 0.881 & $\phantom{-}0.0765$  & 0.241 \\
+$+3$  & $-0.0244$ & 0.501 & $\phantom{-}0.0921$  & 0.156 \\
+$+4$  & $-0.0187$ & 0.711 & $\phantom{-}0.0906$  & 0.181 \\
+$+5$  & $-0.0233$ & 0.661 & $\phantom{-}0.1153$  & 0.117 \\
+$+6$  & $\phantom{-}0.0027$  & 0.959 & $\phantom{-}0.1264$  & 0.165 \\
+$+7$  & $-0.0320$ & 0.541 & $\phantom{-}0.1083$  & 0.223 \\
+$+8$  & $-0.0779$ & 0.181 & $\phantom{-}0.0983$  & 0.235 \\
+\midrule
+Aggregated ATT & $-0.0421$ & 0.269 & $\phantom{-}0.0729$ & 0.276 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Estimated via \texttt{eventstudyinteract} in Stata (Sun and Abraham, 2021). Dependent variable: destination--year composition gap (mean log exports of green or dirty products minus mean log exports of neutral products, within destination--year cells). Standard errors propagate estimation uncertainty in cohort shares, as prescribed by Sun and Abraham (2021); \texttt{fixest::sunab} in R treats the shares as known weights and yields narrower standard errors --- the ratio reaches 3--4 in periods identified by many discordant cohorts. Coefficients agree to 15 significant figures across implementations. Endpoint bins at $t\leq -10$ and $t\geq +8$ accumulate all observations beyond those thresholds. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{DESTINATION-SPECIFIC TRENDS AND PRE-TREND TESTS}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Destination-specific trends and pre-trend tests (collapsed panel)}
+\label{tab:trends}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A --- destination$\times$product-type linear trends (WB index)}} \\
+\addlinespace
+EP depth $\times$ Green & -0.00510 & -0.00200 & 0.00084 & -0.00006 \\
+ & (0.00360) & (0.00436) & (0.00434) & (0.00441) \\
+ & [0.494] & [0.808] & [0.896] & [0.995] \\
+\addlinespace
+EP depth $\times$ Dirty & -0.00825$^{*}$ & -0.00927$^{**}$ & -0.01030$^{***}$ & -0.00930$^{***}$ \\
+ & (0.00423) & (0.00414) & (0.00239) & (0.00204) \\
+ & [0.275] & [0.249] & [0.086] & [0.037] \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Panel A$'$ --- same specification, TREND index}} \\
+\addlinespace
+EP count $\times$ Green & -0.00217$^{***}$ & -0.00214$^{***}$ & -0.00111$^{**}$ & -0.00153$^{***}$ \\
+ & (0.00062) & (0.00061) & (0.00053) & (0.00049) \\
+ & [0.015] & [0.018] & [0.218] & [0.074] \\
+\addlinespace
+EP count $\times$ Dirty & -0.00137 & -0.00142 & -0.00231$^{***}$ & -0.00164$^{**}$ \\
+ & (0.00115) & (0.00114) & (0.00066) & (0.00064) \\
+ & [0.355] & [0.339] & [0.048] & [0.109] \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Panel B --- pre-trend test (WB index)}} \\
+\addlinespace
+Pre-agreement slope, Green & 0.01732 & 0.00402 & 0.01719$^{*}$ & 0.02218 \\
+ & (0.01295) & (0.01678) & (0.00997) & (0.01346) \\
+\quad Bootstrap $p$-value & 0.678 & 0.705 & 0.543 & 0.497 \\
+\addlinespace
+Pre-agreement slope, Dirty & 0.06292 & 0.06237 & 0.07109$^{**}$ & 0.07056$^{**}$ \\
+ & (0.04393) & (0.03983) & (0.03161) & (0.03159) \\
+\quad Bootstrap $p$-value & 0.610 & 0.515 & 0.416 & 0.410 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Panel B$'$ --- pre-trend test (TREND index)}} \\
+\addlinespace
+Pre-agreement slope, Green & 0.00728$^{*}$ & 0.00707 & 0.00775$^{*}$ & 0.00944$^{**}$ \\
+ & (0.00438) & (0.00441) & (0.00428) & (0.00389) \\
+\quad Bootstrap $p$-value & 0.189 & 0.199 & 0.173 & 0.090 \\
+\addlinespace
+Pre-agreement slope, Dirty & 0.01512$^{**}$ & 0.01512$^{**}$ & 0.01839$^{***}$ & 0.01703$^{***}$ \\
+ & (0.00728) & (0.00721) & (0.00596) & (0.00613) \\
+\quad Bootstrap $p$-value & 0.293 & 0.301 & 0.164 & 0.243 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Columns: (1) Excl.\ HK/Macao, TotalDepth control (baseline); (2) Incl.\ HK/Macao, TotalDepth control; (3) Excl.\ HK/Macao, DESTA control; (4) Incl.\ HK/Macao, DESTA control.
+\item Stars are based on asymptotic $p$-values (destination-clustered standard errors). Wild cluster bootstrap $p$-values are reported separately in brackets (Panels A/A$'$) or below each coefficient (Panels B/B$'$).
+\item \textbf{Panels A/A$'$.} The main specification's fixed effects do not absorb a shock specific to green products in a particular destination that grows over time --- i.e., a country signing environmental clauses precisely as its demand for green goods is rising. Adding a linear trend for each destination interacted with product type absorbs exactly that dynamic.
+\item \textbf{TREND result in Panel A$'$.} The TREND green coefficient is highly significant asymptotically ($p < 0.001$ in the baseline column) and survives the bootstrap ($p = 0.015$). Panel B$'$ shows, however, that the green gap was already rising \emph{before} the agreement entered into force (pre-slope $+0.007$, bootstrap $p = 0.189$), making a pre-existing trend a plausible explanation and weakening any causal reading.
+\item \textbf{Panels B/B$'$.} The pre-agreement slope of the composition gap is estimated on pre-treatment years. A slope significantly different from zero would indicate that green and neutral products were already diverging before the agreement.
+\item Standard errors in parentheses, $p$-values in brackets. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{FULL-PANEL ROBUSTNESS BATTERY}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Robustness on the full panel: sample, control, and dependent-variable variants}
+\label{tab:robust-full}
+\begin{threeparttable}
+\begin{tabular}{lccrc}
+\toprule
+Variant & $\times$ Green & $\times$ Dirty & Observations & $R^2$ \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A --- WB index}} \\
+\addlinespace
+With additional controls (tariffs, concentration, antidumping) & -0.00023 & -0.00600$^{**}$ & 19,286,638 & 0.8736 \\
+ & (0.00296) & (0.00259) & & \\
+ & [0.938] & [0.022] & & \\
+\addlinespace
+Excluding the 11 ASEAN destinations & -0.00252 & -0.00438$^{*}$ & 19,236,090 & 0.8719 \\
+ & (0.00360) & (0.00223) & & \\
+ & [0.484] & [0.051] & & \\
+\addlinespace
+Including Hong Kong and Macao & -0.00089 & -0.00409$^{*}$ & 23,560,110 & 0.8706 \\
+ & (0.00360) & (0.00243) & & \\
+ & [0.805] & [0.094] & & \\
+\addlinespace
+Common-support products only & -0.00225 & -0.00435$^{*}$ & 21,519,197 & 0.8734 \\
+ & (0.00392) & (0.00223) & & \\
+ & [0.567] & [0.052] & & \\
+\addlinespace
+Green share in firm's export basket & \multicolumn{2}{c}{-0.00010} & 13,345,132 & 0.8510 \\
+ & \multicolumn{2}{c}{(0.00015)} & & \\
+ & \multicolumn{2}{c}{[0.503]} & & \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel B --- TREND index}} \\
+\addlinespace
+With additional controls (tariffs, concentration, antidumping) & +0.00039 & -0.00085 & 19,286,638 & 0.8736 \\
+ & (0.00091) & (0.00068) & & \\
+ & [0.669] & [0.209] & & \\
+\addlinespace
+Excluding the 11 ASEAN destinations & -0.00102 & -0.00183$^{**}$ & 19,236,090 & 0.8719 \\
+ & (0.00102) & (0.00072) & & \\
+ & [0.318] & [0.012] & & \\
+\addlinespace
+Common-support products only & -0.00011 & -0.00090 & 21,519,197 & 0.8734 \\
+ & (0.00099) & (0.00062) & & \\
+ & [0.914] & [0.153] & & \\
+\addlinespace
+PTA partners only, deep vs.\ shallow & -0.00036 & -0.00061 & 5,262,293 & 0.8839 \\
+ & (0.00100) & (0.00101) & & \\
+ & [0.723] & [0.549] & & \\
+\addlinespace
+Green share in firm's export basket & \multicolumn{2}{c}{-0.00006$^{**}$} & 13,345,132 & 0.8510 \\
+ & \multicolumn{2}{c}{(0.00003)} & & \\
+ & \multicolumn{2}{c}{[0.043]} & & \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Baseline variant (excl.\ HK/Macao, TotalDepth control). Estimated with \texttt{reghdfe}; fixed effects and clustering as in the main specification, except where noted.
+\item \textit{Common support}: only products exported to both agreement and non-agreement destinations are retained. For the others, no observed comparison exists.
+\item \textit{Green share in basket}: the dependent variable changes. Instead of export value, it is the share of the firm's revenue from green products to that destination. Fixed effects: firm$\times$destination and year.
+\item Standard error in parentheses, $p$-value in brackets. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{APEC VS OECD GREEN DEFINITION}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Alternative environmental-good definition: OECD list vs.\ APEC list}
+\label{tab:apec}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+ & OECD list & APEC list \\
+ & (used in this paper) & (54 codes) \\
+\midrule
+EP depth (WB) $\times$ Green & -0.00457 & 0.00501 \\
+ & (0.00696) & (0.01266) \\
+ & [0.512] & [0.693] \\
+\addlinespace
+EP count (TREND) $\times$ Green & 0.00181 & 0.00319 \\
+ & (0.00182) & (0.00208) \\
+ & [0.320] & [0.126] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Baseline variant, collapsed panel.
+\item \textbf{What this tests.} There is no single definition of ``environmental good''. This paper uses the OECD list; here it is replaced with the APEC list, a much narrower set agreed politically in 2012. If the result depended on which products we call green, the two columns would diverge.
+\item Standard error in parentheses, $p$-value in brackets. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{MINIMUM DETECTABLE EFFECTS}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{How large an effect would the design need to detect it}
+\label{tab:mde}
+\begin{threeparttable}
+\begin{tabular}{llcccc}
+\toprule
+Index & Margin & Asymptotic & Minimum detectable & Bootstrap CI & Bootstrap CI \\
+ & & std.\ error & effect (1 s.d.) & half-width (1 s.d.) & (per unit) \\
+\midrule
+WB & Green & 0.0070 & 4.64\% & 5.90\% & [-1.77\%, 3.19\%] \\
+WB & Dirty & 0.0030 & 1.97\% & 2.40\% & [-1.84\%, 0.18\%] \\
+TREND & Green & 0.0018 & 4.16\% & 3.62\% & [-0.18\%, 0.71\%] \\
+TREND & Dirty & 0.0016 & 3.65\% & 3.53\% & [-0.32\%, 0.54\%] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Estimation sample: collapsed panel, excl.\ HK/Macao variant. Standard deviation of regressors computed on the effective sample and weighted.
+\item \textbf{Why this table matters.} A null result can mean two very different things: either the effect does not exist, or it exists but is too small for the data to distinguish it from noise. This table says which.
+\item \textbf{How to read it.} The minimum detectable effect (column 4) is the threshold below which the design is uninformative, computed from the asymptotic method (2.8 $\times$ standard error). Column 5 reports the half-width of the wild cluster bootstrap confidence interval: this is not an 80\%-power MDE (which would be $1.43\times$ larger), but the bootstrap margin of error. The informative bound for the precision estimate is the [bootstrap CI] column: on the green margin, it rules out effects larger than about 3\% per provision at 95\% confidence.
+\item This yields a more precise statement of the result: not ``we find no effect,'' but ``we can rule out effects larger than this threshold.''
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\newpage
+% ============================================================================
+\section{BRANDI BENCHMARK}
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\caption{Benchmark against Brandi et al.\ (2020): equivalent effect and comparison with the confidence intervals}
+\label{tab:brandi}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Margin & Brandi effect (log points) & Asy.\ CI upper & WCB CI upper/coef. & Ratio \\
+\midrule
+Green (liberal) & 0.1570 & 0.0055 & 0.0355 & 1/4 (WCB) \\
+Dirty (restrictive) & -0.0513 & -0.0044 (point est.) & -- & 1/12 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\end{document}

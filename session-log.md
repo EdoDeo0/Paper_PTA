@@ -1,5 +1,26 @@
 # Session Log — Paper_PTA
 
+## 2026-09-06 (sessione 14) — Correzione stelle + tabella PPML riformattata
+
+- **Stelle asintotiche nella tabella destination trends**: corrette in `./New/Paper/paper_v3/Tabelle/tab_12_desttrends.tex` e in `./New/Paper/TABELLE_DEL_PAPER_v2.tex`. Le stelle ora si basano su p-value asintotici (coef/SE → t-stat), non più sul bootstrap. Note aggiornate di conseguenza.
+- **Regola generale confermata**: stelle SEMPRE asintotiche in tutto il paper; bootstrap p-values riportati separatamente come robustezza.
+- **Tabella PPML riformattata** (`tab_14_ppml.tex` + sezione in `TABELLE_DEL_PAPER_v2.tex`): struttura allineata a Table 1 — WB (col 1-2) e TREND (col 3-4) affiancati, Panel A (TotalDepth) e Panel B (DESTA), colonne excl/incl HK-Macao per ciascun EP. Dati da 4 CSV Stata-verificati (`ppml_extensive*.csv`). Unico coefficiente con stella: WB dirty Panel A col 1 (-0.0301*, p=0.057).
+- **Spiegazione tabella destination trends**: Panels A/A' aggiungono trend lineari dest×product-type; Panels B/B' testano pre-slopes. Risultato TREND-green sopravvive ma pre-slope positiva indebolisce la lettura causale.
+
+**Stato**: tabelle aggiornate in entrambi i file, pronte per Overleaf.
+
+---
+
+## 2026-09-06 (sessione 13) — Tabelle LaTeX inclHKMO (full panel + collapsed)
+
+- **Tabella full panel inclHKMO**: costruita da `tripledd_full_alldepvars_reghdfe_inclHKMO.csv` (stime) + `wcb_fullpanel_inclHKMO.csv` (bootstrap). Bootstrap disponibile solo per `ln_export` (colonne 1 e 4); colonne qua/uv hanno solo p asintotico (indicato con `---`). Stessa struttura a 6 colonne e 2 panel (TotalDepth/DESTA) del full panel baseline.
+- **Tabella collapsed inclHKMO**: dati completi (stime + WCB + permutation) ma solo per `ln_export`. Nessun run di `48g` (`collapsed_alldepvars`) con `inclHKMO` → quantity e unit value non disponibili. Tabella ridotta a 2 colonne (WB val + TREND val).
+- **TODO non urgente**: rieseguire `48f` e `48g` (Stata) con `PTA_SAMPLE=incl` per ottenere i bootstrap p di `ln_export_qua` e `ln_export_value` nel full panel inclHKMO. Stima: ~45 min per qua + ~60 min per uv × 2 varianti depth = ~3h30–4h totali in sequenza (o ~2h in parallelo). Da fare prima di sottomettere il paper se si vuole la tabella completa.
+
+**Stato**: tabelle LaTeX consegnate in chat, pronte per incollare nel paper.
+
+---
+
 ## 2026-09-06 (sessione 12) — Fix bug sub-indici full panel + aggiornamento script
 
 - **Bug critico trovato in `68_subindices_fullpanel.do`**: il merge con i sub-indici usava `keep(master match)` droppando tutti i paesi di controllo — la regressione girava solo sui ~23 paesi trattati, senza gruppo di controllo. nobs era 3.9M invece di ~21.5M, R2=0.760 invece di ~0.873.
