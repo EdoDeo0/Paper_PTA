@@ -1,0 +1,660 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA\New\Output\Diagnostics\stata_logs\63_va
+> riants_collapsed_desta.log
+  log type:  text
+ opened on:   6 Sep 2026, 13:56:40
+
+. 
+. confirm file "$VDTA"
+
+. 
+. *── Caricamento e preparazione comune ───────────────────────────────────────
+> ─
+. capture program drop load_variant
+
+. program define load_variant
+  1.     use "$VDTA", clear
+  2.     qui su WB_EP_Depth, meanonly
+  3.     if r(max) != 17 {
+  4.         di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stant
+> io."
+  5.         exit 1
+  6.     }
+  7.     * DESTA: le celle TRATTATE senza copertura DESTA si eliminano (Timor E
+> st e
+.     * simili), le non trattate prendono 0. Identico a 52 blocco 7 e a 28.R.
+.     if "$VDEPTH" == "desta" {
+  8.         qui count
+  9.         local n0 = r(N)
+ 10.         drop if missing(DESTA_depth_index) & WB_EP_Depth > 0
+ 11.         qui count
+ 12.         di as text "[desta] celle trattate senza copertura eliminate: " `n
+> 0' - r(N)
+ 13.         replace DESTA_depth_index = 0 if missing(DESTA_depth_index)
+ 14.     }
+ 15.     qui count
+ 16.     di as text "[dati] celle in memoria: " r(N)
+ 17. end
+
+. 
+. *── Helper: scrive una riga in un CSV ───────────────────────────────────────
+> ─
+. capture program drop wrow
+
+. program define wrow
+  1.     args csv line
+  2.     file open fh using "`csv'", write append text
+  3.     file write fh `"`line'"' _n
+  4.     file close fh
+  5. end
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO A - baseline collassato  ->  tripledd_collapsed{sfx}.csv
+. *   schema R: treat,term,coef,se,pval,nobs
+. *****************************************************************************
+> ***
+. local outA "$TAB\tripledd_collapsed$SFX.csv"
+
+. capture confirm file "`outA'"
+
+. if _rc {
+.     load_variant
+.     file open fh using "`outA'", write replace text
+.     file write fh "treat,term,coef,se,pval,nobs" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_dirty td_green td_dirty
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_dirty = `xv' * dirty_p
+  7.         qui gen double td_green = $DEPTHVAR * env_good
+  8.         qui gen double td_dirty = $DEPTHVAR * dirty_p
+  9.         qui reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 10.         local NN = e(N)
+ 11.         di as res "  [A `treat'] ep_green=" %10.7f _b[ep_green] "  ep_dirt
+> y=" %10.7f _b[ep_dirty] "  N=" `NN'
+ 12.         * nomi dei termini identici a quelli usati da R (fixest)
+.         local t1 "`xv':env_good"
+ 13.         local t2 "`xv':dirty_p"
+ 14.         local t3 "env_good:$DEPTHVAR"
+ 15.         local t4 "dirty_p:$DEPTHVAR"
+ 16.         local i = 1
+ 17.         foreach v in ep_green ep_dirty td_green td_dirty {
+ 18.             local tn "`t`i''"
+ 19.             local b  = _b[`v']
+ 20.             local s  = _se[`v']
+ 21.             local p  = 2 * ttail(e(df_r), abs(`b'/`s'))
+ 22.             wrow "`outA'" "`treat',`tn',`b',`s',`p',`NN'"
+ 23.             local ++i
+ 24.         }
+ 25.     }
+.     di as result "[A] scritto `outA'"
+. }
+
+. else di as text "[A] gia' presente, salto."
+[A] gia' presente, salto.
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO B - WCB sul baseline  ->  wcb_collapsed{sfx}.csv
+. *   schema R: treat,term,coef,p_wcb,conf_low,conf_high,B,nobs_pre,nclust,fe,n
+> obs_post
+. *****************************************************************************
+> ***
+. local outB "$TAB\wcb_collapsed$SFX.csv"
+
+. capture confirm file "`outB'"
+
+. if _rc {
+.     load_variant
+.     qui count
+.     local nobs_pre = r(N)
+.     file open fh using "`outB'", write replace text
+.     file write fh "treat,term,coef,p_wcb,conf_low,conf_high,B,nobs_pre,nclust
+> ,fe,nobs_post" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_dirty td_green td_dirty
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_dirty = `xv' * dirty_p
+  7.         qui gen double td_green = $DEPTHVAR * env_good
+  8.         qui gen double td_dirty = $DEPTHVAR * dirty_p
+  9.         * reghdfe diretto (per verifica FWL)
+.         qui reghdfe y ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 10.         local b_direct_ep_green = _b[ep_green]
+ 11.         local b_direct_ep_dirty = _b[ep_dirty]
+ 12.         * Frisch-Waugh: demean con [aw=n] su pd dt pt (come 52 S3 e come R
+> )
+.         foreach v in y ep_green ep_dirty td_green td_dirty {
+ 13.             cap drop `v'_dm
+ 14.             qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol
+> (1e-8)
+ 15.         }
+ 16.         qui reg y_dm ep_green_dm ep_dirty_dm td_green_dm td_dirty_dm [aw=n
+> ], ///
+>             cluster(country_code) nocons
+ 17.         local nobs_post = e(N)
+ 18.         local nclust    = e(N_clust)
+ 19.         * Verifica manuale: i coefficienti FWL devono coincidere con il re
+> ghdfe diretto
+.         assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+ 20.         assert abs(_b[ep_dirty_dm] - `b_direct_ep_dirty') < 1e-6
+ 21.         foreach p in ep_green ep_dirty {
+ 22.             local b = _b[`p'_dm]
+ 23.             set seed 42
+ 24.             cap boottest `p'_dm, reps($BREPS) cluster(country_code) nograp
+> h
+ 25.             if _rc {
+ 26.                 local pb = .
+ 27.                 local lo = .
+ 28.                 local hi = .
+ 29.             }
+ 30.             else {
+ 31.                 local pb = r(p)
+ 32.                 cap local lo = r(CI)[1,1]
+ 33.                 cap local hi = r(CI)[1,2]
+ 34.             }
+ 35.             di as res "  [B `treat'] `p': coef=" %10.7f `b' "  p_wcb=" %6.
+> 4f `pb'
+ 36.             wrow "`outB'" "`treat',`p',`b',`pb',`lo',`hi',$BREPS,`nobs_pre
+> ',`nclust',pd+dt+pt,`nobs_post'"
+ 37.         }
+ 38.     }
+.     di as result "[B] scritto `outB'"
+. }
+
+. else di as text "[B] gia' presente, salto."
+[B] gia' presente, salto.
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO C - 7 sotto-indici  ->  subindices_collapsed{sfx}.csv
+. *   schema R: sub_index,term,coef,se,pval,nobs,nclust,r2_a
+. *****************************************************************************
+> ***
+. local outC "$TAB\subindices_collapsed$SFX.csv"
+
+. capture confirm file "`outC'"
+
+. if _rc {
+.     load_variant
+(4,051 observations deleted)
+[desta] celle trattate senza copertura eliminate: 4051
+(3,233,716 real changes made)
+[dati] celle in memoria: 3769447
+.     file open fh using "`outC'", write replace text
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\subindices_
+    > collapsed_desta.csv not found)
+.     file write fh "sub_index,term,coef,se,pval,nobs,nclust,r2_a" _n
+.     file close fh
+. 
+.     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
+>                  WB_EnforcementDSM TREND_EnforcementDSM ///
+>                  TREND_Hard TREND_Soft TREND_RegulatorySpace {
+  2.         cap drop sub_green sub_dirty td_green td_dirty
+  3.         qui gen double sub_green = `s' * env_good
+  4.         qui gen double sub_dirty = `s' * dirty_p
+  5.         qui gen double td_green  = $DEPTHVAR * env_good
+  6.         qui gen double td_dirty  = $DEPTHVAR * dirty_p
+  7.         cap qui reghdfe y sub_green sub_dirty td_green td_dirty [aw=n], //
+> /
+>             absorb(pd dt pt) vce(cluster country_code)
+  8.         if _rc {
+  9.             di as error "  [C `s'] stima fallita (rc=" _rc ")"
+ 10.             continue
+ 11.         }
+ 12.         local NN     = e(N)
+ 13.         local nclust = e(N_clust)
+ 14.         local r2a    = e(r2_a)
+ 15.         di as res "  [C `s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty
+> =" %10.7f _b[sub_dirty]
+ 16.         local i = 1
+ 17.         foreach v in sub_green sub_dirty td_green td_dirty {
+ 18.             if `i' == 1 local tn "SUB:env_good"
+ 19.             if `i' == 2 local tn "SUB:dirty_p"
+ 20.             if `i' == 3 local tn "env_good:$DEPTHVAR"
+ 21.             if `i' == 4 local tn "dirty_p:$DEPTHVAR"
+ 22.             local b = _b[`v']
+ 23.             local se = _se[`v']
+ 24.             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
+ 25.             wrow "`outC'" "`s',`tn',`b',`se',`p',`NN',`nclust',`r2a'"
+ 26.             local ++i
+ 27.         }
+ 28.     }
+  [C WB_GreenLiberalization] sub_green=-0.0140688  sub_dirty=-0.1000600
+  [C TREND_GreenMarketAccess] sub_green=-0.0289589  sub_dirty=-0.0542981
+  [C WB_EnforcementDSM] sub_green=-0.0104865  sub_dirty=-0.0197359
+  [C TREND_EnforcementDSM] sub_green= 0.0031611  sub_dirty=-0.0086442
+  [C TREND_Hard] sub_green= 0.0017040  sub_dirty=-0.0023443
+  [C TREND_Soft] sub_green= 0.0132220  sub_dirty=-0.0015463
+  [C TREND_RegulatorySpace] sub_green= 0.0148889  sub_dirty= 0.0091544
+.     di as result "[C] scritto `outC'"
+[C] scritto C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\subin
+> dices_collapsed_desta.csv
+. }
+
+. else di as text "[C] gia' presente, salto."
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO D - intensita' CO2 continua  ->  r711_shapiro_intensity{sfx}.csv
+. *   schema R: treat,term,coef,se_asy,p_asy,p_wcb,conf_low,conf_high,nobs,B
+. *   co2_z e' gia' nel .dta per la variante incl; per la variante excl si
+. *   ricalcola qui con la stessa regola (media/sd sui non mancanti, NA -> medi
+> a).
+. *****************************************************************************
+> ***
+. local outD "$TAB\r711_shapiro_intensity$SFX.csv"
+
+. capture confirm file "`outD'"
+
+. if _rc {
+.     load_variant
+.     capture confirm variable co2_z
+.     if _rc {
+.         preserve
+.             import delimited "$ROOT\New\Data\Classifications\co2_intensity_hs
+> 6.csv", ///
+>                 clear varnames(1)
+.             keep hs6_int co2_total
+.             rename hs6_int hs6
+.             duplicates drop hs6, force
+.             tempfile co2f
+.             save `co2f'
+.         restore
+.         merge m:1 hs6 using `co2f', keep(master match) nogen
+.         qui su co2_total
+.         local mu = r(mean)
+.         local sd = r(sd)
+.         replace co2_total = `mu' if missing(co2_total)
+.         gen double co2_z = (co2_total - `mu') / `sd'
+.     }
+. 
+.     file open fh using "`outD'", write replace text
+.     file write fh "treat,term,coef,se_asy,p_asy,p_wcb,conf_low,conf_high,nobs
+> ,B" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_co2 td_green td_co2
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_co2   = `xv' * co2_z
+  7.         qui gen double td_green = $DEPTHVAR * env_good
+  8.         qui gen double td_co2   = $DEPTHVAR * co2_z
+  9.         * reghdfe diretto (per verifica FWL)
+.         qui reghdfe y ep_green ep_co2 td_green td_co2 [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+ 10.         local b_direct_ep_green = _b[ep_green]
+ 11.         local b_direct_ep_co2   = _b[ep_co2]
+ 12.         foreach v in y ep_green ep_co2 td_green td_co2 {
+ 13.             cap drop `v'_dm
+ 14.             qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol
+> (1e-8)
+ 15.         }
+ 16.         qui reg y_dm ep_green_dm ep_co2_dm td_green_dm td_co2_dm [aw=n], /
+> //
+>             cluster(country_code) nocons
+ 17.         local NN  = e(N)
+ 18.         local NCL = e(N_clust)
+ 19.         * Verifica manuale: i coefficienti FWL devono coincidere con il re
+> ghdfe diretto
+.         assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+ 20.         assert abs(_b[ep_co2_dm] - `b_direct_ep_co2') < 1e-6
+ 21.         foreach p in ep_green ep_co2 {
+ 22.             local b  = _b[`p'_dm]
+ 23.             local se = _se[`p'_dm]
+ 24.             local pa = 2 * ttail(`NCL'-1, abs(`b'/`se'))
+ 25.             set seed 42
+ 26.             cap boottest `p'_dm, reps($BREPS) cluster(country_code) nograp
+> h
+ 27.             if _rc {
+ 28.                 local pb = .
+ 29.                 local lo = .
+ 30.                 local hi = .
+ 31.             }
+ 32.             else {
+ 33.                 local pb = r(p)
+ 34.                 cap local lo = r(CI)[1,1]
+ 35.                 cap local hi = r(CI)[1,2]
+ 36.             }
+ 37.             di as res "  [D `treat'] `p': coef=" %10.7f `b' "  p_wcb=" %6.
+> 4f `pb'
+ 38.             wrow "`outD'" "`treat',`p',`b',`se',`pa',`pb',`lo',`hi',`NN',$
+> BREPS"
+ 39.         }
+ 40.     }
+.     di as result "[D] scritto `outD'"
+. }
+
+. else di as text "[D] gia' presente, salto."
+[D] gia' presente, salto.
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO E - leave-one-out  ->  dirty_leaveoneout{sfx}.csv
+. *   schema R: spec,dropped_country,coef,se,pval,coef_green,se_green,pval_gree
+> n,
+. *             nobs,nclust,fe   (coef = margine DIRTY, coef_green = margine ve
+> rde)
+. *****************************************************************************
+> ***
+. local outE "$TAB\dirty_leaveoneout$SFX.csv"
+
+. capture confirm file "`outE'"
+
+. if _rc {
+.     load_variant
+.     * dirty_ext (non presente nel .dta): serve per la spec lista_estesa
+.     preserve
+.         import delimited "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv"
+> , ///
+>             clear varnames(1)
+.         keep hs6 dirty_ext
+.         duplicates drop hs6, force
+.         tempfile dext
+.         save `dext'
+.     restore
+.     merge m:1 hs6 using `dext', keep(master match) nogen
+.     replace dirty_ext = 0 if missing(dirty_ext)
+. 
+.     qui gen double ep_green     = WB_EP_Depth * env_good
+.     qui gen double ep_dirty     = WB_EP_Depth * dirty_p
+.     qui gen double td_green     = $DEPTHVAR * env_good
+.     qui gen double td_dirty     = $DEPTHVAR * dirty_p
+.     qui gen double ep_dirty_ext = WB_EP_Depth * dirty_ext
+.     qui gen double td_dirty_ext = $DEPTHVAR * dirty_ext
+. 
+.     file open fh using "`outE'", write replace text
+.     file write fh "spec,dropped_country,coef,se,pval,coef_green,se_green,pval
+> _green,nobs,nclust,fe" _n
+.     file close fh
+. 
+.     * programma: stima e scrive una riga
+.     capture program drop loo_row
+.     program define loo_row
+.         * `dvar' = regressore dirty (ep_dirty o ep_dirty_ext)
+.         * `tvar' = controllo di profondita' abbinato (td_dirty o td_dirty_ext
+> )
+.         args csv spec dropped dvar tvar
+.         qui reghdfe y ep_green `dvar' td_green `tvar' ///
+>             [aw=n], absorb(pd dt pt) vce(cluster country_code)
+.         local NN  = e(N)
+.         local NCL = e(N_clust)
+.         local bd  = _b[`dvar']
+.         local sd  = _se[`dvar']
+.         local pd_ = 2 * ttail(e(df_r), abs(`bd'/`sd'))
+.         local bg  = _b[ep_green]
+.         local sg  = _se[ep_green]
+.         local pg  = 2 * ttail(e(df_r), abs(`bg'/`sg'))
+.         file open fh using "`csv'", write append text
+.         file write fh "`spec',`dropped',`bd',`sd',`pd_',`bg',`sg',`pg',`NN',`
+> NCL',pd+dt+pt" _n
+.         file close fh
+.         di as res "  [E `spec'] dirty=" %10.7f `bd' "  green=" %10.7f `bg' " 
+>  N=" `NN'
+.     end
+. 
+.     loo_row "`outE'" baseline "" ep_dirty td_dirty
+.     loo_row "`outE'" lista_estesa "" ep_dirty_ext td_dirty_ext
+. 
+.     * senza_alta_dose: Peru(434) + Svizzera(331) + Corea(133) insieme
+.     preserve
+.         drop if inlist(country_code, 434, 331, 133)
+.         loo_row "`outE'" senza_alta_dose "434+331+133" ep_dirty td_dirty
+.     restore
+. 
+.     qui levelsof country_code if WB_EP_Depth > 0, local(treated)
+.     foreach cc of local treated {
+  2.         preserve
+  3.             drop if country_code == `cc'
+  4.             loo_row "`outE'" "senza_`cc'" "`cc'" ep_dirty td_dirty
+  5.         restore
+  6.     }
+.     di as result "[E] scritto `outE'"
+. }
+
+. else di as text "[E] gia' presente, salto."
+[E] gia' presente, salto.
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO F - trend destinazione x green/dirty  ->  r79_desttrends{sfx}.csv
+. *                                              +  r79b_wcb_trends{sfx}.csv
+. *   E' il blocco piu' lento: absorb include 2 slope per destinazione.
+. *****************************************************************************
+> ***
+. local outF  "$TAB\r79_desttrends$SFX.csv"
+
+. local outFb "$TAB\r79b_wcb_trends$SFX.csv"
+
+. capture confirm file "`outFb'"
+
+. if _rc {
+.     load_variant
+.     qui gen double trend_g = (year - 2000) * env_good
+.     qui gen double trend_b = (year - 2000) * dirty_p
+.     qui gen double td_green = $DEPTHVAR * env_good
+.     qui gen double td_dirty = $DEPTHVAR * dirty_p
+. 
+.     file open fh using "`outF'", write replace text
+.     file write fh "treat,term,coef,se,pval,nobs" _n
+.     file close fh
+.     file open fh using "`outFb'", write replace text
+.     file write fh "treat,term,coef,p_wcb,conf_low,conf_high,B" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_dirty
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_dirty = `xv' * dirty_p
+  7. 
+.         di as text "  [F `treat'] reghdfe diretto (per verifica FWL)..."
+  8.         qui reghdfe y ep_green ep_dirty td_green td_dirty, ///
+>             absorb(pd dt pt country_code#c.trend_g country_code#c.trend_b) //
+> /
+>             vce(cluster country_code)
+  9.         local b_direct_ep_green = _b[ep_green]
+ 10.         local b_direct_ep_dirty = _b[ep_dirty]
+ 11. 
+.         di as text "  [F `treat'] demeaning (lento: 2 slope per destinazione)
+> ..."
+ 12.         foreach v in y ep_green ep_dirty td_green td_dirty {
+ 13.             cap drop `v'_dm
+ 14.             qui reghdfe `v' [aw=n], ///
+>                 absorb(pd dt pt country_code#c.trend_g country_code#c.trend_b
+> ) ///
+>                 residuals(`v'_dm) tol(1e-8)
+ 15.         }
+ 16.         qui reg y_dm ep_green_dm ep_dirty_dm td_green_dm td_dirty_dm [aw=n
+> ], ///
+>             cluster(country_code) nocons
+ 17.         local NN  = e(N)
+ 18.         local NCL = e(N_clust)
+ 19.         * Verifica manuale: i coefficienti FWL devono coincidere con il re
+> ghdfe diretto
+.         assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+ 20.         assert abs(_b[ep_dirty_dm] - `b_direct_ep_dirty') < 1e-6
+ 21.         local i = 1
+ 22.         foreach v in ep_green ep_dirty td_green td_dirty {
+ 23.             if `i' == 1 local tn "`xv':env_good"
+ 24.             if `i' == 2 local tn "`xv':dirty_p"
+ 25.             if `i' == 3 local tn "env_good:$DEPTHVAR"
+ 26.             if `i' == 4 local tn "dirty_p:$DEPTHVAR"
+ 27.             local b  = _b[`v'_dm]
+ 28.             local se = _se[`v'_dm]
+ 29.             local p  = 2 * ttail(`NCL'-1, abs(`b'/`se'))
+ 30.             wrow "`outF'" "`xv',`tn',`b',`se',`p',`NN'"
+ 31.             local ++i
+ 32.         }
+ 33.         foreach p in ep_green ep_dirty {
+ 34.             local b = _b[`p'_dm]
+ 35.             set seed 42
+ 36.             cap boottest `p'_dm, reps($BREPS) cluster(country_code) nograp
+> h
+ 37.             if _rc {
+ 38.                 local pb = .
+ 39.                 local lo = .
+ 40.                 local hi = .
+ 41.             }
+ 42.             else {
+ 43.                 local pb = r(p)
+ 44.                 cap local lo = r(CI)[1,1]
+ 45.                 cap local hi = r(CI)[1,2]
+ 46.             }
+ 47.             di as res "  [F `treat'] `p': coef=" %10.7f `b' "  p_wcb=" %6.
+> 4f `pb'
+ 48.             wrow "`outFb'" "`treat',`p',`b',`pb',`lo',`hi',$BREPS"
+ 49.         }
+ 50.     }
+.     di as result "[F] scritto `outF' + `outFb'"
+. }
+
+. else di as text "[F] gia' presente, salto."
+[F] gia' presente, salto.
+
+. 
+. *****************************************************************************
+> ***
+. * BLOCCO G - detrending sui soli anni PRE  ->  r79c_pretrends{sfx}.csv
+. *   Replica di 28_robustness_desttrends_pre.R:
+. *     1. per destinazione, sui soli anni precedenti all'entrata (tutti gli an
+> ni
+. *        per le mai trattate), regressione pesata di y su
+. *        year, env_good, dirty_p, year#env_good, year#dirty_p
+. *     2. y_adj = y - slope_g*(year-2000)*env_good - slope_b*(year-2000)*dirty
+> _p
+. *     3. spec principale su y_adj + boottest
+. *****************************************************************************
+> ***
+. local outG "$TAB\r79c_pretrends$SFX.csv"
+
+. capture confirm file "`outG'"
+
+. if _rc {
+.     load_variant
+. 
+.     * anno di entrata (definito su WB, come in 28.R); mai trattate -> 10000
+.     qui gen int _ey = year if WB_EP_Depth > 0
+.     bysort country_code: egen int entry_year = min(_ey)
+.     drop _ey
+.     replace entry_year = 10000 if missing(entry_year)
+. 
+.     qui gen double slope_g = 0
+.     qui gen double slope_b = 0
+.     qui levelsof country_code, local(ccs)
+.     local nfit = 0
+.     foreach cc of local ccs {
+  2.         qui count if country_code == `cc' & year < entry_year
+  3.         if r(N) == 0 continue
+  4.         qui levelsof year if country_code == `cc' & year < entry_year, loc
+> al(yy)
+  5.         local nyy : word count `yy'
+  6.         qui su env_good if country_code == `cc' & year < entry_year, meano
+> nly
+  7.         local sumg = r(sum)
+  8.         if `nyy' < 2 | `sumg' == 0 continue
+  9.         cap qui reg y c.year c.env_good c.dirty_p c.year#c.env_good c.year
+> #c.dirty_p ///
+>             [aw=n] if country_code == `cc' & year < entry_year
+ 10.         if _rc continue
+ 11.         local sg = _b[c.year#c.env_good]
+ 12.         local sb = _b[c.year#c.dirty_p]
+ 13.         if missing(`sg') local sg = 0
+ 14.         if missing(`sb') local sb = 0
+ 15.         qui replace slope_g = `sg' if country_code == `cc'
+ 16.         qui replace slope_b = `sb' if country_code == `cc'
+ 17.         local ++nfit
+ 18.     }
+.     di as text "  [G] slope pre-periodo stimate per `nfit' destinazioni"
+. 
+.     qui gen double y_adj = y - slope_g * (year - 2000) * env_good ///
+>                              - slope_b * (year - 2000) * dirty_p
+.     qui gen double td_green = $DEPTHVAR * env_good
+.     qui gen double td_dirty = $DEPTHVAR * dirty_p
+. 
+.     file open fh using "`outG'", write replace text
+.     file write fh "treat,term,coef,se_asy,p_asy,p_wcb,conf_low,conf_high,nobs
+> ,B" _n
+.     file close fh
+. 
+.     foreach treat in WB TREND {
+  2.         if "`treat'" == "WB"  local xv "WB_EP_Depth"
+  3.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+  4.         cap drop ep_green ep_dirty
+  5.         qui gen double ep_green = `xv' * env_good
+  6.         qui gen double ep_dirty = `xv' * dirty_p
+  7.         * reghdfe diretto (per verifica FWL)
+.         qui reghdfe y_adj ep_green ep_dirty td_green td_dirty [aw=n], ///
+>             absorb(pd dt pt) vce(cluster country_code)
+  8.         local b_direct_ep_green = _b[ep_green]
+  9.         local b_direct_ep_dirty = _b[ep_dirty]
+ 10.         foreach v in y_adj ep_green ep_dirty td_green td_dirty {
+ 11.             cap drop `v'_dm
+ 12.             qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol
+> (1e-8)
+ 13.         }
+ 14.         qui reg y_adj_dm ep_green_dm ep_dirty_dm td_green_dm td_dirty_dm [
+> aw=n], ///
+>             cluster(country_code) nocons
+ 15.         local NN  = e(N)
+ 16.         local NCL = e(N_clust)
+ 17.         * Verifica manuale: i coefficienti FWL devono coincidere con il re
+> ghdfe diretto
+.         assert abs(_b[ep_green_dm] - `b_direct_ep_green') < 1e-6
+ 18.         assert abs(_b[ep_dirty_dm] - `b_direct_ep_dirty') < 1e-6
+ 19.         foreach p in ep_green ep_dirty {
+ 20.             local b  = _b[`p'_dm]
+ 21.             local se = _se[`p'_dm]
+ 22.             local pa = 2 * ttail(`NCL'-1, abs(`b'/`se'))
+ 23.             set seed 42
+ 24.             cap boottest `p'_dm, reps($BREPS) cluster(country_code) nograp
+> h
+ 25.             if _rc {
+ 26.                 local pb = .
+ 27.                 local lo = .
+ 28.                 local hi = .
+ 29.             }
+ 30.             else {
+ 31.                 local pb = r(p)
+ 32.                 cap local lo = r(CI)[1,1]
+ 33.                 cap local hi = r(CI)[1,2]
+ 34.             }
+ 35.             di as res "  [G `treat'] `p': coef=" %10.7f `b' "  p_wcb=" %6.
+> 4f `pb'
+ 36.             wrow "`outG'" "`treat',`p',`b',`se',`pa',`pb',`lo',`hi',`NN',$
+> BREPS"
+ 37.         }
+ 38.     }
+.     di as result "[G] scritto `outG'"
+. }
+
+. else di as text "[G] gia' presente, salto."
+[G] gia' presente, salto.
+
+. 
+. di as result _n "=== 63 FATTO per variante '$SFX' ==="
+
+=== 63 FATTO per variante '_desta' ===
+
+. 
+. cap log close _all

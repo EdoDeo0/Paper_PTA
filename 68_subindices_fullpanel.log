@@ -99,7 +99,7 @@ end of do-file
        log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/68_su
 > bindices_fullpanel.log
   log type:  text
- opened on:   6 Sep 2026, 02:31:08
+ opened on:   6 Sep 2026, 11:10:09
 
 . 
 . cap which reghdfe
@@ -129,7 +129,8 @@ Duplicates in terms of hs6
 . tempfile green
 
 . save `green'
-file C:\Users\edodr\AppData\Local\Temp\ST_21c_000001.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000001.tmp saved as .dta
+    format
 
 . 
 . import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
@@ -143,7 +144,8 @@ file C:\Users\edodr\AppData\Local\Temp\ST_21c_000001.tmp saved as .dta format
 . tempfile dirty
 
 . save `dirty'
-file C:\Users\edodr\AppData\Local\Temp\ST_21c_000002.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000002.tmp saved as .dta
+    format
 
 . 
 . global F_GREEN "`green'"
@@ -215,57 +217,65 @@ file C:\Users\edodr\AppData\Local\Temp\ST_21c_000002.tmp saved as .dta format
 .     }
  34.     replace `depthvar' = 0 if missing(`depthvar')
  35. 
-.     merge m:1 country_code year using `subidx', keep(master match) nogen
- 36. 
-.     drop hs6
- 37. 
-.     count
- 38.     di "  Obs dopo merge: " r(N)
+.     * Keep all obs; sub-index = 0 for non-PTA countries (mirrors collapsed sp
+> ec in 63)
+.     merge m:1 country_code year using `subidx', nogen
+ 36.     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
+>                  WB_EnforcementDSM TREND_EnforcementDSM ///
+>                  TREND_Hard TREND_Soft TREND_RegulatorySpace {
+ 37.         replace `s' = 0 if missing(`s')
+ 38.     }
  39. 
+.     drop hs6
+ 40. 
+.     count
+ 41.     di "  Obs dopo merge: " r(N)
+ 42. 
 .     * --- CSV header ---
 .     file open fh using "`outfile'", write replace text
- 40.     file write fh "sub_index,term,coef,se,pval,r2_a,nobs" _n
- 41.     file close fh
- 42. 
+ 43.     file write fh "sub_index,term,coef,se,pval,r2_a,nobs,nclust" _n
+ 44.     file close fh
+ 45. 
 .     * --- Loop sui 7 sotto-indici ---
 .     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
 >                  WB_EnforcementDSM TREND_EnforcementDSM ///
 >                  TREND_Hard TREND_Soft TREND_RegulatorySpace {
- 43. 
+ 46. 
 .         cap drop sub_green sub_dirty td_green td_dirty
- 44.         qui gen double sub_green = `s' * env_good
- 45.         qui gen double sub_dirty = `s' * dirty_p
- 46.         qui gen double td_green  = `depthvar' * env_good
- 47.         qui gen double td_dirty  = `depthvar' * dirty_p
- 48. 
+ 47.         qui gen double sub_green = `s' * env_good
+ 48.         qui gen double sub_dirty = `s' * dirty_p
+ 49.         qui gen double td_green  = `depthvar' * env_good
+ 50.         qui gen double td_dirty  = `depthvar' * dirty_p
+ 51. 
 .         cap qui reghdfe ln_export sub_green sub_dirty td_green td_dirty, ///
 >             absorb(fpd fdt pt) vce(cluster country_code) compact
- 49.         if _rc {
- 50.             di as error "  [`s'] stima fallita (rc=" _rc ")"
- 51.             continue
- 52.         }
- 53. 
-.         local NN   = e(N)
- 54.         local r2a  = e(r2_a)
- 55.         di as res "  [`s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty="
->  %10.7f _b[sub_dirty] "  r2a=" %8.6f `r2a'
+ 52.         if _rc {
+ 53.             di as error "  [`s'] stima fallita (rc=" _rc ")"
+ 54.             continue
+ 55.         }
  56. 
+.         local NN     = e(N)
+ 57.         local nclust = e(N_clust)
+ 58.         local r2a    = e(r2_a)
+ 59.         di as res "  [`s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty="
+>  %10.7f _b[sub_dirty] "  r2a=" %8.6f `r2a'
+ 60. 
 .         foreach v in sub_green sub_dirty {
- 57.             if "`v'" == "sub_green" local tn "SUB:env_good"
- 58.             if "`v'" == "sub_dirty" local tn "SUB:dirty_p"
- 59.             local b  = _b[`v']
- 60.             local se = _se[`v']
- 61.             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
- 62.             file open fh using "`outfile'", write append text
- 63.             file write fh "`s',`tn',`b',`se',`p',`r2a',`NN'" _n
- 64.             file close fh
- 65.         }
- 66.     }
- 67. 
+ 61.             if "`v'" == "sub_green" local tn "SUB:env_good"
+ 62.             if "`v'" == "sub_dirty" local tn "SUB:dirty_p"
+ 63.             local b  = _b[`v']
+ 64.             local se = _se[`v']
+ 65.             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
+ 66.             file open fh using "`outfile'", write append text
+ 67.             file write fh "`s',`tn',`b',`se',`p',`r2a',`NN',`nclust'" _n
+ 68.             file close fh
+ 69.         }
+ 70.     }
+ 71. 
 .     timer off 1
- 68.     qui timer list 1
- 69.     di as result "  -> completato in " r(t1)/60 " minuti"
- 70. end
+ 72.     qui timer list 1
+ 73.     di as result "  -> completato in " r(t1)/60 " minuti"
+ 74. end
 
 . 
 . ************************************************************
@@ -284,10 +294,12 @@ file C:\Users\edodr\AppData\Local\Temp\ST_21c_000002.tmp saved as .dta format
 ============================================================
 (encoding automatically selected: ISO-8859-1)
 (5 vars, 249 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_21c_000003.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000003.tmp saved as .dta
+    format
 (encoding automatically selected: ISO-8859-1)
 (30 vars, 249 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_21c_000004.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
+    format
 (3,464,093 observations deleted)
 
     Result                      Number of obs
@@ -322,29 +334,36 @@ file C:\Users\edodr\AppData\Local\Temp\ST_21c_000004.tmp saved as .dta format
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    36,496,372
+    Not matched                    36,496,398
         from master                36,496,372  
-        from using                          0  
+        from using                         26  
 
     Matched                         9,284,839  
     -----------------------------------------
-  45,781,211
-  Obs dopo merge: 45781211
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+  45,781,237
+  Obs dopo merge: 45781237
 (file
     C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/subindices_fullpa
     > nel.csv not found)
-  [WB_GreenLiberalization] sub_green= 0.0919779  sub_dirty=-0.1274291  r2a=0.75
-> 9940
-  [TREND_GreenMarketAccess] sub_green= 0.0459890  sub_dirty=-0.0637146  r2a=0.7
-> 59940
-  [WB_EnforcementDSM] sub_green=-0.0542718  sub_dirty=-0.0523866  r2a=0.759940
-  [TREND_EnforcementDSM] sub_green= 0.0153297  sub_dirty=-0.0212382  r2a=0.7599
-> 40
-  [TREND_Hard] sub_green= 0.0048667  sub_dirty=-0.0087977  r2a=0.759940
-  [TREND_Soft] sub_green= 0.0298323  sub_dirty=-0.2684421  r2a=0.759940
-  [TREND_RegulatorySpace] sub_green=-0.0070343  sub_dirty=-0.0059590  r2a=0.759
-> 940
-  -> completato in 15.013317 minuti
+  [WB_GreenLiberalization] sub_green= 0.0085105  sub_dirty=-0.0019238  r2a=0.74
+> 3982
+  [TREND_GreenMarketAccess] sub_green= 0.0157946  sub_dirty=-0.0088306  r2a=0.7
+> 43982
+  [WB_EnforcementDSM] sub_green=-0.0027767  sub_dirty=-0.0242787  r2a=0.743982
+  [TREND_EnforcementDSM] sub_green= 0.0020273  sub_dirty=-0.0106752  r2a=0.7439
+> 82
+  [TREND_Hard] sub_green= 0.0006672  sub_dirty=-0.0018823  r2a=0.743982
+  [TREND_Soft] sub_green=-0.0037388  sub_dirty=-0.0046970  r2a=0.743982
+  [TREND_RegulatorySpace] sub_green= 0.0049155  sub_dirty= 0.0072188  r2a=0.743
+> 982
+  -> completato in 80.012633 minuti
 
 . 
 . * --- DESTA ---
@@ -359,10 +378,12 @@ file C:\Users\edodr\AppData\Local\Temp\ST_21c_000004.tmp saved as .dta format
 ============================================================
 (encoding automatically selected: ISO-8859-1)
 (5 vars, 239 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_21c_000003.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000003.tmp saved as .dta
+    format
 (encoding automatically selected: ISO-8859-1)
 (30 vars, 249 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_21c_000004.tmp saved as .dta format
+file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
+    format
 (3,464,093 observations deleted)
 
     Result                      Number of obs
@@ -397,29 +418,36 @@ file C:\Users\edodr\AppData\Local\Temp\ST_21c_000004.tmp saved as .dta format
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    36,496,372
+    Not matched                    36,496,398
         from master                36,496,372  
-        from using                          0  
+        from using                         26  
 
     Matched                         9,284,839  
     -----------------------------------------
-  45,781,211
-  Obs dopo merge: 45781211
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+(36,496,372 real changes made)
+  45,781,237
+  Obs dopo merge: 45781237
 (file
     C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/subindices_fullpa
     > nel_desta.csv not found)
-  [WB_GreenLiberalization] sub_green= 0.1963088  sub_dirty=-0.1323754  r2a=0.75
-> 9940
-  [TREND_GreenMarketAccess] sub_green= 0.0981544  sub_dirty=-0.0661877  r2a=0.7
-> 59940
-  [WB_EnforcementDSM] sub_green= 0.0116398  sub_dirty=-0.0101929  r2a=0.759940
-  [TREND_EnforcementDSM] sub_green= 0.0327181  sub_dirty=-0.0220626  r2a=0.7599
-> 40
-  [TREND_Hard] sub_green= 0.0062543  sub_dirty=-0.0045501  r2a=0.759940
-  [TREND_Soft] sub_green= 0.0174149  sub_dirty=-0.0184843  r2a=0.759940
-  [TREND_RegulatorySpace] sub_green= 0.0014515  sub_dirty=-0.0025350  r2a=0.759
-> 940
-  -> completato in 15.667083 minuti
+  [WB_GreenLiberalization] sub_green= 0.0072704  sub_dirty=-0.0171160  r2a=0.74
+> 3982
+  [TREND_GreenMarketAccess] sub_green= 0.0140534  sub_dirty=-0.0154541  r2a=0.7
+> 43982
+  [WB_EnforcementDSM] sub_green=-0.0029285  sub_dirty=-0.0308237  r2a=0.743982
+  [TREND_EnforcementDSM] sub_green= 0.0016096  sub_dirty=-0.0133281  r2a=0.7439
+> 82
+  [TREND_Hard] sub_green= 0.0005146  sub_dirty=-0.0029136  r2a=0.743982
+  [TREND_Soft] sub_green=-0.0038024  sub_dirty=-0.0079936  r2a=0.743982
+  [TREND_RegulatorySpace] sub_green= 0.0028718  sub_dirty=-0.0036737  r2a=0.743
+> 982
+  -> completato in 81.024533 minuti
 
 . 
 . di as result _n "=== 68 FATTO ==="
