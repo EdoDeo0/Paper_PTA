@@ -1,5 +1,29 @@
 # Session Log — Paper_PTA
 
+## 2026-09-06 (sessione 12) — Fix bug sub-indici full panel + aggiornamento script
+
+- **Bug critico trovato in `68_subindices_fullpanel.do`**: il merge con i sub-indici usava `keep(master match)` droppando tutti i paesi di controllo — la regressione girava solo sui ~23 paesi trattati, senza gruppo di controllo. nobs era 3.9M invece di ~21.5M, R2=0.760 invece di ~0.873.
+- **Fix applicato**: merge ora tiene tutti i paesi, `replace s = 0 if missing(s)` per i non-PTA — coerente con lo script collapsed (`63`). Aggiunto anche `e(N_clust)` nell'output CSV.
+- **Fix `63_variants_collapsed.do`**: aggiunto `e(N_clust)`, `e(r2_a)`, `e(N)` nell'output del blocco C (sub-indici). Header CSV aggiornato.
+- **Tabella collapsed sub-index**: nobs e cluster già corretti; Adj R² non era mostrato ma ora verrà salvato nel CSV.
+- **Pending**: cancellare i CSV esistenti e far girare entrambi gli script su Stata (prompt pronto per Opus: ~30 min script 68, ~5 min script 63). Dopo il run aggiornare la tabella LaTeX full panel sub-index (coefficienti, nobs, nclust, R2 cambieranno).
+
+**Stato**: script corretti, in attesa del run Stata. La tabella collapsed sub-index in LaTeX è corretta (celle individuali per obs/cluster). La tabella full panel sub-index va interamente rifatta dopo il run.
+
+---
+
+## 2026-09-06 (sessione 12) — Tabelle LaTeX: CEM, DeepShallow, sub-indici full panel
+
+- **Tabelle LaTeX aggiornate** in `tables_corrected.tex` (scratchpad sessione) con tutti i dati dai run 48j/48k/68
+- **Collapsed sub-index**: rimpiazzato `\multicolumn{7}{c}{}` con celle individuali per Observations e Clusters in Panel A e B
+- **Aggiunta tabella "Full panel sub-index"** (`\label{tab:subindex_fullpanel}`): 7 sub-indici × TotalDepth/DESTA; unico risultato significativo: TREND Soft × b_p Panel A (β=−0.268, p<0.01)
+- **Fix `68_subindices_fullpanel.do`**: aggiunto `local nclust = e(N_clust)` e colonna `nclust` nell'header CSV — i CSV vanno cancellati e rigenerati (~30 min in Stata) per ottenere il conteggio effettivo dei cluster
+- **Nessuna stima mancante**: permutazione per qua/uv scartata per costo computazionale; tutto il resto è completato
+
+**Stato:** tutte le stime sono pronte. Pending: (1) rigenerare `subindices_fullpanel{_desta}.csv` dopo fix nclust (cancellare i vecchi, `do "New/Code/stata/68_subindices_fullpanel.do"`), poi aggiornare `n.r.` nella tabella full panel sub-index con il numero reale; (2) integrare le tabelle nel paper_v3.
+
+---
+
 ## 2026-09-06 (sessione 11) — Completamento job WCB + sub-indici full panel
 
 - **4 job CEM/DeepShallow WCB completati** (val+qua+uv × TotalDepth/DESTA): output in `./New/Output/TripleDiff/Tables_Stata/cem_alldepvars{_desta}.csv` e `deepshallow_alldepvars{_desta}.csv` (13 righe ciascuno)

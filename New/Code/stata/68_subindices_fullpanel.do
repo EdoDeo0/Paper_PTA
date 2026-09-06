@@ -97,7 +97,13 @@ program define subind_one_depth
     }
     replace `depthvar' = 0 if missing(`depthvar')
 
-    merge m:1 country_code year using `subidx', keep(master match) nogen
+    * Keep all obs; sub-index = 0 for non-PTA countries (mirrors collapsed spec in 63)
+    merge m:1 country_code year using `subidx', nogen
+    foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
+                 WB_EnforcementDSM TREND_EnforcementDSM ///
+                 TREND_Hard TREND_Soft TREND_RegulatorySpace {
+        replace `s' = 0 if missing(`s')
+    }
 
     drop hs6
 
@@ -106,7 +112,7 @@ program define subind_one_depth
 
     * --- CSV header ---
     file open fh using "`outfile'", write replace text
-    file write fh "sub_index,term,coef,se,pval,r2_a,nobs" _n
+    file write fh "sub_index,term,coef,se,pval,r2_a,nobs,nclust" _n
     file close fh
 
     * --- Loop sui 7 sotto-indici ---
@@ -127,8 +133,9 @@ program define subind_one_depth
             continue
         }
 
-        local NN   = e(N)
-        local r2a  = e(r2_a)
+        local NN     = e(N)
+        local nclust = e(N_clust)
+        local r2a    = e(r2_a)
         di as res "  [`s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty=" %10.7f _b[sub_dirty] "  r2a=" %8.6f `r2a'
 
         foreach v in sub_green sub_dirty {
@@ -138,7 +145,7 @@ program define subind_one_depth
             local se = _se[`v']
             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
             file open fh using "`outfile'", write append text
-            file write fh "`s',`tn',`b',`se',`p',`r2a',`NN'" _n
+            file write fh "`s',`tn',`b',`se',`p',`r2a',`NN',`nclust'" _n
             file close fh
         }
     }

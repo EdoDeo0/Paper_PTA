@@ -260,14 +260,14 @@ else di as text "[B] gia' presente, salto."
 
 ********************************************************************************
 * BLOCCO C - 7 sotto-indici  ->  subindices_collapsed{sfx}.csv
-*   schema R: sub_index,term,coef,se,pval,nobs
+*   schema R: sub_index,term,coef,se,pval,nobs,nclust,r2_a
 ********************************************************************************
 local outC "$TAB\subindices_collapsed$SFX.csv"
 capture confirm file "`outC'"
 if _rc {
     load_variant
     file open fh using "`outC'", write replace text
-    file write fh "sub_index,term,coef,se,pval,nobs" _n
+    file write fh "sub_index,term,coef,se,pval,nobs,nclust,r2_a" _n
     file close fh
 
     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
@@ -284,7 +284,9 @@ if _rc {
             di as error "  [C `s'] stima fallita (rc=" _rc ")"
             continue
         }
-        local NN = e(N)
+        local NN     = e(N)
+        local nclust = e(N_clust)
+        local r2a    = e(r2_a)
         di as res "  [C `s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty=" %10.7f _b[sub_dirty]
         local i = 1
         foreach v in sub_green sub_dirty td_green td_dirty {
@@ -295,7 +297,7 @@ if _rc {
             local b = _b[`v']
             local se = _se[`v']
             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
-            wrow "`outC'" "`s',`tn',`b',`se',`p',`NN'"
+            wrow "`outC'" "`s',`tn',`b',`se',`p',`NN',`nclust',`r2a'"
             local ++i
         }
     }
