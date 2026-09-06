@@ -4,6 +4,25 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-09-06 — Segnalati errori inesistenti confrontando con i CSV della cartella sbagliata
+
+**Cosa e' successo.** Nell'audit di `TABELLE_DEL_PAPER_v2.tex` ho segnalato deviazioni nelle
+tabelle PPML, CO2 e destination trends. Erano false: avevo confrontato con i CSV in
+`Output/TripleDiff/Tables/` (versione R) mentre il documento usa `Output/TripleDiff/Tables_Stata/`.
+Dove esistono entrambi i gemelli, i valori divergono al 3o-4o decimale. Ho corretto solo dopo che
+l'utente ha chiesto conferma esplicita che la fonte fosse Stata.
+
+**Causa.** Ho assunto che `Tables/` fosse "la cartella R" e `Tables_Stata/` "la cartella Stata".
+In realta' `Tables/` contiene entrambi: alcuni file sono scritti da `.do` (es.
+`tripledd_full_alldepvars_reghdfe.csv` da `17c`) e non hanno gemello. Non ho verificato quale
+script producesse ciascun CSV prima di usarlo come riferimento.
+
+**Prevenzione.** Prima di usare un CSV come verita' di riferimento, identificare lo script che
+lo scrive (`grep -rl "<nome>.csv" --include="*.do" --include="*.R"`) e, se esiste un file
+omonimo in un'altra cartella di output, confrontarli. Il percorso non e' garanzia della fonte.
+
+---
+
 ## 2026-09-02 — Country_code mapping sbagliato: BACI vs codici interni dataset
 
 **Cosa e' successo.** Ho usato `Data/Matching/country_codes_V202601.csv` (codici BACI/ISO)

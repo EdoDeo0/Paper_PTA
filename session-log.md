@@ -1,5 +1,30 @@
 # Session Log — Paper_PTA
 
+## 2026-09-06 (sessione 16) — Audit numerico e correzione TABELLE_DEL_PAPER_v2.tex
+
+- **Richiesta iniziale**: riorganizzare la sezione Results di paper_v3 sulla base del nuovo documento tabelle. Discussione fatta (architettura claim-driven a 7 sottosezioni proposta), **decisione non ancora presa** — vedi punti aperti sotto.
+- **Trovati errori nel documento tabelle** (non in paper_v3): in `tab:fullpanel` le righe SE e p asintotico delle colonne 1 e 4 (ln value, entrambi i panel) erano copiate dalla regressione "with controls" (N=19.3M) invece che dalla baseline; in `tab:collapsed` Panel B le stesse righe venivano dalle righe del controllo di profondità. Verificato contro CSV e log Stata.
+- **`./New/Paper/TABELLE_DEL_PAPER_v2.tex` corretto** e ricompilato (30 pagine, PDF in `./New/Paper/TABELLE_DEL_PAPER_v2_corretto.pdf`). Oltre ai due bug: R² semplice etichettato "Adj. R²" in full panel/collapsed (rinominato), Adj R² cprodhs4 col.1 0.889 -> 0.737, stelle Enf.DSM nei sub-indici full panel, cluster sub-indici collapsed 236 -> 228, allineamenti al terzo decimale in `tab:robust-full`.
+- **Effetto sostanziale**: WB×dirty full panel Panel A da ** a * (p=0.052); Panel B da * a ** (p=0.039); TREND×dirty Panel B ora significativo al 5% (p=0.048). Questo cambia la lettura del margine dirty con controllo DESTA.
+- **paper_v3 verificato corretto**: `fragments/ptab_main.tex` torna cella per cella con i CSV.
+- **Trappola da ricordare**: `Output/TripleDiff/Tables/` contiene sia output R sia output Stata; dove esiste il gemello in `Tables_Stata/` i valori divergono al 3o-4o decimale. Il documento usa Stata.
+- **Pending**: (1) decidere l'architettura della sezione Results; (2) decidere il framing del margine dirty ("falso positivo" vs "fragile/dipendente dal controllo" — proposta: dare più peso alla permutazione che al bootstrap); (3) `tab:mde`, `tab:brandi` e la riga "Green share in basket" di `tab:robust-full` non verificate (nessun CSV sorgente trovato). Nessun commit fatto.
+
+---
+
+## 2026-09-06 (sessione 15) — Script Stata Fase 2: CO2 + WCB full panel
+
+- **Job 1 (PPML fix)**: già completato nella sessione 14 — aggiunto `nclust` e `r2_p` a `65_ppml_variants.do`.
+- **Job 2 (WCB collapsed inclHKMO qua/uv)**: nessun codice nuovo necessario — `48g_wcb_collapsed_alldepvars.do` è già parametrizzato. Basta eseguire con `PTA_SAMPLE=incl`.
+- **Job 3**: scritto `./New/Code/stata/71_co2_collapsed_alldepvars.do` — CO2 intensity continua su collapsed panel per 3 dep var (val, qua, uv), 4 varianti (excl/incl × TD/DESTA). Pattern: 48g (collapse dal raw) + 63 block D (formula CO2). Reghdfe + FWL + boottest.
+- **Job 4**: scritto `./New/Code/stata/72_co2_fullpanel.do` — CO2 intensity su full panel per 3 dep var, 4 varianti. Pattern: 48e (FWL demeaning) + formula CO2. ~4-6h runtime.
+- **Job 5**: scritto `./New/Code/stata/73_wcb_fullpanel_inclhkmo.do` — WCB full panel inclHKMO per qua e uv, 2 varianti depth. Pattern: 48e (3 fasi FWL). ~4-6h runtime.
+- **Fase 3** (permutation jobs 6-10): non implementata, da fare in sessione futura.
+
+**Stato**: tutti gli script Fase 1+2 pronti. Da eseguire su macchina più potente.
+
+---
+
 ## 2026-09-06 (sessione 14) — Correzione stelle + tabella PPML riformattata
 
 - **Stelle asintotiche nella tabella destination trends**: corrette in `./New/Paper/paper_v3/Tabelle/tab_12_desttrends.tex` e in `./New/Paper/TABELLE_DEL_PAPER_v2.tex`. Le stelle ora si basano su p-value asintotici (coef/SE → t-stat), non più sul bootstrap. Note aggiornate di conseguenza.

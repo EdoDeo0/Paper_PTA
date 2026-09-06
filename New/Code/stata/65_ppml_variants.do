@@ -78,7 +78,7 @@ program define ppml_variant
     di as text "  celle in stima (pre-ppmlhdfe): " r(N)
 
     file open fh using "`out'", write replace text
-    file write fh "treat,term,coef,se,pval,nobs" _n
+    file write fh "treat,term,coef,se,pval,nobs,nclust,r2_p" _n
     file close fh
 
     foreach treat in WB TREND {
@@ -99,7 +99,9 @@ program define ppml_variant
             continue
         }
         local NN = e(N)
-        di as res "    ep_green=" %10.7f _b[ep_green] "  ep_dirty=" %10.7f _b[ep_dirty] "  N=" `NN'
+        local NC = e(N_clust)
+        local R2 = e(r2_p)
+        di as res "    ep_green=" %10.7f _b[ep_green] "  ep_dirty=" %10.7f _b[ep_dirty] "  N=" `NN' "  N_clust=" `NC' "  r2_p=" %6.4f `R2'
 
         local i = 1
         foreach v in ep_green ep_dirty td_green td_dirty {
@@ -111,7 +113,7 @@ program define ppml_variant
             local se = _se[`v']
             local p  = 2 * normal(-abs(`b'/`se'))
             file open fh using "`out'", write append text
-            file write fh "`treat',`tn',`b',`se',`p',`NN'" _n
+            file write fh "`treat',`tn',`b',`se',`p',`NN',`NC',`R2'" _n
             file close fh
             local ++i
         }
