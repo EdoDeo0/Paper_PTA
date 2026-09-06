@@ -1057,3 +1057,993 @@ Absorbed degrees of freedom:
 -----------------------------------------------------+
 * = FE nested within cluster; treated as redundant for DoF computation
   [WB] demeaning per boottest...
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.6130
+                        Prob>|t| =     0.6105
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.6130
+                        Prob>|t| =     0.6105
+
+95% confidence set for null hypothesis expression: [−.02844, .02294]
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.6877
+                        Prob>|t| =     0.2514
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.6877
+                        Prob>|t| =     0.2514
+
+95% confidence set for null hypothesis expression: [−.04295, .01307]
+  [TREND] reghdfe fpd+fdt+pt...
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.4596
+                        Prob>|t| =     0.6764
+(dropped 1.45e+07 singleton observations)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.4596
+                        Prob>|t| =     0.6764
+
+95% confidence set for null hypothesis expression: [−.03286, .03006]
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.7801
+                        Prob>|t| =     0.1214
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.7801
+                        Prob>|t| =     0.1214
+
+95% confidence set for null hypothesis expression: [−.0255, .01517]
+  [TREND] reghdfe fpd+fdt+pt...
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 88 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,992,396
+Absorbing 3 HDFE groups                           F(   4,     56) =       0.78
+Statistics robust to heteroskedasticity           Prob > F        =     0.5439
+                                                  R-squared       =     0.8729
+                                                  Adj R-squared   =     0.7415
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     1.3424
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0006112   .0010865    -0.56   0.576    -.0027876    .0015653
+    tr_dirty |  -.0011208   .0007491    -1.50   0.140    -.0026214    .0003798
+    td_green |   .0001084   .0001619     0.67   0.506    -.0002159    .0004327
+    td_dirty |   .0002167   .0001535     1.41   0.163    -.0000907    .0005242
+       _cons |   9.609242    .000506  1.9e+04   0.000     9.608228    9.610255
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3962959     3962959           0    *|
+         fdt |   3089711     3089711           0    *|
+          pt |     60318           1       60317     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,992,396
+Absorbing 3 HDFE groups                           F(   4,     56) =       0.85
+Statistics robust to heteroskedasticity           Prob > F        =     0.4976
+                                                  R-squared       =     0.8729
+                                                  Adj R-squared   =     0.7415
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     1.3424
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0004757   .0010596    -0.45   0.655    -.0025985     .001647
+    tr_dirty |  -.0012762   .0007413    -1.72   0.091    -.0027612    .0002087
+    td_green |   .0043622   .0091498     0.48   0.635     -.013967    .0226913
+    td_dirty |   .0137237   .0081072     1.69   0.096    -.0025171    .0299644
+       _cons |   9.609194   .0006464  1.5e+04   0.000     9.607899    9.610489
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3962959     3962959           0    *|
+         fdt |   3089711     3089711           0    *|
+          pt |     60318           1       60317     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+    boottest TREND_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.5638
+                        Prob>|t| =     0.6095
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.5638
+                        Prob>|t| =     0.6095
+
+95% confidence set for null hypothesis expression: [−.004994, .002576]
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.4995
+                        Prob>|t| =     0.2038
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.4995
+                        Prob>|t| =     0.2038
+
+95% confidence set for null hypothesis expression: [−.003318, .001077]
+  -> ln_export completato in 85.780417 minuti
+
+. cem_one_outcome exp_qua    ln_export_qua
+
+============================================================
+  CEM: ln_export_qua (totaldepth)
+============================================================
+(337,268 missing values generated)
+(337,268 observations deleted)
+(3,437,983 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    17,139,972
+        from master                17,139,972  
+        from using                          0  
+
+    Matched                        28,330,081  
+    -----------------------------------------
+(17,139,972 observations deleted)
+  28,330,081
+  Righe dopo filtro CEM: 28330081
+    boottest TREND_green...
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    25,083,206
+        from master                25,083,206  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,246,875  (_merge==3)
+    -----------------------------------------
+(25,083,206 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    26,116,044
+        from master                26,116,044  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         2,214,037  (_merge==3)
+    -----------------------------------------
+(26,116,044 real changes made)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.4499
+                        Prob>|t| =     0.6765
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    21,212,473
+        from master                21,212,473  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         7,117,608  (_merge==3)
+    -----------------------------------------
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.4499
+                        Prob>|t| =     0.6765
+(21,212,473 real changes made)
+  28,330,081
+  Righe finali: 28330081
+  [WB] reghdfe fpd+fdt+pt...
+
+95% confidence set for null hypothesis expression: [−.006304, .004187]
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.7255
+                        Prob>|t| =     0.1251
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.7255
+                        Prob>|t| =     0.1251
+(dropped 1.45e+07 singleton observations)
+
+95% confidence set for null hypothesis expression: [−.005625, .001442]
+  -> ln_export completato in 87.337467 minuti
+
+. cem_one_outcome exp_qua    ln_export_qua
+
+============================================================
+  CEM: ln_export_qua (desta)
+============================================================
+(337,268 missing values generated)
+(337,268 observations deleted)
+(3,437,983 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    17,139,972
+        from master                17,139,972  
+        from using                          0  
+
+    Matched                        28,330,081  
+    -----------------------------------------
+(17,139,972 observations deleted)
+  28,330,081
+  Righe dopo filtro CEM: 28330081
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    25,083,206
+        from master                25,083,206  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,246,875  (_merge==3)
+    -----------------------------------------
+(25,083,206 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    26,116,044
+        from master                26,116,044  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         2,214,037  (_merge==3)
+    -----------------------------------------
+(26,116,044 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    21,212,473
+        from master                21,212,473  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         7,117,608  (_merge==3)
+    -----------------------------------------
+(0 observations deleted)
+(21,212,473 real changes made)
+  28,330,081
+  Righe finali: 28330081
+  [WB] reghdfe fpd+fdt+pt...
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,213
+Absorbing 3 HDFE groups                           F(   4,     56) =       1.33
+Statistics robust to heteroskedasticity           Prob > F        =     0.2717
+                                                  R-squared       =     0.9090
+                                                  Adj R-squared   =     0.8145
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     1.3538
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0014053   .0041094    -0.34   0.734    -.0096374    .0068268
+    wb_dirty |  -.0042184   .0033565    -1.26   0.214    -.0109422    .0025054
+    td_green |  -.0000222   .0001163    -0.19   0.849    -.0002553    .0002108
+    td_dirty |    .000168   .0001465     1.15   0.256    -.0001255    .0004616
+       _cons |   7.604175   .0004862  1.6e+04   0.000     7.603202    7.605149
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923550     3923550           0    *|
+         fdt |   3077371     3077371           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [WB] demeaning per boottest...
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,213
+Absorbing 3 HDFE groups                           F(   4,     56) =       1.35
+Statistics robust to heteroskedasticity           Prob > F        =     0.2635
+                                                  R-squared       =     0.9090
+                                                  Adj R-squared   =     0.8145
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     1.3538
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0016158   .0034823    -0.46   0.644    -.0085918    .0053602
+    wb_dirty |  -.0055389   .0030071    -1.84   0.071    -.0115628     .000485
+    td_green |  -.0007007   .0046544    -0.15   0.881    -.0100246    .0086232
+    td_dirty |   .0130047    .006803     1.91   0.061    -.0006234    .0266327
+       _cons |   7.604052   .0004683  1.6e+04   0.000     7.603114    7.604991
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923550     3923550           0    *|
+         fdt |   3077371     3077371           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [WB] demeaning per boottest...
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.3427
+                        Prob>|t| =     0.8242
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.3427
+                        Prob>|t| =     0.8242
+
+95% confidence set for null hypothesis expression: [−.0525, .03509]
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.2595
+                        Prob>|t| =     0.5439
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.2595
+                        Prob>|t| =     0.5439
+
+95% confidence set for null hypothesis expression: [−.0785, .02258]
+  [TREND] reghdfe fpd+fdt+pt...
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.4650
+                        Prob>|t| =     0.7373
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.4650
+                        Prob>|t| =     0.7373
+
+95% confidence set for null hypothesis expression: [−.03265, .0282]
+    boottest WB_dirty...
+(dropped 1.45e+07 singleton observations)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.8460
+                        Prob>|t| =     0.1801
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -1.8460
+                        Prob>|t| =     0.1801
+
+95% confidence set for null hypothesis expression: [−.03269, .02925]
+  [TREND] reghdfe fpd+fdt+pt...
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,213
+Absorbing 3 HDFE groups                           F(   4,     56) =       0.35
+Statistics robust to heteroskedasticity           Prob > F        =     0.8428
+                                                  R-squared       =     0.9090
+                                                  Adj R-squared   =     0.8145
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     1.3538
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0002109    .001167    -0.18   0.857    -.0025487    .0021268
+    tr_dirty |  -.0005871   .0009536    -0.62   0.541    -.0024973    .0013231
+    td_green |  -.0000379   .0001913    -0.20   0.844    -.0004212    .0003454
+    td_dirty |   .0001105   .0002035     0.54   0.589    -.0002972    .0005182
+       _cons |   7.604018    .000679  1.1e+04   0.000     7.602658    7.605378
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923550     3923550           0    *|
+         fdt |   3077371     3077371           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,213
+Absorbing 3 HDFE groups                           F(   4,     56) =       0.57
+Statistics robust to heteroskedasticity           Prob > F        =     0.6835
+                                                  R-squared       =     0.9090
+                                                  Adj R-squared   =     0.8145
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     1.3538
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0002964    .001071    -0.28   0.783     -.002442    .0018491
+    tr_dirty |  -.0011454   .0008719    -1.31   0.194    -.0028919    .0006012
+    td_green |  -.0011129    .009064    -0.12   0.903    -.0192704    .0170445
+    td_dirty |   .0124858   .0093802     1.33   0.189     -.006305    .0312766
+       _cons |   7.603737    .000578  1.3e+04   0.000     7.602579    7.604894
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923550     3923550           0    *|
+         fdt |   3077371     3077371           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+    boottest TREND_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.1812
+                        Prob>|t| =     0.8778
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.1812
+                        Prob>|t| =     0.8778
+
+95% confidence set for null hypothesis expression: [−.00449, .004068]
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -0.6170
+                        Prob>|t| =     0.6104
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -0.6170
+                        Prob>|t| =     0.6104
+
+95% confidence set for null hypothesis expression: [−.003384, .00256]
+  -> ln_export_qua completato in 78.377533 minuti
+
+. cem_one_outcome uv_exp     ln_export_value
+
+============================================================
+  CEM: ln_export_value (totaldepth)
+============================================================
+    boottest TREND_green...
+(337,281 missing values generated)
+(337,281 observations deleted)
+(3,437,983 observations deleted)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.2774
+                        Prob>|t| =     0.8151
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.2774
+                        Prob>|t| =     0.8151
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    17,139,965
+        from master                17,139,965  
+        from using                          0  
+
+    Matched                        28,330,075  
+    -----------------------------------------
+(17,139,965 observations deleted)
+  28,330,075
+  Righe dopo filtro CEM: 28330075
+
+95% confidence set for null hypothesis expression: [−.006188, .004809]
+    boottest TREND_dirty...
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    25,083,200
+        from master                25,083,200  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,246,875  (_merge==3)
+    -----------------------------------------
+(25,083,200 real changes made)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.3166
+                        Prob>|t| =     0.2546
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    26,116,041
+        from master                26,116,041  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         2,214,034  (_merge==3)
+    -----------------------------------------
+(26,116,041 real changes made)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.3166
+                        Prob>|t| =     0.2546
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    21,212,471
+        from master                21,212,471  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         7,117,604  (_merge==3)
+    -----------------------------------------
+(21,212,471 real changes made)
+  28,330,075
+  Righe finali: 28330075
+  [WB] reghdfe fpd+fdt+pt...
+
+95% confidence set for null hypothesis expression: [−.005621, .002691]
+  -> ln_export_qua completato in 77.8111 minuti
+
+. cem_one_outcome uv_exp     ln_export_value
+
+============================================================
+  CEM: ln_export_value (desta)
+============================================================
+(337,281 missing values generated)
+(337,281 observations deleted)
+(3,437,983 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    17,139,965
+        from master                17,139,965  
+        from using                          0  
+
+    Matched                        28,330,075  
+    -----------------------------------------
+(17,139,965 observations deleted)
+  28,330,075
+  Righe dopo filtro CEM: 28330075
+(dropped 1.45e+07 singleton observations)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    25,083,200
+        from master                25,083,200  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,246,875  (_merge==3)
+    -----------------------------------------
+(25,083,200 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    26,116,041
+        from master                26,116,041  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         2,214,034  (_merge==3)
+    -----------------------------------------
+(26,116,041 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    21,212,471
+        from master                21,212,471  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         7,117,604  (_merge==3)
+    -----------------------------------------
+(0 observations deleted)
+(21,212,471 real changes made)
+  28,330,075
+  Righe finali: 28330075
+  [WB] reghdfe fpd+fdt+pt...
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,206
+Absorbing 3 HDFE groups                           F(   4,     56) =       3.64
+Statistics robust to heteroskedasticity           Prob > F        =     0.0105
+                                                  R-squared       =     0.9612
+                                                  Adj R-squared   =     0.9209
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     0.5909
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |  -.0003207   .0015509    -0.21   0.837    -.0034276    .0027861
+    wb_dirty |  -.0002106   .0012593    -0.17   0.868    -.0027333    .0023121
+    td_green |   .0000931   .0000769     1.21   0.231    -.0000609    .0002471
+    td_dirty |   .0000139   .0000452     0.31   0.759    -.0000767    .0001045
+       _cons |   2.050838   .0001799  1.1e+04   0.000     2.050478    2.051199
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923548     3923548           0    *|
+         fdt |   3077368     3077368           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [WB] demeaning per boottest...
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,206
+Absorbing 3 HDFE groups                           F(   4,     56) =       3.43
+Statistics robust to heteroskedasticity           Prob > F        =     0.0140
+                                                  R-squared       =     0.9612
+                                                  Adj R-squared   =     0.9209
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     0.5909
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    wb_green |   .0000497   .0019318     0.03   0.980    -.0038201    .0039196
+    wb_dirty |   .0000979   .0012555     0.08   0.938    -.0024172    .0026129
+    td_green |   .0042203   .0053299     0.79   0.432    -.0064568    .0148974
+    td_dirty |  -.0000452   .0020699    -0.02   0.983    -.0041918    .0041013
+       _cons |   2.050848   .0002137  9598.88   0.000      2.05042    2.051276
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923548     3923548           0    *|
+         fdt |   3077368     3077368           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [WB] demeaning per boottest...
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.2073
+                        Prob>|t| =     0.8868
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =    -0.2073
+                        Prob>|t| =     0.8868
+
+95% confidence set for null hypothesis expression: [−.02097, .0311]
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -0.1676
+                        Prob>|t| =     0.9283
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =    -0.1676
+                        Prob>|t| =     0.9283
+
+95% confidence set for null hypothesis expression: [−.01675, .01743]
+  [TREND] reghdfe fpd+fdt+pt...
+    boottest WB_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =     0.0258
+                        Prob>|t| =     0.9779
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                           t(56) =     0.0258
+                        Prob>|t| =     0.9779
+(dropped 1.45e+07 singleton observations)
+
+95% confidence set for null hypothesis expression: [−.01896, .008791]
+    boottest WB_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =     0.0781
+                        Prob>|t| =     0.9813
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                           t(56) =     0.0781
+                        Prob>|t| =     0.9813
+
+95% confidence set for null hypothesis expression: [−.01417, .01268]
+  [TREND] reghdfe fpd+fdt+pt...
+(dropped 1.45e+07 singleton observations)
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,206
+Absorbing 3 HDFE groups                           F(   4,     56) =       1.92
+Statistics robust to heteroskedasticity           Prob > F        =     0.1195
+                                                  R-squared       =     0.9612
+                                                  Adj R-squared   =     0.9209
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     0.5909
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0003823   .0002957    -1.29   0.201    -.0009746    .0002101
+    tr_dirty |  -.0003588   .0003484    -1.03   0.308    -.0010567    .0003392
+    td_green |   .0001428   .0000755     1.89   0.064    -8.55e-06    .0002941
+    td_dirty |   .0000645   .0000708     0.91   0.366    -.0000773    .0002064
+       _cons |   2.050628   .0003157  6495.74   0.000     2.049995     2.05126
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923548     3923548           0    *|
+         fdt |   3077368     3077368           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+(MWFE estimator converged in 89 iterations)
+
+HDFE Linear regression                            Number of obs   = 13,858,206
+Absorbing 3 HDFE groups                           F(   4,     56) =       2.11
+Statistics robust to heteroskedasticity           Prob > F        =     0.0911
+                                                  R-squared       =     0.9612
+                                                  Adj R-squared   =     0.9209
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =         57    Root MSE        =     0.5909
+
+                          (Std. err. adjusted for 57 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        ln_y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    tr_green |  -.0002835   .0004924    -0.58   0.567    -.0012698    .0007029
+    tr_dirty |  -.0002309   .0003231    -0.71   0.478    -.0008781    .0004164
+    td_green |   .0066311   .0061668     1.08   0.287    -.0057226    .0189848
+    td_dirty |   .0020741   .0033515     0.62   0.539    -.0046398    .0087879
+       _cons |   2.050695   .0003942  5201.66   0.000     2.049905    2.051484
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+         fpd |   3923548     3923548           0    *|
+         fdt |   3077368     3077368           0    *|
+          pt |     60233           1       60232     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+  [TREND] demeaning per boottest...
+    boottest TREND_green...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -1.2955
+                        Prob>|t| =     0.2414
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -1.2955
+                        Prob>|t| =     0.2414
+
+95% confidence set for null hypothesis expression: [−.001575, .0002684]
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.0320
+                        Prob>|t| =     0.4027
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -1.0320
+                        Prob>|t| =     0.4027
+    boottest TREND_green...
+
+95% confidence set for null hypothesis expression: [−.001509, .000791]
+  -> ln_export_value completato in 81.3782 minuti
+
+. 
+. di as result _n "=== FATTO. Output: $CSV_OUT ==="
+
+=== FATTO. Output: C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stat
+> a/cem_alldepvars.csv ===
+
+. cap log close _all
+
+. 
+end of do-file
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.5770
+                        Prob>|t| =     0.6830
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                           t(56) =    -0.5770
+                        Prob>|t| =     0.6830
+
+95% confidence set for null hypothesis expression: [−.003353, .0009804]
+    boottest TREND_dirty...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -0.7160
+                        Prob>|t| =     0.6069
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                           t(56) =    -0.7160
+                        Prob>|t| =     0.6069
+
+95% confidence set for null hypothesis expression: [−.001534, .001428]
+  -> ln_export_value completato in 81.025483 minuti
+
+. 
+. di as result _n "=== FATTO. Output: $CSV_OUT ==="
+
+=== FATTO. Output: C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stat
+> a/cem_alldepvars_desta.csv ===
+
+. cap log close _all
+
+. 
+end of do-file

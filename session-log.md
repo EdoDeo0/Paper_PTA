@@ -1,5 +1,17 @@
 # Session Log — Paper_PTA
 
+## 2026-09-06 (sessione 11) — Completamento job WCB + sub-indici full panel
+
+- **4 job CEM/DeepShallow WCB completati** (val+qua+uv × TotalDepth/DESTA): output in `./New/Output/TripleDiff/Tables_Stata/cem_alldepvars{_desta}.csv` e `deepshallow_alldepvars{_desta}.csv` (13 righe ciascuno)
+- **Scritto `./New/Code/stata/68_subindices_fullpanel.do`**: stima 7 sub-indici EP sul full panel firm-level (fpd+fdt+pt, cluster destination), entrambe le varianti depth in un unico run, con cache CSV
+- Fix: aggiunto `case(preserve)` all'import di `Merged_TREND_WB_Indices_Only.csv` (Stata lowercasava i nomi mixed-case)
+- **Sub-indici full panel completati**: `./New/Output/TripleDiff/Tables/subindices_fullpanel{_desta}.csv` (15 righe ciascuno)
+- Risolto conflitto git stash (sessione precedente, utente ha scartato manualmente)
+
+**Stato:** Tutti i dati WCB e sub-indici sono pronti. Prossimo passo: generare/aggiornare le tabelle LaTeX (CEM, DeepShallow, sub-indici) con i nuovi risultati.
+
+---
+
 ## 2026-09-05 (sessione 10) — Implementazione roadmap completa paper_v3
 
 **Implementati tutti i fix della roadmap `./correspondence/audit/2026-09-05_roadmap_soluzioni.md`:**
