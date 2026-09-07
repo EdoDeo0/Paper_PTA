@@ -1,0 +1,57 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Control groups and estimation designs: EP interactions across subsamples}
+\label{tab:subsamples}
+\begin{threeparttable}
+\begin{tabular}{lcccccrr}
+\toprule
+ & \multicolumn{2}{c}{WB EP depth} & \multicolumn{2}{c}{TREND EP count} & & & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Sample / design & $\times g_p$ & $\times b_p$ & $\times g_p$ & $\times b_p$ & & Obs. & Clusters \\
+\midrule
+\multicolumn{8}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+Full panel (reference)      & $-$0.0023 & $-$0.0044 & $-$0.0001 & $-$0.0009 & & 21,519,511 & 225 \\
+\quad bootstrap $p$         & [0.686] & [0.185] & [0.931] & [0.177] & & & \\[4pt]
+Collapsed panel             & $-$0.0046 & $-$0.0119 & $+$0.0018 & $+$0.0004 & & 3,681,023 & 228 \\
+\quad bootstrap $p$         & [0.649] & [0.072] & [0.390] & [0.857] & & & \\[4pt]
+C-prod-HS4                  & $-$0.0009 & $+$0.0066 & $+$0.0005 & $+$0.0024 & & 3,772,855 & 215 \\
+\quad bootstrap $p$         & [0.860] & [0.435] & [0.730] & [0.734] & & & \\[4pt]
+CEM-matched destinations    & $-$0.0023 & $-$0.0041 & $-$0.0006 & $-$0.0011 & & 13,992,396 & 57 \\
+\quad bootstrap $p$         & [0.610] & [0.251] & [0.609] & [0.204] & & & \\[4pt]
+Deep vs.\ shallow (partners only) & $-$0.0022 & $-$0.0034 & $-$0.0004 & $-$0.0006 & & 5,262,293 & 23 \\
+\quad bootstrap $p$         & [0.585] & [0.499] & [0.751] & [0.739] & & & \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{8}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+Full panel (reference)      & $-$0.0019 & $-$0.0056 & $-$0.0001 & $-$0.0014 & & 21,517,666 & 225 \\
+\quad bootstrap $p$         & [0.673] & [0.049] & [0.920] & [0.069] & & & \\[4pt]
+Collapsed panel             & $-$0.0043 & $-$0.0113 & $+$0.0016 & $-$0.0002 & & 3,677,333 & 228 \\
+\quad bootstrap $p$         & [0.546] & [0.047] & [0.508] & [0.905] & & & \\[4pt]
+C-prod-HS4                  & $-$0.0009 & $+$0.0033 & $+$0.0004 & $+$0.0015 & & 3,772,321 & 214 \\
+\quad bootstrap $p$         & [0.855] & [0.850] & [0.817] & [0.735] & & & \\[4pt]
+CEM-matched destinations    & $-$0.0016 & $-$0.0043 & $-$0.0005 & $-$0.0013 & & 13,992,396 & 57 \\
+\quad bootstrap $p$         & [0.676] & [0.121] & [0.676] & [0.125] & & & \\[4pt]
+Deep vs.\ shallow (partners only) & $-$0.0016 & $-$0.0042 & $-$0.0003 & $-$0.0009 & & 5,260,451 & 23 \\
+\quad bootstrap $p$         & [0.616] & [0.173] & [0.784] & [0.386] & & & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Dependent variable: log export value ($\ln x^{val}_{fpdt}$). Every cell is a separate
+  estimation of equation~\eqref{eq:main} on the indicated sample. Fixed effects: $\theta_{fpd} + \theta_{fdt} + \theta_{pt}$
+  (firm-level samples), $\theta_{pd} + \theta_{dt} + \theta_{pt}$ (collapsed panel). All specifications include
+  $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Hong Kong and Macao excluded throughout.
+\item \textbf{Inference is the wild cluster bootstrap in every cell} ($B = 9{,}999$, clustered by destination),
+  so all forty cells are directly comparable. Asymptotic $p$-values, which are unreliable with 23 treated
+  clusters, are reported in the full tables for each subsample (Appendix Tables~\ref{tab:cprodhs4},
+  \ref{tab:cem} and~\ref{tab:deepshallow}). No stars are shown: with this many designs, star-counting invites
+  exactly the selective reading the table is meant to prevent.
+\item \textit{C-prod-HS4}: restricted to HS6 products with a comparable HS4-level match across classification
+  revisions. \textit{CEM}: destinations matched on log GDP per capita, growth and MFN tariff in 2000.
+  \textit{Deep vs.\ shallow}: PTA partner destinations only, so identification comes from variation in EP
+  depth among treated destinations rather than from treated-versus-untreated comparisons.
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database; DESTA.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

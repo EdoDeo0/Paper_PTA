@@ -1,0 +1,55 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Deep vs.\ shallow agreements --- triple-difference estimates}
+\label{tab:deepshallow}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0022 & $-$0.0013 & $-$0.0004 & $-$0.0004 & $-$0.0001 & $-$0.0002 \\
+ & (0.0035) & (0.0036) & (0.0011) & (0.0010) & (0.0010) & (0.0002) \\[2pt]
+\quad Asymptotic $p$ & [0.534] & [0.712] & [0.748] & [0.721] & [0.903] & [0.392] \\
+\quad Bootstrap $p$ & [0.585] & [0.817] & [0.708] & [0.751] & [0.919] & [0.305] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0034 & $-$0.0034 & $-$0.0005 & $-$0.0006 & $-$0.0004 & $-$0.0003 \\
+ & (0.0029) & (0.0034) & (0.0008) & (0.0010) & (0.0012) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.246] & [0.330] & [0.572] & [0.549] & [0.712] & [0.389] \\
+\quad Bootstrap $p$ & [0.499] & [0.601] & [0.771] & [0.739] & [0.785] & [0.379] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 5,262,293 & 5,201,289 & 5,201,282 & 5,262,293 & 5,201,289 & 5,201,282 \\
+Clusters ($d$) & 23 & 23 & 23 & 23 & 23 & 23 \\
+Adj.\ $R^2$ & 0.751 & 0.844 & 0.932 & 0.751 & 0.844 & 0.932 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0016 & $-$0.0015 & $-$0.0002 & $-$0.0003 & $-$0.0002 & $-$0.0002 \\
+ & (0.0032) & (0.0031) & (0.0018) & (0.0010) & (0.0009) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.619] & [0.633] & [0.915] & [0.776] & [0.832] & [0.624] \\
+\quad Bootstrap $p$ & [0.616] & [0.727] & [0.910] & [0.784] & [0.857] & [0.715] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0042 & $-$0.0043 & $-$0.0007 & $-$0.0009 & $-$0.0008 & $-$0.0003 \\
+ & (0.0025) & (0.0028) & (0.0009) & (0.0008) & (0.0009) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.113] & [0.141] & [0.431] & [0.253] & [0.401] & [0.294] \\
+\quad Bootstrap $p$ & [0.173] & [0.294] & [0.755] & [0.386] & [0.492] & [0.336] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 5,260,451 & 5,199,451 & 5,199,444 & 5,260,451 & 5,199,451 & 5,199,444 \\
+Clusters ($d$) & 23 & 23 & 23 & 23 & 23 & 23 \\
+Adj.\ $R^2$ & 0.751 & 0.844 & 0.932 & 0.751 & 0.844 & 0.932 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Deep vs.\ shallow agreements subsample: restricted to destinations with at least one deep PTA in force. Full firm-level panel, excluding Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt}$). Quantity and unit-value regressions estimated on the subset with non-missing quantity data. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

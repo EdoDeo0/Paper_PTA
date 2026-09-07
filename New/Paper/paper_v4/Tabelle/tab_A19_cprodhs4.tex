@@ -1,0 +1,55 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{C-prod-HS4 subsample --- triple-difference estimates}
+\label{tab:cprodhs4}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0009 & $-$0.0019 & 0.0005 & 0.0005 & 0.0001 & 0.0002 \\
+ & (0.0051) & (0.0043) & (0.0007) & (0.0011) & (0.0010) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.858] & [0.665] & [0.471] & [0.680] & [0.906] & [0.689] \\
+\quad Bootstrap $p$ & [0.860] & [0.662] & [0.421] & [0.730] & [0.916] & [0.713] \\[6pt]
+$EP_{dt} \times b_p$ & 0.0066 & 0.0068 & $-$0.0017 & 0.0024 & 0.0033 & $-$0.0004 \\
+ & (0.0090) & (0.0111) & (0.0070) & (0.0066) & (0.0059) & (0.0024) \\[2pt]
+\quad Asymptotic $p$ & [0.469] & [0.541] & [0.807] & [0.714] & [0.581] & [0.860] \\
+\quad Bootstrap $p$ & [0.435] & [0.562] & [0.857] & [0.734] & [0.591] & [0.866] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,772,855 & 3,745,788 & 3,745,788 & 3,772,855 & 3,745,788 & 3,745,788 \\
+Clusters ($d$) & 215 & 215 & 215 & 215 & 215 & 215 \\
+Adj.\ $R^2$ & 0.737 & 0.835 & 0.923 & 0.737 & 0.835 & 0.923 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0009 & $-$0.0032 & 0.0012 & 0.0004 & $-$0.0003 & 0.0003 \\
+ & (0.0051) & (0.0042) & (0.0012) & (0.0013) & (0.0011) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.867] & [0.449] & [0.338] & [0.779] & [0.790] & [0.484] \\
+\quad Bootstrap $p$ & [0.855] & [0.461] & [0.368] & [0.817] & [0.806] & [0.546] \\[6pt]
+$EP_{dt} \times b_p$ & 0.0033 & $-$0.0059 & 0.0076 & 0.0015 & $-$0.0006 & 0.0022 \\
+ & (0.0168) & (0.0182) & (0.0098) & (0.0040) & (0.0032) & (0.0025) \\[2pt]
+\quad Asymptotic $p$ & [0.846] & [0.747] & [0.440] & [0.719] & [0.854] & [0.383] \\
+\quad Bootstrap $p$ & [0.850] & [0.758] & [0.554] & [0.735] & [0.852] & [0.454] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,772,321 & 3,745,254 & 3,745,254 & 3,772,321 & 3,745,254 & 3,745,254 \\
+Clusters ($d$) & 214 & 214 & 214 & 214 & 214 & 214 \\
+Adj.\ $R^2$ & 0.737 & 0.835 & 0.923 & 0.737 & 0.835 & 0.923 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} C-prod-HS4 subsample: green products plus the non-green products in the 106 HS4 headings that contain at least one green code, so that each green product is compared with its four-digit neighbours. Full firm-level panel, excluding Hong Kong and Macao. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

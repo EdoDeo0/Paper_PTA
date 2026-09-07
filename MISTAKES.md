@@ -4,6 +4,31 @@ Registro degli errori e delle correzioni di approccio. Voce piu' recente in cima
 
 ---
 
+## 2026-09-07 — Sostituzione parziale di una frase: il testo resta grammaticalmente rotto
+
+**Cosa e' successo.** Applicando il FIX W7 punto 3 della roadmap, la frase da sostituire era
+*"which is indifferent to the choice of control because it shuffles treatment rather than covariates"*
+e il rimpiazzo *"which reassigns whole agreement profiles and therefore does not depend on how well
+the depth control is measured"*. Ho ancorato la sostituzione a partire da *"to the choice of
+control..."*, lasciando in piedi il *"which is indifferent"* che precedeva. Risultato:
+*"The permutation test, which is indifferent whole agreement profiles and therefore..."*, cioe'
+una frase senza verbo. Me ne sono accorto rileggendo l'output subito dopo l'edit e l'ho corretta
+nella stessa sessione; il PDF non e' mai stato compilato con la frase rotta.
+
+**Causa.** Ho scelto la stringa di ancoraggio guardando solo che fosse **unica** nel file, non che
+fosse **completa** rispetto alla frase citata dalla roadmap. La roadmap citava la frase a partire da
+"which is indifferent"; io ho ancorato piu' avanti perche' spezzata su piu' righe, e nel farlo ho
+perso l'inizio del rimpiazzo.
+
+**Prevenzione.** Quando la roadmap (o l'utente) cita il testo da sostituire, la stringa cercata deve
+coprire **tutta** la citazione, non un suo suffisso comodo. Se la citazione e' spezzata su piu' righe
+nel file, si ricostruisce la stringa multilinea esatta e si asserisce `count == 1` su quella; non si
+accorcia l'ancora finche' non e' unica. Controllo a valle: dopo ogni sostituzione di prosa,
+rileggere le 3-4 righe attorno al punto toccato — un `assert` sull'unicita' non dice nulla sulla
+grammatica del risultato.
+
+---
+
 ## 2026-09-06 — Segnalati errori inesistenti confrontando con i CSV della cartella sbagliata
 
 **Cosa e' successo.** Nell'audit di `TABELLE_DEL_PAPER_v2.tex` ho segnalato deviazioni nelle

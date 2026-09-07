@@ -1,0 +1,474 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{margin=2.4cm}
+\usepackage{setspace}
+\usepackage[bottom]{footmisc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{threeparttable}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{caption}
+\newcommand{\sym}[1]{$^{#1}$}
+\graphicspath{{/Users/edoardovitella/Documents/work/projects/Paper_PTA/New/Paper/paper_v3/figures/}}
+
+% --- placeholder refs so the draft compiles standalone -----------------------
+\newcommand{\phlabel}[1]{\phantom{\label{#1}}}
+% lightweight citation stubs (no bibliography in this standalone draft)
+\newcommand{\citep}[1]{(\textsc{#1})}
+\newcommand{\citet}[1]{\textsc{#1}}
+
+\title{\textbf{Results --- proposed reorganisation (v4 draft)}\\[6pt]
+\large Environmental Provisions in Chinese PTAs and Export Composition}
+\author{Edoardo Vitella}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent\rule{\textwidth}{0.4pt}
+\footnotesize
+\textbf{What this document is.} A standalone draft of a reorganised Section~5. Six subsections in
+place of twelve, ordered: full panel $\rightarrow$ collapsed panel and inference $\rightarrow$
+control groups $\rightarrow$ dynamics $\rightarrow$ sub-indices $\rightarrow$ extensive margin.
+All figures come from the corrected table document; the numbers that changed relative to
+\texttt{paper\_v3} are flagged in footnotes. Cross-references to appendix tables are
+placeholders. Nothing in \texttt{paper\_v3.tex} has been modified.
+\normalsize
+\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{12pt}
+\noindent\emph{Specification recap.} The estimating equation is
+\begin{equation}\label{eq:main}
+\ln x_{fpdt} = \beta_1\, EP_{dt}\!\times\!g_p + \beta_2\, EP_{dt}\!\times\!b_p
++ \gamma_1\, TD_{dt}\!\times\!g_p + \gamma_2\, TD_{dt}\!\times\!b_p
++ \theta_{fpd} + \theta_{fdt} + \theta_{pt} + \varepsilon_{fpdt},
+\end{equation}
+with $g_p$ and $b_p$ the green and pollution-intensive product indicators, $EP_{dt}$ environmental
+depth and $TD_{dt}$ non-environmental agreement depth. Standard errors are clustered by destination
+throughout; because the design has 23 treated destinations, the wild cluster bootstrap
+($B=9{,}999$) rather than the asymptotic $p$-value is the reference inference.
+
+% ============================================================================
+\section{Results}\label{sec:results}
+% ============================================================================
+
+\subsection{The full panel}\label{sec:fullpanel}
+
+Table~\ref{tab:fullpanel} reports the reference estimates. Equation~\eqref{eq:main} is estimated on
+the full firm--product--destination--year panel: 21.5 million observations, 225 destination
+clusters, firm$\times$product$\times$destination, firm$\times$destination$\times$year and
+product$\times$year fixed effects. Columns~(1)--(3) use the World Bank EP depth index, columns
+(4)--(6) the TREND provision count; within each block the outcome is log export value, log
+quantity and log unit value. Panel~A controls for non-environmental World Bank depth, Panel~B for
+the independently coded DESTA index \citep{dur2014}.
+
+The table is deliberately wide, because the central claim of this section is a claim about
+\emph{invariance}: the green coefficient does not move across any of these dimensions, and the
+dirty coefficient moves across exactly one of them.
+
+\paragraph{The green margin.} Zero everywhere. On export value the WB estimate is $-0.0023$
+(s.e.\ 0.0039, bootstrap $p = 0.69$) under the World Bank depth control and $-0.0019$
+(0.0037, $p = 0.67$) under DESTA; the TREND estimate is $-0.0001$ in both, with bootstrap
+$p$-values of 0.93 and 0.92. The joint $F$-test on all four composition interactions gives
+$p = 0.31$ (WB) and $p = 0.71$ (TREND) in Panel~A, and $p = 0.18$ and $p = 0.26$ in Panel~B.
+Quantity and unit value behave identically: across the eight green cells in columns~(2), (3),
+(5) and~(6), no bootstrap $p$-value falls below 0.74.
+
+That last point does work that the value regression alone cannot do. A null on export value is
+consistent with two offsetting responses --- more units at lower prices, or fewer units at higher
+prices --- cancelling in the aggregate. Columns~(2) and~(3) rule this out directly: neither the
+volume channel nor the price channel moves. The green null is a null on both margins separately,
+not a coincidence of the value aggregate.\footnote{This replaces the summary table in
+\texttt{paper\_v3} \S5.10, which reported ranges of $p$-values and noted that exact coefficients
+were ``available upon request''. They are now in columns~(2), (3), (5) and~(6).}
+
+\paragraph{The dirty margin.} Negative throughout, and this is the one place in the paper where a
+modelling choice changes the verdict. Under the World Bank depth control the WB$\times$dirty
+coefficient is $-0.0044$ with asymptotic $p = 0.052$, but the bootstrap raises it to $p = 0.19$;
+the TREND counterpart is $-0.0009$ ($0.15$ asymptotic, $0.18$ bootstrap). Under the DESTA control
+the same coefficients are $-0.0056$ ($0.039$ asymptotic, \textbf{$0.049$ bootstrap}) and $-0.0014$
+($0.048$ asymptotic, $0.069$ bootstrap). Same data, same fixed effects, same estimation sample; the
+only difference is which measure of non-environmental agreement depth is partialled out.\footnote{%
+In \texttt{paper\_v3} this contrast is invisible, because the tables reported only the World Bank
+depth control in the main text and the sentence ``the TREND index never shows the effect'' was
+written from the collapsed-panel figure. On the full panel with the DESTA control the TREND index
+does show it. The corrected tables make the contrast the substantive question it is.}
+
+The mechanical explanation is collinearity. Net of the fixed effects, environmental depth
+correlates $0.959$ with World Bank non-environmental depth and $0.891$ with DESTA depth. The more
+the control overlaps the regressor of interest, the less independent variation is left and the
+wider the standard error. Read that way, Panel~B is the better-identified specification and Panel~A
+is over-controlled --- which would make the dirty effect real and the World Bank specification the
+one hiding it.
+
+We do not adopt that reading, and Section~\ref{sec:collapsed} explains why: the permutation test,
+which reassigns entire EP profiles across treated destinations and is therefore indifferent to
+which depth control is in the regression, assigns this coefficient a $p$-value between 0.15 and
+0.38 in every one of the four sample--control variants. But the ambiguity is real and we flag it
+here rather than resolving it by choosing the control that gives the answer we prefer.
+
+\paragraph{Quantity, not price.} Where the dirty coefficient does move, it moves on quantity.
+Under the DESTA control it is $-0.0070$ on log quantity (asymptotic $p = 0.020$, bootstrap
+$p = 0.035$) --- larger in magnitude and more precisely estimated than on value --- while the unit
+value coefficient is $+0.0004$ with $p = 0.68$. Taking Tables~\ref{tab:fullpanel} and
+\ref{tab:collapsed} together, sixteen cells estimate an EP interaction on log unit value; exactly
+one is nominally significant (TREND$\times$dirty in the collapsed panel, asymptotic $p = 0.076$)
+and it does not survive the bootstrap ($p = 0.17$). Whatever this coefficient reflects, it is a
+shipment-volume margin with no price response. That is consistent with a compositional shift in
+what firms ship and inconsistent with a quality-upgrading or cost-passthrough interpretation.
+
+\paragraph{How large a null.} A null result means one of two things: the effect is absent, or the
+design cannot see it. The bootstrap confidence intervals say which. On the full panel the 95\%
+bootstrap interval for EP$\times$green is $[-0.0353,\, +0.0355]$ per World Bank provision --- about
+$\pm 3.5\%$, or, since one standard deviation of WB EP depth in the estimation sample is roughly
+2.4 provisions, at most a $\pm 8$--$9\%$ change in green relative to neutral exports. The
+corresponding asymptotic interval, $[-0.0100,\, +0.0055]$, is roughly six times narrower; reporting
+that width would claim a precision this paper's own inference section declares unwarranted.
+
+Table~\ref{tab:brandi} places the bound against the closest benchmark. \citet{brandi2020} find that
+one liberal environmental provision raises the green share of developing-country exports by around
+0.4 percentage points, which is roughly $+0.16$ log points in the metric of
+equation~\eqref{eq:main}. The upper end of the interval here is about one quarter of that figure.
+The design can therefore exclude effects at or above the Brandi magnitude; it cannot exclude
+smaller positive effects. Appendix Table~\ref{tab:mde} reports the implied minimum detectable
+effects in per-provision and per-standard-deviation terms.
+
+\input{tabs/tab_fullpanel}
+
+\input{tabs/tab_brandi}
+
+\FloatBarrier
+\subsection{The collapsed panel, and what survives robust inference}\label{sec:collapsed}
+
+Table~\ref{tab:collapsed} re-estimates equation~\eqref{eq:main} on HS6--destination--year cells with
+analytic weights. This is not a robustness check on Table~\ref{tab:fullpanel}. It estimates a
+different object, and the difference between the two is itself a result.
+
+The firm$\times$destination$\times$year fixed effects in the full panel absorb everything that
+varies at the firm--destination--year level, so identification comes from reallocation
+\emph{within} the firm across products. The collapsed panel compares products across all firms
+shipping to a destination in a year, so any shift in \emph{which} firms export dirty goods enters
+the coefficient as well. The two estimands differ by exactly the between-firm channel.
+
+On the green margin they agree: $-0.0046$ collapsed against $-0.0023$ full panel, both
+indistinguishable from zero on every inference method. On the dirty margin they differ by a factor
+of roughly 2.7 ($-0.0119$ against $-0.0044$), which decomposes the coefficient: approximately
+three-fifths of the collapsed dirty estimate, $(0.0119 - 0.0044)/0.0119 = 0.63$, is between-firm
+composition rather than within-firm reallocation. Whatever moves dirty exports operates mainly
+through which firms ship, not through what a given firm ships. The full panel therefore remains the
+reference specification, and the collapsed panel is where the between-firm channel becomes visible.
+
+\input{tabs/tab_collapsed}
+
+\paragraph{Why inference lives here.} The collapsed panel is also where the design can be stress
+tested. The permutation test reassigns the EP profile of each agreement --- its depth level and its
+entry years --- randomly among the 23 treated destinations and re-estimates the model a thousand
+times; the treated-only design this requires is not feasible at firm level. The leave-one-out
+exercise, likewise, is a collapsed-panel exercise. Table~\ref{tab:collapsed} therefore carries three
+rows of inference where Table~\ref{tab:fullpanel} carries two.
+
+Read down those rows for the WB$\times$dirty coefficient. The asymptotic $p$-value is below 0.001.
+The wild cluster bootstrap raises it to 0.072. The permutation test raises it to 0.278: in 27.8\% of
+random reassignments of environmental content across the same 23 destinations, the model produces a
+coefficient at least as large in absolute value. A coefficient that would have arisen a quarter of
+the time from randomly relabelling which agreements are environmental is not evidence about
+environmental content.
+
+\paragraph{The depth-control ambiguity, resolved as far as it can be.} Table~\ref{tab:matrice}
+assembles the dirty coefficient across all four sample--control variants with a single inference
+method, so the eight cells are directly comparable. Two features stand out. The point estimate is
+uniformly negative and, within each panel, stable. The bootstrap $p$-value is not: on the collapsed
+panel it is 0.072 with the World Bank control and 0.047 with DESTA; on the full panel it is 0.185
+and 0.049. Significance tracks the control variable, not the data.
+
+The permutation test is the tiebreaker, because it is the one procedure whose null distribution
+does not depend on which depth control sits in the regression. It gives $p = 0.278$, $0.146$,
+$0.146$ and $0.384$ across the four variants --- no cell below 0.10. The reading we adopt is
+therefore not that the dirty coefficient is a false positive, and not that it is an established
+effect, but that it is a coefficient whose apparent precision is an artefact of how much
+independent variation a particular depth control leaves behind. On the evidence that does not
+depend on that choice, it is indistinguishable from a placebo.
+
+\input{tabs/tab_matrice}
+
+\paragraph{Leave-one-out: the mechanism is precision, not leverage.} Table~\ref{tab:loo_new}
+re-estimates the dirty coefficient dropping one treated destination at a time. The usual concern
+--- that a result is driven by a single country --- is not what the exercise finds. The point
+estimate sits between $-0.0097$ and $-0.0133$ in all 23 leave-one-out samples; dropping large
+treated destinations such as India or Pakistan moves it by one to four per cent and leaves the
+standard error essentially unchanged.
+
+What is unstable is precision. Dropping Australia moves the coefficient by 13\%, to $-0.0103$, but
+nearly triples its standard error, from 0.0030 to 0.0087, carrying the $p$-value to 0.24. Dropping
+South Korea doubles the standard error, giving $-0.0097$ with $p = 0.09$. Australia and Korea are
+not outliers exerting leverage on the estimate; they supply the identifying variation, and removing
+them leaves too little information for a precise estimate rather than revealing a different effect.
+The coefficient rests on a thin slice of variation concentrated in two destinations --- and which
+two depends on the depth control, since under DESTA the pivotal destination shifts from Australia
+to Korea. That a modelling choice unrelated to environmental content determines which destination is
+pivotal is the same fragility diagnosis reached in Table~\ref{tab:matrice} by a different route.
+
+One caveat we do not resolve. Australia and Korea are also among the destinations with the deepest
+EP coverage in the sample (WB depth 12 and 17). A dose--response reading --- the dirty effect is
+real and concentrated where the dose is largest --- is not ruled out by the leave-one-out geometry.
+The row \textit{High EP depth only} in Table~\ref{tab:loo_new}, which drops Peru, Switzerland and
+Korea jointly, is consistent with either interpretation.
+
+\input{tabs/tab_loo_new}
+
+\FloatBarrier
+\subsection{Control groups and estimation designs}\label{sec:subsamples}
+
+The estimates so far compare green and dirty products against neutral products, in agreement
+destinations against non-agreement destinations. Both comparisons can be challenged. Neutral
+products may be poor counterfactuals for green ones if they sit in different parts of the product
+space; non-agreement destinations may be poor counterfactuals for agreement destinations if China
+signs agreements with countries on different growth paths. Table~\ref{tab:subsamples} replaces each
+comparison in turn.
+
+\emph{C-prod-HS4} restricts attention to HS6 products with a comparable HS4-level match, so a green
+product is compared with neutral products in the same four-digit heading rather than with the whole
+neutral universe. \emph{CEM} matches destinations on log GDP per capita, growth and MFN tariff in
+2000, reducing the sample to 57 destination clusters that are comparable on pre-treatment
+observables. \emph{Deep versus shallow} discards untreated destinations altogether: identification
+comes from variation in EP depth among the 23 PTA partners, so a destination with a shallow
+environmental chapter is the counterfactual for one with a deep chapter.
+
+Every cell in the table uses the wild cluster bootstrap, so all forty are comparable, and no stars
+are reported: with this many designs, star-counting invites exactly the selective reading the table
+is meant to prevent.
+
+The green coefficient stays between $-0.0046$ and $+0.0005$ in all twenty cells and is never close
+to conventional significance --- the smallest bootstrap $p$-value anywhere on the green margin is
+0.51. This is the result. An artifact of the comparison group would move when the comparison group
+changes; this does not move when the product comparison is narrowed to within-HS4, when the
+destination comparison is matched on pre-treatment observables, or when untreated destinations are
+removed from the design entirely.
+
+The dirty coefficient behaves differently, and in a way that reinforces
+Section~\ref{sec:collapsed}. It is negative in eight of the ten firm-level cells but never
+significant once the sample changes: CEM gives $-0.0041$ ($p = 0.25$) and $-0.0043$ ($p = 0.12$),
+deep-versus-shallow gives $-0.0034$ ($p = 0.50$) and $-0.0042$ ($p = 0.17$). C-prod-HS4 reverses
+the sign entirely, to $+0.0066$ and $+0.0033$. A coefficient that survives the removal of the
+untreated comparison group only in the specification that keeps it is not identifying a robust
+composition effect.
+
+\input{tab_subsamples}
+
+Further sample variations --- adding product--destination--year controls for MFN tariffs, market
+concentration and antidumping exposure; excluding the eleven ASEAN destinations, which form the
+largest single cohort; re-including Hong Kong and Macao; and restricting to products with common
+support across agreement and non-agreement destinations --- are reported in Appendix
+Table~\ref{tab:robust-full}. None moves the green coefficient outside $[-0.0025, -0.0002]$.
+Appendix Table~\ref{tab:apec} replaces the OECD list of environmental goods with the narrower APEC
+list agreed in 2012; the green coefficient changes sign but not significance, confirming that the
+null does not depend on which products are labelled green.
+
+\FloatBarrier
+\subsection{Dynamics and pre-trends}\label{sec:dynamics}
+
+Figure~\ref{fig:es} plots the event study of the green and dirty gap relative to neutral products
+around entry into force, using never-treated destinations as controls. Differential pre-trends are
+flat on both margins.
+
+Before reading that as reassurance, a clarification. Parallel trends is a claim about the
+unobserved counterfactual path of treated destinations \emph{after} treatment. A flat pre-trend
+rules out the most easily detectable violation --- a composition gap already in motion before the
+agreement --- but does not establish that the assumption holds thereafter. The exercise is a
+falsification, not a proof.
+
+\begin{figure}[htbp]
+\centering
+\caption{Event study: green and dirty vs.\ neutral products around PTA entry into force}
+\label{fig:es}
+\vspace{6pt}
+\includegraphics[width=\textwidth]{eventstudy_collapsed_v3.png}
+\begin{minipage}{\textwidth}\footnotesize
+\emph{Notes:} Collapsed panel; FE $pd + dt + pt$; destination-clustered 95\% confidence bands;
+$t = -1$ is the reference period; endpoint bins accumulate. Coefficients are tabulated in Appendix
+Table~\ref{tab:eventstudy_twfe}. Source: Chinese Customs Office; World Bank DTA Database.
+\end{minipage}
+\end{figure}
+
+A mild negative drift for green products in the late post-period (bins $\geq +5$) is identified
+only by the early cohorts --- ASEAN 2005, Chile 2006, Pakistan 2007, New Zealand 2008. It disappears
+under the \citet{sun2021} interaction-weighted estimator applied to the destination-level
+composition gap: the aggregated ATT is $-0.042$ ($p = 0.27$) for green and $+0.073$ ($p = 0.28$)
+for dirty, consistent with early-cohort heterogeneity rather than any effect of treatment. The
+Sun--Abraham estimator answers a narrower question than equation~\eqref{eq:main} --- it binarises
+treatment, discards depth, carries no depth control, and operates on a gap collapsed across
+products --- so it is a diagnostic for staggered timing, not a replication. The full
+interaction-weighted event study is in Appendix Table~\ref{tab:sunab}; with standard errors that
+account for estimation uncertainty in the cohort-share weights, no coefficient in the $[-10, +8]$
+window is individually distinguishable from zero on either margin.
+
+\paragraph{Destination-specific trends.} The fixed effects in equation~\eqref{eq:main} do not
+absorb a shock specific to green products in a particular destination that grows over time --- a
+country signing environmental clauses precisely as its demand for green goods is rising. Two
+variants bracket the answer, both on the collapsed panel (Table~\ref{tab:trends}).
+
+Allowing each destination its own linear trend interacted with product type over the full sample
+period leaves the World Bank results essentially unchanged (EP$\times$green $-0.0051$, bootstrap
+$p = 0.49$; EP$\times$dirty $-0.0082$, bootstrap $p = 0.27$). The TREND green interaction, however,
+turns significantly negative and is the single coefficient in the entire robustness battery that
+survives the wild cluster bootstrap ($p = 0.015$).
+
+This should not be taken at face value, for two reasons. First, destination-specific trends
+estimated over the full sample period absorb both pre- and post-treatment variation and can reverse
+the sign of treatment coefficients when cohort dynamics are present \citep{wolfers2006}; the late
+negative drift these trends absorb is precisely the early-cohort artefact the Sun--Abraham
+estimator identifies as noise. Second, and more directly, Panel~B$'$ shows the green gap was already
+rising before entry into force (pre-agreement slope $+0.0073$, bootstrap $p = 0.19$), so a
+pre-existing trend is a plausible account of the same coefficient.
+
+The second variant estimates destination-specific slopes on pre-treatment years only and projects
+them forward before re-estimating on the detrended outcome. Every coefficient returns to an
+imprecise zero: TREND$\times$green $+0.0073$ ($p = 0.19$), WB$\times$green $+0.0173$ ($p = 0.68$),
+dirty interactions $p = 0.29$--$0.61$. The composition null stands against destination-specific
+linear drifts in green demand, which is the most natural form of the selection-on-trends
+confounder.
+
+\input{tabs/tab_trends}
+
+\FloatBarrier
+\subsection{Provision bundling and the limits of heterogeneity analysis}\label{sec:bundling}
+
+The indices used so far sum all environmental provisions in an agreement regardless of content.
+Most are cooperation clauses, institutional commitments or general environmental language, none of
+which has an identifiable channel through which it could shift which products a country exports.
+Only a small minority carry a direct trade mechanism: tariff reductions on green goods,
+non-regression clauses preventing countries from lowering standards to attract trade, or binding
+market-access commitments. A null on the aggregate index is therefore ambiguous. It could mean that
+environmental provisions do not affect export composition, or that the signal from a few
+trade-relevant clauses is diluted by a large majority that should have no effect in the first place.
+
+Table~\ref{tab:mechanism} quantifies the dilution. The World Bank index checks 150 provision slots
+across the 25 treated destinations; 8 of them (5.3\%) belong to sub-indices with a trade mechanism.
+The TREND database, coded at finer granularity, gives 4 of 437 (0.9\%). At agreement level, a
+binding environmental obligation appears in exactly one of the 14--15 Chinese PTAs in the database:
+China--Korea, 2015.
+
+\input{tabs/tab_mechanism}
+
+The structural consequence is stark. The two World Bank sub-indices with a direct trade mechanism
+are non-zero in only three destination--years, always in the same proportion, and are therefore
+perfectly collinear ($\rho = 1.000$) and not separately identifiable. \citet{brandi2020} report a
+maximum VIF of 4.6 across provision-type variables on a 680-agreement panel; with 13 distinct EP
+profiles, this design cannot do the same.
+
+A reading rule applies to everything that follows. Each sub-index replaces the aggregate index one
+at a time and is estimated on its own, so the coefficients are not partial effects holding other
+clause types constant --- they absorb whatever correlated variation moves with each one.
+Table~\ref{tab:subindex} is a set of separate comparisons, not an additive decomposition.
+
+Two things can be said. First, the trade-mechanism bundle reproduces the aggregate pattern: green
+never responds (WB Green Liberalization$\times$green $p = 0.90$; TREND Green Market
+Access$\times$green $p = 0.37$), while the dirty interaction is marginally negative on asymptotic
+$p$-values --- the same asymptotics-only signal documented in Section~\ref{sec:collapsed}.
+
+Second, and more usefully, the full panel and the collapsed panel disagree on the sub-indices in
+exactly the way they disagree on the aggregate. On the collapsed panel, WB Green
+Liberalization$\times$dirty is $-0.088$ and TREND Green Market Access$\times$dirty is $-0.049$; on
+the full panel the same coefficients are $-0.002$ and $-0.009$ and nowhere near significance
+(Appendix Table~\ref{tab:subindex_fullpanel}). The sub-index results, like the aggregate dirty
+coefficient, are a between-firm phenomenon that does not survive firm$\times$destination$\times$year
+fixed effects.
+
+The placebo sub-indices deserve care. TREND soft provisions show nothing on either margin
+($\times$green $p = 0.27$; $\times$dirty $p = 0.86$), consistent with the logic of the null.
+Regulatory-space clauses do not: they carry $+0.024$ on green and $+0.023$ on dirty, and both
+survive the wild cluster bootstrap ($p = 0.045$ and $p = 0.021$). This is the only place in the
+paper where a sub-index without a trade mechanism registers a signal that robust inference sustains.
+
+Two features bound what can be read into it. The two margins move in tandem --- the green--dirty
+differential is $+0.0017$ with $p = 0.80$ --- so the coefficient describes green and dirty exports
+rising equally against the neutral baseline, which is not a shift in composition toward cleaner
+goods. And the regulatory-space sub-index is not a clean placebo: it accounts for 71.5\% of the
+TREND count across treated destination--years and correlates 0.90 with total depth, and in this
+specification the depth control flips to significantly negative. Two regressors correlated at 0.90
+splitting into a large positive and a large negative is the bundling problem applied to the
+placebo, not a cleanly identified channel.
+
+\input{tabs/tab_subindex}
+
+This reconciles the null with \citet{brandi2020}. Their finding is not that environmental provisions
+generically matter; it is driven by the subset of agreements with explicitly liberalizing or
+restrictive clauses, identified separately because 680 agreements supply enough cross-agreement
+variation in provision type. The Chinese PTAs of this period are, on the same coding, overwhelmingly
+cooperation-only. A null on the aggregate index is what their own heterogeneity would predict for a
+sample of this composition. A second difference compounds it: \citet{brandi2020} work with
+exporter--importer--year flows, where a composition effect can arise from the entry or exit of firms
+or products, whereas equation~\eqref{eq:main} identifies from reallocation within the same firm ---
+a strictly more demanding test of the same hypothesis.
+
+\FloatBarrier
+\subsection{The extensive margin}\label{sec:ppml}
+
+Log-linear estimates condition on positive flows. If environmental provisions create new green trade
+where none previously existed, the estimates above miss it \citep{santossilva2006}. On an
+HS6--destination--year grid completed with zeros (8.2 million cells, of which 7.9 million enter
+estimation after PPML drops separated and singleton observations), the picture is unchanged
+(Table~\ref{tab:ppml}): EP$\times$green is $+0.0015$ ($p = 0.74$, WB) and $+0.0001$ ($p = 0.95$,
+TREND), and EP$\times$dirty is $-0.030$ ($p = 0.057$, WB) and $+0.003$ ($p = 0.55$, TREND). No green
+trade creation is detected at the extensive margin, and the dirty coefficient is at most marginal,
+consistent with Section~\ref{sec:collapsed}.
+
+One limitation should be noted. This grid detects a green product newly exported to a destination,
+but not a new firm beginning to export a product that other Chinese firms already ship there, which
+is a common form of firm-level entry. The extensive margin is probed, not exhausted.
+
+\input{tabs/tab_ppml}
+
+\FloatBarrier
+\vspace{18pt}
+\noindent\rule{\textwidth}{0.4pt}
+\subsection*{Note on what moved to the appendix}
+\footnotesize
+Saturation ladder (with a baseline column to be added, so the sequence terminates at
+Table~\ref{tab:fullpanel}); Sun--Abraham event study; tabulated TWFE event study; Hong Kong and
+Macao variants of both main tables; full wild-cluster-bootstrap and permutation tables; full-panel
+robustness battery; APEC versus OECD product definition; CO$_2$ intensity as a continuous dirty
+measure; sub-index estimates on the full panel; minimum detectable effects; environmental share of
+agreement content \citep{abman2024}; the full subsample tables underlying
+Table~\ref{tab:subsamples}.
+
+\bigskip
+\noindent\textbf{Open drafting decisions.}
+(i)~Table~\ref{tab:trends} is included whole; Panels~A/A$'$ could move to the appendix leaving only
+the pre-trend test in the main text. (ii)~The saturation-ladder sign reversal on the dirty margin
+($+0.0064$ under $fpd + pt$, $-0.0044$ in the reference specification) is a strong fragility
+argument and currently sits only in the appendix; it could be a paragraph in
+Section~\ref{sec:collapsed}. (iii)~Table~\ref{tab:mde} is estimated on the collapsed panel while the
+bounding paragraph in Section~\ref{sec:fullpanel} uses full-panel intervals; these should be
+harmonised.
+\normalsize
+
+\newpage
+\appendix
+\section*{Appendix placeholders (labels only, tables live in the table document)}
+\footnotesize
+\begin{itemize}\itemsep2pt
+\item Saturation ladder \phantomsection\label{tab:ladder_wb}\label{tab:ladder_trend}
+\item Sun--Abraham event study \phantomsection\label{tab:sunab}
+\item Event study (TWFE), tabulated \phantomsection\label{tab:eventstudy_twfe}
+\item Full panel incl.\ HK/Macao \phantomsection\label{tab:fullpanel_inclHKMO}
+\item Collapsed panel incl.\ HK/Macao \phantomsection\label{tab:collapsed_inclHKMO}
+\item Wild cluster bootstrap, all variants \phantomsection\label{tab:wcb}
+\item Permutation test, all variants \phantomsection\label{tab:perm}
+\item Full-panel robustness battery \phantomsection\label{tab:robust-full}
+\item APEC vs.\ OECD green definition \phantomsection\label{tab:apec}
+\item CO$_2$ intensity (Shapiro) \phantomsection\label{tab:co2}
+\item Sub-indices, full panel \phantomsection\label{tab:subindex_fullpanel}
+\item Minimum detectable effects \phantomsection\label{tab:mde}
+\item C-prod-HS4, full table \phantomsection\label{tab:cprodhs4}
+\item CEM destinations, full table \phantomsection\label{tab:cem}
+\item Deep vs.\ shallow, full table \phantomsection\label{tab:deepshallow}
+\end{itemize}
+\normalsize
+
+\end{document}

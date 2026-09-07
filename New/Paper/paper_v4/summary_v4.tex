@@ -1,0 +1,296 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=2.6cm}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage[bottom]{footmisc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{threeparttable}
+\usepackage{float}
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection.}{0.6em}{}
+\setlength{\parskip}{2pt}
+
+\title{\textbf{Do Environmental Provisions in Trade Agreements\\Reshape Export Composition?}\\[8pt]
+\large Extended summary}
+\author{Edoardo Vitella\\\small University of Trento \& Free University of Bozen}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+\vspace{-18pt}
+
+% ---------------------------------------------------------------------------
+\section{The question}
+
+Nearly every trade agreement signed in the past two decades contains environmental language, and
+the number of such provisions has grown steadily. Whether any of it changes what countries actually
+trade is close to an open question. The evidence we have comes almost entirely from gravity models
+on aggregate bilateral flows, which can tell us whether trade between two countries grew, but not
+whether its composition shifted --- whether a country began exporting more environmental goods and
+fewer pollution-intensive ones.
+
+This paper asks that second question for the world's largest exporter. Between 2000 and 2015 China
+signed fourteen preferential trade agreements covering twenty-five destination economies, with
+environmental content ranging from a handful of generic cooperation clauses to a dedicated chapter.
+Did the agreements with more environmental content tilt Chinese exports toward green goods and away
+from dirty ones?
+
+The answer is no on the green margin, with a bound attached, and inconclusive on the dirty margin.
+The more useful contribution is not the null itself but what produces it: the environmental content
+of these particular agreements consists almost entirely of language with no mechanism through which
+it could move a product mix. The null is what the existing literature's own heterogeneity results
+predict for a sample composed this way.
+
+% ---------------------------------------------------------------------------
+\section{Setting and data}
+
+\textbf{Trade data.} The universe of Chinese customs transactions, 2000--2015: 45.8 million
+firm--HS6--destination--year observations covering 462,651 exporting firms. The granularity is what
+makes the design possible --- the same firm can be observed shipping the same product to a
+destination covered by an agreement and to one that is not, in the same year.
+
+\textbf{Environmental content.} Two independent codings, used in parallel throughout. The World Bank
+Deep Trade Agreements database gives a count of environmental provisions in force with each
+destination at each date, together with counts for the non-environmental policy areas. The TREND
+database codes environmental provisions at finer granularity, with sub-indices for green market
+access, enforcement, hard and soft obligations, and regulatory space. Using two codings guards
+against the idiosyncrasies of either.
+
+\textbf{Product classification.} Green goods follow the OECD Combined List of Environmental Goods;
+dirty goods follow the standard pollution-intensity taxonomy mapping polluting industries to HS6
+codes. Everything else is neutral and serves as the within-cell comparison group.
+
+\textbf{Samples.} Hong Kong and Macao are excluded from the main estimates. Both have Closer Economic
+Partnership Arrangements with the mainland, and both are entrep\^ots: a large share of what the data
+record as Chinese exports to them is transshipped onward, so the recorded destination and the actual
+final market differ systematically. They account for 24.4 percent of treated observations and 50.1
+percent of treated export value, and results including them are reported separately. After iterative
+removal of singleton observations the estimation sample is 21,519,511 observations with 225
+destination clusters, 23 of them treated.
+
+% ---------------------------------------------------------------------------
+\section{Empirical strategy}
+
+\subsection*{Why composition rather than levels}
+
+The obvious specification --- regress log exports on environmental depth --- cannot work here, for a
+structural reason rather than an empirical one. Any fixed-effect structure that takes bilateral
+confounding seriously requires a destination--year intercept, and that intercept absorbs everything
+that varies at the destination--year level, environmental depth included. With thirteen distinct
+agreement profiles and almost no within-destination change over time, ``having deep environmental
+content'' and ``having a deep agreement'' are empirically the same variable.
+
+An interaction survives the destination--year intercept because it varies within the destination--year
+cell, across products. That is why the design is built on composition: it compares how green and dirty
+products respond relative to neutral ones, inside the same firm--destination--year.
+
+\subsection*{The specification}
+
+\begin{equation*}
+\ln x_{fpdt} = \beta_1\, EP_{dt}\!\times\!g_p + \beta_2\, EP_{dt}\!\times\!b_p
++ \gamma_1\, TD_{dt}\!\times\!g_p + \gamma_2\, TD_{dt}\!\times\!b_p
++ \theta_{fpd} + \theta_{fdt} + \theta_{pt} + \varepsilon_{fpdt}
+\end{equation*}
+
+$g_p$ and $b_p$ are the green and dirty indicators, $EP_{dt}$ environmental depth, $TD_{dt}$
+non-environmental agreement depth. The three sets of absorbed effects do different work.
+$\theta_{fpd}$ removes time-invariant features of each firm--product--market relationship.
+$\theta_{fdt}$ is what drives identification: it removes everything time-varying and bilateral ---
+the agreement itself, demand shocks, exchange rates, the non-random selection of partners --- leaving
+only the differential response of green and dirty products within the cell. $\theta_{pt}$ removes
+global product-level shocks such as the worldwide expansion of the solar market.
+
+Because environmental depth and general agreement depth are highly correlated, every specification
+controls separately for non-environmental depth, and the paper reports every result under two
+independent measures of it: the World Bank count and the DESTA index. This turns out to matter, and
+Section~5 explains why.
+
+\subsection*{Inference}
+
+Twenty-three treated destinations, sharing thirteen distinct agreement profiles, because the ten
+ASEAN partners enter through a single agreement. Under those conditions cluster-robust standard
+errors over-reject, sometimes badly. Every estimate is therefore reported with a wild cluster
+bootstrap $p$-value ($B = 9{,}999$), which is the reference inference, and the collapsed-panel
+estimates additionally with a permutation $p$-value.
+
+The permutation test is worth describing because it does something the bootstrap does not. The
+environmental profile of each agreement --- its depth and the years in which it takes effect --- is
+detached from its destination and reassigned at random among the treated destinations; the model is
+re-estimated; the exercise is repeated a thousand times. The resulting $p$-value is the share of
+random reassignments producing a coefficient at least as large as the observed one. It answers the
+question: would this number have appeared if we had simply relabelled which of these countries signed
+environmental chapters?
+
+% ---------------------------------------------------------------------------
+\section{Results}
+
+\subsection*{First, the fixed effects earn their keep}
+
+Estimating the same interactions under progressively richer fixed-effect structures produces a
+striking pattern. Under any structure that lacks an absorber with both a destination and a time
+dimension, the interactions are frequently positive and sometimes significant: the World Bank dirty
+interaction reaches $+0.0064$ ($p = 0.019$), the TREND green interaction $+0.0021$ ($p = 0.021$,
+column~3).
+Both margins moving in the same direction is not a composition effect --- it is the growth of Chinese
+exports to partner countries around the entry into force of an agreement, loading onto whichever
+interaction happens to be correlated with agreement timing.
+
+Adding firm--destination--year effects removes it. The World Bank dirty coefficient goes from
+$+0.0064$ to $-0.0044$ and the TREND green coefficient from $+0.0018$ to $-0.0001$, with the
+significance disappearing alongside the sign. We cannot identify which destination-specific shock was
+responsible, only that it had a destination--time structure, since absorbing that structure is what
+eliminates it.
+
+\subsection*{The green margin: a bounded null}
+
+On the full panel the green interaction is $-0.0023$ (s.e.\ 0.0039) with the World Bank index and
+$-0.0001$ (0.0010) with TREND. Changing the depth control moves the third decimal. The joint $F$-test
+on all four composition interactions gives $p = 0.31$ and $p = 0.71$. Quantity and unit value are
+equally silent, which matters more than it appears: it rules out the possibility that a volume
+response and a price response are cancelling inside the value aggregate. Neither channel moves.
+
+The null holds when the comparison group is replaced three separate times --- comparing products only
+within the same HS4 heading, matching destinations on pre-treatment observables, and dropping
+untreated destinations altogether so that identification comes from differences in depth among
+partners. Across the twelve green cells of the three subsamples the coefficient stays between $-0.0023$ and
+$+0.0005$ and its bootstrap $p$-value never falls below 0.58; including the two reference rows, the
+range widens only to $[-0.0046, +0.0018]$ and the lowest $p$-value is 0.39.
+
+The bound is what makes this more than a failure to reject. The 95 percent bootstrap interval runs
+from $-0.0353$ to $+0.0355$ per World Bank provision. Any effect larger than about three percent per
+provision is ruled out at 95 percent confidence; anything smaller, the design cannot see. The
+statement the paper defends is a bound, not an absence.
+
+\subsection*{The dirty margin: negative everywhere, decisive nowhere}
+
+The dirty coefficient is negative in almost every specification and its magnitude is stable. Its
+statistical standing is not, and the reason is instructive.
+
+Under the World Bank measure of general agreement depth the full-panel coefficient is $-0.0044$ with
+an asymptotic $p$ of 0.052, which the bootstrap raises to 0.19. Under the DESTA measure the same
+coefficient is $-0.0056$ with asymptotic $p$ of 0.039 and bootstrap $p$ of 0.049. Same data, same
+fixed effects, same sample. What differs is collinearity: net of the fixed effects, environmental
+depth correlates 0.959 with the World Bank control and 0.891 with DESTA. The World Bank control
+absorbs nearly the same variation as the regressor of interest, leaving a wide standard error; DESTA
+overlaps less and the standard error narrows. Nothing about the estimated effect changes between the
+two --- only how much of it the design can resolve.
+
+The permutation test settles what the bootstrap cannot, because it reassigns whole agreement
+profiles rather than partialling out a control and therefore gives the same verdict under both depth
+measures. On the baseline
+it returns $p = 0.278$ for the dirty coefficient and $p = 0.597$ for green; under DESTA, 0.146 and
+0.480. A coefficient that would arise a quarter of the time from randomly relabelling which of these
+destinations signed environmental chapters is not evidence about environmental content.
+
+A leave-one-out exercise sharpens the diagnosis, and not in the usual way. The point estimate is
+remarkably stable, sitting between $-0.0097$ and $-0.0133$ across all 23 exclusions. What is fragile
+is precision: dropping Australia moves the coefficient by 13 percent but nearly triples its standard
+error, from 0.0030 to 0.0087; dropping Korea doubles it. These two destinations are not outliers
+pulling the estimate --- they supply the variation that identifies it. And which of the two is
+pivotal depends on the depth control: under DESTA it is Korea rather than Australia.
+
+\subsection*{Between firms or within them?}
+
+Aggregating the data to product--destination--year cells and re-estimating with the corresponding
+fixed effects yields a dirty coefficient of $-0.0119$ against $-0.0044$ in the firm-level panel, a
+factor of 2.7. The two specifications differ by exactly one thing --- whether the firm dimension is
+in the absorbers --- so the gap measures it: $(0.0119-0.0044)/0.0119 = 0.63$. Roughly three-fifths of
+the aggregate dirty association is a change in \emph{which firms} export, not reallocation inside a
+given firm.
+
+This reconciles the present result with recent work on Chinese customs data reporting that
+environmental provisions reduce dirty exports and raise green ones. That literature identifies from
+variation across firms and destinations; the specification here removes it. The two are not in
+conflict once the estimands are stated.
+
+\input{tab_summary}
+
+\subsection*{Does the content of the clauses matter?}
+
+The natural objection to any null on an aggregate index is dilution. The indices add up every
+environmental provision regardless of what it does, and most of what they add up is cooperation
+language with no channel to a product mix.
+
+The dilution is severe. Of 150 World Bank provision slots checked across the treated destinations,
+8 --- 5.3 percent --- fall in sub-indices with a trade mechanism. In TREND it is 4 of 437, or 0.9
+percent. A binding environmental obligation appears in exactly one of the fourteen agreements, the
+2015 agreement with Korea. The two World Bank sub-indices with a trade mechanism are non-zero in only
+three destination--years and always in the same proportion, which makes them perfectly collinear and
+impossible to separate.
+
+Replacing the aggregate index with one sub-index at a time reproduces the aggregate pattern: nothing
+on the green margin anywhere, and on the dirty margin a marginally negative coefficient on
+enforcement provisions that rests on asymptotic inference alone.
+
+The conclusion is negative and it is the honest one. This sample cannot distinguish between ``there
+is no effect'' and ``there are no provisions capable of producing one''. What it can establish is
+that the two are observationally equivalent here.
+
+\subsection*{Dynamics and the extensive margin}
+
+Pre-treatment coefficients in the event study are flat on both margins. A mild negative drift for
+green products late in the post-period is identified only by the cohorts that entered by 2010,
+dominated by the two early ones (Bangkok 2002 and ASEAN 2005), and disappears
+under the Sun--Abraham interaction-weighted estimator, whose aggregated effects are $-0.042$
+($p = 0.27$) on green and $+0.073$ ($p = 0.28$) on dirty. Allowing destination-specific trends over
+the full sample period turns the TREND green interaction significantly negative --- the only
+green coefficient in the robustness battery to survive the bootstrap --- but the green gap was
+already rising before entry into force, which makes a pre-existing trend the more economical account.
+
+Poisson estimation on a zero-filled product--destination--year grid finds no green trade creation at
+the extensive margin: $+0.0015$ ($p = 0.74$) with the World Bank index and $+0.0001$ ($p = 0.95$)
+with TREND.
+
+% ---------------------------------------------------------------------------
+\section{Interpretation}
+
+The result is not that environmental provisions cannot affect trade. It is that these provisions, in
+these agreements, did not.
+
+The literature that finds effects finds them in the same place. Brandi et al.\ (2020) report that
+only provisions with a direct trade mechanism move anything: liberal provisions raise green export
+shares, restrictive ones reduce dirty exports, and general cooperation language does nothing. Abman
+et al.\ (2024) find that forest-preservation clauses offset the deforestation that typically follows
+an agreement --- again, a specific clause with an identifiable mechanism. China's agreements of this
+period are, on the same coding, overwhelmingly cooperation-only.
+
+So the null is the predicted outcome of the existing literature's own heterogeneity findings, applied
+to a sample where the treatment lacks the specificity that drives effects elsewhere. The policy
+reading is direct: a chapter in an agreement is not the instrument. What the chapter contains is.
+
+There is also a methodological contribution, arrived at reluctantly. With treatment concentrated
+across roughly a dozen agreements, an asymptotically overwhelming composition effect ($p < 0.001$)
+can dissolve entirely under bootstrap and permutation inference. Applying those tests as the primary
+mode of inference rather than as a robustness appendix should be standard for this class of design.
+
+% ---------------------------------------------------------------------------
+\section{What the paper cannot say}
+
+Four limitations, stated plainly.
+
+\textbf{Levels.} The design speaks only to composition. Whether agreements with more environmental
+content changed aggregate trade with those partners is not identified here, and cannot be: a
+destination--year intercept absorbs the question along with the variable.
+
+\textbf{The dirty margin is genuinely unresolved.} The coefficient is negative almost everywhere and
+its statistical standing depends on a modelling choice. We read it as indistinguishable from a
+placebo on the strength of the permutation test, but a dose--response interpretation --- the effect is
+real and concentrated in the two destinations with the deepest environmental coverage --- is not ruled
+out by the evidence assembled here.
+
+\textbf{Provision content.} With thirteen distinct agreement profiles and perfect collinearity among
+the trade-mechanism sub-indices, the claim that content matters is an inference across studies rather
+than something this design demonstrates.
+
+\textbf{Tariffs and firm entry.} The preferential tariff rate was not obtainable from the customs
+data; the MFN rate serves as a control in the robustness battery only, and the headline estimates do
+not use it. And the extensive margin is probed at the product--destination level: a new firm
+beginning to export a green product that other Chinese firms already ship to that destination is not
+detected.
+
+\end{document}

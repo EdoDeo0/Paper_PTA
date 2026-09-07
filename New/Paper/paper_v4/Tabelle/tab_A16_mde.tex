@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{How large an effect would the design need to detect it}
+\label{tab:mde}
+\begin{threeparttable}
+\begin{tabular}{llcccc}
+\toprule
+Index & Margin & Asymptotic & Minimum detectable & Bootstrap CI & Bootstrap CI \\
+ & & std.\ error & effect (1 s.d.) & half-width (1 s.d.) & (per unit) \\
+\midrule
+WB & Green & 0.0070 & 4.64\% & 5.90\% & [-1.85\%, 3.18\%] \\
+WB & Dirty & 0.0030 & 1.97\% & 2.40\% & [-1.84\%, 0.18\%] \\
+TREND & Green & 0.0018 & 4.16\% & 3.62\% & [-0.18\%, 0.71\%] \\
+TREND & Dirty & 0.0016 & 3.65\% & 3.53\% & [-0.32\%, 0.54\%] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Estimation sample: collapsed panel, excl.\ HK/Macao variant. Standard deviation of regressors computed on the effective sample and weighted. Bootstrap intervals from the \textsc{Stata} implementation.
+\item \textbf{Why this table matters.} A null result can mean two very different things: either the effect does not exist, or it exists but is too small for the data to distinguish it from noise. This table says which.
+\item \textbf{How to read it.} The minimum detectable effect (column 4) is the threshold below which the design is uninformative, computed from the asymptotic method (2.8 $\times$ standard error). Column 5 reports the half-width of the wild cluster bootstrap confidence interval: this is not an 80\%-power MDE (which would be $1.43\times$ larger), but the bootstrap margin of error. The informative bound for the precision estimate is the [bootstrap CI] column: on the green margin, it rules out effects larger than about 3\% per provision at 95\% confidence.
+\item This yields a more precise statement of the result: not ``we find no effect,'' but ``we can rule out effects larger than this threshold.''
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

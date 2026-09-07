@@ -1,0 +1,57 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Collapsed panel including Hong Kong and Macao --- triple-difference estimates}
+\label{tab:collapsed_inclHKMO}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+ & WB EP depth ($EP^{WB}_{dt}$) & TREND EP count ($EP^{TR}_{dt}$) \\
+\cmidrule(lr){2-2}\cmidrule(lr){3-3}
+ & (1) & (2) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{val}_{fpdt}$ \\
+\midrule
+\multicolumn{3}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & 0.0017 & 0.0018 \\
+ & (0.0091) & (0.0018) \\[2pt]
+\quad Asymptotic $p$ & [0.849] & [0.337] \\
+\quad Bootstrap $p$ & [0.825] & [0.414] \\
+\quad Permutation $p$ & [0.897] & [0.468] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0189*** & $-$0.00001 \\
+ & (0.0061) & (0.0015) \\[2pt]
+\quad Asymptotic $p$ & [0.002] & [0.995] \\
+\quad Bootstrap $p$ & [0.005] & [0.995] \\
+\quad Permutation $p$ & [0.146] & [0.996] \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,769,187 & 3,769,187 \\
+Clusters ($d$) & 230 & 230 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{3}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0067 & 0.0002 \\
+ & (0.0048) & (0.0020) \\[2pt]
+\quad Asymptotic $p$ & [0.157] & [0.931] \\
+\quad Bootstrap $p$ & [0.484] & [0.949] \\
+\quad Permutation $p$ & [0.465] & [0.929] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0082 & 0.0008 \\
+ & (0.0043) & (0.0015) \\[2pt]
+\quad Asymptotic $p$ & [0.055] & [0.575] \\
+\quad Bootstrap $p$ & [0.195] & [0.635] \\
+\quad Permutation $p$ & [0.384] & [0.788] \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,759,733 & 3,759,733 \\
+Clusters ($d$) & 230 & 230 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Collapsed panel (product$\times$destination$\times$period cells, analytic weights), including Hong Kong and Macao. Dependent variable: log export value ($\ln x^{val}_{fpdt}$). All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. Permutation $p$-values (treated-only design, $R = 1{,}000$). $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

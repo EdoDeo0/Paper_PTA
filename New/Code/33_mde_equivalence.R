@@ -9,8 +9,11 @@
 ## collassato, pesato per n, incluse le mai-trattate con EP=0).
 ##
 ## Input:  New/Data/Collapsed/panel_pdt_collapsed.fst (da 10)
-##         New/Output/TripleDiff/Tables/tripledd_collapsed.csv (da 16, SE asintotici)
-##         New/Output/TripleDiff/Tables/wcb_collapsed.csv (da 20, IC wild bootstrap)
+##         New/Output/TripleDiff/Tables_Stata/tripledd_collapsed.csv (SE asintotici)
+##         New/Output/TripleDiff/Tables_Stata/wcb_collapsed.csv (IC wild bootstrap)
+##         Fonte Stata: il paper dichiara che tutti i numeri riportati sono quelli
+##         Stata. I gemelli in Tables/ (versione R) divergono sull'IC bootstrap
+##         (errore Monte Carlo) e contano 236 cluster invece di 228.
 ## Output: New/Output/Diagnostics/33_mde_equivalence.md
 
 ## --- Setup ---------------------------------------------------------------
@@ -22,8 +25,8 @@ source(here("New/Code/_sample_config.R"))
 threads_fst(1)
 
 CACHE_FST <- out_path(here("New/Data/Collapsed/panel_pdt_collapsed.fst"))
-TRIPLEDD  <- out_path(here("New/Output/TripleDiff/Tables/tripledd_collapsed.csv"))
-WCB       <- out_path(here("New/Output/TripleDiff/Tables/wcb_collapsed.csv"))
+TRIPLEDD  <- out_path(here("New/Output/TripleDiff/Tables_Stata/tripledd_collapsed.csv"))
+WCB       <- out_path(here("New/Output/TripleDiff/Tables_Stata/wcb_collapsed.csv"))
 OUT_MD    <- out_path(here("New/Output/Diagnostics/33_mde_equivalence.md"))
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 
