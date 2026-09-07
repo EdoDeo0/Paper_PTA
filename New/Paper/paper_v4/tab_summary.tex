@@ -1,0 +1,39 @@
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{The result in one table (log export value, World Bank depth control)}
+\label{tab:summary}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB EP depth} & \multicolumn{2}{c}{TREND EP count} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Sample / design & $\times$ green & $\times$ dirty & $\times$ green & $\times$ dirty \\
+\midrule
+Full panel (reference)      & $-$0.0023 & $-$0.0044 & $-$0.0001 & $-$0.0009 \\
+\quad bootstrap $p$         & [0.686] & [0.185] & [0.931] & [0.177] \\
+\addlinespace[3pt]
+Collapsed panel             & $-$0.0046 & $-$0.0119 & $+$0.0018 & $+$0.0004 \\
+\quad bootstrap $p$         & [0.649] & [0.072] & [0.390] & [0.857] \\
+\quad permutation $p$       & [0.597] & [0.278] & [0.160] & [0.817] \\
+\addlinespace[3pt]
+C-prod-HS4                  & $-$0.0009 & $+$0.0066 & $+$0.0005 & $+$0.0024 \\
+\quad bootstrap $p$         & [0.860] & [0.435] & [0.730] & [0.734] \\
+\addlinespace[3pt]
+CEM-matched destinations    & $-$0.0023 & $-$0.0041 & $-$0.0006 & $-$0.0011 \\
+\quad bootstrap $p$         & [0.610] & [0.251] & [0.609] & [0.204] \\
+\addlinespace[3pt]
+Deep vs.\ shallow (partners only) & $-$0.0022 & $-$0.0034 & $-$0.0004 & $-$0.0006 \\
+\quad bootstrap $p$         & [0.585] & [0.499] & [0.751] & [0.739] \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Each cell is a separate estimation. Hong Kong and Macao excluded throughout; all
+specifications control for non-environmental World Bank depth interacted with both product types.
+Wild cluster bootstrap, $B = 9{,}999$, clustered by destination. Permutation $p$-values reported for
+the collapsed panel, where the treated-only design is feasible. No stars: with this many designs,
+star-counting invites exactly the selective reading the table is meant to prevent. The equivalent
+table under the DESTA depth control is in the paper; the only cells that move are the dirty ones.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

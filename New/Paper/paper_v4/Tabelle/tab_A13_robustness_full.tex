@@ -1,0 +1,75 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Robustness on the full panel: sample, control, and dependent-variable variants}
+\label{tab:robust-full}
+\begin{threeparttable}
+\begin{tabular}{lccrc}
+\toprule
+Variant & $\times$ Green & $\times$ Dirty & Observations & $R^2$ \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel A --- WB index}} \\
+\addlinespace
+Additional controls$^{a}$ & -0.00023 & -0.00600$^{**}$ & 19,286,638 & 0.8736 \\
+ & (0.00296) & (0.00259) & & \\
+ & [0.935] & [0.022] & & \\
+\addlinespace
+Excluding the ASEAN cohort (11 destinations) & -0.00252 & -0.00438$^{*}$ & 19,236,090 & 0.8719 \\
+ & (0.00360) & (0.00223) & & \\
+ & [0.482] & [0.051] & & \\
+\addlinespace
+Including Hong Kong and Macao & -0.00089 & -0.00409$^{*}$ & 23,560,110 & 0.8706 \\
+ & (0.00360) & (0.00243) & & \\
+ & [0.804] & [0.094] & & \\
+\addlinespace
+Common-support products only & -0.00225 & -0.00435$^{*}$ & 21,519,197 & 0.8734 \\
+ & (0.00392) & (0.00223) & & \\
+ & [0.566] & [0.052] & & \\
+\addlinespace
+PTA partners only, deep vs.\ shallow & -0.00222 & -0.00344 & 5,262,293 & 0.8839 \\
+ & (0.00351) & (0.00289) & & \\
+ & [0.534] & [0.246] & & \\
+\addlinespace
+Green share in firm's export basket & \multicolumn{2}{c}{-0.00010} & 13,345,132 & 0.8510 \\
+ & \multicolumn{2}{c}{(0.00015)} & & \\
+ & \multicolumn{2}{c}{[0.502]} & & \\
+\midrule
+\multicolumn{5}{l}{\textit{Panel B --- TREND index}} \\
+\addlinespace
+Additional controls$^{a}$ & +0.00039 & -0.00085 & 19,286,638 & 0.8736 \\
+ & (0.00091) & (0.00068) & & \\
+ & [0.669] & [0.209] & & \\
+\addlinespace
+Excluding the ASEAN cohort (11 destinations) & -0.00102 & -0.00183$^{**}$ & 19,236,090 & 0.8719 \\
+ & (0.00102) & (0.00072) & & \\
+ & [0.318] & [0.012] & & \\
+\addlinespace
+Including Hong Kong and Macao & -0.00011 & -0.00101 & 23,560,110 & 0.8706 \\
+ & (0.00100) & (0.00063) & & \\
+ & [0.913] & [0.112] & & \\
+\addlinespace
+Common-support products only & -0.00011 & -0.00090 & 21,519,197 & 0.8734 \\
+ & (0.00099) & (0.00062) & & \\
+ & [0.924] & [0.153] & & \\
+\addlinespace
+PTA partners only, deep vs.\ shallow & -0.00036 & -0.00061 & 5,262,293 & 0.8839 \\
+ & (0.00100) & (0.00101) & & \\
+ & [0.721] & [0.549] & & \\
+\addlinespace
+Green share in firm's export basket & \multicolumn{2}{c}{-0.00006$^{**}$} & 13,345,132 & 0.8510 \\
+ & \multicolumn{2}{c}{(0.00003)} & & \\
+ & \multicolumn{2}{c}{[0.043]} & & \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Baseline variant (excl.\ HK/Macao, TotalDepth control). Estimated with \texttt{reghdfe}; fixed effects and clustering as in the main specification, except where noted.
+\item $^{a}$ \textit{Additional controls}: applied tariff, product-level exporter concentration, and antidumping exposure.
+\item \textit{ASEAN cohort}: the ten members of the China--ASEAN agreement plus Timor-Leste, which the customs data group with them.
+\item \textit{Common support}: only products exported to both agreement and non-agreement destinations are retained. For the others, no observed comparison exists.
+\item \textit{Green share in basket}: the dependent variable changes. Instead of export value, it is the share of the firm's revenue from green products to that destination. Fixed effects: firm$\times$destination and year.
+\item Standard error in parentheses, $p$-value in brackets. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

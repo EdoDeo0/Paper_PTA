@@ -1,5 +1,43 @@
 # Session Log — Paper_PTA
 
+## 2026-09-07 (sessione 19) — Audit di verifica dei fix su paper_v4
+
+**Ruolo:** revisore indipendente dei 34 fix applicati stamattina (roadmap 2026-09-07). Solo lettura: nessun file del paper, del codice o dei dati toccato; nessuna stima rieseguita.
+
+**Metodo:** diff completo contro il backup pre-fix (scratchpad sessione e966c99b), numeri nuovi confrontati coi CSV Stata (Tables_Stata/ dove esistono, altrimenti i CSV scritti da .do), ricompilazione e confronto del log col log del backup, rendering delle pagine sospette.
+
+**Output:** `correspondence/audit/2026-09-07b_audit_verifica_paper_v4.md`.
+
+**Esito in breve:** C1–C8 chiusi (C5 con aritmetica sbagliata: 3.2%/0.157 = un quinto, il "quarto" viene dal bound full panel 3.55%). Warning: W3, W6, W9, W15 chiusi male. Quattro regressioni: (1) Tab. 9 e Tab. A13 sforano la pagina (`Float too large`, assente nel backup; A13 ha una riga di nota tagliata); (2) nota di A16 dichiara "Stata" ma 3 righe su 4 sono ancora R; (3) "0.90 with WB non-environmental depth" senza fonte, ricalcolo 0.70; (4) riga "Cooperation (TREND)" nella tabella di composizione mai costruita né stimata. La colonna semi-ampiezza di A16 si ricalcola senza il .fst usando la SD del report del 12/8: 6.00 / 2.40 / 3.60 / 3.56 (le stime del report di implementazione erano sbagliate nella premessa).
+
+**Stato:** paper non ancora circolabile; lo diventa con le 6 correzioni elencate in §7 del report (30–45 min di editing .tex).
+
+**Da fare (prossima sessione):** applicare le 6 correzioni di §7 (Tab. 9/A13 ridimensionate; A16 con IC e semi-ampiezze Stata; frase Brandi in App. MDE; togliere "0.90" in §5.4 e la riga "Cooperation"; restringere la frase W3 in 3 punti); ricompilare e controllare anche `Float too large`, non solo `Overfull`. Blocco C (K1–K4) e N6/N7 restano aperti.
+
+## 2026-09-07 (sessione 18) — Implementazione roadmap audit su paper_v4
+
+- **Output**: `correspondence/audit/2026-09-07_implementazione_roadmap.md`. Applicati **34 fix su 34**: blocco A (C1–C8), blocco B (W1–W19), blocco D (N1, N4, N8, N9), più K5 e K6. Nessuna ristima, nessun R/Stata, nessun commit.
+- **C5, scelta**: `paper_v3/Tabelle/tab_20_brandi.tex` contiene il benchmark (0.157 log points, rapporto 1/4), quindi **strada 1** — frase reinserita in App. MDE e claim "un quarto" mantenuto in intro/conclusione.
+- **W9, scelta**: fonte del conteggio "binding obligation" **trovata** in `Data/TREND/TREND_Variable_Mapping.csv` → `X5.01.01.Binding.obligations`, non-nulla in 1 riga su 15 (China–Korea 2015). Panel B di `tab:mechanism` **resta**, con la variabile indicata in nota; denominatore 14 e quota 7.1%.
+- **Compilazioni**: dopo A → 75 pagine; finale → 75 pagine, 0 `undefined`, 0 `multiply defined`, 0 warning biber. Sforamenti di margine di A5/A6/A13 azzerati (erano 63/65/28pt); restano 4 overfull >10pt, tutti preesistenti. `summary_v4.tex` ricompilato: 7 pagine.
+- **Effetto collaterale**: l'etichetta lunga imposta dal FIX C2 creava un overfull da 40.9pt in Tab. 5; risolto mandandola a capo senza cambiarne il testo.
+- **Non corretti, annotati nel report**: nota 2 di `tab_A07` usa ancora la vecchia notazione `EP × g_p`; `33_mde_equivalence.R` legge ancora il CSV R mentre Tab. A16 ora riporta i numeri Stata; la spiegazione delle quote verde/dirty tra i due pannelli è sparita con la tabella eliminata da W12.
+- **Follow-up nella stessa sessione**: su richiesta dell'utente chiusi anche i 3 problemi segnalati e non corretti. (1) Nota 2 di `tab_A07` allineata alla notazione `1[t] × g_p` / `t≥5`. (2) `New/Code/33_mde_equivalence.R` ora legge `Tables_Stata/` per WCB **e** per gli SE asintotici (verificato: stessa struttura CSV, SE identici a 10 cifre, `nclust` 228 vs 236 conferma che Stata è la fonte giusta) — l'utente ha autorizzato la modifica al `.R`, esclusa dal mandato iniziale. (3) Reinserita nella nota di `tab:descriptives` la spiegazione delle quote verde/dirty tra i due pannelli. Ricompilato: 75 pagine, 0 undefined, 5 overfull preesistenti.
+- **Residuo noto**: la colonna "Bootstrap CI half-width (1 s.d.)" di Tab. A16 deriva ancora dal calcolo R (~5.90% → ~5.96% per WB green). Non ricalcolabile senza `panel_pdt_collapsed.fst`, che non è nel repo. Da chiudere rieseguendo `33_mde_equivalence.R` quando il `.fst` è disponibile.
+- **Aperto**: blocco C (K1, K2, K3, K4), N6, N7, e il `/audit` di conferma.
+
+---
+
+## 2026-09-07 (sessione 17) — Audit completo paper_v4 (/audit, Mac, Fable 5.1)
+
+- **Output**: `correspondence/audit/2026-09-07_audit_report.md` + `2026-09-07_roadmap_soluzioni.md`. Nessun file in `New/` modificato.
+- **Verdetto**: CONDITIONAL PASS, 7/10. Tutti i numeri delle 28 tabelle tornano con i CSV Stata (unica eccezione: tab_A16 usa il WCB R, −1.77% vs −1.85%). Codice dati/stime senza critici.
+- **8 critici, tutti di testo/tabella, nuovi in v4**: frase troncata fine §4.2; etichetta LOO "High EP depth only" invertita (è *senza* Perù/Svizzera/Corea); nota tab_A07 descrive dose+controllo depth che l'event study non ha; "20 celle verdi tra −0.0023 e +0.0005" falso (collassato −0.0046, p 0.39); "un quarto del benchmark" senza tabella Brandi (tolta in v4); C-prod-HS4 definito in 3 modi; HK "a third of the increase" (è 86%); CEM 13,728,510 stantio (è 13,992,396).
+- **Warning sostanziali**: permutazione permuta anche TD (testo dice "shuffles treatment rather than covariates"); bias under-control applicato solo al verde; 71.5%/0.90/"one binding obligation" non tracciabili (dati: 36%, 0.87); tabella composizione sub-indici non allineata a Tab. 8; tabelle v4 non generate da script; 68.do ramo drop_unmeasured vuoto.
+- **Da fare**: Blocco A della roadmap (2 h) → circolabile; poi B, C (K1 generatore tabelle v4).
+
+---
+
 ## 2026-09-06 (sessione 16) — Audit numerico e correzione TABELLE_DEL_PAPER_v2.tex
 
 - **Richiesta iniziale**: riorganizzare la sezione Results di paper_v3 sulla base del nuovo documento tabelle. Discussione fatta (architettura claim-driven a 7 sottosezioni proposta), **decisione non ancora presa** — vedi punti aperti sotto.

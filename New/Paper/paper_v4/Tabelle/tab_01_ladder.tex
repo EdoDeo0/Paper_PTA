@@ -1,0 +1,52 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Fixed-effects structure and the composition interactions (full panel, log export value)}
+\label{tab:ladder_compact}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) \\
+\midrule
+$EP^{WB}_{dt} \times g_p$ & 0.0018 & 0.0012 & 0.0060 & 0.0050 & $-$0.0023 \\
+ & (0.0050) & (0.0027) & (0.0050) & (0.0037) & (0.0039) \\
+\addlinespace[2pt]
+$EP^{WB}_{dt} \times b_p$ & $-$0.0037 & $-$0.0015 & 0.0058* & 0.0064** & $-$0.0044* \\
+ & (0.0150) & (0.0027) & (0.0031) & (0.0027) & (0.0022) \\
+\addlinespace[5pt]
+$EP^{TR}_{dt} \times g_p$ & $-$0.0013 & 0.0010 & 0.0021** & 0.0018** & $-$0.0001 \\
+ & (0.0010) & (0.0009) & (0.0009) & (0.0008) & (0.0010) \\
+\addlinespace[2pt]
+$EP^{TR}_{dt} \times b_p$ & $-$0.0049*** & 0.00003 & 0.0002 & 0.0009 & $-$0.0009 \\
+ & (0.0015) & (0.0007) & (0.0011) & (0.0008) & (0.0006) \\
+\midrule
+\quad $\theta_{fpd}$ & \checkmark &  & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fpt}$ &  & \checkmark & \checkmark &  &  \\
+\quad $\theta_{pd}$  &  & \checkmark &  &  &  \\
+\quad $\theta_{pt}$  &  &  &  & \checkmark & \checkmark \\
+\quad $\theta_{t}$   & \checkmark &  &  &  &  \\
+\quad $\theta_{fdt}$ &  &  &  &  & \checkmark \\
+\addlinespace[3pt]
+Absorbs destination$\times$time? & No & No & No & No & \textbf{Yes} \\
+\addlinespace[3pt]
+Observations & 29,477,365 & 35,607,036 & 22,927,402 & 29,473,145 & 21,519,511 \\
+Clusters ($d$) & 231 & 232 & 231 & 231 & 225 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Each column is a separate estimation of the composition interactions on the full
+  firm-level panel with a different set of absorbed fixed effects; the dependent variable is log export
+  value throughout. Column~(5) is the reference specification of Table~\ref{tab:fullpanel}, Panel~A,
+  column~(1), reproduced here so the sequence terminates at it. Columns~(1)--(4) differ in observation
+  count because a less saturated fixed-effects structure removes fewer singleton cells. Hong Kong and
+  Macao excluded throughout. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$
+  controls (not shown). Standard errors clustered at the destination level in parentheses.
+  $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item Columns~(1)--(4) contain no fixed effect with both a destination and a time dimension, so
+  destination-specific shocks that move with the timing of an agreement are not absorbed. Column~(5)
+  adds $\theta_{fdt}$. Quantity and unit-value outcomes are reported in Appendix
+  Tables~\ref{tab:ladder_wb} and~\ref{tab:ladder_trend}.
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

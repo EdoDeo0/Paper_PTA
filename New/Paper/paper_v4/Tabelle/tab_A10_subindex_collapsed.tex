@@ -1,0 +1,54 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Collapsed panel --- sub-index decomposition}
+\label{tab:subindex}
+\begin{threeparttable}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & \multicolumn{2}{c}{WB sub-indices} & \multicolumn{5}{c}{TREND sub-indices} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-8}
+ & (1) & (2) & (3) & (4) & (5) & (6) & (7) \\
+ & \shortstack{Green\\Lib.} & \shortstack{Enf.\\DSM} & \shortstack{Green\\Mkt.} & \shortstack{Enf.\\DSM} & Hard & Soft & \shortstack{Reg.\\Space} \\
+\midrule
+\multicolumn{8}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{\text{sub}} \times g_p$ & $-$0.0115 & $-$0.0048 & $-$0.0271 & 0.0042 & 0.0022 & 0.0132 & 0.0242$^{**}$ \\
+                             & (0.0879) & (0.0394) & (0.0303) & (0.0148) & (0.0047) & (0.0121) & (0.0099) \\[6pt]
+$EP_{\text{sub}} \times b_p$ & $-$0.0876$^{*}$ & 0.0067 & $-$0.0491$^{**}$ & $-$0.0052 & $-$0.0013 & 0.0019 & 0.0225$^{***}$ \\
+                             & (0.0483) & (0.0525) & (0.0243) & (0.0140) & (0.0037) & (0.0108) & (0.0086) \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 & 3,681,023 \\
+Clusters ($d$) & 228 & 228 & 228 & 228 & 228 & 228 & 228 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{8}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{\text{sub}} \times g_p$ & $-$0.0141 & $-$0.0105 & $-$0.0290 & 0.0032 & 0.0017 & 0.0132 & 0.0149 \\
+                             & (0.0892) & (0.0280) & (0.0288) & (0.0160) & (0.0047) & (0.0131) & (0.0104) \\[6pt]
+$EP_{\text{sub}} \times b_p$ & $-$0.1001$^{**}$ & $-$0.0197 & $-$0.0543$^{***}$ & $-$0.0086 & $-$0.0023 & $-$0.0015 & 0.0092 \\
+                             & (0.0398) & (0.0343) & (0.0187) & (0.0115) & (0.0029) & (0.0101) & (0.0075) \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 & 3,677,333 \\
+Clusters ($d$) & 228 & 228 & 228 & 228 & 228 & 228 & 228 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Collapsed panel (HS6--destination--year cells), excluding Hong Kong and Macao.
+  Dependent variable: mean log export value ($\bar{y}_{pdt}$), weighted by cell size.
+  Each column estimates a separate model replacing the aggregate EP index with one sub-index;
+  the non-environmental depth control ($TD_{dt} \times g_p$ and $TD_{dt} \times b_p$) is included in all specifications but not shown.
+  Fixed effects: product-destination ($\theta_{pd}$), destination-year ($\theta_{dt}$), product-year ($\theta_{pt}$).
+  Standard errors clustered at the destination level in parentheses.
+  $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$.
+\item WB sub-indices: (1)~Green Liberalization; (2)~Enforcement \& DSM.
+  TREND sub-indices: (3)~Green Market Access; (4)~Enforcement \& DSM; (5)~Hard obligations;
+  (6)~Soft obligations; (7)~Regulatory Space.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

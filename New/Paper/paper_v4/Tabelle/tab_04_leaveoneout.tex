@@ -1,0 +1,59 @@
+\begin{table}[p]
+\centering
+\scriptsize
+\caption{Leave-one-out: EP$\times$dirty coefficient stability across 23 treated destinations}
+\label{tab:loo_new}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB depth control} & \multicolumn{2}{c}{DESTA depth control} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Excluded destination & Excl.\ HK/Macao & Incl.\ HK/Macao & Excl.\ HK/Macao & Incl.\ HK/Macao \\
+ & (1) & (2) & (3) & (4) \\
+\midrule
+\textit{None (baseline)}         & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0113^{***}$ & $-0.0082^{*}$  \\
+\textit{None, extended dirty}    & $-0.0121^{***}$ & $-0.0191^{***}$ & $-0.0107^{***}$ & $-0.0071$      \\
+\midrule
+\multicolumn{1}{@{}p{3.2cm}@{}}{\textit{Excluding the three deepest (Peru, Switzerland, Korea)}} & $-0.0271^{**}$  & $-0.0456^{***}$ & $-0.0161$       & $-0.0164$      \\
+\midrule
+Bangladesh     & $-0.0118^{***}$ & $-0.0188^{***}$ & $-0.0113^{***}$ & $-0.0082^{*}$  \\
+Brunei         & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0114^{***}$ & $-0.0082^{*}$  \\
+Myanmar        & $-0.0118^{***}$ & $-0.0188^{***}$ & $-0.0112^{***}$ & $-0.0081^{*}$  \\
+Cambodia       & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0112^{***}$ & $-0.0081^{*}$  \\
+India          & $-0.0120^{***}$ & $-0.0190^{***}$ & $-0.0115^{***}$ & $-0.0084^{**}$ \\
+Indonesia      & $-0.0119^{***}$ & $-0.0190^{***}$ & $-0.0119^{***}$ & $-0.0087^{**}$ \\
+Laos           & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0113^{***}$ & $-0.0082^{*}$  \\
+Malaysia       & $-0.0124^{***}$ & $-0.0195^{***}$ & $-0.0110^{***}$ & $-0.0076^{*}$  \\
+Pakistan       & $-0.0114^{***}$ & $-0.0183^{***}$ & $-0.0106^{***}$ & $-0.0056$      \\
+Philippines    & $-0.0118^{***}$ & $-0.0189^{***}$ & $-0.0115^{***}$ & $-0.0083^{*}$  \\
+Singapore      & $-0.0098^{**}$  & $-0.0166^{***}$ & $-0.0128^{***}$ & $-0.0100^{**}$ \\
+South Korea    & $-0.0097^{*}$   & $-0.0225^{**}$  & $-0.0104$       & $-0.0085$      \\
+Sri Lanka      & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0114^{***}$ & $-0.0082^{*}$  \\
+Thailand       & $-0.0120^{***}$ & $-0.0189^{***}$ & $-0.0115^{***}$ & $-0.0082^{*}$  \\
+Vietnam        & $-0.0122^{***}$ & $-0.0192^{***}$ & $-0.0112^{***}$ & $-0.0080^{*}$  \\
+Timor-Leste    & $-0.0119^{***}$ & $-0.0189^{***}$ &                 &                \\
+Iceland        & $-0.0119^{***}$ & $-0.0189^{***}$ & $-0.0112^{***}$ & $-0.0081^{*}$  \\
+Switzerland    & $-0.0133^{***}$ & $-0.0209^{***}$ & $-0.0115^{***}$ & $-0.0084^{*}$  \\
+Chile          & $-0.0121^{***}$ & $-0.0191^{***}$ & $-0.0104^{***}$ & $-0.0071$      \\
+Costa Rica     & $-0.0114^{***}$ & $-0.0185^{***}$ & $-0.0109^{***}$ & $-0.0076^{*}$  \\
+Peru           & $-0.0133^{***}$ & $-0.0204^{***}$ & $-0.0121^{***}$ & $-0.0092^{**}$ \\
+Australia      & $-0.0103$       & $-0.0245^{**}$  & $-0.0110^{***}$ & $-0.0048$      \\
+New Zealand    & $-0.0119^{***}$ & $-0.0190^{***}$ & $-0.0113^{***}$ & $-0.0081^{*}$  \\
+\midrule
+Hong Kong      &                 & $-0.0129^{***}$ &                 & $-0.0112^{***}$ \\
+Macao          &                 & $-0.0183^{***}$ &                 & $-0.0082^{*}$  \\
+\midrule
+Observations   & 3,681,023       & 3,769,187       & 3,677,333       & 3,759,733      \\
+Clusters ($d$) & 228             & 230             & 228             & 230            \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} OLS on the collapsed panel. Dependent variable: log total exports from China. The coefficient shown is $\widehat{\beta}$ on EP$\times$dirty, re-estimated dropping one treated destination at a time. FE: $pd + dt + pt$. Standard errors (not shown) clustered by destination. Columns (1) and (3) exclude Hong Kong and Macao from the sample; columns (2) and (4) include them as additional treated observations. Columns (1)--(2) use WB total depth as the control-depth variable; columns (3)--(4) use DESTA depth. Observations and clusters refer to the baseline specification; individual rows differ slightly due to the dropped destination.
+\item \textit{Excluding the three deepest}: estimated dropping Peru, Switzerland and Korea jointly --- the three destinations with the highest WB EP depth (12, 14 and 17 provisions). The coefficient roughly doubles and the standard error quadruples: the three deepest agreements supply most of the identifying variation.
+\item Timor-Leste rows are blank in columns (3)--(4): Timor-Leste is absent from the DESTA dataset. Hong Kong and Macao rows are blank in columns (1) and (3): those territories are already excluded in those samples.
+\item \textbf{Note on inference.} Stars are based on asymptotic $p$-values with destination-clustered SEs. With $\approx23$ treated destinations, these $p$-values are substantially understated relative to the wild cluster bootstrap: the baseline coefficient in column (1) has asymptotic $p<0.001$ but bootstrap $p=0.072$ (Table~\ref{tab:wcb}). Stars are not comparable to the rest of the paper.
+\item \textbf{How to read.} This is a test of \emph{coefficient stability}, not significance. The relevant question is how much the point estimate moves when one destination is dropped, not how many stars it carries.
+\item $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$ (asymptotic).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

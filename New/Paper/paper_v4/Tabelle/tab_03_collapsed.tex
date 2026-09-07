@@ -1,0 +1,59 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Collapsed panel --- triple-difference estimates}
+\label{tab:collapsed}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0046 & $-$0.0055 & 0.0005 & 0.0018 & 0.0019 & $-$0.0001 \\
+ & (0.0069) & (0.0069) & (0.0028) & (0.0018) & (0.0020) & (0.0007) \\[2pt]
+\quad Asymptotic $p$ & [0.508] & [0.426] & [0.854] & [0.316] & [0.360] & [0.868] \\
+\quad Bootstrap $p$ & [0.649] & [0.525] & [0.851] & [0.390] & [0.433] & [0.867] \\
+\quad Permutation $p$ & [0.597] &  &  & [0.160] &  &  \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0119*** & $-$0.0115* & 0.0006 & 0.0004 & $-$0.0004 & 0.0009 \\
+ & (0.0029) & (0.0067) & (0.0042) & (0.0016) & (0.0019) & (0.0005) \\[2pt]
+\quad Asymptotic $p$ & [0.000] & [0.087] & [0.880] & [0.825] & [0.837] & [0.076] \\
+\quad Bootstrap $p$ & [0.072] & [0.250] & [0.947] & [0.857] & [0.886] & [0.169] \\
+\quad Permutation $p$ & [0.278] &  &  & [0.817] &  &  \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,681,023 & 3,672,709 & 3,672,709 & 3,681,023 & 3,672,709 & 3,672,709 \\
+Clusters ($d$) & 228 & 228 & 228 & 228 & 228 & 228 \\
+$R^2$ & 0.843 & 0.919 & 0.966 & 0.843 & 0.919 & 0.966 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0043 & $-$0.0084* & 0.0038 & 0.0016 & 0.0010 & 0.0006 \\
+ & (0.0043) & (0.0044) & (0.0042) & (0.0020) & (0.0022) & (0.0008) \\[2pt]
+\quad Asymptotic $p$ & [0.320] & [0.058] & [0.368] & [0.428] & [0.649] & [0.495] \\
+\quad Bootstrap $p$ & [0.546] & [0.268] & [0.446] & [0.508] & [0.712] & [0.542] \\
+\quad Permutation $p$ & [0.480] &  &  & [0.316] &  &  \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0113*** & $-$0.0097** & $-$0.0012 & $-$0.0002 & $-$0.0008 & 0.0007 \\
+ & (0.0022) & (0.0045) & (0.0029) & (0.0014) & (0.0014) & (0.0006) \\[2pt]
+\quad Asymptotic $p$ & [0.000] & [0.033] & [0.689] & [0.858] & [0.603] & [0.252] \\
+\quad Bootstrap $p$ & [0.047] & [0.311] & [0.757] & [0.905] & [0.876] & [0.332] \\
+\quad Permutation $p$ & [0.146] &  &  & [0.904] &  &  \\[6pt]
+\quad $\theta_{pd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{dt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 3,677,333 & 3,669,025 & 3,669,025 & 3,677,333 & 3,669,025 & 3,669,025 \\
+Clusters ($d$) & 228 & 228 & 228 & 228 & 228 & 228 \\
+$R^2$ & 0.843 & 0.919 & 0.966 & 0.843 & 0.919 & 0.966 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Collapsed panel (product$\times$destination$\times$period cells, analytic weights), excluding Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt}$). All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. Permutation $p$-values (treated-only design, $R = 1{,}000$) reported for export value only; columns~(2)--(3) and~(5)--(6) not permuted. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

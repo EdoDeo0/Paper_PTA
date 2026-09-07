@@ -1,0 +1,55 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Full panel --- triple-difference estimates}
+\label{tab:fullpanel}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{WB EP depth ($EP^{WB}_{dt}$)} & \multicolumn{3}{c}{TREND EP count ($EP^{TR}_{dt}$)} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ & $\ln x^{val}_{fpdt}$ & $\ln x^{qua}_{fpdt}$ & $\ln x^{uv}_{fpdt}$ \\
+\midrule
+\multicolumn{7}{l}{\textit{Panel A --- Non-environmental depth control ($TD_{dt}$, World Bank)}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0023 & $-$0.0013 & $-$0.0004 & $-$0.0001 & $-$0.00003 & $-$0.0001 \\
+ & (0.0039) & (0.0041) & (0.0013) & (0.0010) & (0.0011) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.566] & [0.750] & [0.748] & [0.924] & [0.974] & [0.857] \\
+\quad Bootstrap $p$ & [0.686] & [0.851] & [0.740] & [0.931] & [0.978] & [0.860] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0044* & $-$0.0048* & 0.0001 & $-$0.0009 & $-$0.0006 & $-$0.0001 \\
+ & (0.0022) & (0.0029) & (0.0010) & (0.0006) & (0.0007) & (0.0004) \\[2pt]
+\quad Asymptotic $p$ & [0.052] & [0.096] & [0.903] & [0.153] & [0.409] & [0.697] \\
+\quad Bootstrap $p$ & [0.185] & [0.391] & [0.937] & [0.177] & [0.443] & [0.734] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 21,519,511 & 21,313,047 & 21,313,037 & 21,519,511 & 21,313,047 & 21,313,037 \\
+Clusters ($d$) & 225 & 225 & 225 & 225 & 225 & 225 \\
+$R^2$ & 0.873 & 0.913 & 0.963 & 0.873 & 0.913 & 0.963 \\
+\addlinespace[6pt]
+\midrule
+\multicolumn{7}{l}{\textit{Panel B --- DESTA depth control}} \\[3pt]
+$EP_{dt} \times g_p$ & $-$0.0019 & $-$0.0015 & $-$0.0004 & $-$0.0001 & $-$0.0001 & $-$0.0001 \\
+ & (0.0037) & (0.0034) & (0.0019) & (0.0010) & (0.0010) & (0.0005) \\[2pt]
+\quad Asymptotic $p$ & [0.613] & [0.660] & [0.819] & [0.904] & [0.917] & [0.776] \\
+\quad Bootstrap $p$ & [0.673] & [0.755] & [0.843] & [0.920] & [0.933] & [0.852] \\[6pt]
+$EP_{dt} \times b_p$ & $-$0.0056** & $-$0.0070** & 0.0004 & $-$0.0014** & $-$0.0014* & $-$0.00004 \\
+ & (0.0027) & (0.0030) & (0.0011) & (0.0007) & (0.0008) & (0.0003) \\[2pt]
+\quad Asymptotic $p$ & [0.039] & [0.020] & [0.676] & [0.048] & [0.080] & [0.903] \\
+\quad Bootstrap $p$ & [0.049] & [0.035] & [0.765] & [0.069] & [0.100] & [0.915] \\[6pt]
+\quad $\theta_{fpd}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{fdt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\quad $\theta_{pt}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+\addlinespace[3pt]
+Observations & 21,517,666 & 21,311,206 & 21,311,196 & 21,517,666 & 21,311,206 & 21,311,196 \\
+Clusters ($d$) & 225 & 225 & 225 & 225 & 225 & 225 \\
+$R^2$ & 0.873 & 0.913 & 0.963 & 0.873 & 0.913 & 0.963 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \textit{Notes:} Full firm-level panel, excluding Hong Kong and Macao. Columns~(1) and~(4): log export value ($\ln x^{val}_{fpdt}$). Columns~(2) and~(5): log export quantity ($\ln x^{qua}_{fpdt}$). Columns~(3) and~(6): log unit value ($\ln x^{uv}_{fpdt} = \ln x^{val}_{fpdt} - \ln x^{qua}_{fpdt}$). Quantity and unit-value regressions are estimated on the subset of observations with non-missing quantity data. All specifications include $TD_{dt} \times g_p$ and $TD_{dt} \times b_p$ controls (not shown). Panel~A uses non-environmental WB depth ($TD_{dt}$); Panel~B uses DESTA depth. Standard errors clustered at the destination level in parentheses. Wild cluster bootstrap ($B = 9{,}999$) $p$-values in brackets. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
