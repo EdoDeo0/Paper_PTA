@@ -1,0 +1,525 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/73_wc
+> b_fullpanel_inclhkmo_inclHKMO.log
+  log type:  text
+ opened on:   6 Sep 2026, 20:15:24
+
+. 
+. global CSV_OUT "$ROOT/New/Output/TripleDiff/Tables_Stata/wcb_fullpanel$OUTSFX
+> .csv"
+
+. 
+. capture confirm file "$CSV_OUT"
+
+. if !_rc {
+.     di as text "[73] $CSV_OUT gia' presente, salto."
+.     cap log close _all
+.     exit 0
+. }
+
+. 
+. file open fh using "$CSV_OUT", write replace text
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stata/wcb_fullpan
+    > el_inclHKMO.csv not found)
+
+. file write fh "dataset,treat,var,coef,se,pval,p_boot,B,nobs,nclust,outcome" _
+> n
+
+. file close fh
+
+. 
+. capture program drop wrow
+
+. program define wrow
+  1.     args csv line
+  2.     file open fh using "`csv'", write append text
+  3.     file write fh `"`line'"' _n
+  4.     file close fh
+  5. end
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which boottest
+
+. if _rc ssc install boottest
+
+. 
+. * --- Classificazioni (tempfile) --------------------------------------------
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_6240_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/dirty_goods_hs6.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty
+
+. rename dirty dirty_p
+
+. tempfile dirty
+
+. save `dirty'
+file C:\Users\edodr\AppData\Local\Temp\ST_6240_000002.tmp saved as .dta
+    format
+
+. 
+. import delimited "$DEPTHFILE", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 249 obs)
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_6240_000003.tmp saved as .dta
+    format
+
+. 
+. global F_GREEN "`green'"
+
+. global F_DIRTY "`dirty'"
+
+. global F_DEPTH "`depth'"
+
+. 
+. ************************************************************
+. * Programma: FWL + boottest per una dep var
+. ************************************************************
+. capture program drop wcb_fullpanel_one
+
+. program define wcb_fullpanel_one
+  1.     args raw_var outcome_label
+  2. 
+.     di as result _n "========================================================
+> ===="
+  3.     di as result "  WCB full panel inclHKMO: `outcome_label' ($PTA_DEPTH)"
+  4.     di as result "========================================================
+> ===="
+  5. 
+.     timer clear 1
+  6.     timer on 1
+  7. 
+.     * --- Carica panel (inclHKMO: non filtra) ---
+.     if "`raw_var'" == "exp_qua" {
+  8.         use exp_qua hs6 country_code year fpd fdt pt WB_EP_Depth TREND_EP_
+> Count ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+  9.         drop if missing(exp_qua)
+ 10.         gen double y = ln(exp_qua)
+ 11.         drop exp_qua
+ 12.         drop if missing(y)
+ 13.     }
+ 14.     else if "`raw_var'" == "uv_exp" {
+ 15.         use uv_exp hs6 country_code year fpd fdt pt WB_EP_Depth TREND_EP_C
+> ount ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 16.         drop if missing(uv_exp)
+ 17.         gen double y = ln(uv_exp)
+ 18.         drop uv_exp
+ 19.         drop if missing(y)
+ 20.     }
+ 21. 
+.     * Merge green + dirty
+.     merge m:1 hs6 using "$F_GREEN", keep(master match)
+ 22.     drop _merge
+ 23.     replace env_good = 0 if missing(env_good)
+ 24. 
+.     merge m:1 hs6 using "$F_DIRTY", keep(master match)
+ 25.     drop _merge
+ 26.     replace dirty_p = 0 if missing(dirty_p)
+ 27. 
+.     * Merge depth
+.     merge m:1 country_code year using "$F_DEPTH", keep(master match)
+ 28.     drop _merge
+ 29.     if $DROP_UNMEASURED {
+ 30.         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+ 31.     }
+ 32.     replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+ 33. 
+.     drop hs6
+ 34. 
+.     count
+ 35.     di "  Obs: " r(N)
+ 36. 
+.     * --- Crea interazioni per entrambi i treat ---
+.     qui gen double wb_green = WB_EP_Depth * env_good
+ 37.     qui gen double wb_dirty = WB_EP_Depth * dirty_p
+ 38.     qui gen double tr_green = TREND_EP_Count * env_good
+ 39.     qui gen double tr_dirty = TREND_EP_Count * dirty_p
+ 40.     qui gen double td_green = $DEPTHVAR * env_good
+ 41.     qui gen double td_dirty = $DEPTHVAR * dirty_p
+ 42. 
+.     * --- FASE 1: FWL demeaning ---
+.     di as txt "  Fase 1: demeaning..."
+ 43.     foreach v in y wb_green wb_dirty tr_green tr_dirty td_green td_dirty {
+ 44.         cap drop `v'_dm
+ 45.         di as txt "    `v'..."
+ 46.         qui reghdfe `v', absorb(fpd fdt pt) residuals(`v'_dm) tol(1e-8)
+ 47.     }
+ 48. 
+.     * Salva demeaned in tempfile
+.     tempfile dta_dm
+ 49.     preserve
+ 50.     keep y_dm wb_green_dm wb_dirty_dm tr_green_dm tr_dirty_dm td_green_dm 
+> td_dirty_dm country_code
+ 51.     save `dta_dm'
+ 52.     restore
+ 53.     drop y wb_green wb_dirty tr_green tr_dirty td_green td_dirty
+ 54.     drop WB_EP_Depth TREND_EP_Count env_good dirty_p $DEPTHVAR fpd fdt pt
+ 55.     clear
+ 56. 
+.     * --- FASE 2: WB ---
+.     di as txt _n "  Fase 2: WB reg + boottest"
+ 57.     use `dta_dm', clear
+ 58. 
+.     reg y_dm wb_green_dm wb_dirty_dm td_green_dm td_dirty_dm, cluster(country
+> _code) nocons
+ 59.     local NN  = e(N)
+ 60.     local NCL = e(N_clust)
+ 61. 
+.     foreach v in wb_green wb_dirty td_green td_dirty {
+ 62.         local coef_`v' = _b[`v'_dm]
+ 63.         local se_`v'   = _se[`v'_dm]
+ 64.         local p_`v'    = 2 * ttail(e(df_r), abs(_b[`v'_dm]/_se[`v'_dm]))
+ 65.     }
+ 66. 
+.     foreach v in wb_green wb_dirty {
+ 67.         di as txt "    boottest `v'_dm..."
+ 68.         boottest `v'_dm, boottype(wild) reps(9999) seed(42) noci
+ 69.         local pb_`v' = r(p)
+ 70.     }
+ 71. 
+.     foreach v in wb_green wb_dirty td_green td_dirty {
+ 72.         local pb = .
+ 73.         if "`v'" == "wb_green" local pb = `pb_wb_green'
+ 74.         if "`v'" == "wb_dirty" local pb = `pb_wb_dirty'
+ 75.         wrow "$CSV_OUT" "fullpanel_inclHKMO,WB,`v',`coef_`v'',`se_`v'',`p_
+> `v'',`pb',9999,`NN',`NCL',`outcome_label'"
+ 76.     }
+ 77. 
+.     * --- FASE 3: TREND ---
+.     di as txt _n "  Fase 3: TREND reg + boottest"
+ 78.     use `dta_dm', clear
+ 79. 
+.     reg y_dm tr_green_dm tr_dirty_dm td_green_dm td_dirty_dm, cluster(country
+> _code) nocons
+ 80.     local NN  = e(N)
+ 81.     local NCL = e(N_clust)
+ 82. 
+.     foreach v in tr_green tr_dirty td_green td_dirty {
+ 83.         local coef_`v' = _b[`v'_dm]
+ 84.         local se_`v'   = _se[`v'_dm]
+ 85.         local p_`v'    = 2 * ttail(e(df_r), abs(_b[`v'_dm]/_se[`v'_dm]))
+ 86.     }
+ 87. 
+.     foreach v in tr_green tr_dirty {
+ 88.         di as txt "    boottest `v'_dm..."
+ 89.         boottest `v'_dm, boottype(wild) reps(9999) seed(42) noci
+ 90.         local pb_`v' = r(p)
+ 91.     }
+ 92. 
+.     foreach v in tr_green tr_dirty td_green td_dirty {
+ 93.         local pb = .
+ 94.         if "`v'" == "tr_green" local pb = `pb_tr_green'
+ 95.         if "`v'" == "tr_dirty" local pb = `pb_tr_dirty'
+ 96.         wrow "$CSV_OUT" "fullpanel_inclHKMO,TREND,`v',`coef_`v'',`se_`v'',
+> `p_`v'',`pb',9999,`NN',`NCL',`outcome_label'"
+ 97.     }
+ 98. 
+.     timer off 1
+ 99.     qui timer list 1
+100.     di as result "  -> `outcome_label' completato in " r(t1)/60 " minuti"
+101. end
+
+. 
+. ************************************************************
+. * Esecuzione
+. ************************************************************
+. di as result _n "*** 73 — WCB full panel inclHKMO: qua + uv ***"
+
+*** 73 — WCB full panel inclHKMO: qua + uv ***
+
+. di as result "*** Depth: $PTA_DEPTH ***"
+*** Depth: totaldepth ***
+
+. 
+. wcb_fullpanel_one exp_qua  ln_export_qua
+
+============================================================
+  WCB full panel inclHKMO: ln_export_qua (totaldepth)
+============================================================
+(9 observations deleted)
+(337,259 missing values generated)
+(337,259 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,343,678
+        from master                43,343,678  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,564,358  (_merge==3)
+    -----------------------------------------
+(43,343,678 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    45,103,152
+        from master                45,103,152  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,804,884  (_merge==3)
+    -----------------------------------------
+(45,103,152 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,722,659
+        from master                36,722,659  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        12,185,377  (_merge==3)
+    -----------------------------------------
+(36,722,659 real changes made)
+  48,908,036
+  Obs: 48908036
+  Fase 1: demeaning...
+    y...
+    wb_green...
+    wb_dirty...
+    tr_green...
+    tr_dirty...
+    td_green...
+    td_dirty...
+file C:\Users\edodr\AppData\Local\Temp\ST_6240_000004.tmp saved as .dta
+    format
+
+  Fase 2: WB reg + boottest
+
+Linear regression                               Number of obs     =   23334037
+                                                F(4, 226)         =       1.99
+                                                Prob > F          =     0.0969
+                                                R-squared         =     0.0000
+                                                Root MSE          =      .9578
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        y_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ wb_green_dm |  -.0000753   .0037981    -0.02   0.984    -.0075596     .007409
+ wb_dirty_dm |  -.0036361    .003053    -1.19   0.235    -.0096522    .0023799
+ td_green_dm |  -.0001006   .0001342    -0.75   0.454     -.000365    .0001638
+ td_dirty_dm |   .0001569    .000129     1.22   0.225    -.0000974    .0004112
+------------------------------------------------------------------------------
+    boottest wb_green_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(226) =    -0.0198
+                        Prob>|t| =     0.9920
+    boottest wb_dirty_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(226) =    -1.1910
+                        Prob>|t| =     0.4224
+
+  Fase 3: TREND reg + boottest
+
+Linear regression                               Number of obs     =   23334037
+                                                F(4, 226)         =       0.74
+                                                Prob > F          =     0.5670
+                                                R-squared         =     0.0000
+                                                Root MSE          =      .9578
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        y_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ tr_green_dm |  -.0000535   .0010549    -0.05   0.960    -.0021322    .0020252
+ tr_dirty_dm |  -.0007579   .0007611    -1.00   0.320    -.0022576    .0007418
+ td_green_dm |  -.0000955   .0001715    -0.56   0.578    -.0004334    .0002423
+ td_dirty_dm |   .0001387   .0001591     0.87   0.384    -.0001749    .0004523
+------------------------------------------------------------------------------
+    boottest tr_green_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(226) =    -0.0507
+                        Prob>|t| =     0.9647
+    boottest tr_dirty_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(226) =    -0.9958
+                        Prob>|t| =     0.3403
+  -> ln_export_qua completato in 69.95245 minuti
+
+. wcb_fullpanel_one uv_exp   ln_export_value
+
+============================================================
+  WCB full panel inclHKMO: ln_export_value (totaldepth)
+============================================================
+(337,268 observations deleted)
+(13 missing values generated)
+(13 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,343,665
+        from master                43,343,665  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,564,358  (_merge==3)
+    -----------------------------------------
+(43,343,665 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    45,103,144
+        from master                45,103,144  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         3,804,879  (_merge==3)
+    -----------------------------------------
+(45,103,144 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,722,651
+        from master                36,722,651  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        12,185,372  (_merge==3)
+    -----------------------------------------
+(36,722,651 real changes made)
+  48,908,023
+  Obs: 48908023
+  Fase 1: demeaning...
+    y...
+    wb_green...
+    wb_dirty...
+    tr_green...
+    tr_dirty...
+    td_green...
+    td_dirty...
+file C:\Users\edodr\AppData\Local\Temp\ST_6240_000004.tmp saved as .dta
+    format
+
+  Fase 2: WB reg + boottest
+
+Linear regression                               Number of obs     =   23334027
+                                                F(4, 226)         =       2.27
+                                                Prob > F          =     0.0628
+                                                R-squared         =     0.0000
+                                                Root MSE          =      .4263
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        y_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ wb_green_dm |  -.0004328   .0012693    -0.34   0.733    -.0029339    .0020683
+ wb_dirty_dm |  -.0007554   .0009998    -0.76   0.451    -.0027256    .0012147
+ td_green_dm |   .0000864    .000068     1.27   0.205    -.0000475    .0002204
+ td_dirty_dm |   .0000344   .0000483     0.71   0.477    -.0000607    .0001295
+------------------------------------------------------------------------------
+    boottest wb_green_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_green_dm
+
+                          t(226) =    -0.3410
+                        Prob>|t| =     0.7251
+    boottest wb_dirty_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  wb_dirty_dm
+
+                          t(226) =    -0.7556
+                        Prob>|t| =     0.4703
+
+  Fase 3: TREND reg + boottest
+
+Linear regression                               Number of obs     =   23334027
+                                                F(4, 226)         =       2.71
+                                                Prob > F          =     0.0311
+                                                R-squared         =     0.0000
+                                                Root MSE          =      .4263
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+        y_dm | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ tr_green_dm |  -.0000593   .0003069    -0.19   0.847    -.0006641    .0005455
+ tr_dirty_dm |  -.0000757   .0003647    -0.21   0.836    -.0007945     .000643
+ td_green_dm |     .00008   .0000697     1.15   0.252    -.0000574    .0002174
+ td_dirty_dm |   .0000182   .0000682     0.27   0.790    -.0001162    .0001526
+------------------------------------------------------------------------------
+    boottest tr_green_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_green_dm
+
+                          t(226) =    -0.1932
+                        Prob>|t| =     0.8502
+    boottest tr_dirty_dm...
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, bootstrap cluster
+> ing by country_code, Rademacher weights:
+  tr_dirty_dm
+
+                          t(226) =    -0.2076
+                        Prob>|t| =     0.8458
+  -> ln_export_value completato in 69.477617 minuti
+
+. 
+. di as result _n "=== 73 FATTO. Output: $CSV_OUT ==="
+
+=== 73 FATTO. Output: C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_S
+> tata/wcb_fullpanel_inclHKMO.csv ===
+
+. cap log close _all

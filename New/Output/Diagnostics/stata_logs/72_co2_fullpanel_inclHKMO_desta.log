@@ -1,0 +1,472 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/72_co
+> 2_fullpanel_inclHKMO_desta.log
+  log type:  text
+ opened on:   7 Sep 2026, 00:39:13
+
+. 
+. global CSV_OUT "$ROOT/New/Output/TripleDiff/Tables_Stata/co2_fullpanel$OUTSFX
+> .csv"
+
+. 
+. capture confirm file "$CSV_OUT"
+
+. if !_rc {
+.     di as text "[72] $CSV_OUT gia' presente, salto."
+.     cap log close _all
+.     exit 0
+. }
+
+. 
+. file open fh using "$CSV_OUT", write replace text
+(file
+    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_Stata/co2_fullpan
+    > el_inclHKMO_desta.csv not found)
+
+. file write fh "treat,term,coef,se,pval,p_wcb,ci_low,ci_high,nobs,nclust,B,out
+> come" _n
+
+. file close fh
+
+. 
+. capture program drop wrow
+
+. program define wrow
+  1.     args csv line
+  2.     file open fh using "`csv'", write append text
+  3.     file write fh `"`line'"' _n
+  4.     file close fh
+  5. end
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which boottest
+
+. if _rc ssc install boottest
+
+. 
+. * --- Classificazioni (tempfile) --------------------------------------------
+. import delimited "$ROOT/New/Data/Classifications/green_codes_hs1996.csv", cle
+> ar
+(encoding automatically selected: ISO-8859-2)
+(7 vars, 248 obs)
+
+. keep hs6_final
+
+. rename hs6_final hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(2 observations deleted)
+
+. gen byte env_good = 1
+
+. tempfile green
+
+. save `green'
+file C:\Users\edodr\AppData\Local\Temp\ST_214c_000001.tmp saved as .dta
+    format
+
+. 
+. import delimited "$ROOT/New/Data/Classifications/co2_intensity_hs6.csv", clea
+> r
+(encoding automatically selected: ISO-8859-1)
+(4 vars, 4,607 obs)
+
+. keep hs6_int co2_total
+
+. rename hs6_int hs6
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+. tempfile co2f
+
+. save `co2f'
+file C:\Users\edodr\AppData\Local\Temp\ST_214c_000002.tmp saved as .dta
+    format
+
+. 
+. import delimited "$DEPTHFILE", clear
+(encoding automatically selected: ISO-8859-1)
+(5 vars, 239 obs)
+
+. keep country_code year $DEPTHVAR
+
+. tempfile depth
+
+. save `depth'
+file C:\Users\edodr\AppData\Local\Temp\ST_214c_000003.tmp saved as .dta
+    format
+
+. 
+. global F_GREEN "`green'"
+
+. global F_CO2   "`co2f'"
+
+. global F_DEPTH "`depth'"
+
+. 
+. ************************************************************
+. * Programma: CO2 FWL + boottest per una dep var
+. ************************************************************
+. capture program drop co2_fullpanel_one
+
+. program define co2_fullpanel_one
+  1.     args raw_var outcome_label
+  2. 
+.     di as result _n "========================================================
+> ===="
+  3.     di as result "  CO2 full panel: `outcome_label' ($PTA_DEPTH, $PTA_SAMP
+> LE)"
+  4.     di as result "========================================================
+> ===="
+  5. 
+.     timer clear 1
+  6.     timer on 1
+  7. 
+.     * --- Carica panel ---
+.     if "`raw_var'" == "ln_export" {
+  8.         use ln_export hs6 country_code year fpd fdt pt WB_EP_Depth TREND_E
+> P_Count ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+  9.         rename ln_export y
+ 10.     }
+ 11.     else if "`raw_var'" == "exp_qua" {
+ 12.         use exp_qua hs6 country_code year fpd fdt pt WB_EP_Depth TREND_EP_
+> Count ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 13.         drop if missing(exp_qua)
+ 14.         gen double y = ln(exp_qua)
+ 15.         drop exp_qua
+ 16.         drop if missing(y)
+ 17.     }
+ 18.     else if "`raw_var'" == "uv_exp" {
+ 19.         use uv_exp hs6 country_code year fpd fdt pt WB_EP_Depth TREND_EP_C
+> ount ///
+>             using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_com
+> pressed.dta", clear
+ 20.         drop if missing(uv_exp)
+ 21.         gen double y = ln(uv_exp)
+ 22.         drop uv_exp
+ 23.         drop if missing(y)
+ 24.     }
+ 25. 
+.     gen byte hkmo = inlist(country_code, 110, 121)
+ 26.     keep if $HKMOEXPR
+ 27.     drop hkmo
+ 28. 
+.     * Merge green
+.     merge m:1 hs6 using "$F_GREEN", keep(master match)
+ 29.     drop _merge
+ 30.     replace env_good = 0 if missing(env_good)
+ 31. 
+.     * Merge CO2 intensity
+.     merge m:1 hs6 using "$F_CO2", keep(master match)
+ 32.     drop _merge
+ 33.     qui su co2_total
+ 34.     local mu = r(mean)
+ 35.     local sd = r(sd)
+ 36.     replace co2_total = `mu' if missing(co2_total)
+ 37.     gen double co2_z = (co2_total - `mu') / `sd'
+ 38.     drop co2_total
+ 39. 
+.     * Merge depth
+.     merge m:1 country_code year using "$F_DEPTH", keep(master match)
+ 40.     drop _merge
+ 41.     if $DROP_UNMEASURED {
+ 42.         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
+ 43.     }
+ 44.     replace $DEPTHVAR = 0 if missing($DEPTHVAR)
+ 45. 
+.     drop hs6
+ 46. 
+.     count
+ 47.     di "  Obs: " r(N)
+ 48. 
+.     * --- Per ogni treat: FWL + boottest ---
+.     foreach treat in WB TREND {
+ 49.         di as result _n "  --- `treat' ---"
+ 50. 
+.         if "`treat'" == "WB"    local xv "WB_EP_Depth"
+ 51.         if "`treat'" == "TREND" local xv "TREND_EP_Count"
+ 52. 
+.         cap drop ep_green ep_co2 td_green td_co2
+ 53.         qui gen double ep_green = `xv' * env_good
+ 54.         qui gen double ep_co2   = `xv' * co2_z
+ 55.         qui gen double td_green = $DEPTHVAR * env_good
+ 56.         qui gen double td_co2   = $DEPTHVAR * co2_z
+ 57. 
+.         * FWL demeaning
+.         foreach v in y ep_green ep_co2 td_green td_co2 {
+ 58.             cap drop `v'_dm
+ 59.             di as txt "    demeaning `v'..."
+ 60.             qui reghdfe `v', absorb(fpd fdt pt) residuals(`v'_dm) tol(1e-8
+> )
+ 61.         }
+ 62. 
+.         * OLS su demeaned
+.         qui reg y_dm ep_green_dm ep_co2_dm td_green_dm td_co2_dm, ///
+>             cluster(country_code) nocons
+ 63.         local NN  = e(N)
+ 64.         local NCL = e(N_clust)
+ 65. 
+.         * Boottest per ep_green e ep_co2
+.         foreach p in ep_green ep_co2 {
+ 66.             local b  = _b[`p'_dm]
+ 67.             local se = _se[`p'_dm]
+ 68.             local pa = 2 * ttail(e(df_r), abs(`b'/`se'))
+ 69.             di as txt "    boottest `p'_dm..."
+ 70.             set seed 42
+ 71.             cap boottest `p'_dm, boottype(wild) reps(9999) cluster(country
+> _code) nograph
+ 72.             if _rc {
+ 73.                 local pb = .
+ 74.                 local lo = .
+ 75.                 local hi = .
+ 76.             }
+ 77.             else {
+ 78.                 local pb = r(p)
+ 79.                 cap local lo = r(CI)[1,1]
+ 80.                 cap local hi = r(CI)[1,2]
+ 81.             }
+ 82.             di as res "    [`treat'] `p': coef=" %10.7f `b' "  p_wcb=" %6.
+> 4f `pb'
+ 83.             wrow "$CSV_OUT" "`treat',`p',`b',`se',`pa',`pb',`lo',`hi',`NN'
+> ,`NCL',9999,`outcome_label'"
+ 84.         }
+ 85. 
+.         cap drop ep_green ep_co2 td_green td_co2
+ 86.         cap drop y_dm ep_green_dm ep_co2_dm td_green_dm td_co2_dm
+ 87.     }
+ 88. 
+.     timer off 1
+ 89.     qui timer list 1
+ 90.     di as result "  -> `outcome_label' completato in " r(t1)/60 " minuti"
+ 91. end
+
+. 
+. ************************************************************
+. * Esecuzione
+. ************************************************************
+. di as result _n "*** 72 — CO2 full panel: tutte le dep var ***"
+
+*** 72 — CO2 full panel: tutte le dep var ***
+
+. di as result "*** Depth: $PTA_DEPTH | Sample: $PTA_SAMPLE ***"
+*** Depth: desta | Sample: incl ***
+
+. 
+. co2_fullpanel_one ln_export   ln_export
+
+============================================================
+  CO2 full panel: ln_export (desta, incl)
+============================================================
+(0 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,652,802
+        from master                43,652,802  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,592,502  (_merge==3)
+    -----------------------------------------
+(43,652,802 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                       468,235
+        from master                   468,235  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        48,777,069  (_merge==3)
+    -----------------------------------------
+(468,235 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    37,162,246
+        from master                37,162,246  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        12,083,058  (_merge==3)
+    -----------------------------------------
+(229,436 observations deleted)
+(36,932,810 real changes made)
+  49,015,868
+  Obs: 49015868
+
+  --- WB ---
+    demeaning y...
+    demeaning ep_green...
+    demeaning ep_co2...
+    demeaning td_green...
+    demeaning td_co2...
+    boottest ep_green_dm...
+    [WB] ep_green: coef=-0.0013131  p_wcb=0.7589
+    boottest ep_co2_dm...
+    [WB] ep_co2: coef= 0.0007371  p_wcb=0.6529
+
+  --- TREND ---
+    demeaning y...
+    demeaning ep_green...
+    demeaning ep_co2...
+    demeaning td_green...
+    demeaning td_co2...
+    boottest ep_green_dm...
+    [TREND] ep_green: coef=-0.0002566  p_wcb=0.8213
+    boottest ep_co2_dm...
+    [TREND] ep_co2: coef= 0.0001273  p_wcb=0.7824
+  -> ln_export completato in 86.49985 minuti
+
+. co2_fullpanel_one exp_qua     ln_export_qua
+
+============================================================
+  CO2 full panel: ln_export_qua (desta, incl)
+============================================================
+(9 observations deleted)
+(337,259 missing values generated)
+(337,259 observations deleted)
+(0 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,343,678
+        from master                43,343,678  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,564,358  (_merge==3)
+    -----------------------------------------
+(43,343,678 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                       467,429
+        from master                   467,429  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        48,440,607  (_merge==3)
+    -----------------------------------------
+(467,429 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,926,950
+        from master                36,926,950  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        11,981,086  (_merge==3)
+    -----------------------------------------
+(228,674 observations deleted)
+(36,698,276 real changes made)
+  48,679,362
+  Obs: 48679362
+
+  --- WB ---
+    demeaning y...
+    demeaning ep_green...
+    demeaning ep_co2...
+    demeaning td_green...
+    demeaning td_co2...
+    boottest ep_green_dm...
+    [WB] ep_green: coef=-0.0015777  p_wcb=0.7328
+    boottest ep_co2_dm...
+    [WB] ep_co2: coef=-0.0011071  p_wcb=0.5471
+
+  --- TREND ---
+    demeaning y...
+    demeaning ep_green...
+    demeaning ep_co2...
+    demeaning td_green...
+    demeaning td_co2...
+    boottest ep_green_dm...
+    [TREND] ep_green: coef=-0.0002925  p_wcb=0.7861
+    boottest ep_co2_dm...
+    [TREND] ep_co2: coef=-0.0001308  p_wcb=0.6204
+  -> ln_export_qua completato in 90.536283 minuti
+
+. co2_fullpanel_one uv_exp      ln_export_value
+
+============================================================
+  CO2 full panel: ln_export_value (desta, incl)
+============================================================
+(337,268 observations deleted)
+(13 missing values generated)
+(13 observations deleted)
+(0 observations deleted)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    43,343,665
+        from master                43,343,665  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                         5,564,358  (_merge==3)
+    -----------------------------------------
+(43,343,665 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                       467,429
+        from master                   467,429  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        48,440,594  (_merge==3)
+    -----------------------------------------
+(467,429 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                    36,926,942
+        from master                36,926,942  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                        11,981,081  (_merge==3)
+    -----------------------------------------
+(228,674 observations deleted)
+(36,698,268 real changes made)
+  48,679,349
+  Obs: 48679349
+
+  --- WB ---
+    demeaning y...
+    demeaning ep_green...
+    demeaning ep_co2...
+    demeaning td_green...
+    demeaning td_co2...
+    boottest ep_green_dm...
+    [WB] ep_green: coef= 0.0001619  p_wcb=0.9347
+    boottest ep_co2_dm...
+    [WB] ep_co2: coef= 0.0015742  p_wcb=0.3574
+
+  --- TREND ---
+    demeaning y...
+    demeaning ep_green...
+    demeaning ep_co2...
+    demeaning td_green...
+    demeaning td_co2...
+    boottest ep_green_dm...
+    [TREND] ep_green: coef=-0.0000603  p_wcb=0.9039
+    boottest ep_co2_dm...
+    [TREND] ep_co2: coef= 0.0002325  p_wcb=0.5086
+  -> ln_export_value completato in 93.912033 minuti
+
+. 
+. di as result _n "=== 72 FATTO. Output: $CSV_OUT ==="
+
+=== 72 FATTO. Output: C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables_S
+> tata/co2_fullpanel_inclHKMO_desta.csv ===
+
+. cap log close _all

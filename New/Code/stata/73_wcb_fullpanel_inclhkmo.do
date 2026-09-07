@@ -79,6 +79,10 @@ keep country_code year $DEPTHVAR
 tempfile depth
 save `depth'
 
+global F_GREEN "`green'"
+global F_DIRTY "`dirty'"
+global F_DEPTH "`depth'"
+
 ************************************************************
 * Programma: FWL + boottest per una dep var
 ************************************************************
@@ -112,16 +116,16 @@ program define wcb_fullpanel_one
     }
 
     * Merge green + dirty
-    merge m:1 hs6 using `green', keep(master match)
+    merge m:1 hs6 using "$F_GREEN", keep(master match)
     drop _merge
     replace env_good = 0 if missing(env_good)
 
-    merge m:1 hs6 using `dirty', keep(master match)
+    merge m:1 hs6 using "$F_DIRTY", keep(master match)
     drop _merge
     replace dirty_p = 0 if missing(dirty_p)
 
     * Merge depth
-    merge m:1 country_code year using `depth', keep(master match)
+    merge m:1 country_code year using "$F_DEPTH", keep(master match)
     drop _merge
     if $DROP_UNMEASURED {
         drop if missing($DEPTHVAR) & WB_EP_Depth > 0

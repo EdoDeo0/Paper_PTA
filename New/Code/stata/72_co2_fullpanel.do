@@ -95,6 +95,10 @@ keep country_code year $DEPTHVAR
 tempfile depth
 save `depth'
 
+global F_GREEN "`green'"
+global F_CO2   "`co2f'"
+global F_DEPTH "`depth'"
+
 ************************************************************
 * Programma: CO2 FWL + boottest per una dep var
 ************************************************************
@@ -137,12 +141,12 @@ program define co2_fullpanel_one
     drop hkmo
 
     * Merge green
-    merge m:1 hs6 using `green', keep(master match)
+    merge m:1 hs6 using "$F_GREEN", keep(master match)
     drop _merge
     replace env_good = 0 if missing(env_good)
 
     * Merge CO2 intensity
-    merge m:1 hs6 using `co2f', keep(master match)
+    merge m:1 hs6 using "$F_CO2", keep(master match)
     drop _merge
     qui su co2_total
     local mu = r(mean)
@@ -152,7 +156,7 @@ program define co2_fullpanel_one
     drop co2_total
 
     * Merge depth
-    merge m:1 country_code year using `depth', keep(master match)
+    merge m:1 country_code year using "$F_DEPTH", keep(master match)
     drop _merge
     if $DROP_UNMEASURED {
         drop if missing($DEPTHVAR) & WB_EP_Depth > 0
