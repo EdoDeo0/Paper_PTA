@@ -42,9 +42,8 @@ EP count $\times$ Dirty: coefficient & -0.00089 & -0.00101 & -0.00140 & -0.00140
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
-\item \emph{Notes:} Columns: (1) Excl.\ HK/Macao, TotalDepth control (baseline); (2) Incl.\ HK/Macao, TotalDepth control; (3) Excl.\ HK/Macao, DESTA control; (4) Incl.\ HK/Macao, DESTA control.
-\item Asymptotic $p$-values from destination-clustered standard errors are unreliable with 23 treated clusters (13 distinct EP profiles). The wild cluster bootstrap reconstructs the coefficient distribution by resampling 9,999 times and produces substantially more conservative $p$-values. The baseline dirty coefficient (Panel A, column 1) has asymptotic $p < 0.001$ but bootstrap $p = 0.072$.
-\item Panels C and D computed via \texttt{boottest} in Stata on residualized data (Frisch--Waugh), because the command does not support more than one set of absorbed fixed effects.
+\item \emph{Notes:} Columns: (1) Excl.\ HK/Macao, TotalDepth control; (2) Incl.\ HK/Macao, TotalDepth control; (3) Excl.\ HK/Macao, DESTA control; (4) Incl.\ HK/Macao, DESTA control. Wild cluster bootstrap ($B = 9{,}999$), clustered by destination. Panels~C and~D computed via \texttt{boottest} in Stata on residualized data (Frisch--Waugh).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
