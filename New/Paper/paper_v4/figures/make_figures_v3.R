@@ -90,8 +90,8 @@ if (requireNamespace("rnaturalearth", quietly = TRUE) &&
 
   # Entry years from Table 1
   treated <- data.frame(
-    iso_a3 = c("BGD","IND","LKA",                          # Bangkok 2002
-               "BRN","KHM","IDN","LAO","MYS","MMR","PHL",  # ASEAN 2005
+    iso_a3 = c("BGD","IND","LKA","LAO","KOR",              # Bangkok 2002 (first EP>0)
+               "BRN","KHM","IDN","MYS","MMR","PHL",         # ASEAN 2005
                "SGP","THA","TLS","VNM",                     # ASEAN 2005
                "CHL",                                        # 2006
                "PAK",                                        # 2007
@@ -99,9 +99,9 @@ if (requireNamespace("rnaturalearth", quietly = TRUE) &&
                "PER",                                        # 2010
                "CRI",                                        # 2011
                "ISL","CHE",                                  # 2014
-               "AUS","KOR"),                                 # 2015
-    entry = c(rep(2002,3), rep(2005,11), 2006, 2007, 2008, 2010, 2011,
-              rep(2014,2), rep(2015,2))
+               "AUS"),                                       # 2015
+    entry = c(rep(2002,5), rep(2005,10), 2006, 2007, 2008, 2010, 2011,
+              rep(2014,2), 2015)
   )
 
   world <- merge(world, treated, by = "iso_a3", all.x = TRUE)

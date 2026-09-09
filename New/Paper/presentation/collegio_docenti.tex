@@ -1,0 +1,172 @@
+\documentclass{beamer}
+
+\usetheme{default}
+\usefonttheme{serif}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\definecolor{myGreen}{RGB}{34,139,87}
+\setbeamercolor{title}{fg=myGreen}
+\setbeamercolor{frametitle}{fg=myGreen}
+\setbeamercolor{framesubtitle}{fg=black!60}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamercolor{block title}{fg=white,bg=myGreen}
+\setbeamercolor{block body}{bg=myGreen!8}
+\setbeamercolor{alerted text}{fg=myGreen!70!black}
+
+\setbeamertemplate{itemize item}{\textcolor{myGreen}{\small$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\textcolor{black!55}{$\hookrightarrow$}}
+\setbeamerfont{itemize/enumerate body}{size=\normalsize}
+\setlength{\itemsep}{6pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{booktabs}
+
+\title{The Impact of PTAs' Environmental Provisions on\\Chinese Firm-Level Export Performance}
+\author{Edoardo Vitella}
+\institute{University of Trento \& Free University of Bozen-Bolzano}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Research Question \& Data}
+
+  \textbf{Goal:} does the environmental content of China's PTAs shift
+  exports towards green goods and away from dirty goods?
+
+  \vspace{1.2em}
+  \begin{itemize}\setlength\itemsep{10pt}
+    \item Chinese customs transactions, 2000--2015 \hfill \small(45.8M obs.)
+    \item 14 PTAs signed by China \hfill \small(23 treated destinations)
+    \item EP content: World Bank DTA \& TREND databases
+    \item Green/dirty goods: OECD CLEG list \& pollution-intensity mapping
+    \item Robustness samples: HS4-restricted comparison, CEM-matched destinations
+  \end{itemize}
+
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Empirical Analysis}
+
+  \begin{center}
+  \[
+  \ln x_{fpdt} = \beta_1\, EP_{dt}\!\times\!g_p + \beta_2\, EP_{dt}\!\times\!b_p
+  + \gamma_1\, TD_{dt}\!\times\!g_p + \gamma_2\, TD_{dt}\!\times\!b_p
+  + \text{FE} + \varepsilon_{fpdt}
+  \]
+  \end{center}
+
+  \small
+  \begin{center}
+  firm $\times$ product $\times$ destination $\times$ year, with
+  firm--destination--year fixed effects
+  \end{center}
+  \normalsize
+
+  \vspace{1.2em}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{\small Three levels of inference}
+      \begin{itemize}\setlength\itemsep{4pt}
+        \item Asymptotic
+        \item Wild cluster bootstrap
+        \item Permutation
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{\small Robustness of measurement}
+      \begin{itemize}\setlength\itemsep{4pt}
+        \item WB \emph{and} TREND indices
+        \item Continuous CO$_2$ intensity
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Results: The Triple-Difference Estimates}
+
+  \begin{center}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{lcccc}
+    \toprule
+     & \multicolumn{2}{c}{Full panel} & \multicolumn{2}{c}{Collapsed panel} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+     & WB & TREND & WB & TREND \\
+    \midrule
+    $EP\times$ green & $-0.0023$ & $-0.0001$ & $-0.0046$ & $0.0018$ \\
+    Bootstrap $p$     & $0.69$ & $0.98$ & $0.65$ & $0.39$ \\[6pt]
+    $EP\times$ dirty  & $-0.0044^{*}$ & $-0.0009$ & $-0.0119^{***}$ & $0.0004$ \\
+    Bootstrap $p$     & $0.19$ & $0.18$ & $0.07$ & $0.86$ \\
+    Permutation $p$   & --- & --- & $0.28$ & $0.82$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1.5em}
+  \begin{itemize}\setlength\itemsep{8pt}
+    \item \textbf{Green:} a robust null
+    \item \textbf{Dirty:} negative, but fragile to inference method
+  \end{itemize}
+
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Results: The Extensive Margin (PPML)}
+
+  \small Zero-filled HS6--destination--year grid --- do agreements create
+  \emph{new} trade flows?
+  \normalsize
+
+  \vspace{1em}
+  \begin{center}
+  \begin{tabular}{lcc}
+    \toprule
+     & WB index & TREND index \\
+    \midrule
+    $EP\times$ green & $0.0015$ & $0.0001$ \\
+    Asymptotic $p$    & $0.74$ & $0.95$ \\[6pt]
+    $EP\times$ dirty  & $-0.0301^{*}$ & $0.0028$ \\
+    Asymptotic $p$    & $0.06$ & $0.55$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{1.5em}
+  \begin{itemize}\setlength\itemsep{8pt}
+    \item No new green trade --- same null as the intensive margin
+    \item Dirty margin: same pattern, marginal under one index only
+  \end{itemize}
+
+\end{frame}
+
+% ======================================================================
+\begin{frame}{Takeaways}
+
+  \begin{itemize}\setlength\itemsep{16pt}
+    \item \textbf{Green margin: a robust null}
+    \item \textbf{Dirty margin: fragile}
+    \item \textbf{Content over presence}
+  \end{itemize}
+
+  \vspace{1.5em}
+  \begin{alertblock}{Next steps}
+    Preferential tariffs \quad$\cdot$\quad Webb-weight inference \quad$\cdot$\quad submission by year-end
+  \end{alertblock}
+
+  \vspace{1.5em}
+  \begin{center}
+    \Large Thank you
+  \end{center}
+
+\end{frame}
+
+\end{document}

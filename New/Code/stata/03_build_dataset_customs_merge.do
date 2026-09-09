@@ -27,6 +27,16 @@
 *
 * ESECUZIONE BATCH (da PowerShell, non Git Bash: il flag /e viene manglato):
 *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\03_build_dataset_customs_merge.do"
+*
+* NOTA (audit 2026-09-07c, FIX B2): il merge sotto e' stato corretto con
+* keep(master match) per scartare le 9 righe "using only" (codici HS6 di
+* Env_Codes_HS.dta senza corrispondenza nel panel doganale). La versione
+* dell'output gia' su disco (final_dataset_pta_env_indices_compressed.dta)
+* e' stata costruita PRIMA di questa correzione e contiene quelle 9 righe
+* fantasma, innocue (non pesano su nessuna stima: sono osservazioni
+* aggiunte con tutti i valori doganali mancanti). Non ricostruita per
+* questo fix (input 13,4 GB, output ~18 GB): la correzione vale per la
+* prossima rigenerazione completa della pipeline.
 
 do "New/Code/stata/_root.do"
 
@@ -45,7 +55,7 @@ assert r(N) == 0
 drop _merge
 
 * --- Merge lista green goods --------------------------------------------
-merge m:1 hs6 using "$ROOT\Data\Env_Codes_HS.dta"
+merge m:1 hs6 using "$ROOT\Data\Env_Codes_HS.dta", keep(master match)
 tab _merge
 count if _merge == 2
 local unmatched_green = r(N)

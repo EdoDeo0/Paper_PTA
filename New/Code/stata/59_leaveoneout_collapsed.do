@@ -149,8 +149,20 @@ di as text _n "########## ASSEMBLAGGIO ##########"
 * quando l'etichetta e' un numero puro ("103") o vuota, e STRINGA quando non lo
 * e' ("434+331+133"). L'append di tipi diversi fallisce con r(106). Si passa
 * tutto a stringa una volta sola (idempotente: se e' gia' stringa non tocca nulla).
-local files : dir "$TAB" files "LOO_*.dta"
+* File attesi: si ELENCANO dagli spec effettivamente stimati sopra (baseline,
+* ext, senza_alta_dose, un senza_<cc> per ogni paese in `treated`), non si
+* cercano con un glob: `LOO_*.dta' nella stessa cartella raccoglierebbe anche
+* eventuali file orfani di altre run senza un avviso.
+local files "LOO_baseline.dta LOO_lista_estesa.dta LOO_senza_alta_dose.dta"
+foreach cc of local treated {
+    local files "`files' LOO_senza_`cc'.dta"
+}
 foreach f of local files {
+    cap confirm file "$TAB/`f'"
+    if _rc {
+        di as error "  [mancante] `f'"
+        continue
+    }
     use "$TAB/`f'", clear
     capture confirm string variable dropped_country
     if _rc {
@@ -163,6 +175,8 @@ foreach f of local files {
 clear
 local first = 1
 foreach f of local files {
+    cap confirm file "$TAB/`f'"
+    if _rc continue
     if `first' {
         use "$TAB/`f'", clear
         local first = 0

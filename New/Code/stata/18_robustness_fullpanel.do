@@ -270,7 +270,7 @@ foreach f of local all {
     * run suffissate, e nessuna esclusione per la run principale.
     local match 0
     if "$OUTSFX" != "" {
-        if strpos(lower("`f'"), lower("$OUTSFX.dta")) > 0 local match 1
+        if regexm("`f'", "_(WB|TREND)_[a-z]+$OUTSFX\.dta$") local match 1
     }
     else {
         if !strpos(lower("`f'"), "_inclhkmo") & !strpos(lower("`f'"), "_desta") local match 1

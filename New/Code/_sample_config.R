@@ -27,9 +27,10 @@ DEPTH  <- "totaldepth"
 ## Asse 2 â€” Depth control: TotalDepth e' costruito dalla stessa fonte di EP
 ## (WB) e ha una correlazione within 0,96 (VIF 5,71). DESTA e' una misura
 ## indipendente (Dur, Baccini & Elsig 2014) che riduce il VIF a 1,92 e dimezza
-## gli errori standard. Timor Est (country_code=144) ha un PTA cinese ma non
-## e' nel DESTA: nelle stime desta riceve NA -> le sue celle escono dal campione
-## (~4181 celle, 0,11%). Le destinazioni mai trattate ricevono 0 in entrambi.
+## gli errori standard. Timor Est (country_code=144) e' codificato ASEAN nelle
+## liste manuali ma non e' parte dell'accordo, e non e' nel DESTA: nelle stime
+## desta riceve NA -> le sue celle escono dal campione (~4181 celle, 0,11%).
+## Le destinazioni mai trattate ricevono 0 in entrambi.
 ##
 ## COME PRODURRE LE 4 VARIANTI (nessuna variabile d'ambiente, nessun arg da CLI):
 ##   Run 1: SAMPLE="excl", DEPTH="totaldepth"  -> spec principale

@@ -376,15 +376,58 @@ else di "  SKIP epshare_WB"
 ** S2 — Assemblaggio tabella finale (tutti i OMNI_*.dta -> CSV)
 ********************************************************************************
 di as text _n "========== Assemblaggio S2 =========="
+* I file attesi si ELENCANO, non si cercano con un glob: `OMNI_*.dta' raccoglie
+* anche eventuali orfani (es. le vecchie varianti *_cem16_old.dta) e li impila
+* qui dentro senza un avviso. Cosi' invece un file mancante ferma l'assemblaggio.
 clear
-local files : dir "$TAB" files "OMNI_*.dta"
 local first = 1
-foreach f of local files {
+local mancanti ""
+foreach spec in baseline prodHS4 deepshallow cem nodepth targeted desta desttrends apec {
+    foreach treat in WB TREND {
+        local f "$TAB/OMNI_`spec'_`treat'.dta"
+        cap confirm file "`f'"
+        if _rc {
+            local mancanti "`mancanti' `spec'_`treat'"
+            continue
+        }
+        if `first' {
+            use "`f'", clear
+            local first = 0
+        }
+        else append using "`f'"
+    }
+}
+foreach sub in WB_GreenLiberalization TREND_GreenMarketAccess WB_EnforcementDSM ///
+               TREND_EnforcementDSM TREND_Hard TREND_Soft TREND_RegulatorySpace {
+    local f "$TAB/OMNI_sub_`sub'.dta"
+    cap confirm file "`f'"
+    if _rc {
+        local mancanti "`mancanti' sub_`sub'"
+        continue
+    }
     if `first' {
-        use "$TAB/`f'", clear
+        use "`f'", clear
         local first = 0
     }
-    else append using "$TAB/`f'"
+    else append using "`f'"
+}
+foreach f in dosebins_WB epshare_WB {
+    local ff "$TAB/OMNI_`f'.dta"
+    cap confirm file "`ff'"
+    if _rc {
+        local mancanti "`mancanti' `f'"
+        continue
+    }
+    if `first' {
+        use "`ff'", clear
+        local first = 0
+    }
+    else append using "`ff'"
+}
+if "`mancanti'" != "" {
+    di as error "Stime mancanti:`mancanti'"
+    di as error "Assemblaggio interrotto: una tabella parziale sembrerebbe completa."
+    exit 9
 }
 export delimited "$TAB/omnibus_collapsed_reghdfe.csv", replace
 di as result "[OK] omnibus_collapsed_reghdfe.csv — " _N " righe"

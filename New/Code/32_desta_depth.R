@@ -37,8 +37,8 @@ indices  <- fread(file.path(DESTA_DIR, "desta_indices_version_02_03.csv"),
 ## --- Base_treaty IDs dei 14 accordi nel campione -----------------------------
 # Corrispondenza verificata manualmente (vedi check_desta_coverage3.R e output):
 # base_treaty DESTA = numero accordo nei dati WB/TREND del progetto
-our_base_treaties <- c(62L, 67L, 100L, 199L, 220L, 221L, 222L, 224L,
-                       227L, 804L, 840L, 862L, 909L, 955L)
+our_base_treaties <- c(62L, 67L, 199L, 220L, 221L, 222L, 224L,
+                       227L, 228L, 804L, 840L, 862L, 909L, 955L)
 
 ## --- Mapping ISO numerico → codice e nome paese del progetto -----------------
 # ISO numerico standard (da dyads$iso1/iso2) → country_code progetto
@@ -112,6 +112,11 @@ if (length(unmatched) > 0) {
   cat("       Questi paesi non saranno nell'output finale.\n")
 }
 d <- d[!is.na(country_code)]
+
+# Mongolia (cc 124) entra in APTA solo per accessione (62+1), non e' un partner
+# PTA cinese nel campione: esclusa esplicitamente invece di lasciarla passare
+# dal fallback delle accession entries sopra.
+d <- d[country_code != 124L]
 
 ## --- Espansione a country-year (2000-2015) con depth time-varying ------------
 # Per ogni (country_code, base_treaty, year_panel):

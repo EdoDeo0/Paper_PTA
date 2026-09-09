@@ -55,11 +55,22 @@ foreach v in gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000 {
 
 di as text "Paesi candidati: `pre_drop' prima, `=_N' dopo drop missing (dropped `=`pre_drop'-_N')"
 
+cap log close cem_l1
+log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", replace text name(cem_l1)
+di as text _n "=== L1 pre-matching ==="
 imb gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000, treatment(treated)
+log close cem_l1
+
 cem gdp_growth_2000 (0 3 6 10) ///
     log_gdppc_2000  (6 7.5 9 10.5) ///
     mfn_tariff_2000 (0 5 10 20), ///
     treatment(treated)
+
+cap log close cem_l1
+log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", append text name(cem_l1)
+di as text _n "=== L1 post-matching (matched sample) ==="
+imb gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000 if cem_matched, treatment(treated)
+log close cem_l1
 
 *── 4. Diagnostica ────────────────────────────────────────────────────────────
 qui count if cem_matched & treated
@@ -106,7 +117,7 @@ drop if missing(country_code)
 save "$ROOT/New/Output/CEM_stata/cem_v1_cc.dta", replace
 restore
 
-log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", replace text name(summary)
+log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", append text name(summary)
 list iso3c country_code treated weights, clean noobs
 di as text _n "Paesi senza country_code (non nel dataset di trade):"
 list iso3c if missing(country_code), clean noobs

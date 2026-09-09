@@ -32,8 +32,12 @@ do "New/Code/stata/_root.do"
 *  ##       "totaldepth" -> TotalDepth_nonEnv, WB (spec principale)      ##
 *  ##       "desta"      -> DESTA_depth_index (robustezza)                ##
 *  ##########################################################################
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+local env_sample : env PTA_SAMPLE
+local env_depth  : env PTA_DEPTH
+if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+else                    global PTA_SAMPLE "excl"
+if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+else                    global PTA_DEPTH  "totaldepth"
 
 * Asse 1 — campione HK/Macao
 if !inlist("$PTA_SAMPLE", "excl", "incl") {

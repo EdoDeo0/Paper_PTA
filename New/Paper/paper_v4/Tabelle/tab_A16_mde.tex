@@ -9,14 +9,14 @@
 Index & Margin & Asymptotic & Minimum detectable & Bootstrap CI & Bootstrap CI \\
  & & std.\ error & effect (1 s.d.) & half-width (1 s.d.) & (per unit) \\
 \midrule
-WB & Green & 0.0070 & 4.64\% & 5.90\% & [-1.85\%, 3.18\%] \\
-WB & Dirty & 0.0030 & 1.97\% & 2.40\% & [-1.84\%, 0.18\%] \\
-TREND & Green & 0.0018 & 4.16\% & 3.62\% & [-0.18\%, 0.71\%] \\
-TREND & Dirty & 0.0016 & 3.65\% & 3.53\% & [-0.32\%, 0.54\%] \\
+WB & Green & 0.0070 & 4.64\% & 6.00\% & [-1.85\%, 3.18\%] \\
+WB & Dirty & 0.0030 & 1.97\% & 2.40\% & [-1.85\%, 0.17\%] \\
+TREND & Green & 0.0018 & 4.16\% & 3.60\% & [-0.17\%, 0.71\%] \\
+TREND & Dirty & 0.0016 & 3.65\% & 3.56\% & [-0.31\%, 0.56\%] \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[flushleft]\footnotesize
-\item \emph{Notes:} Collapsed panel, excl.\ HK/Macao. Standard deviation of regressors computed on the effective sample and weighted. Minimum detectable effect = $2.8 \times$ asymptotic standard error. Bootstrap CI half-width from the wild cluster bootstrap ($B = 9{,}999$, \textsc{Stata} implementation).
+\item \emph{Notes:} Collapsed panel, excl.\ HK/Macao. Standard deviation of the EP indices weighted by cell size over all 3,773,498 cells of the collapsed panel, never-treated destinations included (2.38 for WB, 8.16 for TREND). Minimum detectable effect = $2.8 \times$ asymptotic standard error, which understates the true MDE by the same factor by which the bootstrap widens the interval; the bootstrap half-width column is the relevant bound.
 \item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
 \end{tablenotes}
 \end{threeparttable}

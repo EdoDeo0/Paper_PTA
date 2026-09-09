@@ -21,7 +21,7 @@ Notes:
       3. Maximum number of variables is set to 5,000 but can be increased;
           see help set_maxvar.
 
-. do C:\Work\projects\Paper_PTA\New\Code\stata\68_subindices_fullpanel.do 
+. do C:/Work/projects/Paper_PTA/New/Code/stata/68_subindices_fullpanel.do 
 
 . ************************************************************
 . *** 68 — Sub-indices EP sul full panel firm-level
@@ -99,7 +99,7 @@ end of do-file
        log:  C:\Work\projects\Paper_PTA/New/Output/Diagnostics/stata_logs/68_su
 > bindices_fullpanel.log
   log type:  text
- opened on:   6 Sep 2026, 11:10:09
+ opened on:   8 Sep 2026, 11:21:31
 
 . 
 . cap which reghdfe
@@ -129,7 +129,7 @@ Duplicates in terms of hs6
 . tempfile green
 
 . save `green'
-file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000001.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_68ec_000001.tmp saved as .dta
     format
 
 . 
@@ -144,7 +144,7 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000001.tmp saved as .dta
 . tempfile dirty
 
 . save `dirty'
-file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000002.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_68ec_000002.tmp saved as .dta
     format
 
 . 
@@ -192,7 +192,7 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000002.tmp saved as .dta
  19.     save `subidx'
  20. 
 .     * --- Carica panel ---
-.     use ln_export hs6 country_code year fpd fdt pt ///
+.     use ln_export hs6 country_code year fpd fdt pt WB_EP_Depth ///
 >         using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_compres
 > sed.dta", clear
  21. 
@@ -211,71 +211,69 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000002.tmp saved as .dta
 .     merge m:1 country_code year using `depth', keep(master match)
  31.     drop _merge
  32.     if `drop_unmeasured' {
- 33.         * no WB_EP_Depth in memory — approximate: drop if depth missing & 
-> year >= 2001
-.         * (conservative; the variable would be >0 only for treated obs)
-.     }
- 34.     replace `depthvar' = 0 if missing(`depthvar')
- 35. 
+ 33.         drop if missing(`depthvar') & WB_EP_Depth > 0
+ 34.     }
+ 35.     replace `depthvar' = 0 if missing(`depthvar')
+ 36. 
 .     * Keep all obs; sub-index = 0 for non-PTA countries (mirrors collapsed sp
 > ec in 63)
-.     merge m:1 country_code year using `subidx', nogen
- 36.     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
+.     merge m:1 country_code year using `subidx', keep(master match) nogen
+ 37.     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
 >                  WB_EnforcementDSM TREND_EnforcementDSM ///
 >                  TREND_Hard TREND_Soft TREND_RegulatorySpace {
- 37.         replace `s' = 0 if missing(`s')
- 38.     }
- 39. 
-.     drop hs6
+ 38.         replace `s' = 0 if missing(`s')
+ 39.     }
  40. 
+.     drop hs6
+ 41. 
 .     count
- 41.     di "  Obs dopo merge: " r(N)
- 42. 
+ 42.     di "  Obs dopo merge: " r(N)
+ 43. 
 .     * --- CSV header ---
 .     file open fh using "`outfile'", write replace text
- 43.     file write fh "sub_index,term,coef,se,pval,r2_a,nobs,nclust" _n
- 44.     file close fh
- 45. 
+ 44.     file write fh "sub_index,term,coef,se,pval,r2_a,nobs,nclust" _n
+ 45.     file close fh
+ 46. 
 .     * --- Loop sui 7 sotto-indici ---
 .     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
 >                  WB_EnforcementDSM TREND_EnforcementDSM ///
 >                  TREND_Hard TREND_Soft TREND_RegulatorySpace {
- 46. 
+ 47. 
 .         cap drop sub_green sub_dirty td_green td_dirty
- 47.         qui gen double sub_green = `s' * env_good
- 48.         qui gen double sub_dirty = `s' * dirty_p
- 49.         qui gen double td_green  = `depthvar' * env_good
- 50.         qui gen double td_dirty  = `depthvar' * dirty_p
- 51. 
+ 48.         qui gen double sub_green = `s' * env_good
+ 49.         qui gen double sub_dirty = `s' * dirty_p
+ 50.         qui gen double td_green  = `depthvar' * env_good
+ 51.         qui gen double td_dirty  = `depthvar' * dirty_p
+ 52. 
 .         cap qui reghdfe ln_export sub_green sub_dirty td_green td_dirty, ///
 >             absorb(fpd fdt pt) vce(cluster country_code) compact
- 52.         if _rc {
- 53.             di as error "  [`s'] stima fallita (rc=" _rc ")"
- 54.             continue
- 55.         }
- 56. 
+ 53.         if _rc {
+ 54.             di as error "  [`s'] stima fallita (rc=" _rc ")"
+ 55.             continue
+ 56.         }
+ 57. 
 .         local NN     = e(N)
- 57.         local nclust = e(N_clust)
- 58.         local r2a    = e(r2_a)
- 59.         di as res "  [`s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty="
+ 58.         local nclust = e(N_clust)
+ 59.         local r2a    = e(r2_a)
+ 60.         di as res "  [`s'] sub_green=" %10.7f _b[sub_green] "  sub_dirty="
 >  %10.7f _b[sub_dirty] "  r2a=" %8.6f `r2a'
- 60. 
+ 61. 
 .         foreach v in sub_green sub_dirty {
- 61.             if "`v'" == "sub_green" local tn "SUB:env_good"
- 62.             if "`v'" == "sub_dirty" local tn "SUB:dirty_p"
- 63.             local b  = _b[`v']
- 64.             local se = _se[`v']
- 65.             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
- 66.             file open fh using "`outfile'", write append text
- 67.             file write fh "`s',`tn',`b',`se',`p',`r2a',`NN',`nclust'" _n
- 68.             file close fh
- 69.         }
- 70.     }
- 71. 
+ 62.             if "`v'" == "sub_green" local tn "SUB:env_good"
+ 63.             if "`v'" == "sub_dirty" local tn "SUB:dirty_p"
+ 64.             local b  = _b[`v']
+ 65.             local se = _se[`v']
+ 66.             local p  = 2 * ttail(e(df_r), abs(`b'/`se'))
+ 67.             file open fh using "`outfile'", write append text
+ 68.             file write fh "`s',`tn',`b',`se',`p',`r2a',`NN',`nclust'" _n
+ 69.             file close fh
+ 70.         }
+ 71.     }
+ 72. 
 .     timer off 1
- 72.     qui timer list 1
- 73.     di as result "  -> completato in " r(t1)/60 " minuti"
- 74. end
+ 73.     qui timer list 1
+ 74.     di as result "  -> completato in " r(t1)/60 " minuti"
+ 75. end
 
 . 
 . ************************************************************
@@ -294,11 +292,11 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000002.tmp saved as .dta
 ============================================================
 (encoding automatically selected: ISO-8859-1)
 (5 vars, 249 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000003.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_68ec_000003.tmp saved as .dta
     format
 (encoding automatically selected: ISO-8859-1)
 (30 vars, 249 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_68ec_000004.tmp saved as .dta
     format
 (3,464,093 observations deleted)
 
@@ -334,9 +332,9 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                    36,496,398
+    Not matched                    36,496,372
         from master                36,496,372  
-        from using                         26  
+        from using                          0  
 
     Matched                         9,284,839  
     -----------------------------------------
@@ -347,8 +345,8 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
 (36,496,372 real changes made)
 (36,496,372 real changes made)
 (36,496,372 real changes made)
-  45,781,237
-  Obs dopo merge: 45781237
+  45,781,211
+  Obs dopo merge: 45781211
 (file
     C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/subindices_fullpa
     > nel.csv not found)
@@ -359,11 +357,11 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
   [WB_EnforcementDSM] sub_green=-0.0027767  sub_dirty=-0.0242787  r2a=0.743982
   [TREND_EnforcementDSM] sub_green= 0.0020273  sub_dirty=-0.0106752  r2a=0.7439
 > 82
-  [TREND_Hard] sub_green= 0.0006672  sub_dirty=-0.0018823  r2a=0.743982
+  [TREND_Hard] sub_green= 0.0001421  sub_dirty=-0.0016568  r2a=0.743982
   [TREND_Soft] sub_green=-0.0037388  sub_dirty=-0.0046970  r2a=0.743982
   [TREND_RegulatorySpace] sub_green= 0.0049155  sub_dirty= 0.0072188  r2a=0.743
 > 982
-  -> completato in 80.012633 minuti
+  -> completato in 80.285317 minuti
 
 . 
 . * --- DESTA ---
@@ -372,82 +370,8 @@ file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
 >     desta_depth_index ///
 >     1 ///
 >     "$ROOT/New/Output/TripleDiff/Tables/subindices_fullpanel_desta.csv"
-
-============================================================
-  Sub-indici full panel — depth: desta_depth_index
-============================================================
-(encoding automatically selected: ISO-8859-1)
-(5 vars, 239 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000003.tmp saved as .dta
-    format
-(encoding automatically selected: ISO-8859-1)
-(30 vars, 249 obs)
-file C:\Users\edodr\AppData\Local\Temp\ST_4ddc_000004.tmp saved as .dta
-    format
-(3,464,093 observations deleted)
-
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                    40,499,383
-        from master                40,499,383  (_merge==1)
-        from using                          0  (_merge==2)
-
-    Matched                         5,281,828  (_merge==3)
-    -----------------------------------------
-(40,499,383 real changes made)
-
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                    42,166,299
-        from master                42,166,299  (_merge==1)
-        from using                          0  (_merge==2)
-
-    Matched                         3,614,912  (_merge==3)
-    -----------------------------------------
-(42,166,299 real changes made)
-
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                    36,480,566
-        from master                36,480,566  (_merge==1)
-        from using                          0  (_merge==2)
-
-    Matched                         9,300,645  (_merge==3)
-    -----------------------------------------
-(36,480,566 real changes made)
-
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                    36,496,398
-        from master                36,496,372  
-        from using                         26  
-
-    Matched                         9,284,839  
-    -----------------------------------------
-(36,496,372 real changes made)
-(36,496,372 real changes made)
-(36,496,372 real changes made)
-(36,496,372 real changes made)
-(36,496,372 real changes made)
-(36,496,372 real changes made)
-(36,496,372 real changes made)
-  45,781,237
-  Obs dopo merge: 45781237
-(file
-    C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/subindices_fullpa
-    > nel_desta.csv not found)
-  [WB_GreenLiberalization] sub_green= 0.0072704  sub_dirty=-0.0171160  r2a=0.74
-> 3982
-  [TREND_GreenMarketAccess] sub_green= 0.0140534  sub_dirty=-0.0154541  r2a=0.7
-> 43982
-  [WB_EnforcementDSM] sub_green=-0.0029285  sub_dirty=-0.0308237  r2a=0.743982
-  [TREND_EnforcementDSM] sub_green= 0.0016096  sub_dirty=-0.0133281  r2a=0.7439
-> 82
-  [TREND_Hard] sub_green= 0.0005146  sub_dirty=-0.0029136  r2a=0.743982
-  [TREND_Soft] sub_green=-0.0038024  sub_dirty=-0.0079936  r2a=0.743982
-  [TREND_RegulatorySpace] sub_green= 0.0028718  sub_dirty=-0.0036737  r2a=0.743
-> 982
-  -> completato in 81.024533 minuti
+[skip] C:\Work\projects\Paper_PTA/New/Output/TripleDiff/Tables/subindices_fullp
+> anel_desta.csv esiste gia'.
 
 . 
 . di as result _n "=== 68 FATTO ==="

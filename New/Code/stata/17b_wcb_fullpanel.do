@@ -38,8 +38,12 @@ set seed 42
 * robustezza (i cui output esistono gia': suffissi _inclHKMO / _desta).
 * Riportato al default il 2026-08-23: era rimasto su "incl"/"desta" dall'ultima
 * variante eseguita, quindi un rerun non riproduceva il baseline.
-global PTA_SAMPLE "excl"
-global PTA_DEPTH  "totaldepth"
+local env_sample : env PTA_SAMPLE
+local env_depth  : env PTA_DEPTH
+if "`env_sample'" != "" global PTA_SAMPLE "`env_sample'"
+else                    global PTA_SAMPLE "excl"
+if "`env_depth'"  != "" global PTA_DEPTH  "`env_depth'"
+else                    global PTA_DEPTH  "totaldepth"
 global BREPS      9999
 
 * Asse 1 — campione HK/Macao

@@ -12,8 +12,11 @@ $env:PTA_DEPTH = "totaldepth"
 $p1 = Start-Process -FilePath $stata -ArgumentList "/e","do","New\Code\stata\48g_wcb_collapsed_alldepvars.do" -PassThru
 Write-Host "Job 1 PID: $($p1.Id)"
 
-# Job 2: Full panel DESTA val (17b copy)
-$p2 = Start-Process -FilePath $stata -ArgumentList "/e","do","New\Code\stata\17b_wcb_fullpanel_desta_val.do" -PassThru
+# Job 2: Full panel DESTA val (17b, ora parametrizzato via env var invece del
+# wrapper 17b_wcb_fullpanel_desta_val.do, rimosso: FIX B4 audit 2026-09-07c)
+$env:PTA_SAMPLE = "excl"
+$env:PTA_DEPTH = "desta"
+$p2 = Start-Process -FilePath $stata -ArgumentList "/e","do","New\Code\stata\17b_wcb_fullpanel.do" -PassThru
 Write-Host "Job 2 PID: $($p2.Id)"
 
 # Job 3: C-prod-HS4 TotalDepth val

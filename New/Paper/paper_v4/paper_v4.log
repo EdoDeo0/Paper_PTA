@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.20)  7 SEP 2026 10:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.8.20)  8 SEP 2026 12:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -743,16 +743,15 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.207 
-      ] [9
+l.253 \end{table}
+                 ] [9
 pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.262 \emph{Third}
-                  , Hong Kong and Macao (CEPA, 2003) are entrepôt economies...
-]
-Overfull \hbox (35.72984pt too wide) in paragraph at lines 278--287
+l.261 
+      ]
+Overfull \hbox (35.72984pt too wide) in paragraph at lines 284--293
 \T1/cmr/m/n/12 Agree-ments database ([][]Hof-mann, Os-nago, and Ruta, []2017[][
 ]) yields $\OML/cmm/m/it/12 EP[]$\T1/cmr/m/n/12 , the count of environmental-
  []
@@ -761,339 +760,344 @@ Overfull \hbox (35.72984pt too wide) in paragraph at lines 278--287
 
 pdfTeX warning: pdflatex.exe (file ./figures/fig_ep_timeline.pdf): PDF inclusio
 n: found PDF version <1.7>, but at most version <1.5> allowed
-<figures/fig_ep_timeline.pdf, id=342, 867.24pt x 397.485pt>
+<figures/fig_ep_timeline.pdf, id=353, 867.24pt x 397.485pt>
 File: figures/fig_ep_timeline.pdf Graphic file (type pdf)
 <use figures/fig_ep_timeline.pdf>
-Package pdftex.def Info: figures/fig_ep_timeline.pdf  used on input line 298.
+Package pdftex.def Info: figures/fig_ep_timeline.pdf  used on input line 304.
 (pdftex.def)             Requested size: 472.03123pt x 216.34906pt.
 
 
 pdfTeX warning: pdflatex.exe (file ./figures/fig_map_treated.pdf): PDF inclusio
 n: found PDF version <1.7>, but at most version <1.5> allowed
-<figures/fig_map_treated.pdf, id=343, 722.7pt x 397.485pt>
+<figures/fig_map_treated.pdf, id=354, 722.7pt x 397.485pt>
 File: figures/fig_map_treated.pdf Graphic file (type pdf)
 <use figures/fig_map_treated.pdf>
-Package pdftex.def Info: figures/fig_map_treated.pdf  used on input line 311.
+Package pdftex.def Info: figures/fig_map_treated.pdf  used on input line 317.
 (pdftex.def)             Requested size: 401.22942pt x 220.6735pt.
 [10] [11
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.330 \emph{Green products}
-                            are the 248 HS6 codes of the OECD Combined List ...
-
+l.335 
+      
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.330 \emph{Green products}
-                            are the 248 HS6 codes of the OECD Combined List ...
- <./figures/fig_ep_timeline.pdf> <./figures/fig_map_treated.pdf
+l.335 
+       <./figures/fig_ep_timeline.pdf> <./figures/fig_map_treated.pdf
 
 pdfTeX warning: pdflatex.exe (file ./figures/fig_map_treated.pdf): PDF inclusio
 n: multiple pdfs with page group included in a single page
->] [12
+>]
+
+pdfTeX warning: pdflatex.exe (file ./figures/fig_composition_shares.pdf): PDF i
+nclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<figures/fig_composition_shares.pdf, id=394, 650.43pt x 397.485pt>
+File: figures/fig_composition_shares.pdf Graphic file (type pdf)
+<use figures/fig_composition_shares.pdf>
+Package pdftex.def Info: figures/fig_composition_shares.pdf  used on input line
+ 407.
+(pdftex.def)             Requested size: 401.22942pt x 245.20087pt.
+[12] [13
 pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.395 
-      ]
-
-pdfTeX warning: pdflatex.exe (file ./figures/fig_composition_shares.pdf): PDF i
-nclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<figures/fig_composition_shares.pdf, id=392, 650.43pt x 397.485pt>
-File: figures/fig_composition_shares.pdf Graphic file (type pdf)
-<use figures/fig_composition_shares.pdf>
-Package pdftex.def Info: figures/fig_composition_shares.pdf  used on input line
- 401.
-(pdftex.def)             Requested size: 401.22942pt x 245.20087pt.
-[13
+l.461 \end{table}
+                 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.477 
-       <./figures/fig_composition_shares.pdf>] [14
+l.461 \end{table}
+                  <./figures/fig_composition_shares.pdf>] [14
 pdfTeX warning (ext4): destination with the same identifier (name{table.4}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.477 
+l.483 
       ]
-Underfull \hbox (badness 4686) in paragraph at lines 503--503
+Underfull \hbox (badness 4686) in paragraph at lines 509--509
 \T1/cmr/m/it/10.95 neutral prod-ucts in the
  []
 
 
-Underfull \hbox (badness 3281) in paragraph at lines 503--503
+Underfull \hbox (badness 3281) in paragraph at lines 509--509
 \T1/cmr/m/it/10.95 same HS4 fam-ily as a
  []
 
 
-Underfull \hbox (badness 4048) in paragraph at lines 503--503
+Underfull \hbox (badness 4048) in paragraph at lines 509--509
 []\T1/cmr/m/n/10.95 Neutral prod-ucts dif-fer from
  []
 
 
-Underfull \hbox (badness 3148) in paragraph at lines 507--507
+Underfull \hbox (badness 3148) in paragraph at lines 511--511
 \T1/cmr/m/it/10.95 destinations matched on
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 507--507
+Underfull \hbox (badness 10000) in paragraph at lines 511--511
 \T1/cmr/m/it/10.95 year-2000 GDP p.c.,
  []
 
-[15] [16
+[15
 pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.552 
-      ] [17] [18] [19] [20] [21] (Tabelle/tab_01_ladder.tex) [22
+l.528 
+      ] [16] [17] [18] [19] [20] [21] (Tabelle/tab_01_ladder.tex) [22
 pdfTeX warning (ext4): destination with the same identifier (name{table.6}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.758 
-      ] [23] (Tabelle/tab_02_fullpanel.tex) [24] [25
+l.758 O
+       nly one of those ends moves. On the green margin the coefficient is i...
+] [23] (Tabelle/tab_02_fullpanel.tex) [24] [25
 pdfTeX warning (ext4): destination with the same identifier (name{table.7}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.829 \FloatBarrier
-                   ] [26] (Tabelle/tab_03_collapsed.tex)
+l.833 \FloatBarrier
+                   ] [26] [27] (Tabelle/tab_03_collapsed.tex)
 (Tabelle/tab_04_leaveoneout.tex
 Underfull \hbox (badness 10000) in paragraph at lines 17--17
 []\T1/cmr/m/it/8 Excluding the three
  []
 
-) [27] [28
+) (Tabelle/tab_A23_loo_green.tex
+Underfull \hbox (badness 10000) in paragraph at lines 14--14
+[]\T1/cmr/m/it/8 Excluding the three deep-est (Peru,
+ []
+
+) [28] [29
 pdfTeX warning (ext4): destination with the same identifier (name{table.8}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.912 \FloatBarrier
-                   ] [29
+l.930 \FloatBarrier
+                   ] [30
 pdfTeX warning (ext4): destination with the same identifier (name{table.9}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.912 \FloatBarrier
-                   ] (Tabelle/tab_05_subsamples.tex [30]) [31
+l.930 \FloatBarrier
+                   ] [31
 pdfTeX warning (ext4): destination with the same identifier (name{table.10}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.969 
-      ]
-Underfull \hbox (badness 3965) in paragraph at lines 992--992
-[] \T1/cmr/m/n/10.95 WB: Green Lib-er-al-iza-tion +
- []
-
-[32
+l.930 \FloatBarrier
+                   ] (Tabelle/tab_05_subsamples.tex [32]) [33
 pdfTeX warning (ext4): destination with the same identifier (name{table.11}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1020 
-       ] (Tabelle/tab_06_subindex_fullpanel.tex) [33] [34
+l.987 
+      ]
+Underfull \hbox (badness 3965) in paragraph at lines 1010--1010
+[] \T1/cmr/m/n/10.95 WB: Green Lib-er-al-iza-tion +
+ []
+
+[34
 pdfTeX warning (ext4): destination with the same identifier (name{table.12}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1052 \FloatBarrier
-                    ]
-<figures/eventstudy_collapsed_v3.png, id=684, 903.375pt x 390.258pt>
-File: figures/eventstudy_collapsed_v3.png Graphic file (type png)
-<use figures/eventstudy_collapsed_v3.png>
-Package pdftex.def Info: figures/eventstudy_collapsed_v3.png  used on input lin
-e 1086.
-(pdftex.def)             Requested size: 472.03123pt x 203.92383pt.
- [35] (Tabelle/tab_07_ppml.tex) [36
-pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1117 \section
-               {Conclusion}\label{sec:conclusion} <./figures/eventstudy_collaps
-ed_v3.png>] [37
+l.1038 
+       ] (Tabelle/tab_06_subindex_fullpanel.tex) [35] [36
 pdfTeX warning (ext4): destination with the same identifier (name{table.13}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1117 \section
-               {Conclusion}\label{sec:conclusion}] [38] [39]
-Overfull \hbox (4.21649pt too wide) in paragraph at lines 1169--1169
+l.1069 \FloatBarrier
+                    ]
+<figures/eventstudy_collapsed_v3.png, id=704, 903.375pt x 390.258pt>
+File: figures/eventstudy_collapsed_v3.png Graphic file (type png)
+<use figures/eventstudy_collapsed_v3.png>
+Package pdftex.def Info: figures/eventstudy_collapsed_v3.png  used on input lin
+e 1104.
+(pdftex.def)             Requested size: 472.03123pt x 203.92383pt.
+ [37] (Tabelle/tab_07_ppml.tex) [38
+pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1135 \section
+               {Conclusion}\label{sec:conclusion} <./figures/eventstudy_collaps
+ed_v3.png>] [39
+pdfTeX warning (ext4): destination with the same identifier (name{table.14}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1135 \section
+               {Conclusion}\label{sec:conclusion}] [40] [41]
+Overfull \hbox (4.21649pt too wide) in paragraph at lines 1186--1186
 [][]\T1/cmr/m/n/12 Cherniwchan, Je-van (2017). ``Trade lib-er-al-iza-tion and t
 he en-vi-ron-ment: Ev-i-dence from NAFTA
  []
 
 
-Overfull \hbox (55.61937pt too wide) in paragraph at lines 1169--1169
+Overfull \hbox (55.61937pt too wide) in paragraph at lines 1186--1186
 \T1/cmr/m/n/12 high-dimensional fixed ef-fects''. In: \T1/cmr/m/it/12 Stata Jou
 r-nal \T1/cmr/m/n/12 20.1, pp. 95^^U115. \T1/cmr/m/sc/12 doi\T1/cmr/m/n/12 : []
 $\T1/cmtt/m/n/12 10 . 1177 / 1536867X20909691$[]\T1/cmr/m/n/12 . 
  []
 
-[40]
-Overfull \hbox (13.407pt too wide) in paragraph at lines 1169--1169
+[42] [43]
+Overfull \hbox (13.407pt too wide) in paragraph at lines 1186--1186
 \T1/cmr/m/n/12 environment-competitiveness re-la-tion-ship''. In: \T1/cmr/m/it/
 12 Jour-nal of Eco-nomic Per-spec-tives \T1/cmr/m/n/12 9.4, pp. 97^^U
  []
 
-[41] [42] (Tabelle/tab_A01_trattamento.tex) [43] [44
-pdfTeX warning (ext4): destination with the same identifier (name{table.14}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1193 \section
-               {Inference: full bootstrap and permutation tables}\label{app:...
-] (Tabelle/tab_A02_wcb.tex) (Tabelle/tab_A03_permutation.tex) [45
+[44] (Tabelle/tab_A01_trattamento.tex) [45] [46
 pdfTeX warning (ext4): destination with the same identifier (name{table.15}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1205 \section
-               {Wild-cluster-bootstrap coefficient matrix}\label{app:matrice}]
-[46
+l.1210 \section
+               {Inference: full bootstrap and permutation tables}\label{app:...
+] (Tabelle/tab_A02_wcb.tex) (Tabelle/tab_A03_permutation.tex) [47
 pdfTeX warning (ext4): destination with the same identifier (name{table.16}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1205 \section
+l.1222 \section
                {Wild-cluster-bootstrap coefficient matrix}\label{app:matrice}]
-(Tabelle/tab_A04_matrice.tex) (Tabelle/tab_A05_ladder_wb.tex)
-(Tabelle/tab_A06_ladder_trend.tex) [47
+[48
 pdfTeX warning (ext4): destination with the same identifier (name{table.17}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1229 \section
-               {Dynamics: event study and destination-specific trends}\label...
-] [48
+l.1222 \section
+               {Wild-cluster-bootstrap coefficient matrix}\label{app:matrice}]
+(Tabelle/tab_A04_matrice.tex) (Tabelle/tab_A05_ladder_wb.tex)
+(Tabelle/tab_A06_ladder_trend.tex) [49
 pdfTeX warning (ext4): destination with the same identifier (name{table.18}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1229 \section
+l.1246 \section
                {Dynamics: event study and destination-specific trends}\label...
-] [49
+] [50
 pdfTeX warning (ext4): destination with the same identifier (name{table.19}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1229 \section
+l.1246 \section
                {Dynamics: event study and destination-specific trends}\label...
-] (Tabelle/tab_A07_eventstudy_twfe.tex) [50] [51
+] [51
 pdfTeX warning (ext4): destination with the same identifier (name{table.20}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1239 \section
-               {Sun--Abraham event study}\label{app:sunab}]
-<figures/eventstudy_sunab_v3.png, id=856, 903.375pt x 448.074pt>
-File: figures/eventstudy_sunab_v3.png Graphic file (type png)
-<use figures/eventstudy_sunab_v3.png>
-Package pdftex.def Info: figures/eventstudy_sunab_v3.png  used on input line 12
-69.
-(pdftex.def)             Requested size: 472.03123pt x 234.13477pt.
-
-(Tabelle/tab_A08_sunab.tex) [52] [53
+l.1246 \section
+               {Dynamics: event study and destination-specific trends}\label...
+] (Tabelle/tab_A07_eventstudy_twfe.tex) [52] [53
 pdfTeX warning (ext4): destination with the same identifier (name{table.21}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1274 \section
-               {Destination-specific trends and pre-trend tests}\label{app:t...
-] (Tabelle/tab_A09_desttrends.tex) [54
-pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1295 \section
-               {Sub-index estimates on the collapsed panel}\label{app:subind...
- <./figures/eventstudy_sunab_v3.png>] [55
+l.1256 \section
+               {Sun--Abraham event study}\label{app:sunab}]
+<figures/eventstudy_sunab_v3.png, id=877, 903.375pt x 448.074pt>
+File: figures/eventstudy_sunab_v3.png Graphic file (type png)
+<use figures/eventstudy_sunab_v3.png>
+Package pdftex.def Info: figures/eventstudy_sunab_v3.png  used on input line 12
+86.
+(pdftex.def)             Requested size: 472.03123pt x 234.13477pt.
+
+(Tabelle/tab_A08_sunab.tex) [54] [55
 pdfTeX warning (ext4): destination with the same identifier (name{table.22}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1295 \section
+l.1291 \section
+               {Destination-specific trends and pre-trend tests}\label{app:t...
+] (Tabelle/tab_A09_desttrends.tex) [56
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1314 \section
                {Sub-index estimates on the collapsed panel}\label{app:subind...
-] (Tabelle/tab_A10_subindex_collapsed.tex)
-Underfull \hbox (badness 3179) in paragraph at lines 1319--1320
-[]\T1/cmr/m/n/10.95 Liberalization of trade in en-vi-ron-men-tal
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1321--1321
-[]\T1/cmr/m/n/10.95 Standards Non-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1323--1324
-[]\T1/cmr/m/n/10.95 Provisions fa-cil-i-tat-ing mar-ket ac-cess
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1323--1324
-\T1/cmr/m/n/10.95 for en-vi-ron-men-tal goods (X7_01_01,
- []
-
-
-Underfull \hbox (badness 1082) in paragraph at lines 1327--1327
-[]\T1/cmr/m/n/10.95 Enforcement & DSM
- []
-
-
-Underfull \hbox (badness 1082) in paragraph at lines 1329--1329
-[]\T1/cmr/m/n/10.95 Enforcement & DSM
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1329--1330
-[]\T1/cmr/m/n/10.95 Environmental dis-pute set-tle-ment and
- []
-
-
-Underfull \hbox (badness 6016) in paragraph at lines 1329--1330
-\T1/cmr/m/n/10.95 en-force-ment pro-ce-dures (X5_*, X11_*,
- []
-
-
-Underfull \hbox (badness 1348) in paragraph at lines 1333--1334
-\T1/cmr/m/n/10.95 X5_*, X10_*, X14_*, net of the soft-
- []
-
-
-Underfull \hbox (badness 1394) in paragraph at lines 1335--1336
-[]\T1/cmr/m/n/10.95 Cooperation and best-endeavour lan-guage
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1337--1338
-[]\T1/cmr/m/n/10.95 Regulatory au-ton-omy and policy-space
- []
-
-
-Underfull \hbox (badness 3460) in paragraph at lines 1339--1340
-[]\T1/cmr/m/n/10.95 Information ex-change, ca-pac-ity build-ing,
- []
-
-[56] [57
+ <./figures/eventstudy_sunab_v3.png>] [57
 pdfTeX warning (ext4): destination with the same identifier (name{table.23}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1348 \section
-               {Hong Kong and Macao}\label{app:hkmo}] [58
+l.1314 \section
+               {Sub-index estimates on the collapsed panel}\label{app:subind...
+] (Tabelle/tab_A10_subindex_collapsed.tex)
+Underfull \hbox (badness 3179) in paragraph at lines 1338--1339
+[]\T1/cmr/m/n/10.95 Liberalization of trade in en-vi-ron-men-tal
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1340--1340
+[]\T1/cmr/m/n/10.95 Standards Non-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1342--1343
+[]\T1/cmr/m/n/10.95 Provisions fa-cil-i-tat-ing mar-ket ac-cess
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1342--1343
+\T1/cmr/m/n/10.95 for en-vi-ron-men-tal goods (X7_01_01,
+ []
+
+
+Underfull \hbox (badness 1082) in paragraph at lines 1346--1346
+[]\T1/cmr/m/n/10.95 Enforcement & DSM
+ []
+
+
+Underfull \hbox (badness 1082) in paragraph at lines 1348--1348
+[]\T1/cmr/m/n/10.95 Enforcement & DSM
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1348--1349
+[]\T1/cmr/m/n/10.95 Environmental dis-pute set-tle-ment and
+ []
+
+
+Underfull \hbox (badness 6016) in paragraph at lines 1348--1349
+\T1/cmr/m/n/10.95 en-force-ment pro-ce-dures (X5_*, X11_*,
+ []
+
+
+Underfull \hbox (badness 1348) in paragraph at lines 1352--1353
+\T1/cmr/m/n/10.95 X5_*, X10_*, X14_*, net of the soft-
+ []
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 1354--1355
+[]\T1/cmr/m/n/10.95 Cooperation and best-endeavour lan-guage
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1356--1357
+[]\T1/cmr/m/n/10.95 Regulatory au-ton-omy and policy-space
+ []
+
+[58] [59
 pdfTeX warning (ext4): destination with the same identifier (name{table.24}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1348 \section
+l.1365 \section
+               {Hong Kong and Macao}\label{app:hkmo}] [60
+pdfTeX warning (ext4): destination with the same identifier (name{table.25}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1365 \section
                {Hong Kong and Macao}\label{app:hkmo}]
 (Tabelle/tab_A11_fullpanel_inclHKMO.tex)
 (Tabelle/tab_A12_collapsed_inclHKMO.tex
@@ -1103,120 +1107,124 @@ Underfull \hbox (badness 3590) in paragraph at lines 53--54
 ells, an-a-lytic
  []
 
-) [59] [60
-pdfTeX warning (ext4): destination with the same identifier (name{table.25}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1371 \section
-               {Full robustness battery with standard errors}\label{app:robu...
-] [61
+) [61] [62
 pdfTeX warning (ext4): destination with the same identifier (name{table.26}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1371 \section
+l.1388 \section
                {Full robustness battery with standard errors}\label{app:robu...
-] (Tabelle/tab_A13_robustness_full.tex
-
-LaTeX Warning: Float too large for page by 28.4505pt on input line 71.
-
-) [62] [63
+] [63
 pdfTeX warning (ext4): destination with the same identifier (name{table.27}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1379 \section
-               {Alternative depth controls}\label{app:depthbounds}]
-(Tabelle/tab_A18_depthbounds.tex) (Tabelle/tab_A14_apec.tex) [64
+l.1388 \section
+               {Full robustness battery with standard errors}\label{app:robu...
+] (Tabelle/tab_A13_robustness_full.tex) [64] [65
 pdfTeX warning (ext4): destination with the same identifier (name{table.28}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1399 \section
-               {CO$_2$ intensity as a continuous dirty measure}\label{app:co2}]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1399.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 1399.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1399.
-
-(Tabelle/tab_A15_co2.tex) [65
+l.1408 \section
+               {Alternative depth controls}\label{app:depthbounds}]
+(Tabelle/tab_A18_depthbounds.tex) [66
 pdfTeX warning (ext4): destination with the same identifier (name{table.29}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1422 \section
-               {Extended tables for the comparison-group subsamples}\label{a...
-] [66
+l.1447 
+       ] (Tabelle/tab_A22_eif.tex
+Overfull \hbox (23.3941pt too wide) in paragraph at lines 7--32
+ [] 
+ []
+
+) [67
 pdfTeX warning (ext4): destination with the same identifier (name{table.30}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1422 \section
-               {Extended tables for the comparison-group subsamples}\label{a...
-] (Tabelle/tab_A19_cprodhs4.tex) (Tabelle/tab_A20_cem.tex)
-(Tabelle/tab_A21_deepshallow.tex) [67] [68
+l.1469 
+       ] (Tabelle/tab_A24_dosebins.tex
+Overfull \hbox (47.00073pt too wide) in paragraph at lines 7--29
+ [] 
+ []
+
+) [68] (Tabelle/tab_A14_apec.tex) [69
 pdfTeX warning (ext4): destination with the same identifier (name{table.31}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1438 \section
-               {Minimum detectable effects}\label{app:mde}] [69
+l.1478 \section
+               {CO$_2$ intensity as a continuous dirty measure}\label{app:co2}]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1478.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 1478.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1478.
+
+(Tabelle/tab_A15_co2.tex) [70
 pdfTeX warning (ext4): destination with the same identifier (name{table.32}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1438 \section
-               {Minimum detectable effects}\label{app:mde}] [70
+l.1501 \section
+               {Extended tables for the comparison-group subsamples}\label{a...
+] [71
 pdfTeX warning (ext4): destination with the same identifier (name{table.33}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1438 \section
-               {Minimum detectable effects}\label{app:mde}]
-(Tabelle/tab_A16_mde.tex) [71
+l.1501 \section
+               {Extended tables for the comparison-group subsamples}\label{a...
+] (Tabelle/tab_A19_cprodhs4.tex) (Tabelle/tab_A20_cem.tex)
+(Tabelle/tab_A21_deepshallow.tex) [72] [73
 pdfTeX warning (ext4): destination with the same identifier (name{table.34}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1446 \end{document}
+l.1517 \section
+               {Minimum detectable effects}\label{app:mde}] [74
+pdfTeX warning (ext4): destination with the same identifier (name{table.35}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1517 \section
+               {Minimum detectable effects}\label{app:mde}] [75
+pdfTeX warning (ext4): destination with the same identifier (name{table.36}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1517 \section
+               {Minimum detectable effects}\label{app:mde}]
+(Tabelle/tab_A16_mde.tex) [76
+pdfTeX warning (ext4): destination with the same identifier (name{table.37}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1531 \end{document}
                      ] (paper_v4.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `paper_v4.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `paper_v4.out':
-(rerunfilecheck)             Before: 57A55F68215E262DF349434F45AAE82F;7662
-(rerunfilecheck)             After:  5A67A365F51214DA574E5F1296FD9E96;7625.
-
-Package biblatex Warning: Please rerun LaTeX.
-(biblatex)                Page breaks have changed.
-
+Package rerunfilecheck Info: File `paper_v4.out' has not changed.
+(rerunfilecheck)             Checksum: A1C241DF2E3976D55BD844C31E84D7C5;7881.
 Package logreq Info: Writing requests to 'paper_v4.run.xml'.
 \openout1 = `paper_v4.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 19095 strings out of 467871
- 337723 string characters out of 5418376
- 1213534 words of memory out of 5000000
- 47454 multiletter control sequences out of 15000+600000
+ 19136 strings out of 467871
+ 338751 string characters out of 5418376
+ 1213884 words of memory out of 5000000
+ 47476 multiletter control sequences out of 15000+600000
  655906 words of font info for 113 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,15n,79p,1929b,1725s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1260,9 +1268,9 @@ rs/edodr/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb
 ><C:/Users/edodr/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
 msy8.pfb><C:/Users/edodr/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
 nts/symbols/msam10.pfb>
-Output written on paper_v4.pdf (71 pages, 1635741 bytes).
+Output written on paper_v4.pdf (76 pages, 1659285 bytes).
 PDF statistics:
- 1968 PDF objects out of 2073 (max. 8388607)
- 215 named destinations out of 1000 (max. 500000)
- 322 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2023 PDF objects out of 2073 (max. 8388607)
+ 225 named destinations out of 1000 (max. 500000)
+ 338 words of extra memory for PDF output out of 10000 (max. 10000000)
 

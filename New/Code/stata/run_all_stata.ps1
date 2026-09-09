@@ -60,7 +60,7 @@ Run-4Variants "$Do\17c_tripledd_fullpanel_alldepvars.do" "17c - tripledd fullpan
 Run-4Variants "$Do\18_robustness_fullpanel.do" "18 - robustness fullpanel"
 
 # --- 19b - Saturation ladder, full panel (once) ------------------------------
-Run-Stata "$Do\19b_saturation_ladder_fullpanel.do" @() "19b - saturation ladder fullpanel"
+Run-Stata "$Do\19d_ladder_tripledd_fullpanel.do" @() "19b - saturation ladder fullpanel"
 
 # --- 19c - Saturation ladder, full panel (2 variants: sample only) -----------
 $env:PTA_DEPTH = $null

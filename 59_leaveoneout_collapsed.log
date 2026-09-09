@@ -1,0 +1,1550 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:/Work/projects/Paper_PTA/New/Code/stata/59_leaveoneout_collapsed.do 
+
+. *****************************************************************************
+> ***
+. ****** 59 — Leave-one-out sul margine dirty (Stata, reghdfe)              ***
+> ***
+. *****************************************************************************
+> ***
+. * Author: Edoardo Vitella
+. * Prerequisito: Rscript New/Code/52_export_collapsed_dta.R
+. *
+. * Replica in Stata di 31_robustness_leaveoneout.R. Chiude l'ultimo risultato
+. * del paper rimasto in fascia C (due run R identiche, nessuna verifica
+. * cross-software) secondo il censimento 2026-08-21d.
+. *
+. * SPEC (identica a 31.R e al baseline di 16/52):
+. *   y ~ EP:env_good + EP:dirty + TD:env_good + TD:dirty
+. *      | pd + dt + pt,  [aw=n],  vce(cluster country_code)
+. * Si registrano ENTRAMBI i margini (dirty e green): il leave-one-out serve si
+> a
+. * a testare la fragilita' del dirty sia la tenuta del green.
+. *
+. * PIANO (26 stime):
+. *   baseline          -> spec principale, controllo di riproduzione
+. *   lista_estesa      -> dirty_ext (Mani-Wheeler + cemento/minerali non metal
+> lici)
+. *   senza_alta_dose   -> esclude INSIEME Peru(434)+Svizzera(331)+Corea(133):
+. *                        i tre paesi ad alta dose si coprono a vicenda, quind
+> i
+. *                        il leave-one-out singolo non li intercetta
+. *   senza_<cc> x23    -> un paese trattato alla volta
+. *
+. * Nessun preserve/restore: i sotto-campioni si fanno con `if`, cosi' non si
+. * riscrive il dataset su disco a ogni stima (26 volte su 3,7M celle).
+. * Le FE pd/dt/pt restano quelle globali: restringere il campione non cambia l
+> a
+. * partizione, e reghdfe scarta i singleton risultanti (in R le .GRP vengono
+. * rinumerate, ma rinumerare non cambia i gruppi).
+. *
+. * Cache per spec (.dta): rilanciabile senza rifare nulla.
+. *
+. * Output: New/Output/TripleDiff/Tables_Stata/LOO_<spec>.dta (26)
+. *         New/Output/TripleDiff/Tables_Stata/dirty_leaveoneout_stata.csv
+. *
+. * ESECUZIONE BATCH (da PowerShell, root progetto — ~20-30 min):
+. *   & "C:\Program Files\StataNow19\StataSE-64.exe" /e do "New\Code\stata\59_l
+> eaveoneout_collapsed.do"
+. 
+. do "New/Code/stata/_root.do"
+
+. * _root.do — configurazione centralizzata del progetto
+. * Il replicatore deve modificare SOLO questo file.
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. 
+. if c(os) == "Windows" {
+.     global ROOT "C:\Work\projects\Paper_PTA"
+. }
+
+. else if c(os) == "MacOSX" {
+.     global ROOT "~/Documents/work/projects/Paper_PTA"
+. }
+
+. else {
+.     global ROOT "~/work/projects/Paper_PTA"
+. }
+
+. 
+. cd "$ROOT"
+C:\Work\projects\Paper_PTA
+
+. 
+. * --- Variant configuration (2x2 matrix) ---
+. * PTA_SAMPLE: "excl" (default, exclude HK/Macao) or "incl"
+. * PTA_DEPTH:  "totaldepth" (default) or "desta"
+. if "$PTA_SAMPLE" == "" global PTA_SAMPLE "excl"
+
+. if "$PTA_DEPTH"  == "" global PTA_DEPTH  "totaldepth"
+
+. 
+. * --- Output suffix (prevents cross-variant cache contamination) ---
+. global OUTSFX ""
+
+. if "$PTA_SAMPLE" == "incl" global OUTSFX "${OUTSFX}_inclHKMO"
+
+. if "$PTA_DEPTH"  == "desta" global OUTSFX "${OUTSFX}_desta"
+
+. 
+end of do-file
+
+. global DTA   "$ROOT\New\Data\Collapsed\collapsed_omnibus.dta"
+
+. global DIRTY "$ROOT\New\Data\Classifications\dirty_goods_hs6.csv"
+
+. global TAB   "$ROOT\New\Output\TripleDiff\Tables_Stata"
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which ftools
+
+. if _rc ssc install ftools
+
+. cap which regsave
+
+. if _rc ssc install regsave
+
+. 
+. cap mkdir "$TAB"
+
+. 
+. *── dirty_ext (non presente in collapsed_omnibus.dta: 52_export tiene solo di
+> rty) ──
+. import delimited "$DIRTY", clear
+(encoding automatically selected: ISO-8859-2)
+(3 vars, 1,139 obs)
+
+. keep hs6 dirty_ext
+
+. duplicates drop hs6, force
+
+Duplicates in terms of hs6
+
+(0 observations are duplicates)
+
+. tempfile dext
+
+. save `dext'
+file C:\Users\edodr\AppData\Local\Temp\ST_5140_000001.tmp saved as .dta
+    format
+
+. 
+. *── Caricamento e preparazione ──────────────────────────────────────────────
+> ───
+. use "$DTA", clear
+
+. su WB_EP_Depth, meanonly
+
+. if r(max) != 17 {
+.     di as error "WB_EP_Depth max=" r(max) " (atteso 17). Dataset stantio."
+.     exit 1
+. }
+
+. merge m:1 hs6 using `dext', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                     3,193,367
+        from master                 3,193,367  
+        from using                          0  
+
+    Matched                           580,131  
+    -----------------------------------------
+
+. replace dirty_ext = 0 if missing(dirty_ext)
+(3,193,367 real changes made)
+
+. 
+. gen double ep_green     = WB_EP_Depth       * env_good
+
+. gen double ep_dirty     = WB_EP_Depth       * dirty_p
+
+. gen double td_green     = TotalDepth_nonEnv * env_good
+
+. gen double td_dirty     = TotalDepth_nonEnv * dirty_p
+
+. gen double ep_dirty_ext = WB_EP_Depth       * dirty_ext
+
+. gen double td_dirty_ext = TotalDepth_nonEnv * dirty_ext
+
+. 
+. count
+  3,773,498
+
+. di as text "Celle: " r(N)
+Celle: 3773498
+
+. 
+. *── Lista dei paesi trattati ────────────────────────────────────────────────
+> ───
+. preserve
+
+. keep country_code WB_EP_Depth
+
+. collapse (max) maxep = WB_EP_Depth, by(country_code)
+
+. keep if maxep > 0
+(213 observations deleted)
+
+. sort country_code
+
+. levelsof country_code, local(treated) clean
+103 105 106 107 111 112 119 122 127 129 132 133 134 136 141 144 322 331 412 415
+>  434 601 609
+
+. local ntr : word count `treated'
+
+. di as text "Paesi trattati: `ntr'  ->  `treated'"
+Paesi trattati: 23  ->  103 105 106 107 111 112 119 122 127 129 132 133 134 136
+>  141 144 322 331 412 415 434 601 609
+
+. restore
+
+. if `ntr' != 23 {
+.     di as error "Attesi 23 paesi trattati, trovati `ntr'. Fermo."
+.     exit 9
+. }
+
+. 
+. *── Program: una stima -> LOO_<label>.dta ───────────────────────────────────
+> ───
+. capture program drop run_loo
+
+. program define run_loo
+  1.     args label dvar ifexpr dropped
+  2.     local out "$TAB\LOO_`label'.dta"
+  3.     cap confirm file "`out'"
+  4.     if _rc == 0 {
+  5.         di as text "  SKIP `label' (gia' presente)"
+  6.         exit 0
+  7.     }
+  8.     local epd = cond("`dvar'" == "ext", "ep_dirty_ext", "ep_dirty")
+  9.     local tdd = cond("`dvar'" == "ext", "td_dirty_ext", "td_dirty")
+ 10.     di as text "  [`label'] reghdfe..."
+ 11.     cap noisily reghdfe y ep_green `epd' td_green `tdd' [aw=n] `ifexpr', /
+> //
+>         absorb(pd dt pt) vce(cluster country_code)
+ 12.     if _rc {
+ 13.         di as error "  [FALLITO] `label'"
+ 14.         exit 0
+ 15.     }
+ 16.     regsave using "`out'", tstat pval ci replace ///
+>         addlabel(spec, `label', dropped_country, "`dropped'", ///
+>                  source, reghdfe_stata_59)
+ 17.     di as text "  `label': dirty=" %9.5f _b[`epd'] "  green=" %9.5f _b[ep_
+> green]
+ 18. end
+
+. 
+. *── 1. baseline (+ guardia di riproduzione) ─────────────────────────────────
+> ───
+. run_loo baseline core "" ""
+  [baseline] reghdfe...
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       9.59
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045685   .0069576    -0.66   0.512    -.0182782    .0091412
+    ep_dirty |  -.0118734   .0029502    -4.02   0.000    -.0176866   -.0060602
+    td_green |  -.0000508   .0002397    -0.21   0.832    -.0005231    .0004215
+    td_dirty |   .0003663   .0001767     2.07   0.039     .0000181    .0007144
+       _cons |   9.266953   .0006265  1.5e+04   0.000     9.265719    9.268188
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_baselin
+    > e.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_baselin
+    > e.dta saved
+  baseline: dirty= -0.01187  green= -0.00457
+
+. * La guardia gira solo se la stima e' appena stata fatta (dopo uno SKIP i
+. * coefficienti in memoria non sono quelli del baseline).
+. cap confirm file "$TAB\LOO_baseline.dta"
+
+. if _rc == 0 & "`e(cmd)'" == "reghdfe" {
+.     if abs(_b[ep_dirty] - (-0.0118734)) > 1e-4 | abs(_b[ep_green] - (-0.00456
+> 85)) > 1e-4 {
+.         di as error "Baseline non riprodotto (atteso -0.0118734 / -0.0045685)
+> ."
+.         di as error "  ottenuto: " _b[ep_dirty] " / " _b[ep_green]
+.         exit 9
+.     }
+.     di as result "  [guardia OK] baseline riprodotto"
+  [guardia OK] baseline riprodotto
+. }
+
+. 
+. *── 2. lista estesa (dirty_ext) ─────────────────────────────────────────────
+> ───
+. run_loo lista_estesa ext "" ""
+  [lista_estesa] reghdfe...
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       7.11
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0047073   .0069786    -0.67   0.501    -.0184584    .0090438
+ep_dirty_ext |  -.0121105   .0031201    -3.88   0.000    -.0182587   -.0059624
+    td_green |  -.0000452   .0002399    -0.19   0.851     -.000518    .0004276
+td_dirty_ext |   .0003867   .0001822     2.12   0.035     .0000277    .0007458
+       _cons |   9.266922   .0006649  1.4e+04   0.000     9.265612    9.268232
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_lista_e
+    > stesa.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_lista_e
+    > stesa.dta saved
+  lista_estesa: dirty= -0.01211  green= -0.00471
+
+. 
+. *── 3. senza i tre paesi ad alta dose (Peru 434, Svizzera 331, Corea 133) ───
+> ───
+. run_loo senza_alta_dose core "if !inlist(country_code, 434, 331, 133)" "434+3
+> 31+133"
+  [senza_alta_dose] reghdfe...
+(dropped 91589 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,565,862
+Absorbing 3 HDFE groups                           F(   4,    224) =       3.38
+Statistics robust to heteroskedasticity           Prob > F        =     0.0105
+                                                  R-squared       =     0.8424
+                                                  Adj R-squared   =     0.8177
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        225    Root MSE        =     0.5805
+
+                         (Std. err. adjusted for 225 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0254837   .0111526    -2.29   0.023    -.0474611   -.0035063
+    ep_dirty |   -.027063     .01333    -2.03   0.044    -.0533313   -.0007947
+    td_green |   .0004265   .0002135     2.00   0.047     5.86e-06    .0008472
+    td_dirty |   .0006952   .0002612     2.66   0.008     .0001805      .00121
+       _cons |   9.261102   .0011585  7993.80   0.000     9.258819    9.263385
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    411296      411296           0    *|
+          dt |      3459        3459           0    *|
+          pt |     68057           1       68056     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_a
+    > lta_dose.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_a
+    > lta_dose.dta saved
+  senza_alta_dose: dirty= -0.02706  green= -0.02548
+
+. 
+. *── 4. leave-one-out: un paese trattato alla volta ──────────────────────────
+> ───
+. foreach cc of local treated {
+  2.     run_loo senza_`cc' core "if country_code != `cc'" "`cc'"
+  3. }
+  [senza_103] reghdfe...
+(dropped 92113 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,647,317
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.83
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8434
+                                                  Adj R-squared   =     0.8191
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5777
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0044953   .0069592    -0.65   0.519    -.0182085    .0092179
+    ep_dirty |  -.0117822   .0029519    -3.99   0.000    -.0175989   -.0059654
+    td_green |  -.0000598   .0002405    -0.25   0.804    -.0005336     .000414
+    td_dirty |   .0003556   .0001774     2.00   0.046     6.09e-06    .0007051
+       _cons |   9.265205   .0006256  1.5e+04   0.000     9.263972    9.266438
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418270      418270           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68544           1       68543     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 03.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 03.dta saved
+  senza_103: dirty= -0.01178  green= -0.00450
+  [senza_105] reghdfe...
+(dropped 91919 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,669,215
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.66
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8433
+                                                  Adj R-squared   =     0.8190
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5779
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045675   .0069616    -0.66   0.512    -.0182855    .0091505
+    ep_dirty |  -.0118871    .002951    -4.03   0.000    -.0177022   -.0060721
+    td_green |  -.0000512     .00024    -0.21   0.831    -.0005241    .0004218
+    td_dirty |   .0003669    .000177     2.07   0.039     .0000182    .0007156
+       _cons |   9.267394    .000625  1.5e+04   0.000     9.266163    9.268626
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    419841      419841           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68568           1       68567     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 05.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 05.dta saved
+  senza_105: dirty= -0.01189  green= -0.00457
+  [senza_106] reghdfe...
+(dropped 92027 singleton observations)
+(MWFE estimator converged in 28 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,653,563
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.48
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8436
+                                                  Adj R-squared   =     0.8194
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5772
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0046062   .0069374    -0.66   0.507    -.0182765    .0090641
+    ep_dirty |  -.0118333   .0029603    -4.00   0.000    -.0176666   -.0060001
+    td_green |  -.0000448   .0002369    -0.19   0.850    -.0005117     .000422
+    td_dirty |   .0003659   .0001787     2.05   0.042     .0000137     .000718
+       _cons |   9.266603   .0006187  1.5e+04   0.000     9.265384    9.267822
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418557      418557           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68513           1       68512     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 06.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 06.dta saved
+  senza_106: dirty= -0.01183  green= -0.00461
+  [senza_107] reghdfe...
+(dropped 91983 singleton observations)
+(MWFE estimator converged in 31 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,660,688
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.65
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8435
+                                                  Adj R-squared   =     0.8192
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5774
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045532   .0069725    -0.65   0.514    -.0182925    .0091861
+    ep_dirty |   -.011879   .0029553    -4.02   0.000    -.0177024   -.0060555
+    td_green |  -.0000541   .0002411    -0.22   0.823    -.0005291    .0004209
+    td_dirty |   .0003668   .0001773     2.07   0.040     .0000175    .0007161
+       _cons |   9.267739   .0006243  1.5e+04   0.000     9.266509    9.268969
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    419074      419074           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68554           1       68553     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 07.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 07.dta saved
+  senza_107: dirty= -0.01188  green= -0.00455
+  [senza_111] reghdfe...
+(dropped 92281 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,634,401
+Absorbing 3 HDFE groups                           F(   4,    226) =      12.74
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8424
+                                                  Adj R-squared   =     0.8179
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5801
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045229   .0069269    -0.65   0.514    -.0181725    .0091268
+    ep_dirty |  -.0120219   .0027681    -4.34   0.000    -.0174766   -.0065672
+    td_green |   -.000064   .0002364    -0.27   0.787    -.0005298    .0004019
+    td_dirty |   .0003396   .0001692     2.01   0.046     6.16e-06    .0006731
+       _cons |   9.266561   .0006026  1.5e+04   0.000     9.265373    9.267748
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417663      417663           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68483           1       68482     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 11.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 11.dta saved
+  senza_111: dirty= -0.01202  green= -0.00452
+  [senza_112] reghdfe...
+(dropped 92288 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,632,761
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.33
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8430
+                                                  Adj R-squared   =     0.8186
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5789
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |   -.004638   .0069149    -0.67   0.503     -.018264     .008988
+    ep_dirty |   -.011922   .0029549    -4.03   0.000    -.0177448   -.0060993
+    td_green |  -.0000359   .0002307    -0.16   0.876    -.0004904    .0004186
+    td_dirty |   .0003679   .0001792     2.05   0.041     .0000147     .000721
+       _cons |   9.263313   .0005845  1.6e+04   0.000     9.262161    9.264464
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417608      417608           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68483           1       68482     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 12.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 12.dta saved
+  senza_112: dirty= -0.01192  green= -0.00464
+  [senza_119] reghdfe...
+(dropped 91917 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,670,257
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.59
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8433
+                                                  Adj R-squared   =     0.8191
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5778
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045642   .0069576    -0.66   0.512    -.0182743     .009146
+    ep_dirty |  -.0118635   .0029585    -4.01   0.000    -.0176933   -.0060337
+    td_green |  -.0000511   .0002399    -0.21   0.831    -.0005238    .0004216
+    td_dirty |   .0003657   .0001775     2.06   0.041      .000016    .0007155
+       _cons |   9.267096   .0006245  1.5e+04   0.000     9.265866    9.268327
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    419951      419951           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68559           1       68558     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 19.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 19.dta saved
+  senza_119: dirty= -0.01186  green= -0.00456
+  [senza_122] reghdfe...
+(dropped 92308 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,630,621
+Absorbing 3 HDFE groups                           F(   4,    226) =       6.14
+Statistics robust to heteroskedasticity           Prob > F        =     0.0001
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8186
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5800
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0046962   .0069514    -0.68   0.500    -.0183941    .0090017
+    ep_dirty |  -.0124253   .0031885    -3.90   0.000    -.0187083   -.0061423
+    td_green |  -7.01e-06   .0002148    -0.03   0.974    -.0004303    .0004163
+    td_dirty |   .0004382   .0001587     2.76   0.006     .0001254     .000751
+       _cons |   9.269681   .0004975  1.9e+04   0.000       9.2687    9.270661
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417453      417453           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68401           1       68400     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 22.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 22.dta saved
+  senza_122: dirty= -0.01243  green= -0.00470
+  [senza_127] reghdfe...
+(dropped 92154 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,642,624
+Absorbing 3 HDFE groups                           F(   4,    226) =       8.65
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8436
+                                                  Adj R-squared   =     0.8193
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5778
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0048223   .0069339    -0.70   0.487    -.0184857    .0088411
+    ep_dirty |  -.0114269   .0031835    -3.59   0.000       -.0177   -.0051538
+    td_green |  -.0000361   .0002384    -0.15   0.880    -.0005059    .0004337
+    td_dirty |   .0003383   .0001891     1.79   0.075    -.0000343    .0007109
+       _cons |   9.266864   .0006225  1.5e+04   0.000     9.265637     9.26809
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418041      418041           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68516           1       68515     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 27.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 27.dta saved
+  senza_127: dirty= -0.01143  green= -0.00482
+  [senza_129] reghdfe...
+(dropped 92199 singleton observations)
+(MWFE estimator converged in 28 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,467
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.11
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8187
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5786
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045342   .0069313    -0.65   0.514    -.0181924    .0091241
+    ep_dirty |  -.0118398   .0029609    -4.00   0.000    -.0176743   -.0060052
+    td_green |  -.0000536   .0002376    -0.23   0.822    -.0005218    .0004146
+    td_dirty |   .0003633   .0001784     2.04   0.043     .0000117    .0007149
+       _cons |    9.26916   .0006054  1.5e+04   0.000     9.267968    9.270353
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417827      417827           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68520           1       68519     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 29.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 29.dta saved
+  senza_129: dirty= -0.01184  green= -0.00453
+  [senza_132] reghdfe...
+(dropped 92259 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,630,771
+Absorbing 3 HDFE groups                           F(   4,    226) =       6.33
+Statistics robust to heteroskedasticity           Prob > F        =     0.0001
+                                                  R-squared       =     0.8428
+                                                  Adj R-squared   =     0.8183
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5793
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0041726   .0073301    -0.57   0.570    -.0186167    .0102715
+    ep_dirty |    -.00976   .0039105    -2.50   0.013    -.0174658   -.0020543
+    td_green |  -.0001044   .0002716    -0.38   0.701    -.0006397    .0004308
+    td_dirty |   .0002112   .0002016     1.05   0.296     -.000186    .0006084
+       _cons |   9.275923   .0005592  1.7e+04   0.000     9.274821    9.277025
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417501      417501           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68429           1       68428     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 32.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 32.dta saved
+  senza_132: dirty= -0.00976  green= -0.00417
+  [senza_133] reghdfe...
+(dropped 92412 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,623,166
+Absorbing 3 HDFE groups                           F(   4,    226) =       2.78
+Statistics robust to heteroskedasticity           Prob > F        =     0.0278
+                                                  R-squared       =     0.8418
+                                                  Adj R-squared   =     0.8171
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5815
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |    .003081    .010632     0.29   0.772    -.0178696    .0240316
+    ep_dirty |  -.0097461   .0058099    -1.68   0.095    -.0211946    .0017025
+    td_green |  -.0002157   .0003013    -0.72   0.475    -.0008095    .0003781
+    td_dirty |   .0003106   .0001587     1.96   0.052    -2.06e-06    .0006232
+       _cons |   9.255443   .0008618  1.1e+04   0.000     9.253745    9.257141
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417172      417172           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68092           1       68091     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 33.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 33.dta saved
+  senza_133: dirty= -0.00975  green=  0.00308
+  [senza_134] reghdfe...
+(dropped 92098 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,649,859
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.47
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8433
+                                                  Adj R-squared   =     0.8190
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5778
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045232   .0069738    -0.65   0.517    -.0182651    .0092188
+    ep_dirty |  -.0118898   .0029434    -4.04   0.000    -.0176897   -.0060898
+    td_green |  -.0000544   .0002406    -0.23   0.821    -.0005286    .0004198
+    td_dirty |   .0003681   .0001758     2.09   0.037     .0000218    .0007145
+       _cons |   9.269798   .0006256  1.5e+04   0.000     9.268565    9.271031
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418453      418453           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68564           1       68563     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 34.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 34.dta saved
+  senza_134: dirty= -0.01189  green= -0.00452
+  [senza_136] reghdfe...
+(dropped 92216 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,631,474
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.23
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8428
+                                                  Adj R-squared   =     0.8183
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5796
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0046681   .0069075    -0.68   0.500    -.0182794    .0089433
+    ep_dirty |  -.0119794   .0029467    -4.07   0.000    -.0177859   -.0061729
+    td_green |  -.0000333   .0002294    -0.15   0.885    -.0004854    .0004189
+    td_dirty |   .0003771   .0001792     2.10   0.036      .000024    .0007303
+       _cons |   9.268873   .0005731  1.6e+04   0.000     9.267744    9.270002
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417540      417540           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68461           1       68460     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 36.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 36.dta saved
+  senza_136: dirty= -0.01198  green= -0.00467
+  [senza_141] reghdfe...
+(dropped 92303 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,634,385
+Absorbing 3 HDFE groups                           F(   4,    226) =       7.57
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8187
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5783
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0046639   .0069173    -0.67   0.501    -.0182947    .0089668
+    ep_dirty |  -.0121601   .0029837    -4.08   0.000    -.0180395   -.0062807
+    td_green |  -.0000341   .0002304    -0.15   0.883    -.0004881    .0004199
+    td_dirty |   .0004092   .0001687     2.43   0.016     .0000768    .0007415
+       _cons |   9.266495   .0005637  1.6e+04   0.000     9.265384    9.267606
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417643      417643           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68423           1       68422     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 41.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 41.dta saved
+  senza_141: dirty= -0.01216  green= -0.00466
+  [senza_144] reghdfe...
+(dropped 92034 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,677,283
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.58
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8189
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5783
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045688   .0069572    -0.66   0.512    -.0182781    .0091404
+    ep_dirty |  -.0118732   .0029503    -4.02   0.000    -.0176868   -.0060596
+    td_green |  -.0000507   .0002397    -0.21   0.833     -.000523    .0004216
+    td_dirty |   .0003664   .0001767     2.07   0.039     .0000182    .0007146
+       _cons |   9.267183   .0006261  1.5e+04   0.000     9.265949    9.268416
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420789      420789           0    *|
+          dt |      3494        3494           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 44.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_1
+    > 44.dta saved
+  senza_144: dirty= -0.01187  green= -0.00457
+  [senza_322] reghdfe...
+(dropped 92084 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,672,673
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.65
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8432
+                                                  Adj R-squared   =     0.8189
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5781
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045639   .0069636    -0.66   0.513    -.0182857    .0091578
+    ep_dirty |  -.0118643   .0029543    -4.02   0.000    -.0176859   -.0060427
+    td_green |  -.0000529   .0002406    -0.22   0.826     -.000527    .0004213
+    td_dirty |   .0003642   .0001772     2.06   0.041      .000015    .0007135
+       _cons |    9.26748   .0006282  1.5e+04   0.000     9.266243    9.268718
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420353      420353           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68568           1       68567     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_3
+    > 22.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_3
+    > 22.dta saved
+  senza_322: dirty= -0.01186  green= -0.00456
+  [senza_331] reghdfe...
+(dropped 92016 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,652,860
+Absorbing 3 HDFE groups                           F(   4,    226) =      10.70
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8436
+                                                  Adj R-squared   =     0.8194
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5775
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |   -.011122   .0024506    -4.54   0.000     -.015951    -.006293
+    ep_dirty |  -.0133481   .0025984    -5.14   0.000    -.0184683   -.0082279
+    td_green |    .000132   .0001301     1.02   0.311    -.0001243    .0003883
+    td_dirty |   .0004044   .0001678     2.41   0.017     .0000737    .0007351
+       _cons |   9.270164   .0005903  1.6e+04   0.000     9.269001    9.271327
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418823      418823           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68541           1       68540     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_3
+    > 31.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_3
+    > 31.dta saved
+  senza_331: dirty= -0.01335  green= -0.01112
+  [senza_412] reghdfe...
+(dropped 92174 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,645,947
+Absorbing 3 HDFE groups                           F(   4,    226) =      10.22
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8430
+                                                  Adj R-squared   =     0.8186
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5794
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0045335   .0069808    -0.65   0.517    -.0182893    .0092222
+    ep_dirty |  -.0120558   .0029476    -4.09   0.000    -.0178641   -.0062476
+    td_green |  -.0000486   .0002401    -0.20   0.840    -.0005218    .0004245
+    td_dirty |   .0003644   .0001786     2.04   0.042     .0000125    .0007163
+       _cons |   9.267016   .0006204  1.5e+04   0.000     9.265793    9.268238
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418310      418310           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68564           1       68563     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_4
+    > 12.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_4
+    > 12.dta saved
+  senza_412: dirty= -0.01206  green= -0.00453
+  [senza_415] reghdfe...
+(dropped 92066 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,661,539
+Absorbing 3 HDFE groups                           F(   4,    226) =       9.35
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8433
+                                                  Adj R-squared   =     0.8190
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5780
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0038237   .0071549    -0.53   0.594    -.0179226    .0102752
+    ep_dirty |  -.0114232   .0030575    -3.74   0.000     -.017448   -.0053983
+    td_green |  -.0000915   .0002548    -0.36   0.720    -.0005937    .0004106
+    td_dirty |   .0003429   .0001837     1.87   0.063    -.0000192    .0007049
+       _cons |   9.268427   .0006447  1.4e+04   0.000     9.267156    9.269697
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    419346      419346           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_4
+    > 15.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_4
+    > 15.dta saved
+  senza_415: dirty= -0.01142  green= -0.00382
+  [senza_434] reghdfe...
+(dropped 92112 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,651,881
+Absorbing 3 HDFE groups                           F(   4,    226) =      20.30
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |  -.0058078   .0071155    -0.82   0.415     -.019829    .0082135
+    ep_dirty |  -.0133235    .002514    -5.30   0.000    -.0182772   -.0083697
+    td_green |   -.000032   .0002422    -0.13   0.895    -.0005093    .0004453
+    td_dirty |   .0003906   .0001727     2.26   0.025     .0000504    .0007308
+       _cons |   9.268266   .0006192  1.5e+04   0.000     9.267046    9.269486
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418629      418629           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68563           1       68562     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_4
+    > 34.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_4
+    > 34.dta saved
+  senza_434: dirty= -0.01332  green= -0.00581
+  [senza_601] reghdfe...
+(dropped 92295 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,631,816
+Absorbing 3 HDFE groups                           F(   4,    226) =       4.04
+Statistics robust to heteroskedasticity           Prob > F        =     0.0035
+                                                  R-squared       =     0.8421
+                                                  Adj R-squared   =     0.8175
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5829
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |   .0017433   .0129177     0.13   0.893    -.0237112    .0271977
+    ep_dirty |  -.0103122   .0086768    -1.19   0.236      -.02741    .0067856
+    td_green |   -.000347   .0005556    -0.62   0.533    -.0014419    .0007478
+    td_dirty |   .0002892   .0004628     0.62   0.533    -.0006228    .0012012
+       _cons |   9.273781   .0010264  9034.97   0.000     9.271758    9.275804
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    417581      417581           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68460           1       68459     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_6
+    > 01.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_6
+    > 01.dta saved
+  senza_601: dirty= -0.01031  green=  0.00174
+  [senza_609] reghdfe...
+(dropped 92107 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,644,309
+Absorbing 3 HDFE groups                           F(   4,    226) =      10.01
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8429
+                                                  Adj R-squared   =     0.8185
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5788
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    ep_green |   -.003357   .0073776    -0.46   0.650    -.0178947    .0111807
+    ep_dirty |  -.0119224   .0030755    -3.88   0.000    -.0179826   -.0058622
+    td_green |  -.0001395   .0002733    -0.51   0.610     -.000678     .000399
+    td_dirty |   .0003707   .0001919     1.93   0.055    -7.48e-06    .0007489
+       _cons |   9.274361    .000661  1.4e+04   0.000     9.273059    9.275664
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    418269      418269           0    *|
+          dt |      3491        3491           0    *|
+          pt |     68550           1       68549     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_6
+    > 09.dta not found)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\LOO_senza_6
+    > 09.dta saved
+  senza_609: dirty= -0.01192  green= -0.00336
+
+. 
+. *── Assemblaggio ────────────────────────────────────────────────────────────
+> ───
+. di as text _n "########## ASSEMBLAGGIO ##########"
+
+########## ASSEMBLAGGIO ##########
+
+. 
+. * Normalizzazione del tipo di `dropped_country`: regsave lo salva NUMERICO
+. * quando l'etichetta e' un numero puro ("103") o vuota, e STRINGA quando non 
+> lo
+. * e' ("434+331+133"). L'append di tipi diversi fallisce con r(106). Si passa
+. * tutto a stringa una volta sola (idempotente: se e' gia' stringa non tocca n
+> ulla).
+. * File attesi: si ELENCANO dagli spec effettivamente stimati sopra (baseline,
+. * ext, senza_alta_dose, un senza_<cc> per ogni paese in `treated`), non si
+. * cercano con un glob: `LOO_*.dta' nella stessa cartella raccoglierebbe anche
+. * eventuali file orfani di altre run senza un avviso.
+. local files "LOO_baseline.dta LOO_lista_estesa.dta LOO_senza_alta_dose.dta"
+
+. foreach cc of local treated {
+  2.     local files "`files' LOO_senza_`cc'.dta"
+  3. }
+
+. foreach f of local files {
+  2.     cap confirm file "$TAB/`f'"
+  3.     if _rc {
+  4.         di as error "  [mancante] `f'"
+  5.         continue
+  6.     }
+  7.     use "$TAB/`f'", clear
+  8.     capture confirm string variable dropped_country
+  9.     if _rc {
+ 10.         tostring dropped_country, replace force
+ 11.         replace dropped_country = "" if dropped_country == "."
+ 12.         save "$TAB/`f'", replace
+ 13.     }
+ 14. }
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 03.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 05.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 06.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 07.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 11.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 12.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 19.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 22.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 27.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 29.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 32.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 33.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 34.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 36.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 41.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_1
+    > 44.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_3
+    > 22.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_3
+    > 31.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_4
+    > 12.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_4
+    > 15.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_4
+    > 34.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_6
+    > 01.dta saved
+dropped_country was int now str3
+(0 real changes made)
+file
+    C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata/LOO_senza_6
+    > 09.dta saved
+
+. 
+. clear
+
+. local first = 1
+
+. foreach f of local files {
+  2.     cap confirm file "$TAB/`f'"
+  3.     if _rc continue
+  4.     if `first' {
+  5.         use "$TAB/`f'", clear
+  6.         local first = 0
+  7.     }
+  8.     else {
+  9.         append using "$TAB/`f'"
+ 10.     }
+ 11. }
+(variable var was str8, now str12 to accommodate using data's values)
+(variable spec was str8, now str12 to accommodate using data's values)
+(variable spec was str12, now str15 to accommodate using data's values)
+(variable dropped_country was str1, now str11 to accommodate using data's
+       values)
+
+. if `first' == 0 {
+.     export delimited "$TAB\dirty_leaveoneout_stata.csv", replace
+file C:\Work\projects\Paper_PTA\New\Output\TripleDiff\Tables_Stata\dirty_leaveo
+> neout_stata.csv saved
+.     di as result "[OK] dirty_leaveoneout_stata.csv — " _N " righe"
+[OK] dirty_leaveoneout_stata.csv — 130 righe
+.     di as text "Confronto con R: New/Output/TripleDiff/Tables/dirty_leaveoneo
+> ut.csv"
+Confronto con R: New/Output/TripleDiff/Tables/dirty_leaveoneout.csv
+.     di as text "  attesi: baseline dirty -0.01187 | senza_601 (Australia) -0.
+> 01030"
+  attesi: baseline dirty -0.01187 | senza_601 (Australia) -0.01030
+.     di as text "  NB: la colonna nclust di R e' pre-singleton (236), reghdfe 
+> riporta post (228)."
+  NB: la colonna nclust di R e' pre-singleton (236), reghdfe riporta post (228)
+> .
+. }
+
+. else di as error "Nessuna stima trovata."
+
+. 
+. di as result _n "=== S9 (leave-one-out) COMPLETATO ==="
+
+=== S9 (leave-one-out) COMPLETATO ===
+
+. 
+end of do-file

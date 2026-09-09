@@ -1,5 +1,37 @@
 # Session Log — Paper_PTA
 
+## 2026-09-08 (sessione 22) — Blocco C della roadmap 2026-09-07c (autorizzato: "automatizza tutto")
+
+- **Eseguito integralmente**: C1 (varianti EIF, nuova App. M `app:eif`, Tab. 30), C2 (colonna green in Tab. 9/10 leave-one-out, nessuna nuova stima), C3 (dose-bins con WCB, nuova App. N `app:dose`, Tab. 31), C4 (ristime di conseguenza: Pannello A+B di Tab. 8 rigenerati con TREND_Hard/DESTA aggiornati).
+- **Bug trovato e corretto**: lanciare Stata da Bash con `/e` viene mangled in `E:/` da Git Bash (MSYS path conversion) → finestra interattiva bloccata invece di batch silenzioso. Fix: `//e`. Ha causato ~10h di stallo apparente su una run notturna (in realtà mai partita). Voce non ancora in MISTAKES.md — da aggiungere se si ripete.
+- **Trovato**: `16b_dose_bins.R` (output R esistente `dose_bins_collapsed.csv`) legge un pannello diverso (`panel_pdt_collapsed.fst`, script 10) da `collapsed_omnibus.dta` usato ovunque nel resto del paper — non corruzione, due pannelli diversi. I numeri di Tab. 31 vengono dalla replica Stata su `collapsed_omnibus.dta`, coerente col resto. Voce in MISTAKES.md.
+- **Compilazione**: pulita, 76 pagine, zero errori, zero `??`, zero `Float too large`. Verificato con pymupdf4llm il rendering delle 3 nuove tabelle/appendici.
+- **Non eseguito**: Blocco D (tariffe preferenziali, WCU/Webb — richiede raccolta dati esterni, fuori scope).
+
+---
+
+## 2026-09-07 (sessione 21) — Implementazione roadmap 2026-09-07c, Blocco A+B
+
+- **Output:** `./correspondence/audit/2026-09-07d_implementazione_roadmap.md` (fix-per-fix). Blocco A (15 fix testo/tabelle) e Blocco B (10 fix codice) eseguiti; Blocco C/D non lanciati.
+- **Blocco A:** tutti e 15 i fix applicati (A1-A15); A10 corretto un'incongruenza numerica interna alla roadmap verificando `66_permutation_variants.do`. Compilazione pulita: `Float too large` sparito (A8), zero `??`, PPML csv recuperati da git-lfs (A9). A11/A13/A14 lasciati senza `\ref{app:eif}`/`app:dose` (appendici non create, Blocco C).
+- **Blocco B:** B1 applicato **e rilanciato** (unico rerun autorizzato, output CSV identico); B2-B5, B7, B9, B10 applicati come solo-modifica; B6 e parti di B5/B8/B9/B10 **non applicati** per rischio di rottura silenziosa su script Stata complessi non eseguibili in verifica — voce in MISTAKES.md.
+- **Rerun da autorizzare (Blocco B residuo + C):** 68.do desta, 18.do assemblaggio desta, 32_desta_depth.R, 12_cem_matching_stata.do+52/62, 70_sumstats_paper.R, make_figures_v3.R, 71_make_figure_inputs.R (da scrivere), FIX B6. Blocco C (C1-C4) e D interi.
+- **Metodo:** eseguito da un agente in background con istruzioni auto-contenute (ancore roadmap, regola MISTAKES.md su citazioni multilinea, lista ristretta di run consentiti); verificato a valle su git status/diff e MISTAKES.md.
+
+---
+
+## 2026-09-07 (sessione 20, pomeriggio) — /audit da referee su ./New, paper_v4 + roadmap
+
+- **Output:** `./correspondence/audit/2026-09-07c_audit_referee_report.md` e `2026-09-07c_roadmap_soluzioni.md`. Nessun file dell'autore modificato. Creato `./New/replication/audit_2026-09-07c/` (script Stata: baseline collassato riprodotto esattamente; 6 varianti EIF/cluster pronte ma **interrotte su richiesta dell'utente** — voce in MISTAKES.md e memoria: in audit niente stime senza via libera).
+- **Metodo:** lettura integrale del paper; 4 agenti read-only (dati, do-file, script R, tabelle vs CSV; C rilanciato con scope ridotto dopo limite di sessione); ogni critico degli agenti riverificato nel codice.
+- **Verdetto:** CONDITIONAL PASS come WP, major revision da referee.
+- **Critici nuovi (codice/tabelle):** guardia WBID in `02.R` confronta WBID con Merge_ID → script non gira; Tab. A9 Panel B "pre-agreement slope" = coefficienti EP×g/b su outcome detrendizzato (dirty +0.06/+0.07 dopo detrending, non discusso); 17/17b ignorano PTA_SAMPLE/PTA_DEPTH e ps1 chiama 19b archiviato; correlazioni "net of FE" e VIF bivariate su country-year; Tab. A16 incoerente; sumstats collassato senza fonte; 68.do ramo DESTA vuoto (K2) e tabelle a mano (K1) ancora aperti.
+- **Punti da referee (§5 report):** Corea/Australia EIF 20-12-2015 codificate trattate per tutto il 2015 e sono le due destinazioni "pivot"; dose-bins (16b) non nel paper, dirty medio −0.11 = ASEAN, event study binari con dirty positivo; LOO green nel CSV ma non in tabella (senza Svizzera −0.011***); permutazione con placebo centrato a +0.0026 (p unilaterale 0.08); WCR sotto-rifiuta con pochi trattati; cluster per profilo (13 non 23); Sensitive Track ACFTA come confondente del dirty; bounded null solo per provisione.
+- **Residui 09-07b:** applicata solo Tab. 9; A13 sfora ancora; A16, "one quarter", "0.90", "Cooperation", "only green coefficient" ancora presenti. Tabelle: 34 scarti di arrotondamento su 856 celle, nessuno di sostanza; `Tables_Stata/ppml_extensive*.csv` mancano dal working tree.
+- **Stato/pending:** roadmap in 4 blocchi — A testo/tabelle (15 fix, 1 giorno), B codice (10 fix, mezza giornata), C stime leggere sul collassato (**solo dopo via libera**, script pronto), D per rivista (WCU/Webb, tariffe preferenziali, generatore tabelle v4, full panel DESTA). Dopo A+B il paper è circolabile.
+
+---
+
 ## 2026-09-07 (sessione 19) — Audit di verifica dei fix su paper_v4
 
 **Ruolo:** revisore indipendente dei 34 fix applicati stamattina (roadmap 2026-09-07). Solo lettura: nessun file del paper, del codice o dei dati toccato; nessuna stima rieseguita.

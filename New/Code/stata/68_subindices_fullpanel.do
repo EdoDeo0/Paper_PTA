@@ -74,7 +74,7 @@ program define subind_one_depth
     save `subidx'
 
     * --- Carica panel ---
-    use ln_export hs6 country_code year fpd fdt pt ///
+    use ln_export hs6 country_code year fpd fdt pt WB_EP_Depth ///
         using "$ROOT/Data/Final Dataset/final_dataset_pta_env_indices_compressed.dta", clear
 
     gen byte hkmo = inlist(country_code, 110, 121)
@@ -92,13 +92,12 @@ program define subind_one_depth
     merge m:1 country_code year using `depth', keep(master match)
     drop _merge
     if `drop_unmeasured' {
-        * no WB_EP_Depth in memory — approximate: drop if depth missing & year >= 2001
-        * (conservative; the variable would be >0 only for treated obs)
+        drop if missing(`depthvar') & WB_EP_Depth > 0
     }
     replace `depthvar' = 0 if missing(`depthvar')
 
     * Keep all obs; sub-index = 0 for non-PTA countries (mirrors collapsed spec in 63)
-    merge m:1 country_code year using `subidx', nogen
+    merge m:1 country_code year using `subidx', keep(master match) nogen
     foreach s in WB_GreenLiberalization TREND_GreenMarketAccess ///
                  WB_EnforcementDSM TREND_EnforcementDSM ///
                  TREND_Hard TREND_Soft TREND_RegulatorySpace {

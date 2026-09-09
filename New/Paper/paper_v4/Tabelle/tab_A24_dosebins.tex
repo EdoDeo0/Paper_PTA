@@ -1,0 +1,29 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Dose bins: the current-dose response is not linear}
+\label{tab:dosebins}
+\begin{threeparttable}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{Green} & \multicolumn{3}{c}{Dirty} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Fascia (dose corrente) & Coef. & Implied by linear fit & $p$ (WCB) & Coef. & Implied by linear fit & $p$ (WCB) \\
+\midrule
+Low (1--5, median 1)   & $0.0643^{*}$  & $-0.0046$ & $0.165$ & $0.0364$    & $-0.0119$ & $0.666$ \\
+                        & $(0.0308)$    &           &         & $(0.0351)$  &           &         \\[4pt]
+Medium (6--7, median 6) & $0.0403$      & $-0.0274$ & $0.608$ & $-0.1060$   & $-0.0712$ & $0.284$ \\
+                        & $(0.0721)$    &           &         & $(0.0882)$  &           &         \\[4pt]
+High (8+, median 12)   & $0.2717$      & $-0.0548$ & --- & $-0.1700$   & $-0.1425$ & --- \\
+                        & $(0.1772)$    &           &         & $(0.2325)$  &           &         \\
+\midrule
+Countries & 9 & & & 13 & & 3 (high) \\
+Country--years & 83 & \multicolumn{2}{c}{131} & \multicolumn{2}{c}{9} & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Collapsed panel, weighted by cell size, FE $pd+dt+pt$, clustered by destination (228 clusters, 3{,}681{,}023 cells for every row). Bins are defined on the current-year WB total depth (never-treated destination--years are the omitted category). ``Implied by linear fit'' is the baseline linear coefficient (Table~\ref{tab:collapsed}, column WB) times the bin's median depth; the gap between it and the bin coefficient is the departure from linearity the design is built to detect. Standard errors in parentheses are asymptotic. $p$ (WCB): wild cluster bootstrap $p$-value (Rademacher weights, 9{,}999 replications), computed only for the low and medium bins, which have countries at more than one dose level within the bin; the high bin has one country per dose level (Peru 12, Switzerland 14, Korea 17, only in 2015) and a bootstrap adds no information the asymptotic standard error does not already convey. The low-bin green coefficient is significant under the asymptotic standard error ($p=0.038$) but not under the wild cluster bootstrap ($p=0.165$), the same wedge the main results show throughout with few treated clusters. $^{*}$~$p<0.10$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

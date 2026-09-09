@@ -1,0 +1,49 @@
+\begin{table}[p]
+\centering
+\scriptsize
+\caption{Leave-one-out: EP$\times$green coefficient stability across 23 treated destinations}
+\label{tab:loo_green}
+\begin{threeparttable}
+\begin{tabular}{lc}
+\toprule
+Excluded destination & EP$\times$green \\
+\midrule
+\textit{None (baseline)}      & $-0.0046$ \\
+\textit{None, extended dirty} & $-0.0047$ \\
+\midrule
+\multicolumn{1}{@{}p{5.5cm}@{}}{\textit{Excluding the three deepest (Peru, Switzerland, Korea)}} & $-0.0255^{**}$ \\
+\midrule
+Bangladesh     & $-0.0045$ \\
+Brunei         & $-0.0046$ \\
+Myanmar        & $-0.0046$ \\
+Cambodia       & $-0.0046$ \\
+India          & $-0.0045$ \\
+Indonesia      & $-0.0046$ \\
+Laos           & $-0.0046$ \\
+Malaysia       & $-0.0048$ \\
+Pakistan       & $-0.0045$ \\
+Philippines    & $-0.0042$ \\
+Singapore      & $+0.0031$ \\
+South Korea    & $+0.0031$ \\
+Sri Lanka      & $-0.0045$ \\
+Thailand       & $-0.0047$ \\
+Vietnam        & $-0.0047$ \\
+Timor-Leste    & $-0.0046$ \\
+Iceland        & $-0.0046$ \\
+Switzerland    & $-0.0111^{***}$ \\
+Chile          & $-0.0045$ \\
+Costa Rica     & $-0.0038$ \\
+Peru           & $-0.0058$ \\
+Australia      & $+0.0017$ \\
+New Zealand    & $-0.0034$ \\
+\midrule
+Observations & 3,681,023 \\
+Clusters ($d$) & 228 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} OLS on the collapsed panel, WB total depth control, excluding Hong Kong and Macao (same sample as column~(1) of Table~\ref{tab:loo_new}). The coefficient shown is $\widehat{\beta}$ on EP$\times$green, re-estimated dropping one treated destination at a time. FE: $pd + dt + pt$. Standard errors (not shown) clustered by destination. Excluding the three deepest: estimated dropping Peru, Switzerland and Korea jointly. Dropping Switzerland moves the coefficient to $-0.011$ (asymptotic $p < 0.001$); dropping Korea or Australia moves it to $+0.003$ and $+0.002$, with standard errors roughly 1.5 and 1.9 times the baseline. $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

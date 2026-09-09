@@ -18,21 +18,21 @@ NON e' un MDE a potenza 80%. Con IC asimmetrico, il bound informativo e' conf_hi
 
 | Indice | Margine | SE asint. | MDE asint./unita | Semi-amp. IC/unita | SD regressore | MDE asint./1SD | Semi-amp. IC/1SD | IC WCB (%, per unita) |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| WB | green | 0.0070 | 0.0195 | 0.0248 | 2.383 | 4.64% | 5.90% | [-1.77%, 3.19%] |
-| WB | dirty | 0.0030 | 0.0083 | 0.0101 | 2.383 | 1.97% | 2.40% | [-1.84%, 0.18%] |
-| TREND | green | 0.0018 | 0.0051 | 0.0044 | 8.165 | 4.16% | 3.62% | [-0.18%, 0.71%] |
-| TREND | dirty | 0.0016 | 0.0045 | 0.0043 | 8.165 | 3.65% | 3.53% | [-0.32%, 0.54%] |
+| WB | green | 0.0070 | 0.0195 | 0.0252 | 2.383 | 4.64% | 6.00% | [-1.85%, 3.18%] |
+| WB | dirty | 0.0030 | 0.0083 | 0.0101 | 2.383 | 1.97% | 2.40% | [-1.85%, 0.17%] |
+| TREND | green | 0.0018 | 0.0051 | 0.0044 | 8.165 | 4.16% | 3.60% | [-0.17%, 0.71%] |
+| TREND | dirty | 0.0016 | 0.0045 | 0.0044 | 8.165 | 3.65% | 3.56% | [-0.31%, 0.56%] |
 
 ## MDE per il salto tipico osservato (WB, margine green)
 
 | Paese | Salto EP | MDE asintotico | MDE WCB |
 |---|---:|---:|---:|
-| Laos (1->6) | 5 | 9.75% | 12.39% |
-| Corea (1->17) | 16 | 31.19% | 39.65% |
+| Laos (1->6) | 5 | 9.74% | 12.59% |
+| Corea (1->17) | 16 | 31.17% | 40.27% |
 
 ## Confronto WB vs TREND in unita' comparabili
 
-Sul margine green: WB MDE/1SD = 4.64% (asint.) / 5.90% (WCB); TREND MDE/1SD = 4.16% (asint.) / 3.62% (WCB).
+Sul margine green: WB MDE/1SD = 4.64% (asint.); TREND MDE/1SD = 4.16% (asint.). Semi-amp. IC WCB: WB = 6.00%, TREND = 3.60%.
 TREND risulta leggermente piu' preciso di WB in unita' comparabili su questo campione (verificare se cambia rispetto al back-of-envelope preliminare del cappello §8).
 
 ## Lettura

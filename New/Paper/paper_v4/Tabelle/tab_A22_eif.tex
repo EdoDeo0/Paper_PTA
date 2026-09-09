@@ -1,0 +1,32 @@
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Entry-into-force timing: robustness of the collapsed-panel estimates}
+\label{tab:eif}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{WB index} & \multicolumn{2}{c}{TREND index} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Variant & EP$\times$green & EP$\times$dirty & EP$\times$green & EP$\times$dirty \\
+\midrule
+Baseline & $-0.0046$ & $-0.0119^{***}$ & $0.0018$ & $0.0004$ \\
+         & $(0.0070)$ & $(0.0030)$ & $(0.0018)$ & $(0.0016)$ \\[4pt]
+A1: Korea \& Australia 2015 coded pre-EIF & $0.0175$ & $-0.0059$ & $0.0052^{***}$ & $0.0030^{*}$ \\
+         & $(0.0124)$ & $(0.0094)$ & $(0.0012)$ & $(0.0016)$ \\[4pt]
+A2: all second-half-entry years coded pre-EIF & $0.0085$ & $-0.0088$ & $0.0050^{***}$ & $0.0032^{*}$ \\
+         & $(0.0120)$ & $(0.0117)$ & $(0.0012)$ & $(0.0017)$ \\[4pt]
+B: drop 2015 & $0.0100$ & $-0.0064$ & $0.0045^{***}$ & $0.0029^{*}$ \\
+         & $(0.0145)$ & $(0.0113)$ & $(0.0012)$ & $(0.0016)$ \\[4pt]
+C: drop Korea and Australia entirely & $0.0174$ & $-0.0055$ & $0.0052^{***}$ & $0.0030^{*}$ \\
+         & $(0.0123)$ & $(0.0094)$ & $(0.0013)$ & $(0.0016)$ \\[4pt]
+D: single-provision (depth 1) destinations coded untreated & $-0.0041$ & $-0.0120^{***}$ & $0.0021$ & $0.0005$ \\
+         & $(0.0070)$ & $(0.0031)$ & $(0.0018)$ & $(0.0016)$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[flushleft]\footnotesize
+\item \emph{Notes:} Collapsed panel, WB total depth control, destination clustering. A1 and A2 recode the treatment variables of the affected destination--years to their pre-entry (previous-year) values rather than dropping observations. Asymptotic standard errors in parentheses. Cluster counts and observation counts are within a few hundred cells of the baseline (3{,}681{,}023 cells, 228 clusters) except B (3{,}344{,}592 cells, 227 clusters, 2015 dropped) and C (3{,}573{,}947 cells, 226 clusters). $^{*}$~$p<0.10$, $^{**}$~$p<0.05$, $^{***}$~$p<0.01$ (asymptotic).
+\item \textit{Source:} Chinese Customs Office; World Bank DTA Database; TREND Database.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

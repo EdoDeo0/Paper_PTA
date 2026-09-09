@@ -1,0 +1,910 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/repli
+> cate_collapsed_eif_variants_stata.log
+  log type:  text
+ opened on:   8 Sep 2026, 10:52:24
+
+. global CSV "$OUTD/collapsed_eif_variants_stata.csv"
+
+. file open fh using "$CSV", write replace text
+
+. file write fh "variant,depth,index,cluster,coef_green,se_green,p_green,coef_d
+> irty,se_dirty,p_dirty,nobs,nclust" _n
+
+. file close fh
+
+. 
+. use hs6 country_code year y n WB_EP_Depth TREND_EP_Count env_good dirty_p Tot
+> alDepth_nonEnv DESTA_depth_index pd dt pt ///
+>     using "$ROOT/New/Data/Collapsed/collapsed_omnibus.dta", clear
+
+. su WB_EP_Depth, meanonly
+
+. assert r(max) == 17
+
+. count
+  3,773,498
+
+. di "cells: " r(N)
+cells: 3773498
+
+. * profile clusters: ASEAN-only block and Bangkok-only block
+. gen long profile = country_code
+
+. replace profile = 9001 if inlist(country_code, 105,106,107,112,122,129,136,14
+> 1,144)
+(304,748 real changes made)
+
+. replace profile = 9002 if inlist(country_code, 103,111,134)
+(112,425 real changes made)
+
+. tempfile base
+
+. save `base'
+file C:\Users\edodr\AppData\Local\Temp\ST_105c_000001.tmp saved as .dta
+    format
+
+. 
+. capture program drop est_one
+
+. program define est_one
+  1.     args variant depth clus
+  2.     * depth: td | desta
+.     if "`depth'" == "desta" {
+  3.         drop if missing(DESTA_depth_index) & WB_EP_Depth > 0
+  4.         gen double TD = cond(missing(DESTA_depth_index), 0, DESTA_depth_in
+> dex)
+  5.     }
+  6.     else gen double TD = TotalDepth_nonEnv
+  7.     foreach ix in WB TREND {
+  8.         local ep = cond("`ix'"=="WB", "WB_EP_Depth", "TREND_EP_Count")
+  9.         gen double ep_g = `ep' * env_good
+ 10.         gen double ep_d = `ep' * dirty_p
+ 11.         gen double td_g = TD * env_good
+ 12.         gen double td_d = TD * dirty_p
+ 13.         reghdfe y ep_g ep_d td_g td_d [aw=n], absorb(pd dt pt) vce(cluster
+>  `clus')
+ 14.         local nc = e(N_clust)
+ 15.         local pg = 2*ttail(`nc'-1, abs(_b[ep_g]/_se[ep_g]))
+ 16.         local pd = 2*ttail(`nc'-1, abs(_b[ep_d]/_se[ep_d]))
+ 17.         file open fh using "$CSV", write append text
+ 18.         file write fh "`variant',`depth',`ix',`clus'," (_b[ep_g]) "," (_se
+> [ep_g]) "," (`pg') "," (_b[ep_d]) "," (_se[ep_d]) "," (`pd') "," (e(N)) "," (
+> `nc') _n
+ 19.         file close fh
+ 20.         drop ep_g ep_d td_g td_d
+ 21.     }
+ 22.     drop TD
+ 23. end
+
+. 
+. * recode helper: set (cc, y0) treatment vars to their (cc, y0-1) values
+. capture program drop recode_prev
+
+. program define recode_prev
+  1.     args cc y0
+  2.     foreach v in WB_EP_Depth TREND_EP_Count TotalDepth_nonEnv DESTA_depth_
+> index {
+  3.         qui su `v' if country_code == `cc' & year == `y0'-1, meanonly
+  4.         local m = cond(r(N) > 0, r(mean), 0)
+  5.         qui replace `v' = `m' if country_code == `cc' & year == `y0'
+  6.     }
+  7. end
+
+. 
+. * 0. baseline (TD and DESTA), destination clusters
+. use `base', clear
+
+. est_one 0_baseline td country_code
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       9.59
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |  -.0045685   .0069576    -0.66   0.512    -.0182782    .0091412
+        ep_d |  -.0118734   .0029502    -4.02   0.000    -.0176866   -.0060602
+        td_g |  -.0000508   .0002397    -0.21   0.832    -.0005231    .0004215
+        td_d |   .0003663   .0001767     2.07   0.039     .0000181    .0007144
+       _cons |   9.266953   .0006265  1.5e+04   0.000     9.265719    9.268188
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       3.58
+Statistics robust to heteroskedasticity           Prob > F        =     0.0075
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0018115   .0018189     1.00   0.320    -.0017725    .0053955
+        ep_d |    .000351   .0015979     0.22   0.826    -.0027977    .0034996
+        td_g |  -.0004726   .0002556    -1.85   0.066    -.0009763    .0000311
+        td_d |  -.0001258   .0002987    -0.42   0.674    -.0007144    .0004627
+       _cons |   9.267711   .0011756  7883.21   0.000     9.265395    9.270028
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. use `base', clear
+
+. est_one 0_baseline desta country_code
+(43,833 observations deleted)
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    227) =      11.55
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8197
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5769
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |  -.0036993   .0043941    -0.84   0.401    -.0123577     .004959
+        ep_d |  -.0116528   .0017562    -6.64   0.000    -.0151133   -.0081922
+        td_g |  -.0046629   .0084043    -0.55   0.580    -.0212233    .0118975
+        td_d |   .0192674   .0053293     3.62   0.000     .0087661    .0297687
+       _cons |   9.266167   .0006316  1.5e+04   0.000     9.264922    9.267411
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    227) =       3.56
+Statistics robust to heteroskedasticity           Prob > F        =     0.0077
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8197
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5769
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0018656   .0020518     0.91   0.364    -.0021774    .0059086
+        ep_d |  -.0001087   .0013661    -0.08   0.937    -.0028005    .0025831
+        td_g |   -.024683   .0141595    -1.74   0.083    -.0525838    .0032178
+        td_d |  -.0012702   .0131114    -0.10   0.923    -.0271058    .0245654
+       _cons |   9.266739   .0010939  8471.06   0.000     9.264584    9.268895
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. * E. baseline with profile clusters
+. use `base', clear
+
+. est_one E_baseline_profileclust td profile
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    217) =       9.35
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (profile) =        218         Root MSE        =     0.5784
+
+                              (Std. err. adjusted for 218 clusters in profile)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |  -.0045685   .0069662    -0.66   0.513    -.0182986    .0091616
+        ep_d |  -.0118734   .0030173    -3.94   0.000    -.0178204   -.0059264
+        td_g |  -.0000508   .0002512    -0.20   0.840     -.000546    .0004443
+        td_d |   .0003663   .0001973     1.86   0.065    -.0000226    .0007552
+       _cons |   9.266953    .000756  1.2e+04   0.000     9.265463    9.268443
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    217) =       4.60
+Statistics robust to heteroskedasticity           Prob > F        =     0.0014
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (profile) =        218         Root MSE        =     0.5784
+
+                              (Std. err. adjusted for 218 clusters in profile)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0018115   .0020896     0.87   0.387     -.002307    .0059301
+        ep_d |    .000351   .0019595     0.18   0.858    -.0035111     .004213
+        td_g |  -.0004726   .0003094    -1.53   0.128    -.0010825    .0001373
+        td_d |  -.0001258   .0003669    -0.34   0.732     -.000849    .0005973
+       _cons |   9.267711   .0014078  6583.13   0.000     9.264937    9.270486
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. use `base', clear
+
+. est_one E_baseline_profileclust desta profile
+(43,833 observations deleted)
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    217) =      13.37
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8197
+                                                  Within R-sq.    =     0.0000
+Number of clusters (profile) =        218         Root MSE        =     0.5769
+
+                              (Std. err. adjusted for 218 clusters in profile)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |  -.0036993   .0045622    -0.81   0.418    -.0126911    .0052925
+        ep_d |  -.0116528   .0016148    -7.22   0.000    -.0148355   -.0084701
+        td_g |  -.0046629   .0106677    -0.44   0.662    -.0256885    .0163627
+        td_d |   .0192674   .0059115     3.26   0.001     .0076161    .0309188
+       _cons |   9.266167   .0007882  1.2e+04   0.000     9.264613     9.26772
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    217) =       3.98
+Statistics robust to heteroskedasticity           Prob > F        =     0.0039
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8197
+                                                  Within R-sq.    =     0.0000
+Number of clusters (profile) =        218         Root MSE        =     0.5769
+
+                              (Std. err. adjusted for 218 clusters in profile)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0018656   .0025059     0.74   0.457    -.0030734    .0068046
+        ep_d |  -.0001087   .0018104    -0.06   0.952     -.003677    .0034596
+        td_g |   -.024683   .0196213    -1.26   0.210    -.0633557    .0139897
+        td_d |  -.0012702   .0177748    -0.07   0.943    -.0363036    .0337632
+       _cons |   9.266739   .0015099  6137.38   0.000     9.263763    9.269715
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. * A1. Korea (133) and Australia (601): EIF 20 Dec 2015 -> 2015 coded with pre
+> -EIF values
+. use `base', clear
+
+. recode_prev 133 2015
+
+. recode_prev 601 2015
+
+. tempfile a1
+
+. save `a1'
+file C:\Users\edodr\AppData\Local\Temp\ST_105c_000002.tmp saved as .dta
+    format
+
+. est_one A1_KOR_AUS_2015_pre td country_code
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       1.28
+Statistics robust to heteroskedasticity           Prob > F        =     0.2770
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5785
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0175245   .0124373     1.41   0.160    -.0069827    .0420317
+        ep_d |  -.0059262   .0094444    -0.63   0.531     -.024536    .0126837
+        td_g |  -.0007895   .0005245    -1.51   0.134     -.001823     .000244
+        td_d |   .0001666    .000447     0.37   0.710    -.0007142    .0010474
+       _cons |   9.266901    .001082  8564.94   0.000     9.264769    9.269033
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =      11.85
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0052251    .001243     4.20   0.000     .0027759    .0076743
+        ep_d |   .0030198   .0016001     1.89   0.060    -.0001332    .0061728
+        td_g |  -.0007524   .0002468    -3.05   0.003    -.0012387    -.000266
+        td_d |  -.0003543   .0003272    -1.08   0.280     -.000999    .0002905
+       _cons |   9.268127   .0012181  7608.44   0.000     9.265727    9.270528
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. use `a1', clear
+
+. est_one A1_KOR_AUS_2015_pre desta country_code
+(43,833 observations deleted)
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    227) =       3.87
+Statistics robust to heteroskedasticity           Prob > F        =     0.0046
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8197
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5769
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0128223   .0088371     1.45   0.148     -.004591    .0302356
+        ep_d |  -.0125886   .0065216    -1.93   0.055    -.0254392     .000262
+        td_g |  -.0313428   .0154305    -2.03   0.043    -.0617482   -.0009375
+        td_d |    .019652   .0094444     2.08   0.039     .0010422    .0382619
+       _cons |   9.266024   .0009384  9874.65   0.000     9.264175    9.267873
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    227) =       8.68
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8198
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        228    Root MSE        =     0.5769
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0068606   .0017803     3.85   0.000     .0033525    .0103686
+        ep_d |   .0028214    .001813     1.56   0.121    -.0007511    .0063939
+        td_g |    -.04963   .0137481    -3.61   0.000    -.0767203   -.0225398
+        td_d |  -.0162826   .0159909    -1.02   0.310    -.0477922     .015227
+       _cons |   9.267675   .0011394  8133.61   0.000      9.26543     9.26992
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. * A2. all second-half EIF years coded pre-EIF: Chile 2006-10, Pakistan 2007-0
+> 7, NZ 2008-10, Costa Rica 2011-08, Iceland & Switzerland 2014-07, + A1
+. use `a1', clear
+
+. recode_prev 412 2006
+
+. recode_prev 127 2007
+
+. recode_prev 609 2008
+
+. recode_prev 415 2011
+
+. recode_prev 322 2014
+
+. recode_prev 331 2014
+
+. tempfile a2
+
+. save `a2'
+file C:\Users\edodr\AppData\Local\Temp\ST_105c_000003.tmp saved as .dta
+    format
+
+. est_one A2_allH2_EIFyear_pre td country_code
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       0.70
+Statistics robust to heteroskedasticity           Prob > F        =     0.5952
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5785
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0085182   .0119766     0.71   0.478    -.0150813    .0321178
+        ep_d |  -.0087824   .0116825    -0.75   0.453    -.0318025    .0142376
+        td_g |  -.0004661   .0004862    -0.96   0.339    -.0014242    .0004919
+        td_d |   .0002781   .0004781     0.58   0.561    -.0006641    .0012202
+       _cons |   9.266769   .0009858  9400.05   0.000     9.264826    9.268711
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =      12.94
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0050494   .0011646     4.34   0.000     .0027545    .0073442
+        ep_d |   .0032101   .0017224     1.86   0.064    -.0001838     .006604
+        td_g |  -.0007361    .000245    -3.00   0.003    -.0012189   -.0002533
+        td_d |   -.000352    .000326    -1.08   0.281    -.0009944    .0002904
+       _cons |   9.268102   .0012052  7690.17   0.000     9.265727    9.270476
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. use `a2', clear
+
+. est_one A2_allH2_EIFyear_pre desta country_code
+(43,833 observations deleted)
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    227) =       4.60
+Statistics robust to heteroskedasticity           Prob > F        =     0.0014
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8197
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5769
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0050681   .0073226     0.69   0.490    -.0093609     .019497
+        ep_d |  -.0150175   .0072809    -2.06   0.040    -.0293644   -.0006706
+        td_g |  -.0180409   .0134514    -1.34   0.181    -.0445465    .0084647
+        td_d |   .0243378   .0094397     2.58   0.011     .0057371    .0429385
+       _cons |   9.265991   .0008938  1.0e+04   0.000      9.26423    9.267752
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92311 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,637,354
+Absorbing 3 HDFE groups                           F(   4,    227) =       9.49
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8441
+                                                  Adj R-squared   =     0.8197
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        228    Root MSE        =     0.5769
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0061929   .0017212     3.60   0.000     .0028013    .0095844
+        ep_d |   .0026111   .0019479     1.34   0.181    -.0012272    .0064495
+        td_g |  -.0449862   .0141488    -3.18   0.002    -.0728661   -.0171063
+        td_d |  -.0127986     .01607    -0.80   0.427    -.0444641    .0188669
+       _cons |   9.267374   .0011674  7938.73   0.000     9.265073    9.269674
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420234      420234           0    *|
+          dt |      3477        3477           0    *|
+          pt |     68349           1       68348     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. * B. drop 2015
+. use `base', clear
+
+. drop if year == 2015
+(336,180 observations deleted)
+
+. est_one B_drop_2015 td country_code
+(dropped 92726 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,344,592
+Absorbing 3 HDFE groups                           F(   4,    226) =       0.63
+Statistics robust to heteroskedasticity           Prob > F        =     0.6436
+                                                  R-squared       =     0.8430
+                                                  Adj R-squared   =     0.8171
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5852
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0099833   .0145228     0.69   0.493    -.0186342    .0386007
+        ep_d |  -.0063631   .0112716    -0.56   0.573     -.028574    .0158477
+        td_g |  -.0005041    .000572    -0.88   0.379    -.0016312     .000623
+        td_d |   .0001964   .0004804     0.41   0.683    -.0007503    .0011431
+       _cons |   9.280925    .000979  9480.24   0.000     9.278996    9.282854
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    404797      404797           0    *|
+          dt |      3274        3274           0    *|
+          pt |     64266           1       64265     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92726 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,344,592
+Absorbing 3 HDFE groups                           F(   4,    226) =       7.78
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8430
+                                                  Adj R-squared   =     0.8172
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        227    Root MSE        =     0.5852
+
+                         (Std. err. adjusted for 227 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0045479    .001221     3.72   0.000     .0021419     .006954
+        ep_d |    .002877   .0016309     1.76   0.079    -.0003367    .0060907
+        td_g |   -.000639   .0002477    -2.58   0.011    -.0011271   -.0001508
+        td_d |  -.0003034   .0003186    -0.95   0.342    -.0009311    .0003244
+       _cons |   9.281914   .0011486  8081.21   0.000     9.279651    9.284178
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    404797      404797           0    *|
+          dt |      3274        3274           0    *|
+          pt |     64266           1       64265     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. * C. drop Korea and Australia entirely
+. use `base', clear
+
+. drop if inlist(country_code, 133, 601)
+(107,307 observations deleted)
+
+. est_one C_drop_KOR_AUS td country_code
+(dropped 92244 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,573,947
+Absorbing 3 HDFE groups                           F(   4,    225) =       1.23
+Statistics robust to heteroskedasticity           Prob > F        =     0.2995
+                                                  R-squared       =     0.8407
+                                                  Adj R-squared   =     0.8158
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        226    Root MSE        =     0.5861
+
+                         (Std. err. adjusted for 226 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |    .017357   .0123388     1.41   0.161    -.0069574    .0416713
+        ep_d |  -.0054942   .0094339    -0.58   0.561    -.0240843     .013096
+        td_g |  -.0007979   .0005227    -1.53   0.128     -.001828    .0002321
+        td_d |   .0001367   .0004472     0.31   0.760    -.0007445    .0010178
+       _cons |   9.262215    .001105  8381.78   0.000     9.260038    9.264393
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    413089      413089           0    *|
+          dt |      3475        3475           0    *|
+          pt |     67963           1       67962     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92244 singleton observations)
+(MWFE estimator converged in 29 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,573,947
+Absorbing 3 HDFE groups                           F(   4,    225) =      10.65
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8407
+                                                  Adj R-squared   =     0.8158
+                                                  Within R-sq.    =     0.0001
+Number of clusters (country_code) =        226    Root MSE        =     0.5861
+
+                         (Std. err. adjusted for 226 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |    .005233   .0012577     4.16   0.000     .0027545    .0077114
+        ep_d |   .0030126    .001622     1.86   0.065    -.0001836    .0062087
+        td_g |    -.00077   .0002504    -3.08   0.002    -.0012634   -.0002766
+        td_d |  -.0003709   .0003304    -1.12   0.263    -.0010221    .0002802
+       _cons |    9.26347   .0012538  7388.41   0.000     9.260999     9.26594
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    413089      413089           0    *|
+          dt |      3475        3475           0    *|
+          pt |     67963           1       67962     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. * D. Bangkok depth-1 destinations coded untreated (is one generic 1975 provis
+> ion a treatment?)
+. use `base', clear
+
+. replace TREND_EP_Count = 0 if WB_EP_Depth == 1
+(152,728 real changes made)
+
+. replace TotalDepth_nonEnv = 0 if WB_EP_Depth == 1
+(152,728 real changes made)
+
+. replace WB_EP_Depth = 0 if WB_EP_Depth == 1
+(152,728 real changes made)
+
+. est_one D_depth1_untreated td country_code
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       9.28
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   -.004092   .0070143    -0.58   0.560    -.0179135    .0097295
+        ep_d |  -.0120475   .0030909    -3.90   0.000    -.0181381   -.0059568
+        td_g |  -.0000656   .0002479    -0.26   0.791    -.0005541    .0004229
+        td_d |   .0003744   .0001785     2.10   0.037     .0000227    .0007262
+       _cons |   9.266903     .00055  1.7e+04   0.000     9.265819    9.267987
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       4.01
+Statistics robust to heteroskedasticity           Prob > F        =     0.0037
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0021332   .0017928     1.19   0.235    -.0013996    .0056659
+        ep_d |   .0004704   .0016478     0.29   0.776    -.0027766    .0037174
+        td_g |  -.0005156   .0002569    -2.01   0.046    -.0010219   -9.31e-06
+        td_d |   -.000144   .0003025    -0.48   0.635    -.0007401    .0004522
+       _cons |   9.267676   .0010697  8663.41   0.000     9.265568    9.269784
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. di "[OK] done"
+[OK] done
+
+. log close _all
+      name:  <unnamed>
+       log:  C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/repli
+> cate_collapsed_eif_variants_stata.log
+  log type:  text
+ closed on:   8 Sep 2026, 11:05:35
+-------------------------------------------------------------------------------

@@ -1,8 +1,63 @@
 -------------------------------------------------------------------------------
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ opened on:   7 Sep 2026, 22:56:49
+
+. di as text _n "=== L1 pre-matching ==="
+
+=== L1 pre-matching ===
+
+. imb gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000, treatment(treated)
+
+Multivariate L1 distance: .68073593
+
+Univariate imbalance:
+
+                      L1     mean      min      25%      50%      75%      max
+gdp_growth_2000      .25   1.5371   5.7535   1.4082   .70518   .69996  -5.9353
+ log_gdppc_2000   .16017   .05096  -.12962  -.35809   .01155    .5448   -.0078
+mfn_tariff_2000   .27056  -2.3442    -1.07      .18    -3.63    -6.68    -4.07
+
+. log close cem_l1
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ closed on:   7 Sep 2026, 22:56:49
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ opened on:   7 Sep 2026, 22:56:49
+
+. di as text _n "=== L1 post-matching (matched sample) ==="
+
+=== L1 post-matching (matched sample) ===
+
+. imb gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000 if cem_matched, treatment(
+> treated)
+
+Multivariate L1 distance: .43157895
+
+Univariate imbalance:
+
+                      L1     mean      min      25%      50%      75%      max
+gdp_growth_2000   .11316   .67772   2.6456   .25985   .25525    .7695  -.41036
+ log_gdppc_2000   .21579  -.37115   .21125  -1.1627  -.18221  -.05289   .06745
+mfn_tariff_2000   .12368  -.62604     -3.3      .36     1.07     -3.4    -4.07
+
+. log close cem_l1
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ closed on:   7 Sep 2026, 22:56:49
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
       name:  summary
        log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
   log type:  text
- opened on:   2 Sep 2026, 18:58:35
+ opened on:   7 Sep 2026, 22:56:49
 
 . list iso3c country_code treated weights, clean noobs
 
@@ -77,5 +132,5 @@ Paesi senza country_code (non nel dataset di trade):
       name:  summary
        log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
   log type:  text
- closed on:   2 Sep 2026, 18:58:35
+ closed on:   7 Sep 2026, 22:56:49
 -------------------------------------------------------------------------------

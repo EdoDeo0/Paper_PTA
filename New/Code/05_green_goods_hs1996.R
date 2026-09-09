@@ -136,6 +136,20 @@ if (n_suspect > 0) print(yearly_wide[suspect_break == TRUE, .(hs6_str, exp_pre_a
 
 ## --- Sezione 5: salvataggio output ------------------------------------------
 out <- green[, .(hs6_hs2012_orig = hs6_str, env_good, hs6_final, n_match, hs1_candidates, vintage_note)]
+
+## Colonna apec_egl (spostata qui da 43_apec_egl_subsample.R, che leggeva e
+## riscriveva questo stesso file come effetto collaterale): marca i 54 codici
+## che compaiono anche nella APEC Environmental Goods List (2012 Vladivostok
+## Declaration, Annex C; Sauvage 2014, Table A.1, colonna APEC).
+APEC_TXT <- here("New/Data/Classifications/apec_egl_hs2007_codes.txt")
+if (file.exists(APEC_TXT)) {
+  apec_codes <- readLines(APEC_TXT)
+  out[, apec_egl := as.integer(hs6_hs2012_orig %in% apec_codes)]
+  stopifnot(sum(out$apec_egl) == 54)
+} else {
+  cat("[WARN] apec_egl_hs2007_codes.txt non trovato: colonna apec_egl non aggiunta.\n")
+}
+
 fwrite(out, file.path(OUT_DATA, "green_codes_hs1996.csv"))
 cat(sprintf("\n[OK] Lista green tradotta a HS1996 salvata: %s\n", file.path(OUT_DATA, "green_codes_hs1996.csv")))
 

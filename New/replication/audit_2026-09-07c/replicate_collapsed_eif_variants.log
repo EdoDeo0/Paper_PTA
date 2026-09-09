@@ -1,0 +1,290 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       SE—Standard Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user network, expiring 16 May 2027
+Serial number: 401909302599
+  Licensed to: Cristiano Santinello
+               Università degli Studi di Trento
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+. do C:\Work\projects\Paper_PTA\New\replication\audit_2026-09-07c\replicate_col
+> lapsed_eif_variants.do 
+
+. * Audit 2026-09-07c -- referee variants on the collapsed-panel triple-diff (r
+> eghdfe).
+. * Input : New/Data/Collapsed/collapsed_omnibus.dta (author's export, read-onl
+> y)
+. * Output: New/replication/audit_2026-09-07c/collapsed_eif_variants_stata.csv
+. * Baseline must reproduce omnibus_collapsed_reghdfe.csv: WB green -0.0045685,
+>  WB dirty -0.0118734
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. global ROOT "C:/Work/projects/Paper_PTA"
+
+. global OUTD "$ROOT/New/replication/audit_2026-09-07c"
+
+. cap log close _all
+
+. log using "$OUTD/replicate_collapsed_eif_variants_stata.log", replace text
+(file
+    C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/replicate_co
+    > llapsed_eif_variants_stata.log not found)
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/repli
+> cate_collapsed_eif_variants_stata.log
+  log type:  text
+ opened on:   7 Sep 2026, 15:36:38
+
+. global CSV "$OUTD/collapsed_eif_variants_stata.csv"
+
+. file open fh using "$CSV", write replace text
+(file
+    C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/collapsed_ei
+    > f_variants_stata.csv not found)
+
+. file write fh "variant,depth,index,cluster,coef_green,se_green,p_green,coef_d
+> irty,se_dirty,p_dirty,nobs,nclust" _n
+
+. file close fh
+
+. 
+. use hs6 country_code year y n WB_EP_Depth TREND_EP_Count env_good dirty_p Tot
+> alDepth_nonEnv DESTA_depth_index pd dt pt ///
+>     using "$ROOT/New/Data/Collapsed/collapsed_omnibus.dta", clear
+
+. su WB_EP_Depth, meanonly
+
+. assert r(max) == 17
+
+. count
+  3,773,498
+
+. di "cells: " r(N)
+cells: 3773498
+
+. * profile clusters: ASEAN-only block and Bangkok-only block
+. gen long profile = country_code
+
+. replace profile = 9001 if inlist(country_code, 105,106,107,112,122,129,136,14
+> 1,144)
+(304,748 real changes made)
+
+. replace profile = 9002 if inlist(country_code, 103,111,134)
+(112,425 real changes made)
+
+. tempfile base
+
+. save `base'
+file C:\Users\edodr\AppData\Local\Temp\ST_24bc_000001.tmp saved as .dta
+    format
+
+. 
+. capture program drop est_one
+
+. program define est_one
+  1.     args variant depth clus
+  2.     * depth: td | desta
+.     if "`depth'" == "desta" {
+  3.         drop if missing(DESTA_depth_index) & WB_EP_Depth > 0
+  4.         gen double TD = cond(missing(DESTA_depth_index), 0, DESTA_depth_in
+> dex)
+  5.     }
+  6.     else gen double TD = TotalDepth_nonEnv
+  7.     foreach ix in WB TREND {
+  8.         local ep = cond("`ix'"=="WB", "WB_EP_Depth", "TREND_EP_Count")
+  9.         gen double ep_g = `ep' * env_good
+ 10.         gen double ep_d = `ep' * dirty_p
+ 11.         gen double td_g = TD * env_good
+ 12.         gen double td_d = TD * dirty_p
+ 13.         reghdfe y ep_g ep_d td_g td_d [aw=n], absorb(pd dt pt) vce(cluster
+>  `clus')
+ 14.         local nc = e(N_clust)
+ 15.         local pg = 2*ttail(`nc'-1, abs(_b[ep_g]/_se[ep_g]))
+ 16.         local pd = 2*ttail(`nc'-1, abs(_b[ep_d]/_se[ep_d]))
+ 17.         file open fh using "$CSV", write append text
+ 18.         file write fh "`variant',`depth',`ix',`clus'," (_b[ep_g]) "," (_se
+> [ep_g]) "," (`pg') "," (_b[ep_d]) "," (_se[ep_d]) "," (`pd') "," (e(N)) "," (
+> `nc') _n
+ 19.         file close fh
+ 20.         drop ep_g ep_d td_g td_d
+ 21.     }
+ 22.     drop TD
+ 23. end
+
+. 
+. * recode helper: set (cc, y0) treatment vars to their (cc, y0-1) values
+. capture program drop recode_prev
+
+. program define recode_prev
+  1.     args cc y0
+  2.     foreach v in WB_EP_Depth TREND_EP_Count TotalDepth_nonEnv DESTA_depth_
+> index {
+  3.         qui su `v' if country_code == `cc' & year == `y0'-1, meanonly
+  4.         local m = cond(r(N) > 0, r(mean), 0)
+  5.         qui replace `v' = `m' if country_code == `cc' & year == `y0'
+  6.     }
+  7. end
+
+. 
+. * 0. baseline (TD and DESTA), destination clusters
+. use `base', clear
+
+. est_one 0_baseline td country_code
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       9.59
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |  -.0045685   .0069576    -0.66   0.512    -.0182782    .0091412
+        ep_d |  -.0118734   .0029502    -4.02   0.000    -.0176866   -.0060602
+        td_g |  -.0000508   .0002397    -0.21   0.832    -.0005231    .0004215
+        td_d |   .0003663   .0001767     2.07   0.039     .0000181    .0007144
+       _cons |   9.266953   .0006265  1.5e+04   0.000     9.265719    9.268188
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   4,    227) =       3.58
+Statistics robust to heteroskedasticity           Prob > F        =     0.0075
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0018115   .0018189     1.00   0.320    -.0017725    .0053955
+        ep_d |    .000351   .0015979     0.22   0.826    -.0027977    .0034996
+        td_g |  -.0004726   .0002556    -1.85   0.066    -.0009763    .0000311
+        td_d |  -.0001258   .0002987    -0.42   0.674    -.0007144    .0004627
+       _cons |   9.267711   .0011756  7883.21   0.000     9.265395    9.270028
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. use `base', clear
+
+. est_one 0_baseline desta country_code
+(4,051 observations deleted)
+(dropped 92114 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,677,333
+Absorbing 3 HDFE groups                           F(   4,    227) =       7.62
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8189
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5783
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |  -.0043316    .004349    -1.00   0.320    -.0129011     .004238
+        ep_d |  -.0113421   .0022315    -5.08   0.000    -.0157392   -.0069449
+        td_g |  -.0033612   .0086345    -0.39   0.697    -.0203753    .0136529
+        td_d |   .0192674   .0054147     3.56   0.000     .0085979    .0299368
+       _cons |    9.26715   .0006378  1.5e+04   0.000     9.265894    9.268407
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420814      420814           0    *|
+          dt |      3496        3496           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+(dropped 92114 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,677,333
+Absorbing 3 HDFE groups                           F(   4,    227) =       3.75
+Statistics robust to heteroskedasticity           Prob > F        =     0.0056
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8189
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5783
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        ep_g |   .0016118   .0020291     0.79   0.428    -.0023865      .00561
+        ep_d |  -.0002473   .0013836    -0.18   0.858    -.0029737    .0024791
+        td_g |  -.0230296   .0143686    -1.60   0.110    -.0513424    .0052832
+        td_d |  -.0000603   .0129149    -0.00   0.996    -.0255088    .0253881
+       _cons |   9.267622   .0010733  8634.54   0.000     9.265507    9.269737
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    420814      420814           0    *|
+          dt |      3496        3496           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. * E. baseline with profile clusters
+. use `base', clear
+
+. est_one E_baseline_profileclust td profile
+(dropped 92475 singleton observations)

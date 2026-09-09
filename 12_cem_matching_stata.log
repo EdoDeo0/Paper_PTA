@@ -41,23 +41,52 @@ Notes:
 . *
 . * Dipendenza: ssc install cem
 . 
+. do "New/Code/stata/_root.do"
+
+. * _root.do — configurazione centralizzata del progetto
+. * Il replicatore deve modificare SOLO questo file.
+. 
 . clear all
 
 . set more off
 
 . set varabbrev off
 
+. 
 . if c(os) == "Windows" {
 .     global ROOT "C:\Work\projects\Paper_PTA"
 . }
 
-. if c(os) == "MacOSX" {
+. else if c(os) == "MacOSX" {
 .     global ROOT "~/Documents/work/projects/Paper_PTA"
 . }
 
-. if c(os) == "Unix" {
+. else {
 .     global ROOT "~/work/projects/Paper_PTA"
 . }
+
+. 
+. cd "$ROOT"
+C:\Work\projects\Paper_PTA
+
+. 
+. * --- Variant configuration (2x2 matrix) ---
+. * PTA_SAMPLE: "excl" (default, exclude HK/Macao) or "incl"
+. * PTA_DEPTH:  "totaldepth" (default) or "desta"
+. if "$PTA_SAMPLE" == "" global PTA_SAMPLE "excl"
+
+. if "$PTA_DEPTH"  == "" global PTA_DEPTH  "totaldepth"
+
+. 
+. * --- Output suffix (prevents cross-variant cache contamination) ---
+. global OUTSFX ""
+
+. if "$PTA_SAMPLE" == "incl" global OUTSFX "${OUTSFX}_inclHKMO"
+
+. if "$PTA_DEPTH"  == "desta" global OUTSFX "${OUTSFX}_desta"
+
+. 
+end of do-file
 
 . 
 . cap which cem
@@ -85,7 +114,7 @@ Duplicates in terms of iso3c
 . tempfile wdi
 
 . save `wdi'
-file C:\Users\edodr\AppData\Local\Temp\ST_3bb0_000001.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_1cb8_000001.tmp saved as .dta
     format
 
 . 
@@ -98,7 +127,7 @@ file C:\Users\edodr\AppData\Local\Temp\ST_3bb0_000001.tmp saved as .dta
 . tempfile mfn
 
 . save `mfn'
-file C:\Users\edodr\AppData\Local\Temp\ST_3bb0_000002.tmp saved as .dta
+file C:\Users\edodr\AppData\Local\Temp\ST_1cb8_000002.tmp saved as .dta
     format
 
 . 
@@ -165,6 +194,10 @@ Controlli: 224
 . *── 3. CEM ──────────────────────────────────────────────────────────────────
 > ──
 . * Eliminare righe con missing nelle covariate
+. qui count
+
+. local pre_drop = r(N)
+
 . foreach v in gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000 {
   2.     drop if missing(`v')
   3. }
@@ -173,13 +206,25 @@ Controlli: 224
 (138 observations deleted)
 
 . 
-. qui count
-
-. di as text "Paesi candidati: " r(N) " (" ///
->     string(r(N) - r(N) + _N) " dopo drop missing)"
-Paesi candidati: 106 (106 dopo drop missing)
+. di as text "Paesi candidati: `pre_drop' prima, `=_N' dopo drop missing (dropp
+> ed `=`pre_drop'-_N')"
+Paesi candidati: 249 prima, 106 dopo drop missing (dropped 143)
 
 . 
+. cap log close cem_l1
+
+. log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", replace text name(
+> cem_l1)
+-------------------------------------------------------------------------------
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ opened on:   7 Sep 2026, 22:56:49
+
+. di as text _n "=== L1 pre-matching ==="
+
+=== L1 pre-matching ===
+
 . imb gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000, treatment(treated)
 
 Multivariate L1 distance: .68073593
@@ -191,11 +236,18 @@ gdp_growth_2000      .25   1.5371   5.7535   1.4082   .70518   .69996  -5.9353
  log_gdppc_2000   .16017   .05096  -.12962  -.35809   .01155    .5448   -.0078
 mfn_tariff_2000   .27056  -2.3442    -1.07      .18    -3.63    -6.68    -4.07
 
+. log close cem_l1
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ closed on:   7 Sep 2026, 22:56:49
+-------------------------------------------------------------------------------
+
+. 
 . cem gdp_growth_2000 (0 3 6 10) ///
 >     log_gdppc_2000  (6 7.5 9 10.5) ///
 >     mfn_tariff_2000 (0 5 10 20), ///
 >     treatment(treated)
-(using the scott break method for imbalance)
 
 Matching Summary:
 -----------------
@@ -216,6 +268,40 @@ Univariate imbalance:
 gdp_growth_2000   .13158  -.17542   2.6456   .18177   .20954  -.04675  -.41036
  log_gdppc_2000   .17544  -.22884   .21125  -.65074  -.18221  -.08806   .06745
 mfn_tariff_2000   .02982  -.38292     -3.3     -.21     -.16     1.04    -4.07
+
+. 
+. cap log close cem_l1
+
+. log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", append text name(c
+> em_l1)
+-------------------------------------------------------------------------------
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ opened on:   7 Sep 2026, 22:56:49
+
+. di as text _n "=== L1 post-matching (matched sample) ==="
+
+=== L1 post-matching (matched sample) ===
+
+. imb gdp_growth_2000 log_gdppc_2000 mfn_tariff_2000 if cem_matched, treatment(
+> treated)
+
+Multivariate L1 distance: .43157895
+
+Univariate imbalance:
+
+                      L1     mean      min      25%      50%      75%      max
+gdp_growth_2000   .11316   .67772   2.6456   .25985   .25525    .7695  -.41036
+ log_gdppc_2000   .21579  -.37115   .21125  -1.1627  -.18221  -.05289   .06745
+mfn_tariff_2000   .12368  -.62604     -3.3      .36     1.07     -3.4    -4.07
+
+. log close cem_l1
+      name:  cem_l1
+       log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
+  log type:  text
+ closed on:   7 Sep 2026, 22:56:49
+-------------------------------------------------------------------------------
 
 . 
 . *── 4. Diagnostica ──────────────────────────────────────────────────────────
@@ -318,13 +404,13 @@ file C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_cc.dta saved
 . restore
 
 . 
-. log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", replace text name(
-> summary)
+. log using "$ROOT/New/Output/CEM_stata/cem_v1_summary.txt", append text name(s
+> ummary)
 -------------------------------------------------------------------------------
       name:  summary
        log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
   log type:  text
- opened on:   2 Sep 2026, 18:58:35
+ opened on:   7 Sep 2026, 22:56:49
 
 . list iso3c country_code treated weights, clean noobs
 
@@ -399,7 +485,7 @@ Paesi senza country_code (non nel dataset di trade):
       name:  summary
        log:  C:\Work\projects\Paper_PTA/New/Output/CEM_stata/cem_v1_summary.txt
   log type:  text
- closed on:   2 Sep 2026, 18:58:35
+ closed on:   7 Sep 2026, 22:56:49
 -------------------------------------------------------------------------------
 
 . 

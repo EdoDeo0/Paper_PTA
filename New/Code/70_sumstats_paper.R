@@ -43,7 +43,8 @@ calc_ss <- function(d) {
   vars <- c("ln_export", "ln_export_qua", "ln_export_value",
             "env_good", "dirty_p",
             "WB_EP_Depth", "TREND_EP_Count",
-            "tariffs", "ln_hhi_baci")
+            "tariffs", "ln_hhi_baci",
+            "y", "n")
   rbindlist(lapply(vars, function(v) {
     if (is.null(d[[v]])) return(data.table(variable = v, N = 0L,
       mean = NA_real_, median = NA_real_, sd = NA_real_,

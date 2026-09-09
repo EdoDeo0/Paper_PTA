@@ -1,0 +1,242 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/repli
+> cate_dosebins_wcb_stata.log
+  log type:  text
+ opened on:   8 Sep 2026, 12:42:06
+
+. 
+. cap which reghdfe
+
+. if _rc ssc install reghdfe
+
+. cap which boottest
+
+. if _rc ssc install boottest
+
+. 
+. use hs6 country_code year y n WB_EP_Depth env_good dirty_p pd dt pt ///
+>     using "$ROOT/New/Data/Collapsed/collapsed_omnibus.dta", clear
+
+. su WB_EP_Depth, meanonly
+
+. assert r(max) == 17
+
+. 
+. gen str8 dose_bin = "0_mai" if WB_EP_Depth == 0
+(534,846 missing values generated)
+
+. replace dose_bin  = "1_basso" if WB_EP_Depth >= 1 & WB_EP_Depth <= 5
+(215,096 real changes made)
+
+. replace dose_bin  = "2_medio" if WB_EP_Depth >= 6 & WB_EP_Depth <= 7
+(297,047 real changes made)
+
+. replace dose_bin  = "3_alto"  if WB_EP_Depth >= 8
+(22,703 real changes made)
+
+. 
+. gen double low_g  = (dose_bin == "1_basso") * env_good
+
+. gen double low_d  = (dose_bin == "1_basso") * dirty_p
+
+. gen double med_g  = (dose_bin == "2_medio") * env_good
+
+. gen double med_d  = (dose_bin == "2_medio") * dirty_p
+
+. gen double high_g = (dose_bin == "3_alto")  * env_good
+
+. gen double high_d = (dose_bin == "3_alto")  * dirty_p
+
+. gen double td_g   = WB_EP_Depth * env_good
+
+. gen double td_d   = WB_EP_Depth * dirty_p
+
+. 
+. * --- reghdfe asintotico (coefficienti e SE di riferimento) -----------------
+> -
+. reghdfe y low_g med_g high_g low_d med_d high_d td_g td_d [aw=n], ///
+>     absorb(pd dt pt) vce(cluster country_code)
+(dropped 92475 singleton observations)
+(MWFE estimator converged in 30 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,681,023
+Absorbing 3 HDFE groups                           F(   8,    227) =       3.98
+Statistics robust to heteroskedasticity           Prob > F        =     0.0002
+                                                  R-squared       =     0.8431
+                                                  Adj R-squared   =     0.8188
+                                                  Within R-sq.    =     0.0000
+Number of clusters (country_code) =        228    Root MSE        =     0.5784
+
+                         (Std. err. adjusted for 228 clusters in country_code)
+------------------------------------------------------------------------------
+             |               Robust
+           y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       low_g |   .0643491   .0308445     2.09   0.038     .0035709    .1251273
+       med_g |   .0402753   .0720648     0.56   0.577    -.1017263    .1822768
+      high_g |   .2716644   .1771827     1.53   0.127    -.0774686    .6207974
+       low_d |   .0363658   .0350661     1.04   0.301    -.0327309    .1054624
+       med_d |  -.1059921   .0882034    -1.20   0.231    -.2797943      .06781
+      high_d |  -.1699711   .2325437    -0.73   0.466    -.6281913    .2882491
+        td_g |  -.0188563    .009923    -1.90   0.059    -.0384093    .0006968
+        td_d |   .0095187   .0133741     0.71   0.477    -.0168347     .035872
+       _cons |   9.267026   .0011435  8103.97   0.000     9.264773    9.269279
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+          pd |    421664      421664           0    *|
+          dt |      3507        3507           0    *|
+          pt |     68569           1       68568     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. local nobs   = e(N)
+
+. local nclust = e(N_clust)
+
+. foreach v in low_g med_g high_g low_d med_d high_d {
+  2.     local b_`v'  = _b[`v']
+  3.     local se_`v' = _se[`v']
+  4. }
+
+. 
+. * --- FWL demeaning ---------------------------------------------------------
+> --
+. di as txt "demeaning..."
+demeaning...
+
+. local dmvars y low_g med_g high_g low_d med_d high_d td_g td_d
+
+. foreach v of local dmvars {
+  2.     cap drop `v'_dm
+  3.     qui reghdfe `v' [aw=n], absorb(pd dt pt) residuals(`v'_dm) tol(1e-8)
+  4. }
+
+. 
+. qui reg y_dm low_g_dm med_g_dm high_g_dm low_d_dm med_d_dm high_d_dm td_g_dm 
+> td_d_dm [aw=n], ///
+>     cluster(country_code) nocons
+
+. 
+. * --- Guardia di riproduzione (FWL deve coincidere col reghdfe asintotico) --
+> -
+. foreach v in low_g med_g high_g low_d med_d high_d {
+  2.     local b_fwl = _b[`v'_dm]
+  3.     if abs(`b_fwl' - `b_`v'') > 1e-4 {
+  4.         di as error "GUARDIA FALLITA su `v': reghdfe=`b_`v'' FWL=`b_fwl'"
+  5.         exit 9
+  6.     }
+  7. }
+
+. di as result "[guardia OK] FWL riproduce reghdfe entro 1e-4 su tutte le 6 fas
+> ce"
+[guardia OK] FWL riproduce reghdfe entro 1e-4 su tutte le 6 fasce
+
+. 
+. * --- Scrittura CSV coefficienti asintotici ---------------------------------
+> --
+. global CSV "$OUTD/dosebins_wcb_stata.csv"
+
+. file open fh using "$CSV", write replace text
+(file
+    C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/dosebins_wcb
+    > _stata.csv not found)
+
+. file write fh "fascia,coef,se,pval,nobs,nclust" _n
+
+. foreach v in low_g med_g high_g low_d med_d high_d {
+  2.     local p  = 2*ttail(`nclust'-1, abs(`b_`v''/`se_`v''))
+  3.     file write fh "`v'," (`b_`v'') "," (`se_`v'') "," (`p') "," (`nobs') "
+> ," (`nclust') _n
+  4. }
+
+. file close fh
+
+. 
+. * --- boottest sulle fasce bassa e media (green e dirty), 4 chiamate --------
+> -
+. di as result _n "=== boottest (4 chiamate: low_g, med_g, low_d, med_d) ==="
+
+=== boottest (4 chiamate: low_g, med_g, low_d, med_d) ===
+
+. global CSVW "$OUTD/dosebins_wcb_pvalues.csv"
+
+. file open fw using "$CSVW", write replace text
+(file
+    C:/Work/projects/Paper_PTA/New/replication/audit_2026-09-07c/dosebins_wcb
+    > _pvalues.csv not found)
+
+. file write fw "var,p_wcb,ci_lo,ci_hi" _n
+
+. file close fw
+
+. foreach v in low_g med_g low_d med_d {
+  2.     di as text "  boottest su `v'_dm..."
+  3.     set seed 42
+  4.     boottest `v'_dm, reps(9999) cluster(country_code) nograph
+  5.     local pw = r(p)
+  6.     local cilo = r(CI)[1,1]
+  7.     local cihi = r(CI)[1,2]
+  8.     file open fw using "$CSVW", write append text
+  9.     file write fw "`v'," (`pw') "," (`cilo') "," (`cihi') _n
+ 10.     file close fw
+ 11. }
+  boottest su low_g_dm...
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  low_g_dm
+
+                          t(227) =     2.1059
+                        Prob>|t| =     0.1654
+
+95% confidence set for null hypothesis expression: [−.0768, .2077]
+  boottest su med_g_dm...
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  med_g_dm
+
+                          t(227) =     0.5642
+                        Prob>|t| =     0.6082
+
+95% confidence set for null hypothesis expression: [−.2277, .2683]
+  boottest su low_d_dm...
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  low_d_dm
+
+                          t(227) =     1.0469
+                        Prob>|t| =     0.6657
+
+95% confidence set for null hypothesis expression: [−.1995, .1116]
+  boottest su med_d_dm...
+
+Overriding estimator's cluster/robust settings with cluster(country_code)
+
+Wild bootstrap-t, null imposed, 9999 replications, Wald test, clustering by cou
+> ntry_code, bootstrap clustering by country_code, Rademacher weights:
+  med_d_dm
+
+                          t(227) =    -1.2130
+                        Prob>|t| =     0.2841
+
+95% confidence set for null hypothesis expression: [−.5015, .07341]
+
+. 
+. di as result _n "=== [OK] dosebins done ==="
+
+=== [OK] dosebins done ===
+
+. cap log close _all

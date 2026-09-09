@@ -44,13 +44,15 @@ OUT_MD     <- out_path(here("New/Output/Diagnostics/43_apec_egl_subsample.md"))
 dir.create(dirname(OUT_MD), recursive = TRUE, showWarnings = FALSE)
 stopifnot("Eseguire prima l'estrazione dei codici APEC EGL" = file.exists(APEC_TXT))
 
-## --- Sezione 1: aggiunta colonna apec_egl a green_codes_hs1996.csv ---------
-apec_codes <- readLines(APEC_TXT)
+## --- Sezione 1: colonna apec_egl (aggiunta da 05_green_goods_hs1996.R) -----
+## Non si riscrive piu' green_codes_hs1996.csv qui: la colonna e' scritta a
+## monte dal builder canonico del file (05), cosi' questo script resta di
+## sola lettura sul suo input.
 green <- fread(GREEN_FILE, colClasses = "character")
-green[, apec_egl := as.integer(hs6_hs2012_orig %in% apec_codes)]
+stopifnot("Colonna apec_egl assente: rilanciare 05_green_goods_hs1996.R" = "apec_egl" %in% names(green))
+green[, apec_egl := as.integer(apec_egl)]
 stopifnot(sum(green$apec_egl) == 54)
-fwrite(green, GREEN_FILE)
-cat(sprintf("[OK] Colonna apec_egl aggiunta a green_codes_hs1996.csv (%d/%d codici marcati)\n",
+cat(sprintf("[OK] Colonna apec_egl letta da green_codes_hs1996.csv (%d/%d codici marcati)\n",
             sum(green$apec_egl), nrow(green)))
 
 ## --- Sezione 2: ristima con apec_green al posto di env_good -----------------

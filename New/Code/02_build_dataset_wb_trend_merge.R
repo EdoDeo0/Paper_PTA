@@ -211,7 +211,7 @@ stopifnot(
 ## Impronta attesa: WBID nell'ordine in cui il pivot li restituisce.
 ## Se questa fallisce, l'ordine e' cambiato: NON aggiornare l'impronta senza
 ## aver prima riverificato a mano la corrispondenza WBID <-> accordo <-> paesi.
-WBID_ATTESI <- as.double(c(8, 15, 10, 1, 9, 2, 12, 3, 4, 7, 13, 5, 6, 11))
+WBID_ATTESI <- as.double(c(106, 90, 268, 125, 210, 85, 270, 84, 165, 162, 252, 133, 179, 249))
 stopifnot("ordine WBID cambiato rispetto alla verifica del 2026" =
             identical(df_wb$WBID, WBID_ATTESI))
 
@@ -243,6 +243,7 @@ df_wb <- df_wb_country_year %>%
 
 ## --- C2: TREND - stessa logica di espansione paese-anno e aggregazione ---
 df_trend$Year_trend <- c(2006, 2003, 2003, 2008, 2007, 2010, 2009, 2005, 2011, 2015, 2014, 2015, 2014, 2002, 2005)
+stopifnot(identical(sub("_.*", "", df_trend$Trade.Agreement), c("199","220","221","222","224","227","228","67","804","840","862","909","955","100","62")))
 Country_TREND <- list(
   c("Chile"), c("HongKong"), c("Macau"), c("New Zealand"), c("Pakistan"), c("Peru"), c("Singapore"),
   c("Brunei", "Cambodia", "Indonesia", "Laos,PDR", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "East Timor", "Vietnam"), # ASEAN
@@ -376,10 +377,7 @@ df_merged <- df_merged %>%
   mutate(TREND_Soft = rowSums(select(., matches("^X1_"), X7_09, X5_01_02), na.rm = TRUE))
 
 df_merged <- df_merged %>%
-  mutate(TREND_Hard = pmax(
-    rowSums(select(., matches("^X2_"), matches("^X5_"), matches("^X10_"), matches("^X14_")), na.rm = TRUE) - TREND_Soft,
-    0
-  ))
+  mutate(TREND_Hard = rowSums(select(., matches("^X2_"), matches("^X5_"), matches("^X10_"), matches("^X14_")), na.rm = TRUE) - X5_01_02)
 
 df_merged <- df_merged %>%
   mutate(TREND_Hardness_Share = round(ifelse((TREND_Hard + TREND_Soft) > 0, TREND_Hard / (TREND_Hard + TREND_Soft), 0), 3))
